@@ -1,0 +1,38 @@
+{
+    "run_id": "30a308e8-c16c-4ad0-88a0-49e7d05aed14",
+    "source_name": "inventory_excel",
+    "source_type": "excel",
+    "input_path_or_url": "F:\\data\\new\\quanskill\\duy\\data\\sample_inputs\\inventory.xlsx",
+    "start_time": "2026-05-29T07:17:23.391943+00:00",
+    "end_time": "2026-05-29T07:17:42.011372+00:00",
+    "status": "success",
+    "records_read": 25,
+    "records_valid": 25,
+    "records_invalid": 0,
+    "duplicate_rows_removed": 0,
+    "missing_values": {
+        "for_reorder": 0,
+        "inventory_id": 0,
+        "name": 0,
+        "description": 0,
+        "unit_price": 0,
+        "quantity_in_stock": 0,
+        "inventory_value": 0,
+        "reorder_level": 0,
+        "reorder_time_in_days": 0,
+        "quantity_in_reorder": 0,
+        "discontinued": 22
+    },
+    "total_missing_values": 22,
+    "sheet_names": [
+        "Inventory list"
+    ],
+    "selected_sheet": "Inventory list",
+    "detected_header_row_index": 4,
+    "detected_excel_header_row_number": 5,
+    "error_message": null,
+    "raw_output_path": "F:\\data\\new\\quanskill\\duy\\data\\raw\\excel\\inventory_raw.xlsx",
+    "staging_output_path": "F:\\data\\new\\quanskill\\duy\\data\\staging\\excel\\sample_excel_staging.csv",
+    "clean_output_path": "F:\\data\\new\\quanskill\\duy\\data\\clean\\excel\\sample_excel_clean.csv",
+    "owner": "Nguyen Minh Duy"
+}

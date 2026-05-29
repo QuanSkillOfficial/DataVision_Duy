@@ -1,0 +1,31 @@
+{
+  "customers": [
+    {
+      "customer_id": 1001,
+      "first_name": "John",
+      "last_name": "Doe",
+      "email": "john.doe@example.com",
+      "phone": "+1-202-555-0111",
+      "country": "USA",
+      "created_at": "2026-05-22T09:15:00Z"
+    },
+    {
+      "customer_id": 1002,
+      "first_name": "Emma",
+      "last_name": "Smith",
+      "email": "emma.smith@example.com",
+      "phone": "+44-20-7946-0958",
+      "country": "UK",
+      "created_at": "2026-05-22T10:30:00Z"
+    },
+    {
+      "customer_id": 1003,
+      "first_name": "Minh",
+      "last_name": "Nguyen",
+      "email": "minh.nguyen@example.com",
+      "phone": "+84-909-123-456",
+      "country": "Vietnam",
+      "created_at": "2026-05-23T08:00:00Z"
+    }
+  ]
+}

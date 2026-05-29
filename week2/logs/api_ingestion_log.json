@@ -1,0 +1,35 @@
+{
+    "run_id": "a2226453-8634-48e9-9969-312304181e5d",
+    "source_name": "sample_api_response",
+    "source_type": "api",
+    "input_path_or_url": "F:\\data\\new\\quanskill\\duy\\data\\sample_inputs\\customer_api.json",
+    "start_time": "2026-05-29T07:24:27.769401+00:00",
+    "end_time": "2026-05-29T07:24:45.488073+00:00",
+    "status": "success",
+    "validation_status": "passed",
+    "records_read": 3,
+    "records_valid": 3,
+    "records_invalid": 0,
+    "duplicate_rows_removed": 0,
+    "missing_values": {
+        "customer_id": 0,
+        "first_name": 0,
+        "last_name": 0,
+        "email": 0,
+        "phone": 0,
+        "country": 0,
+        "created_at": 0
+    },
+    "total_missing_values": 0,
+    "required_fields": [
+        "customer_id",
+        "email",
+        "created_at"
+    ],
+    "missing_required_fields": [],
+    "error_message": null,
+    "raw_output_path": "F:\\data\\new\\quanskill\\duy\\data\\raw\\api\\sample_api_response.json",
+    "staging_output_path": "F:\\data\\new\\quanskill\\duy\\data\\staging\\api\\api_staging.csv",
+    "clean_output_path": "F:\\data\\new\\quanskill\\duy\\data\\clean\\api\\api_clean.csv",
+    "owner": "Nguyen Minh Duy"
+}

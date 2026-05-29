@@ -1,0 +1,4 @@
+customer_id,first_name,last_name,email,phone,country,created_at
+1001,John,Doe,john.doe@example.com,+1-202-555-0111,USA,2026-05-22T09:15:00Z
+1002,Emma,Smith,emma.smith@example.com,+44-20-7946-0958,UK,2026-05-22T10:30:00Z
+1003,Minh,Nguyen,minh.nguyen@example.com,+84-909-123-456,Vietnam,2026-05-23T08:00:00Z
