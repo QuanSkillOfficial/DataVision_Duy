@@ -10,8 +10,8 @@ The inventory is used to:
 - standardize ingestion planning
 - support governance and observability
 - track ingestion metadata
-- prepare for scalable ETL and ELT workflows
-- support AI, analytics, and downstream systems
+- prepare scalable ETL and ELT workflows
+- support analytics, AI, and downstream systems
 - improve source traceability and ownership
 
 Version 2 extends the original inventory with governance, security, schema, and operational metadata.
@@ -23,20 +23,21 @@ This inventory will later support:
 - PostgreSQL catalog tables
 - monitoring systems
 - data quality tracking
-- lineage and governance systems
+- lineage systems
+- observability integration
 
 ---
 
 # 2. Data Source Inventory Table
 
-| Source Name          | Source Type       | File Format | Sample Location               | Expected Fields                   | Ingestion Method         | Frequency | Difficulty | Authentication Required | Schema Version | Sample Available | Last Ingested At     | Expected Volume | Sensitive Data Flag | Downstream Consumer  | Owner | Status  |
-| -------------------- | ----------------- | ----------- | ----------------------------- | --------------------------------- | ------------------------ | --------- | ---------- | ----------------------- | -------------- | ---------------- | -------------------- | --------------- | ------------------- | -------------------- | ----- | ------- |
-| Customer API         | API               | JSON        | /samples/customer_api.json    | customer_id, email, created_at    | Python Requests API Pull | Daily     | Medium     | Yes                     | v1.0           | Yes              | 2026-05-29T10:00:00Z | Medium          | Yes                 | Analytics Team       | Duy   | Planned |
-| Sales CSV            | CSV File          | CSV         | /samples/sales.csv            | order_id, product_id, revenue     | Pandas CSV Loader        | Daily     | Easy       | No                      | v1.0           | Yes              | 2026-05-29T10:00:00Z | Low             | No                  | BI Dashboard         | Duy   | Planned |
-| Financial Report PDF | PDF Document      | PDF         | /samples/financial_report.pdf | revenue, expenses, financial_text | pdfplumber Extraction    | Weekly    | Hard       | No                      | v1.0           | Yes              | 2026-05-29T10:00:00Z | Low             | Yes                 | AI Team              | Duy   | Planned |
-| Inventory Excel      | Excel Spreadsheet | XLSX        | /samples/inventory.xlsx       | sku, quantity, warehouse          | OpenPyXL Loader          | Weekly    | Medium     | No                      | v1.0           | Yes              | 2026-05-29T10:00:00Z | Medium          | No                  | Operations Dashboard | Duy   | Planned |
-| Transaction Database | Database          | PostgreSQL  | db_connection_string          | transaction_id, amount, timestamp | SQLAlchemy Connector     | Real-time | Hard       | Yes                     | v2.0           | No               | Not Yet Ingested     | High            | Yes                 | ML Pipeline          | Duy   | Future  |
-| IoT Sensor Stream    | Streaming         | JSON Stream | kafka://sensor_topic          | timestamp, sensor_id, value       | Kafka Consumer           | Streaming | Hard       | Yes                     | v1.0           | No               | Not Yet Ingested     | High            | No                  | Monitoring System    | Duy   | Future  |
+| Source Name          | Source Type       | File Format | Sample Location            | Expected Fields                     | Ingestion Method                | Frequency | Difficulty | Authentication Required | Schema Version | Sample Available | Last Ingested At     | Expected Volume | Sensitive Data Flag | Downstream Consumer  | Owner | Status  |
+| -------------------- | ----------------- | ----------- | -------------------------- | ----------------------------------- | ------------------------------- | --------- | ---------- | ----------------------- | -------------- | ---------------- | -------------------- | --------------- | ------------------- | -------------------- | ----- | ------- |
+| Customer API         | API               | JSON        | /samples/customer_api.json | customer_id, email, created_at      | Python Requests API Pull        | Daily     | Medium     | Yes                     | v1.0           | Yes              | 2026-05-29T10:00:00Z | Medium          | Yes                 | Analytics Team       | Duy   | Planned |
+| Sales CSV            | CSV File          | CSV         | /samples/sales.csv         | order_id, product_id, revenue       | Pandas CSV Loader               | Daily     | Easy       | No                      | v1.0           | Yes              | 2026-05-29T10:00:00Z | Low             | No                  | BI Dashboard         | Duy   | Planned |
+| Resume PDF           | PDF Document      | PDF         | /samples/resume.pdf        | name, skills, experience, education | PyMuPDF / pdfplumber Extraction | Weekly    | Medium     | No                      | v1.0           | Yes              | 2026-05-29T10:00:00Z | Low             | Yes                 | AI Team / RAG System | Duy   | Planned |
+| Inventory Excel      | Excel Spreadsheet | XLSX        | /samples/inventory.xlsx    | sku, quantity, warehouse            | OpenPyXL Loader                 | Weekly    | Medium     | No                      | v1.0           | Yes              | 2026-05-29T10:00:00Z | Medium          | No                  | Operations Dashboard | Duy   | Planned |
+| Transaction Database | Database          | PostgreSQL  | db_connection_string       | transaction_id, amount, timestamp   | SQLAlchemy Connector            | Real-time | Hard       | Yes                     | v2.0           | No               | Not Yet Ingested     | High            | Yes                 | ML Pipeline          | Duy   | Future  |
+| IoT Sensor Stream    | Streaming         | JSON Stream | kafka://sensor_topic       | timestamp, sensor_id, value         | Kafka Consumer                  | Streaming | Hard       | Yes                     | v1.0           | No               | Not Yet Ingested     | High            | No                  | Monitoring System    | Duy   | Future  |
 
 ---
 
@@ -105,7 +106,7 @@ Schema versioning helps:
 
 ## Recommended Format
 
-```text id="u1m8yt"
+```text
 v1.0
 v1.1
 v2.0
@@ -154,7 +155,7 @@ Useful for:
 
 ## Recommended Format
 
-```text id="m74f6j"
+```text
 2026-05-29T10:15:00Z
 ```
 
@@ -285,10 +286,19 @@ Semi-structured or unstructured documents.
 
 Examples:
 
+- resumes / CV documents
 - invoices
 - financial reports
 - contracts
 - research documents
+
+PDF ingestion may later support:
+
+- OCR extraction
+- document chunking
+- semantic search
+- vector embedding pipelines
+- RAG and LLM workflows
 
 ---
 
@@ -332,23 +342,29 @@ Examples:
 
 # 13. Operational Usage
 
-This inventory supports:
-
 ## Ingestion Team
 
 To build and manage ingestion pipelines.
+
+---
 
 ## Database Team
 
 To design metadata and governance tables.
 
+---
+
 ## Analytics Team
 
 To understand source availability and freshness.
 
+---
+
 ## AI Team
 
 To identify reliable sources for RAG and LLM workflows.
+
+---
 
 ## Platform Team
 
@@ -375,20 +391,22 @@ Future versions of this inventory may include:
 
 # 15. Example Production Use Case
 
-```text id="4rc0ye"
-Customer API
+```text
+Resume PDF
 ↓
-API ingestion pipeline
+PDF ingestion pipeline
 ↓
-Raw JSON storage
+Raw PDF storage
 ↓
-Validation and staging
+Text extraction and chunking
 ↓
-Clean customer table
+Staging text layer
 ↓
-Analytics dashboard
+Clean document chunks
 ↓
-AI recommendation system
+Vector embedding pipeline
+↓
+RAG / LLM system
 ```
 
 The inventory tracks:
@@ -400,18 +418,3 @@ The inventory tracks:
 - downstream dependencies
 
 ---
-
-# 16. Summary
-
-The Data Source Inventory Template V2 provides a production-oriented metadata foundation for the ingestion platform.
-
-It improves:
-
-- ingestion governance
-- source traceability
-- operational visibility
-- schema management
-- downstream coordination
-- scalability planning
-
-This inventory serves as a centralized reference for ingestion architecture, pipeline planning, and future platform expansion.

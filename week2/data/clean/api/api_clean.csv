@@ -2,3 +2,15 @@ customer_id,first_name,last_name,email,phone,country,created_at
 1001,John,Doe,john.doe@example.com,+1-202-555-0111,USA,2026-05-22T09:15:00Z
 1002,Emma,Smith,emma.smith@example.com,+44-20-7946-0958,UK,2026-05-22T10:30:00Z
 1003,Minh,Nguyen,minh.nguyen@example.com,+84-909-123-456,Vietnam,2026-05-23T08:00:00Z
+1004,Sophia,Brown,sophia.brown@example.com,+1-310-555-0145,USA,2026-05-23T09:20:00Z
+1005,Liam,Wilson,liam.wilson@example.com,+61-2-9374-4000,Australia,2026-05-23T11:45:00Z
+1006,Olivia,Taylor,olivia.taylor@example.com,+65-6123-4567,Singapore,2026-05-24T07:10:00Z
+1007,Noah,Anderson,noah.anderson@example.com,+49-30-123456,Germany,2026-05-24T08:50:00Z
+1008,Ava,Thomas,ava.thomas@example.com,+33-1-42-68-53-00,France,2026-05-24T10:05:00Z
+1009,Ethan,Martinez,ethan.martinez@example.com,+34-91-123-4567,Spain,2026-05-24T13:30:00Z
+1010,Mia,Lee,mia.lee@example.com,+82-2-555-1234,South Korea,2026-05-25T06:40:00Z
+1011,Lucas,Garcia,lucas.garcia@example.com,+52-55-1234-5678,Mexico,2026-05-25T08:15:00Z
+1012,Charlotte,White,charlotte.white@example.com,+81-3-1234-5678,Japan,2026-05-25T09:50:00Z
+1013,Benjamin,Harris,benjamin.harris@example.com,+39-06-12345678,Italy,2026-05-25T12:00:00Z
+1014,Amelia,Clark,amelia.clark@example.com,+91-22-1234-5678,India,2026-05-26T07:25:00Z
+1015,James,Lewis,james.lewis@example.com,+55-11-4002-8922,Brazil,2026-05-26T10:10:00Z

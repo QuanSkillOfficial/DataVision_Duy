@@ -1,26 +1,47 @@
-for_reorder,inventory_id,name,description,unit_price,quantity_in_stock,inventory_value,reorder_level,reorder_time_in_days,quantity_in_reorder,discontinued
-1,IN0001,Item 1,Desc 1,51,25,1275,29,13,50,
-1,IN0002,Item 2,Desc 2,93,132,12276,231,4,50,
-0,IN0003,Item 3,Desc 3,57,151,8607,114,11,150,
-0,IN0004,Item 4,Desc 4,19,186,3534,158,6,50,
-0,IN0005,Item 5,Desc 5,75,62,4650,39,12,50,
-1,IN0006,Item 6,Desc 6,11,5,55,9,13,150,
-0,IN0007,Item 7,Desc 7,56,58,3248,109,7,100,Yes
-1,IN0008,Item 8,Desc 8,38,101,3838,162,3,100,
-0,IN0009,Item 9,Desc 9,59,122,7198,82,3,150,
-1,IN0010,Item 10,Desc 10,50,175,8750,283,8,150,
-1,IN0011,Item 11,Desc 11,59,176,10384,229,1,100,
-1,IN0012,Item 12,Desc 12,18,22,396,36,12,50,
-1,IN0013,Item 13,Desc 13,26,72,1872,102,9,100,
-1,IN0014,Item 14,Desc 14,42,62,2604,83,2,100,
-0,IN0015,Item 15,Desc 15,32,46,1472,23,15,50,
-1,IN0016,Item 16,Desc 16,90,96,8640,180,3,50,
-0,IN0017,Item 17,Desc 17,97,57,5529,98,12,50,Yes
-1,IN0018,Item 18,Desc 18,12,6,72,7,13,50,
-1,IN0019,Item 19,Desc 19,82,143,11726,164,12,150,
-0,IN0020,Item 20,Desc 20,16,124,1984,113,14,50,
-0,IN0021,Item 21,Desc 21,19,112,2128,75,11,50,
-0,IN0022,Item 22,Desc 22,24,182,4368,132,15,150,
-0,IN0023,Item 23,Desc 23,29,106,3074,142,1,150,Yes
-0,IN0024,Item 24,Desc 24,75,173,12975,127,9,100,
-0,IN0025,Item 25,Desc 25,14,28,392,21,8,50,
+product_id,product_name,opening_stock,purchase_stock_in,number_of_units_sold,hand_in_stock,cost_price_per_unit_usd,cost_price_total_usd
+P101,Laptop,50,20,10,60,1200,72000
+P102,Monitor,40,15,5,50,500,25000
+P103,Keyboard,60,25,15,70,50,3500
+P104,Headphones,30,10,3,37,100,3700
+P105,Smartphone,70,30,20,80,900,72000
+P106,Tablet,45,18,8,55,700,38500
+P107,Router,55,22,12,65,150,9750
+P108,External Hard Drive,25,12,5,32,200,6400
+P109,Wireless Earbuds,35,15,7,43,80,3440
+P110,Webcam,40,20,10,50,60,3000
+P111,Desk Chair,20,8,3,25,150,3750
+P112,Desk Lamp,30,15,7,38,30,1140
+P113,USB Flash Drive,50,25,12,63,20,1260
+P114,Ethernet Cable,60,30,15,75,10,750
+P115,Power Strip,40,20,8,52,25,1300
+P116,Wireless Mouse,35,15,5,45,40,1800
+P117,Gaming Keyboard,25,10,4,31,100,3100
+P118,Gaming Mouse,30,12,6,36,80,2880
+P119,Gaming Headset,20,8,3,25,120,3000
+P120,Gaming Chair,15,6,2,19,200,3800
+P121,Gaming Monitor,25,10,4,29,400,11600
+P122,Graphics Card,40,18,9,49,600,29400
+P123,CPU,30,15,7,38,350,13300
+P124,Motherboard,25,12,5,32,200,6400
+P125,RAM,50,22,11,61,80,4880
+P126,SSD,45,20,8,57,120,6840
+P127,HDD,60,25,12,73,60,4380
+P128,Power Supply,35,15,6,44,100,4400
+P129,PC Case,40,18,9,49,80,3920
+P130,CPU Cooler,30,12,4,34,50,1700
+P131,Monitor Stand,25,10,3,28,30,840
+P132,Mouse Pad,50,20,8,58,10,580
+P133,Thermal Paste,40,15,5,50,5,250
+P134,Cable Management Kit,30,12,4,34,15,510
+P135,WiFi Adapter,20,8,3,23,20,460
+P136,External DVD Drive,15,6,2,17,50,850
+P137,Printer Cable,25,10,4,29,5,145
+P138,Keyboard Cleaner,40,18,9,49,8,392
+P139,Laptop Cooling Pad,30,15,6,39,20,780
+P140,USB Hub,35,12,4,31,15,465
+P141,Anti-Glare Screen Protector,25,8,3,28,10,280
+P142,USB-C Adapter,20,10,4,24,15,360
+P143,Laptop Sleeve,30,12,5,37,20,740
+P144,Wireless Charger,40,18,7,51,30,1530
+P145,USB-C Cable,50,20,9,61,8,488
+P146,Gaming Desk,25,10,3,28,150,4200

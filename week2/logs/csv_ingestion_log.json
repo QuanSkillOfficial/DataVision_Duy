@@ -1,10 +1,10 @@
 {
-    "run_id": "e31a4f32-3dfe-4ea2-94e7-473721f0763e",
-    "source_name": "sales_csv",
+    "run_id": "a19b1cb2-3b25-4b38-971b-a8d9d44cd065",
+    "source_name": "sample_csv",
     "source_type": "csv",
-    "input_path_or_url": "F:\\data\\new\\quanskill\\duy\\data\\sample_inputs\\sales.csv",
-    "start_time": "2026-05-29T07:09:43.958666+00:00",
-    "end_time": "2026-05-29T07:10:08.489349+00:00",
+    "input_path_or_url": "F:\\data\\new\\quanskill\\DataVision_Duy\\week2\\data\\sample_inputs\\sales.csv",
+    "start_time": "2026-06-01T04:14:40.236171+00:00",
+    "end_time": "2026-06-01T04:15:34.965735+00:00",
     "status": "success",
     "records_read": 2823,
     "records_valid": 2823,
@@ -39,8 +39,8 @@
     },
     "total_missing_values": 5157,
     "error_message": null,
-    "raw_output_path": "F:\\data\\new\\quanskill\\duy\\data\\raw\\csv\\sample_raw.csv",
-    "staging_output_path": "F:\\data\\new\\quanskill\\duy\\data\\staging\\csv\\sample_staging.csv",
-    "clean_output_path": "F:\\data\\new\\quanskill\\duy\\data\\clean\\csv\\sample_clean.csv",
+    "raw_output_path": "F:\\data\\new\\quanskill\\DataVision_Duy\\week2\\data\\raw\\csv\\sample_raw.csv",
+    "staging_output_path": "F:\\data\\new\\quanskill\\DataVision_Duy\\week2\\data\\staging\\csv\\sample_staging.csv",
+    "clean_output_path": "F:\\data\\new\\quanskill\\DataVision_Duy\\week2\\data\\clean\\csv\\sample_clean.csv",
     "owner": "Nguyen Minh Duy"
 }

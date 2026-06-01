@@ -26,6 +26,114 @@
       "phone": "+84-909-123-456",
       "country": "Vietnam",
       "created_at": "2026-05-23T08:00:00Z"
+    },
+    {
+      "customer_id": 1004,
+      "first_name": "Sophia",
+      "last_name": "Brown",
+      "email": "sophia.brown@example.com",
+      "phone": "+1-310-555-0145",
+      "country": "USA",
+      "created_at": "2026-05-23T09:20:00Z"
+    },
+    {
+      "customer_id": 1005,
+      "first_name": "Liam",
+      "last_name": "Wilson",
+      "email": "liam.wilson@example.com",
+      "phone": "+61-2-9374-4000",
+      "country": "Australia",
+      "created_at": "2026-05-23T11:45:00Z"
+    },
+    {
+      "customer_id": 1006,
+      "first_name": "Olivia",
+      "last_name": "Taylor",
+      "email": "olivia.taylor@example.com",
+      "phone": "+65-6123-4567",
+      "country": "Singapore",
+      "created_at": "2026-05-24T07:10:00Z"
+    },
+    {
+      "customer_id": 1007,
+      "first_name": "Noah",
+      "last_name": "Anderson",
+      "email": "noah.anderson@example.com",
+      "phone": "+49-30-123456",
+      "country": "Germany",
+      "created_at": "2026-05-24T08:50:00Z"
+    },
+    {
+      "customer_id": 1008,
+      "first_name": "Ava",
+      "last_name": "Thomas",
+      "email": "ava.thomas@example.com",
+      "phone": "+33-1-42-68-53-00",
+      "country": "France",
+      "created_at": "2026-05-24T10:05:00Z"
+    },
+    {
+      "customer_id": 1009,
+      "first_name": "Ethan",
+      "last_name": "Martinez",
+      "email": "ethan.martinez@example.com",
+      "phone": "+34-91-123-4567",
+      "country": "Spain",
+      "created_at": "2026-05-24T13:30:00Z"
+    },
+    {
+      "customer_id": 1010,
+      "first_name": "Mia",
+      "last_name": "Lee",
+      "email": "mia.lee@example.com",
+      "phone": "+82-2-555-1234",
+      "country": "South Korea",
+      "created_at": "2026-05-25T06:40:00Z"
+    },
+    {
+      "customer_id": 1011,
+      "first_name": "Lucas",
+      "last_name": "Garcia",
+      "email": "lucas.garcia@example.com",
+      "phone": "+52-55-1234-5678",
+      "country": "Mexico",
+      "created_at": "2026-05-25T08:15:00Z"
+    },
+    {
+      "customer_id": 1012,
+      "first_name": "Charlotte",
+      "last_name": "White",
+      "email": "charlotte.white@example.com",
+      "phone": "+81-3-1234-5678",
+      "country": "Japan",
+      "created_at": "2026-05-25T09:50:00Z"
+    },
+    {
+      "customer_id": 1013,
+      "first_name": "Benjamin",
+      "last_name": "Harris",
+      "email": "benjamin.harris@example.com",
+      "phone": "+39-06-12345678",
+      "country": "Italy",
+      "created_at": "2026-05-25T12:00:00Z"
+    },
+    {
+      "customer_id": 1014,
+      "first_name": "Amelia",
+      "last_name": "Clark",
+      "email": "amelia.clark@example.com",
+      "phone": "+91-22-1234-5678",
+      "country": "India",
+      "created_at": "2026-05-26T07:25:00Z"
+    },
+    {
+      "customer_id": 1015,
+      "first_name": "James",
+      "last_name": "Lewis",
+      "email": "james.lewis@example.com",
+      "phone": "+55-11-4002-8922",
+      "country": "Brazil",
+      "created_at": "2026-05-26T10:10:00Z"
     }
   ]
 }

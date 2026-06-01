@@ -1,0 +1,21 @@
+{
+    "run_id": "b30ab525-f696-4de2-af14-fea28415332b",
+    "source_name": "sample_pdf",
+    "source_type": "pdf",
+    "input_path_or_url": "F:\\data\\new\\quanskill\\DataVision_Duy\\week2\\data\\sample_inputs\\big-data-engineer2 - Template 16 .pdf",
+    "start_time": "2026-06-01T05:00:57.585937+00:00",
+    "end_time": "2026-06-01T05:01:20.150740+00:00",
+    "status": "success",
+    "records_read": 1,
+    "records_valid": 1,
+    "records_invalid": 0,
+    "error_message": null,
+    "raw_output_path": "F:\\data\\new\\quanskill\\DataVision_Duy\\week2\\data\\raw\\pdf\\sample_pdf_raw.pdf",
+    "staging_output_path": "F:\\data\\new\\quanskill\\DataVision_Duy\\week2\\data\\staging\\pdf\\sample_pdf_text.txt",
+    "clean_output_path": null,
+    "owner": "Nguyen Minh Duy",
+    "page_count": 1,
+    "total_extracted_characters": 2650,
+    "empty_pages": [],
+    "metadata_output_path": "F:\\data\\new\\quanskill\\DataVision_Duy\\week2\\logs\\pdf_metadata.json"
+}

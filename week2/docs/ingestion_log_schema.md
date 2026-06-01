@@ -2,42 +2,51 @@
 
 ## 1. Purpose
 
-This document defines the standard ingestion log schema for all ingestion prototypes in the platform.
+This document defines the standard ingestion log schema used across all ingestion pipelines in the platform.
 
-Every ingestion run should generate one log record.
+Each ingestion execution should generate one ingestion log record.
 
-The ingestion log helps the team:
+The ingestion log is used to:
 
 - track ingestion execution
+- monitor ingestion health and status
 - debug failed pipelines
 - measure records read and validated
 - trace raw, staging, and clean outputs
 - support auditability and observability
-- prepare for PostgreSQL `ingestion_logs` table design
+- prepare future PostgreSQL logging integration
+- support downstream analytics and AI systems
 
-This schema will be used by CSV, Excel, API, PDF, and future ingestion pipelines.
+This schema is shared across:
+
+- CSV ingestion
+- Excel ingestion
+- API ingestion
+- PDF extraction ingestion
+- future database ingestion
+- future streaming ingestion
 
 ---
 
 # 2. Log Schema Overview
 
-| Field               | Data Type        | Required | Description                                                      |
-| ------------------- | ---------------- | -------- | ---------------------------------------------------------------- |
-| run_id              | string           | Yes      | Unique ID for each ingestion run                                 |
-| source_name         | string           | Yes      | Name of the data source                                          |
-| source_type         | string           | Yes      | Type of source such as csv, excel, api, pdf, database, streaming |
-| input_path_or_url   | string           | Yes      | File path, API endpoint, or source URL                           |
-| start_time          | timestamp/string | Yes      | Time when ingestion started                                      |
-| end_time            | timestamp/string | Yes      | Time when ingestion completed                                    |
-| status              | string           | Yes      | Execution status: success, failed, partial_success               |
-| records_read        | integer          | Yes      | Number of records read from source                               |
-| records_valid       | integer          | Yes      | Number of valid records after validation or cleaning             |
-| records_invalid     | integer          | Yes      | Number of invalid, failed, or removed records                    |
-| error_message       | string/null      | Yes      | Error details if ingestion failed; null if successful            |
-| raw_output_path     | string/null      | Yes      | Location of raw output file, if available                        |
-| staging_output_path | string/null      | Yes      | Location of parsed/staging output                                |
-| clean_output_path   | string/null      | Yes      | Location of cleaned output                                       |
-| owner               | string           | Yes      | Person responsible for the ingestion run                         |
+| Field               | Data Type        | Required | Description                                 |
+| ------------------- | ---------------- | -------- | ------------------------------------------- |
+| run_id              | string           | Yes      | Unique identifier for each ingestion run    |
+| source_name         | string           | Yes      | Human-readable source name                  |
+| source_type         | string           | Yes      | Type of source such as csv, excel, api, pdf |
+| input_path_or_url   | string           | Yes      | Original input file path or API URL         |
+| start_time          | timestamp/string | Yes      | Time when ingestion started                 |
+| end_time            | timestamp/string | Yes      | Time when ingestion completed               |
+| status              | string           | Yes      | Final ingestion status                      |
+| records_read        | integer          | Yes      | Total records/pages read                    |
+| records_valid       | integer          | Yes      | Valid records after validation/cleaning     |
+| records_invalid     | integer          | Yes      | Invalid or removed records                  |
+| error_message       | string/null      | Yes      | Error details if failure occurs             |
+| raw_output_path     | string/null      | Yes      | Location of raw output file                 |
+| staging_output_path | string/null      | Yes      | Location of staging output                  |
+| clean_output_path   | string/null      | Yes      | Location of clean output                    |
+| owner               | string           | Yes      | Ingestion pipeline owner                    |
 
 ---
 
@@ -45,7 +54,7 @@ This schema will be used by CSV, Excel, API, PDF, and future ingestion pipelines
 
 ## run_id
 
-A unique identifier for one ingestion run.
+A unique identifier generated for every ingestion execution.
 
 Recommended format:
 
@@ -63,7 +72,7 @@ Example:
 
 ## source_name
 
-The human-readable source name.
+Human-readable name of the ingestion source.
 
 Examples:
 
@@ -71,16 +80,16 @@ Examples:
 sales_csv
 inventory_excel
 sample_api_response
-financial_report_pdf
+resume_pdf
 ```
 
 ---
 
 ## source_type
 
-The source category.
+The category of the source.
 
-Allowed values:
+Supported values:
 
 ```text
 csv
@@ -95,7 +104,7 @@ streaming
 
 ## input_path_or_url
 
-The original input location.
+Original source location.
 
 Examples:
 
@@ -110,7 +119,7 @@ https://api.example.com/customers
 
 ## start_time
 
-Timestamp when the ingestion run starts.
+Timestamp when ingestion starts.
 
 Recommended format:
 
@@ -128,7 +137,7 @@ Example:
 
 ## end_time
 
-Timestamp when the ingestion run completes.
+Timestamp when ingestion finishes.
 
 Recommended format:
 
@@ -146,56 +155,49 @@ Example:
 
 ## status
 
-Final status of the ingestion run.
+Final ingestion execution status.
 
-Allowed values:
-
-| Status          | Meaning                                     |
-| --------------- | ------------------------------------------- |
-| success         | Ingestion completed successfully            |
-| failed          | Ingestion failed                            |
-| partial_success | Some records were processed but some failed |
+| Status          | Meaning                                  |
+| --------------- | ---------------------------------------- |
+| success         | Ingestion completed successfully         |
+| failed          | Ingestion failed                         |
+| partial_success | Some records succeeded while some failed |
 
 ---
 
 ## records_read
 
-Total number of records read from the source.
+Total records/pages extracted from the source.
 
-For CSV, Excel, and API:
+Examples:
 
-```text
-number of dataframe rows
-```
-
-For PDF:
-
-```text
-number of pages or extracted text blocks
-```
+- CSV rows
+- Excel rows
+- API records
+- PDF pages
 
 ---
 
 ## records_valid
 
-Number of records considered valid after parsing, validation, and cleaning.
+Number of valid records after cleaning or validation.
 
 Examples:
 
-- records after duplicate removal
-- records with required fields available
-- valid extracted pages for PDF
+- rows after duplicate removal
+- records with required fields
+- valid extracted pages
 
 ---
 
 ## records_invalid
 
-Number of invalid, removed, or failed records.
+Number of invalid or removed records.
 
 Examples:
 
-- duplicate rows removed
-- rows missing required fields
+- duplicate rows
+- missing required fields
 - empty PDF pages
 - corrupted records
 
@@ -203,15 +205,15 @@ Examples:
 
 ## error_message
 
-Stores the error message if ingestion fails.
+Stores failure details if ingestion fails.
 
-If successful:
+Successful execution:
 
 ```json
 null
 ```
 
-If failed:
+Failure example:
 
 ```text
 Missing required field: customer_id
@@ -221,26 +223,21 @@ Missing required field: customer_id
 
 ## raw_output_path
 
-Path to the raw output stored by the ingestion pipeline.
+Location of raw layer output.
 
 Examples:
 
 ```text
-data/raw/api/sample_api_response.json
+data/raw/csv/sample_raw.csv
 data/raw/excel/inventory_raw.xlsx
-```
-
-If not applicable:
-
-```json
-null
+data/raw/api/sample_api_response.json
 ```
 
 ---
 
 ## staging_output_path
 
-Path to the parsed/intermediate output.
+Location of parsed or intermediate staging output.
 
 Examples:
 
@@ -254,7 +251,7 @@ data/staging/pdf/sample_pdf_text.txt
 
 ## clean_output_path
 
-Path to the cleaned output.
+Location of cleaned output.
 
 Examples:
 
@@ -264,13 +261,13 @@ data/clean/excel/sample_excel_clean.csv
 data/clean/api/api_clean.csv
 ```
 
-For PDF extraction, this may be null if only staging text is generated in Week 2.
+For PDF extraction during Week 2, this field may be null.
 
 ---
 
 ## owner
 
-The person responsible for the ingestion pipeline.
+The ingestion pipeline owner.
 
 Example:
 
@@ -304,9 +301,7 @@ Nguyen Minh Duy
 
 ---
 
-# 5. Mapping to Future PostgreSQL Table
-
-This schema will later be converted into a PostgreSQL table by the Database, Quality, and Analytics Owner.
+# 5. Suggested PostgreSQL Table Design
 
 Suggested table name:
 
@@ -339,11 +334,9 @@ CREATE TABLE ingestion_logs (
 
 ---
 
-# 6. Usage Across Ingestion Prototypes
+# 6. Expected Log Outputs by Pipeline
 
 ## CSV Ingestion
-
-Expected log path:
 
 ```text
 logs/csv_ingestion_log.json
@@ -351,23 +344,17 @@ logs/csv_ingestion_log.json
 
 ## Excel Ingestion
 
-Expected log path:
-
 ```text
 logs/excel_ingestion_log.json
 ```
 
 ## API Ingestion
 
-Expected log path:
-
 ```text
 logs/api_ingestion_log.json
 ```
 
 ## PDF Ingestion
-
-Expected log path:
 
 ```text
 logs/pdf_ingestion_log.json
@@ -377,48 +364,70 @@ logs/pdf_ingestion_log.json
 
 # 7. Logging Rules
 
-- Each ingestion run must generate one log file or one log record.
-- `run_id` must be unique for every run.
-- `start_time` and `end_time` should use UTC time.
-- `status` must clearly show whether the run succeeded or failed.
-- Output paths should be recorded even if some downstream files are not generated.
-- Error messages should be clear enough for debugging.
+- Every ingestion run must generate one ingestion log.
+- `run_id` must be unique for every execution.
+- `start_time` and `end_time` should use UTC timestamps.
+- `status` must clearly indicate success or failure.
+- Output paths should always be logged when generated.
+- Error messages should be descriptive enough for debugging.
 - Logs should be stored in the `logs/` directory during prototype development.
-- Later, these logs can be inserted into the PostgreSQL `ingestion_logs` table.
+- Future versions may store logs directly in PostgreSQL.
 
 ---
 
 # 8. Downstream Usage
 
-The ingestion log will be used by:
+## Data Engineering Team
 
-## Data Intern 2
+Used for:
 
-To design and populate the PostgreSQL `ingestion_logs` table.
-
-## Analytics Layer
-
-To monitor pipeline runs, failures, data volume, and source freshness.
-
-## AI Team
-
-To understand whether source data is reliable before using it for RAG, embeddings, or ML.
-
-## Demo / Report Team
-
-To show ingestion status, latest runs, and pipeline health in Streamlit or reports.
+- pipeline monitoring
+- debugging
+- auditing
+- ingestion observability
 
 ---
 
-# 9. Summary
+## Database Team
 
-The ingestion log schema provides a standard way to record ingestion execution metadata.
+Used to create and populate the PostgreSQL `ingestion_logs` table.
 
-It supports:
+---
 
-- traceability
-- debugging
-- observability
-- auditability
-- PostgreSQL integration
-- downstream analytics and AI reliability
+## Analytics Team
+
+Used to:
+
+- monitor pipeline freshness
+- track ingestion failures
+- monitor source activity
+- measure ingestion volume
+
+---
+
+## AI / RAG Team
+
+Used to:
+
+- verify source reliability
+- track ingestion freshness
+- validate document availability before embedding or indexing
+
+---
+
+# 9. Future Improvements
+
+Future versions of the ingestion log schema may include:
+
+- ingestion latency
+- retry count
+- schema version
+- pipeline duration
+- ingestion environment
+- validation score
+- source authentication metadata
+- SLA metrics
+- data lineage tracking
+- monitoring dashboard integration
+
+---

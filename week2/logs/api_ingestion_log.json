@@ -1,14 +1,14 @@
 {
-    "run_id": "a2226453-8634-48e9-9969-312304181e5d",
-    "source_name": "sample_api_response",
+    "run_id": "b763bcb7-49fd-486d-bd61-7836eca4ba29",
+    "source_name": "customer_api",
     "source_type": "api",
-    "input_path_or_url": "F:\\data\\new\\quanskill\\duy\\data\\sample_inputs\\customer_api.json",
-    "start_time": "2026-05-29T07:24:27.769401+00:00",
-    "end_time": "2026-05-29T07:24:45.488073+00:00",
+    "input_path_or_url": "F:\\data\\new\\quanskill\\DataVision_Duy\\week2\\data\\sample_inputs\\customer_api.json",
+    "start_time": "2026-06-01T04:41:52.734872+00:00",
+    "end_time": "2026-06-01T04:42:15.291752+00:00",
     "status": "success",
     "validation_status": "passed",
-    "records_read": 3,
-    "records_valid": 3,
+    "records_read": 15,
+    "records_valid": 15,
     "records_invalid": 0,
     "duplicate_rows_removed": 0,
     "missing_values": {
@@ -28,8 +28,8 @@
     ],
     "missing_required_fields": [],
     "error_message": null,
-    "raw_output_path": "F:\\data\\new\\quanskill\\duy\\data\\raw\\api\\sample_api_response.json",
-    "staging_output_path": "F:\\data\\new\\quanskill\\duy\\data\\staging\\api\\api_staging.csv",
-    "clean_output_path": "F:\\data\\new\\quanskill\\duy\\data\\clean\\api\\api_clean.csv",
+    "raw_output_path": "F:\\data\\new\\quanskill\\DataVision_Duy\\week2\\data\\raw\\api\\sample_api_response.json",
+    "staging_output_path": "F:\\data\\new\\quanskill\\DataVision_Duy\\week2\\data\\staging\\api\\api_staging.csv",
+    "clean_output_path": "F:\\data\\new\\quanskill\\DataVision_Duy\\week2\\data\\clean\\api\\api_clean.csv",
     "owner": "Nguyen Minh Duy"
 }
