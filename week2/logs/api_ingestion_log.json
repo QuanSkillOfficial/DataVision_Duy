@@ -1,10 +1,10 @@
 {
-    "run_id": "ebe220de-248c-4fc6-975b-4c5e6949a67e",
+    "run_id": "746e3435-3eab-40f1-998a-a521e6c422ae",
     "source_name": "customer_api",
     "source_type": "api",
     "input_path_or_url": "data/sample_inputs/customer_api.json",
-    "start_time": "2026-06-13T16:15:40.083044+00:00",
-    "end_time": "2026-06-13T16:15:40.091540+00:00",
+    "start_time": "2026-06-13T16:23:08.713127+00:00",
+    "end_time": "2026-06-13T16:23:08.719449+00:00",
     "status": "success",
     "records_read": 15,
     "records_valid": 15,

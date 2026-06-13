@@ -1,10 +1,10 @@
 {
-    "run_id": "9e39d1a9-ff8b-4bce-9cb5-b14cac2f553a",
+    "run_id": "090576d5-5d06-4cd2-a31d-4897802c66e3",
     "source_name": "inventory_excel",
     "source_type": "excel",
     "input_path_or_url": "data/sample_inputs/inventory.xlsx",
-    "start_time": "2026-06-13T16:15:39.653388+00:00",
-    "end_time": "2026-06-13T16:15:40.082048+00:00",
+    "start_time": "2026-06-13T16:23:08.298374+00:00",
+    "end_time": "2026-06-13T16:23:08.711613+00:00",
     "status": "success",
     "records_read": 46,
     "records_valid": 46,
