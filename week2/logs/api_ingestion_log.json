@@ -1,35 +1,32 @@
 {
-    "run_id": "b763bcb7-49fd-486d-bd61-7836eca4ba29",
+    "run_id": "ebe220de-248c-4fc6-975b-4c5e6949a67e",
     "source_name": "customer_api",
     "source_type": "api",
-    "input_path_or_url": "F:\\data\\new\\quanskill\\DataVision_Duy\\week2\\data\\sample_inputs\\customer_api.json",
-    "start_time": "2026-06-01T04:41:52.734872+00:00",
-    "end_time": "2026-06-01T04:42:15.291752+00:00",
+    "input_path_or_url": "data/sample_inputs/customer_api.json",
+    "start_time": "2026-06-13T16:15:40.083044+00:00",
+    "end_time": "2026-06-13T16:15:40.091540+00:00",
     "status": "success",
-    "validation_status": "passed",
     "records_read": 15,
     "records_valid": 15,
     "records_invalid": 0,
+    "error_message": null,
+    "raw_output_path": "data/raw/api/sample_api_response.json",
+    "staging_output_path": "data/staging/api/api_staging.csv",
+    "clean_output_path": "data/clean/api/api_clean.csv",
+    "owner": "Nguyen Minh Duy",
+    "validation_status": "passed",
     "duplicate_rows_removed": 0,
-    "missing_values": {
-        "customer_id": 0,
+    "required_missing_values_removed": 0,
+    "optional_missing_values": {
         "first_name": 0,
         "last_name": 0,
-        "email": 0,
         "phone": 0,
-        "country": 0,
-        "created_at": 0
+        "country": 0
     },
-    "total_missing_values": 0,
+    "missing_required_columns": [],
     "required_fields": [
         "customer_id",
         "email",
         "created_at"
-    ],
-    "missing_required_fields": [],
-    "error_message": null,
-    "raw_output_path": "F:\\data\\new\\quanskill\\DataVision_Duy\\week2\\data\\raw\\api\\sample_api_response.json",
-    "staging_output_path": "F:\\data\\new\\quanskill\\DataVision_Duy\\week2\\data\\staging\\api\\api_staging.csv",
-    "clean_output_path": "F:\\data\\new\\quanskill\\DataVision_Duy\\week2\\data\\clean\\api\\api_clean.csv",
-    "owner": "Nguyen Minh Duy"
+    ]
 }

@@ -1,18 +1,27 @@
 {
-    "run_id": "3b802d1b-19b6-4899-85c9-43196e2391a6",
+    "run_id": "9e39d1a9-ff8b-4bce-9cb5-b14cac2f553a",
     "source_name": "inventory_excel",
     "source_type": "excel",
-    "input_path_or_url": "F:\\data\\new\\quanskill\\DataVision_Duy\\week2\\data\\sample_inputs\\inventory.xlsx",
-    "start_time": "2026-06-01T04:33:53.123498+00:00",
-    "end_time": "2026-06-01T04:34:27.445727+00:00",
+    "input_path_or_url": "data/sample_inputs/inventory.xlsx",
+    "start_time": "2026-06-13T16:15:39.653388+00:00",
+    "end_time": "2026-06-13T16:15:40.082048+00:00",
     "status": "success",
     "records_read": 46,
     "records_valid": 46,
     "records_invalid": 0,
+    "error_message": null,
+    "raw_output_path": "data/raw/excel/inventory_raw.xlsx",
+    "staging_output_path": "data/staging/excel/sample_excel_staging.csv",
+    "clean_output_path": "data/clean/excel/sample_excel_clean.csv",
+    "owner": "Nguyen Minh Duy",
+    "sheet_names": [
+        "Inventory Records Data"
+    ],
+    "selected_sheet": "Inventory Records Data",
+    "detected_header_row": 5,
     "duplicate_rows_removed": 0,
-    "missing_values": {
-        "product_id": 0,
-        "product_name": 0,
+    "required_missing_values_removed": 0,
+    "optional_missing_values": {
         "opening_stock": 0,
         "purchase_stock_in": 0,
         "number_of_units_sold": 0,
@@ -20,16 +29,9 @@
         "cost_price_per_unit_usd": 0,
         "cost_price_total_usd": 0
     },
-    "total_missing_values": 0,
-    "sheet_names": [
-        "Inventory Records Data"
-    ],
-    "selected_sheet": "Inventory Records Data",
-    "detected_header_row_index": 5,
-    "detected_excel_header_row_number": 6,
-    "error_message": null,
-    "raw_output_path": "F:\\data\\new\\quanskill\\DataVision_Duy\\week2\\data\\raw\\excel\\inventory_raw.xlsx",
-    "staging_output_path": "F:\\data\\new\\quanskill\\DataVision_Duy\\week2\\data\\staging\\excel\\sample_excel_staging.csv",
-    "clean_output_path": "F:\\data\\new\\quanskill\\DataVision_Duy\\week2\\data\\clean\\excel\\sample_excel_clean.csv",
-    "owner": "Nguyen Minh Duy"
+    "missing_required_columns": [],
+    "required_fields": [
+        "product_id",
+        "product_name"
+    ]
 }

@@ -43,9 +43,9 @@ This schema is shared across:
 | records_valid       | integer          | Yes      | Valid records after validation/cleaning     |
 | records_invalid     | integer          | Yes      | Invalid or removed records                  |
 | error_message       | string/null      | Yes      | Error details if failure occurs             |
-| raw_output_path     | string/null      | Yes      | Location of raw output file                 |
-| staging_output_path | string/null      | Yes      | Location of staging output                  |
-| clean_output_path   | string/null      | Yes      | Location of clean output                    |
+| raw_output_path     | string/null      | Yes      | Project-relative location of raw output file |
+| staging_output_path | string/null      | Yes      | Project-relative location of staging output |
+| clean_output_path   | string/null      | Yes      | Project-relative location of clean output   |
 | owner               | string           | Yes      | Ingestion pipeline owner                    |
 
 ---
@@ -201,6 +201,8 @@ Examples:
 - empty PDF pages
 - corrupted records
 
+Missing values must be separated into required-field failures and optional-field missing values. Clean data may keep optional missing values, but records with missing required fields should be excluded from clean output.
+
 ---
 
 ## error_message
@@ -232,6 +234,8 @@ data/raw/csv/sample_raw.csv
 data/raw/excel/inventory_raw.xlsx
 data/raw/api/sample_api_response.json
 ```
+
+Paths must be project-relative so logs are portable across machines. Do not write local absolute paths such as `F:\...` or `C:\...` into shared logs.
 
 ---
 

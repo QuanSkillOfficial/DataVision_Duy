@@ -1,4 +1,4 @@
-===== Page 1 =====
+--- Page 1 ---
 First Last
 Big Data Engineer
 Wichita, Kansas • +1-234-456-789 • professionalemail@resumeworded.com • linkedin.com/in/username
@@ -58,5 +58,3 @@ SKILLS
 _______________________________________________________________________________________________________________
 Hard Skills: Testing (Advanced), Integration (Experienced), Modeling, Machine Learning, Bootstrapping, Coding
 Techniques: Data Transformation, Performance Optimization ), Extract Transform Load (ETL), Disambiguation
-
-
