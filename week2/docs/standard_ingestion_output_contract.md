@@ -86,3 +86,18 @@ Optional missing values should be logged separately in `optional_missing_values`
 | Tuong - Prediction/ML | Clean structured CSV/API/Excel records |
 | Hung - Demo/Reports/UX | Clean data and ingestion status logs for demo screens |
 
+## UI Integration Contract
+
+Phi/Hung's Streamlit demo should consume `week2/docs/ingestion_result_contract_for_ui.md` when connecting Upload and Dashboard pages to Duy's ingestion outputs.
+
+## Prediction Integration Contract
+
+Tuong's document type classifier should consume `week2/docs/ingestion_to_prediction_contract.md` when receiving document metadata and extracted text from Duy's ingestion layer.
+
+## Database Integration Contract
+
+Phat's schema_v2 should consume `week2/docs/ingestion_db_handoff_for_phat.md` when mapping Duy's ingestion outputs into PostgreSQL tables.
+
+## RAG Integration Contract
+
+Lap's RAG module should consume `week2/docs/document_pages_jsonl_contract_for_lap.md` and `week2/data/staging/pdf/document_pages.jsonl` when creating page-aware chunks and citations.

@@ -1,9 +1,11 @@
 {
+    "document_id": "doc_big_data_engineer2_template_16",
     "source_name": "sample_pdf",
     "source_type": "pdf",
     "input_path": "data/sample_inputs/big-data-engineer2 - Template 16 .pdf",
     "raw_output_path": "data/raw/pdf/sample_pdf_raw.pdf",
     "staging_output_path": "data/staging/pdf/sample_pdf_text.txt",
+    "document_pages_output_path": "data/staging/pdf/document_pages.jsonl",
     "page_count": 1,
     "extracted_character_count": 2664,
     "empty_pages": [],

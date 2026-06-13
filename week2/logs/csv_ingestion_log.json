@@ -1,10 +1,10 @@
 {
-    "run_id": "081b08ff-3eca-4f72-b290-083a99391595",
+    "run_id": "f3ebe25a-176d-4695-88c3-14779895345c",
     "source_name": "sales_csv",
     "source_type": "csv",
     "input_path_or_url": "data/sample_inputs/sales.csv",
-    "start_time": "2026-06-13T16:23:08.180503+00:00",
-    "end_time": "2026-06-13T16:23:08.295321+00:00",
+    "start_time": "2026-06-13T17:07:26.466798+00:00",
+    "end_time": "2026-06-13T17:07:26.537491+00:00",
     "status": "success",
     "records_read": 2823,
     "records_valid": 2823,
