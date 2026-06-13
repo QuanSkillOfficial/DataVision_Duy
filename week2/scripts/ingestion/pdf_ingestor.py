@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+import re
 import shutil
 from pathlib import Path
 
@@ -22,13 +24,27 @@ except ImportError:
         relative_path,
         utc_now,
         write_json,
-    )
+)
+
+
+def safe_document_id(file_name: str) -> str:
+    stem = Path(file_name).stem.lower()
+    safe_stem = re.sub(r"[^a-z0-9]+", "_", stem).strip("_")
+    return f"doc_{safe_stem or 'unknown'}"
+
+
+def write_jsonl(records: list[dict], path: Path) -> None:
+    ensure_parent(path)
+    with path.open("w", encoding="utf-8") as file:
+        for record in records:
+            file.write(json.dumps(record, ensure_ascii=False) + "\n")
 
 
 def run_pdf_ingestion(
     input_path: Path = PROJECT_ROOT / "data/sample_inputs/big-data-engineer2 - Template 16 .pdf",
     raw_output_path: Path = PROJECT_ROOT / "data/raw/pdf/sample_pdf_raw.pdf",
     staging_output_path: Path = PROJECT_ROOT / "data/staging/pdf/sample_pdf_text.txt",
+    document_pages_output_path: Path = PROJECT_ROOT / "data/staging/pdf/document_pages.jsonl",
     metadata_output_path: Path = PROJECT_ROOT / "logs/pdf_metadata.json",
     log_output_path: Path = PROJECT_ROOT / "logs/pdf_ingestion_log.json",
 ) -> dict:
@@ -38,24 +54,42 @@ def run_pdf_ingestion(
         shutil.copy2(input_path, raw_output_path)
 
         document = fitz.open(input_path)
+        document_id = safe_document_id(input_path.name)
         page_texts = []
+        page_records = []
         empty_pages = []
         for page_index, page in enumerate(document, start=1):
             text = page.get_text().strip()
             if not text:
                 empty_pages.append(page_index)
             page_texts.append(f"--- Page {page_index} ---\n{text}")
+            page_records.append(
+                {
+                    "document_id": document_id,
+                    "file_name": input_path.name,
+                    "page_number": page_index,
+                    "text": text,
+                    "character_count": len(text),
+                    "is_empty": not bool(text),
+                    "source": input_path.name,
+                    "raw_output_path": relative_path(raw_output_path),
+                    "staging_text_path": relative_path(staging_output_path),
+                }
+            )
 
         extracted_text = "\n\n".join(page_texts)
         ensure_parent(staging_output_path)
         staging_output_path.write_text(extracted_text, encoding="utf-8")
+        write_jsonl(page_records, document_pages_output_path)
 
         metadata = {
+            "document_id": document_id,
             "source_name": "sample_pdf",
             "source_type": "pdf",
             "input_path": relative_path(input_path),
             "raw_output_path": relative_path(raw_output_path),
             "staging_output_path": relative_path(staging_output_path),
+            "document_pages_output_path": relative_path(document_pages_output_path),
             "page_count": len(document),
             "extracted_character_count": len(extracted_text),
             "empty_pages": empty_pages,
@@ -81,6 +115,8 @@ def run_pdf_ingestion(
                 "page_count": len(document),
                 "extracted_character_count": len(extracted_text),
                 "empty_pages": empty_pages,
+                "document_id": document_id,
+                "document_pages_output_path": relative_path(document_pages_output_path),
                 "metadata_output_path": relative_path(metadata_output_path),
             },
         )

@@ -35,6 +35,7 @@ week2/
 | `scripts/ingestion/api_ingestor.py` | API JSON flattening and validation |
 | `scripts/ingestion/pdf_ingestor.py` | PDF page-level text extraction and metadata generation |
 | `scripts/ingestion/ingestion_engine.py` | Runs all ingestion modules |
+| `scripts/ingestion/prediction_payload_builder.py` | Builds Tuong-ready prediction payload from PDF ingestion output |
 
 ## Run
 
@@ -50,3 +51,20 @@ python -m week2.scripts.ingestion.ingestion_engine
 python week2/scripts/validate_project.py
 ```
 
+Expected validation summary:
+
+```text
+Validation passed
+Checked 17 required outputs
+Checked 7 required contract docs
+Checked ingestion log schema and portable paths
+```
+
+## Cross-Team Outputs
+
+| Consumer | Output |
+| --- | --- |
+| Phat | `docs/ingestion_db_handoff_for_phat.md` |
+| Lap | `data/staging/pdf/document_pages.jsonl` and `docs/document_pages_jsonl_contract_for_lap.md` |
+| Tuong | `scripts/ingestion/prediction_payload_builder.py` and `docs/ingestion_to_prediction_contract.md` |
+| Phi/Hung | `docs/ingestion_result_contract_for_ui.md` |

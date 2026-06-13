@@ -12,7 +12,7 @@ The DataVision ingestion track is complete through Week 3 foundation work.
 | --- | --- | --- |
 | Week 1 | Complete | Ingestion foundation, source inventory, raw folder structure, setup confirmation |
 | Week 2 | Complete | Working notebook prototypes for CSV, Excel, API JSON, and PDF extraction |
-| Week 3 | Complete | Reusable ingestion modules, standard output contract, portable logs |
+| Week 3 | Complete | Reusable ingestion modules, standard output contract, portable logs, cross-team handoff contracts |
 
 ## What Works Now
 
@@ -23,7 +23,7 @@ The project can ingest four source types:
 | CSV | `week2/data/sample_inputs/sales.csv` | Raw CSV, staging CSV, clean CSV, JSON log |
 | Excel | `week2/data/sample_inputs/inventory.xlsx` | Raw XLSX, staging CSV, clean CSV, JSON log |
 | API JSON | `week2/data/sample_inputs/customer_api.json` | Raw JSON, staging CSV, clean CSV, JSON log |
-| PDF | `week2/data/sample_inputs/big-data-engineer2 - Template 16 .pdf` | Raw PDF, extracted text, metadata, JSON log |
+| PDF | `week2/data/sample_inputs/big-data-engineer2 - Template 16 .pdf` | Raw PDF, extracted text, page-level JSONL, metadata, JSON log |
 
 ## Run Command
 
@@ -50,7 +50,8 @@ Expected result:
 
 ```text
 Validation passed
-Checked 16 required outputs
+Checked 17 required outputs
+Checked 7 required contract docs
 Checked ingestion log schema and portable paths
 ```
 
@@ -85,16 +86,25 @@ Example: the CSV sales file has optional missing values in fields such as `addre
 
 | Member | Role | What they can use from this project |
 | --- | --- | --- |
-| Phat | Database, Quality, Analytics | Clean outputs and JSON logs for PostgreSQL tables |
-| Lap | RAG and Embeddings | Extracted PDF text and PDF metadata |
-| Tuong | Prediction and ML | Clean structured CSV/API/Excel data |
-| Hung | Suggestions, Reports, Demo, AI UX | Clean data and ingestion status logs for Streamlit/demo pages |
+| Phat | Database, Quality, Analytics | Clean outputs, page-level document text, and JSON logs for PostgreSQL tables |
+| Lap | RAG and Embeddings | `document_pages.jsonl`, extracted PDF text, PDF metadata |
+| Tuong | Prediction and ML | Clean structured CSV/API/Excel data and Duy-style PDF prediction payload |
+| Phi/Hung | Suggestions, Reports, Demo, AI UX | Ingestion result contract and data quality signals for Streamlit/demo pages |
+
+## Cross-Team Contracts
+
+| Contract | Consumer | Purpose |
+| --- | --- | --- |
+| `week2/docs/ingestion_db_handoff_for_phat.md` | Phat | Maps Duy output to PostgreSQL schema_v2 tables |
+| `week2/docs/document_pages_jsonl_contract_for_lap.md` | Lap | Defines page-level document text for chunking and citation |
+| `week2/docs/ingestion_to_prediction_contract.md` | Tuong | Defines model-ready document metadata and extracted text |
+| `week2/docs/ingestion_result_contract_for_ui.md` | Phi/Hung | Defines dashboard/upload UI fields from ingestion logs |
+| `week2/docs/team_handoff_index.md` | Whole team | One-page index of all Duy handoff contracts |
 
 ## Next Recommended Work
 
 1. Convert ingestion logs into PostgreSQL `ingestion_logs`.
-2. Add schema contracts for each source type.
+2. Load `document_pages.jsonl` into Phat's `document_pages` table.
 3. Add automated tests for each ingestor using small fixture files.
 4. Add CLI arguments for custom input/output paths.
 5. Add database loading from clean outputs.
-

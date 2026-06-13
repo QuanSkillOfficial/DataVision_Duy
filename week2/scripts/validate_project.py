@@ -21,8 +21,19 @@ REQUIRED_OUTPUTS = [
     "logs/api_ingestion_log.json",
     "data/raw/pdf/sample_pdf_raw.pdf",
     "data/staging/pdf/sample_pdf_text.txt",
+    "data/staging/pdf/document_pages.jsonl",
     "logs/pdf_ingestion_log.json",
     "logs/pdf_metadata.json",
+]
+
+REQUIRED_DOCS = [
+    "docs/standard_ingestion_output_contract.md",
+    "docs/ingestion_log_schema.md",
+    "docs/ingestion_db_handoff_for_phat.md",
+    "docs/document_pages_jsonl_contract_for_lap.md",
+    "docs/ingestion_to_prediction_contract.md",
+    "docs/ingestion_result_contract_for_ui.md",
+    "docs/team_handoff_index.md",
 ]
 
 REQUIRED_LOG_FIELDS = [
@@ -57,6 +68,15 @@ def validate_outputs() -> list[str]:
     return errors
 
 
+def validate_docs() -> list[str]:
+    errors: list[str] = []
+    for relative in REQUIRED_DOCS:
+        path = PROJECT_ROOT / relative
+        if not path.exists():
+            errors.append(f"Missing contract doc: {relative}")
+    return errors
+
+
 def validate_logs() -> list[str]:
     errors: list[str] = []
     for log_path in sorted((PROJECT_ROOT / "logs").glob("*_ingestion_log.json")):
@@ -78,7 +98,7 @@ def validate_logs() -> list[str]:
 
 
 def main() -> int:
-    errors = validate_outputs() + validate_logs()
+    errors = validate_outputs() + validate_docs() + validate_logs()
     if errors:
         print("Validation failed")
         for error in errors:
@@ -87,10 +107,10 @@ def main() -> int:
 
     print("Validation passed")
     print(f"Checked {len(REQUIRED_OUTPUTS)} required outputs")
+    print(f"Checked {len(REQUIRED_DOCS)} required contract docs")
     print("Checked ingestion log schema and portable paths")
     return 0
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
