@@ -23,10 +23,10 @@ This inventory will be used as the foundation for ingestion prototypes and pipel
 
 | Source Name          | Source Type       | File Format | Sample Location               | Expected Fields                   | Ingestion Method         | Frequency | Difficulty | Owner | Status  |
 | -------------------- | ----------------- | ----------- | ----------------------------- | --------------------------------- | ------------------------ | --------- | ---------- | ----- | ------- |
-| Customer API         | API               | JSON        | /samples/customer_api.json    | customer_id, email, created_at    | Python Requests API Pull | Daily     | Medium     | Duy   | Planned |
-| Sales CSV            | CSV File          | CSV         | /samples/sales.csv            | order_id, product_id, revenue     | Pandas CSV Loader        | Daily     | Easy       | Duy   | Planned |
-| Financial Report     | PDF Document      | PDF         | /samples/financial_report.pdf | tables, revenue, expenses         | pdfplumber Extraction    | Weekly    | Hard       | Duy   | Planned |
-| Inventory Excel      | Excel Spreadsheet | XLSX        | /samples/inventory.xlsx       | sku, quantity, warehouse          | OpenPyXL Loader          | Weekly    | Medium     | Duy   | Planned |
+| DummyJSON Products API | API | JSON | https://dummyjson.com/products | id, title, category, price, rating, stock, sku | Python Requests API Pull with local raw fallback | On demand | Medium | Duy | Ready |
+| Superstore CSV | CSV File | CSV | data/sample_inputs/Superstore.csv | row_id, order_id, customer_id, product_id, sales, quantity, profit | Pandas CSV Loader | On demand | Easy | Duy | Ready |
+| DataFlow Technical Report | PDF Document | PDF | data/sample_inputs/DataFlow_Technical_Report.pdf | page_number, clean_text, char_count, word_count | pdfplumber Extraction | On demand | Medium | Duy | Ready |
+| Product Sales Region Excel | Excel Spreadsheet | XLSX | data/sample_inputs/Product-Sales-Region.xlsx | date, region, product, quantity, totalprice, orderid | Pandas/OpenPyXL Loader | On demand | Medium | Duy | Ready |
 | Transaction Database | Database          | PostgreSQL  | db_connection_string          | transaction_id, amount, timestamp | SQLAlchemy Connector     | Real-time | Hard       | Duy   | Future  |
 | IoT Sensor Stream    | Streaming         | JSON Stream | kafka://sensor_topic          | timestamp, sensor_id, value       | Kafka Consumer           | Streaming | Hard       | Duy   | Future  |
 

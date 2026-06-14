@@ -31,7 +31,13 @@ def build_pdf_prediction_payload(
 
     input_relative = ingestion_log["input_path_or_url"]
     input_path = PROJECT_ROOT / input_relative
-    staging_path = PROJECT_ROOT / ingestion_log["staging_output_path"]
+    text_relative_path = (
+        metadata.get("staging_text_output_path")
+        or metadata.get("staging_output_path")
+        or ingestion_log.get("staging_text_output_path")
+        or ingestion_log["staging_output_path"]
+    )
+    staging_path = PROJECT_ROOT / text_relative_path
     extracted_text = staging_path.read_text(encoding="utf-8") if staging_path.exists() else ""
     file_name = input_path.name
     file_type = input_path.suffix.lower().lstrip(".")
@@ -47,18 +53,21 @@ def build_pdf_prediction_payload(
         "file_name": file_name,
         "file_type": file_type,
         "file_size": input_path.stat().st_size if input_path.exists() else None,
-        "text_length": len(extracted_text),
-        "num_pages": metadata.get("page_count", 0),
+        "text_length": metadata.get("total_characters") or len(extracted_text),
+        "num_pages": metadata.get("page_count") or metadata.get("total_pages", 0),
         "source_system": source_system,
         "extracted_text": extracted_text,
         "ingestion_run_id": ingestion_log["run_id"],
         "raw_output_path": ingestion_log.get("raw_output_path"),
-        "staging_output_path": ingestion_log.get("staging_output_path"),
+        "staging_output_path": text_relative_path,
+        "staging_csv_output_path": metadata.get("staging_csv_output_path"),
+        "document_pages_output_path": metadata.get("document_pages_output_path"),
         "clean_output_path": ingestion_log.get("clean_output_path"),
         "records_read": ingestion_log.get("records_read", 0),
         "records_valid": ingestion_log.get("records_valid", 0),
         "records_invalid": ingestion_log.get("records_invalid", 0),
         "empty_pages": metadata.get("empty_pages", []),
+        "empty_page_count": metadata.get("empty_page_count", 0),
         "parsing_status": parsing_status,
     }
 

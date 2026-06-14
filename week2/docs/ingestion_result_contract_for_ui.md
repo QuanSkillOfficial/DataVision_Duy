@@ -25,7 +25,7 @@ Duy ingestion module
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
 | `run_id` | string | Yes | Unique ingestion run ID |
-| `source_name` | string | Yes | Stable source name, such as `sales_csv` |
+| `source_name` | string | Yes | Stable source name, such as `superstore_sales_csv` |
 | `source_type` | string | Yes | `csv`, `excel`, `api`, `pdf`, `database`, or `streaming` |
 | `file_name` | string/null | Yes | File name displayed in Upload and Dashboard |
 | `file_size_bytes` | integer/null | Yes | Source file size if available |
@@ -72,14 +72,14 @@ Duy ingestion module
 ```json
 {
   "run_id": "2660ff58-bedc-433f-bbd3-41d2479dbcd0",
-  "source_name": "sales_csv",
+  "source_name": "superstore_sales_csv",
   "source_type": "csv",
-  "file_name": "sales.csv",
-  "file_size_bytes": 527958,
-  "input_path_or_url": "data/sample_inputs/sales.csv",
+  "file_name": "Superstore.csv",
+  "file_size_bytes": 2304545,
+  "input_path_or_url": "data/sample_inputs/Superstore.csv",
   "processing_status": "ready",
-  "records_read": 2823,
-  "records_valid": 2823,
+  "records_read": 9994,
+  "records_valid": 9994,
   "records_invalid": 0,
   "missing_values": {
     "required_missing_values_removed": 0,
@@ -98,9 +98,9 @@ Duy ingestion module
     "territory": 1074
   },
   "duplicate_rows_removed": 0,
-  "raw_output_path": "data/raw/csv/sample_raw.csv",
-  "staging_output_path": "data/staging/csv/sample_staging.csv",
-  "clean_output_path": "data/clean/csv/sample_clean.csv",
+  "raw_output_path": "data/raw/csv/superstore_raw.csv",
+  "staging_output_path": "data/staging/csv/superstore_staging.csv",
+  "clean_output_path": "data/clean/csv/superstore_clean.csv",
   "start_time": "2026-06-13T16:15:39.555437+00:00",
   "end_time": "2026-06-13T16:15:39.654392+00:00",
   "owner": "Nguyen Minh Duy"
@@ -112,17 +112,17 @@ Duy ingestion module
 ```json
 {
   "run_id": "c77b8cf3-d542-4242-af90-b5aa866715bf",
-  "source_name": "sample_pdf",
+  "source_name": "dataflow_technical_report_pdf",
   "source_type": "pdf",
-  "file_name": "big-data-engineer2 - Template 16 .pdf",
-  "file_size_bytes": 63047,
-  "input_path_or_url": "data/sample_inputs/big-data-engineer2 - Template 16 .pdf",
+  "file_name": "DataFlow_Technical_Report.pdf",
+  "file_size_bytes": 2857707,
+  "input_path_or_url": "data/sample_inputs/DataFlow_Technical_Report.pdf",
   "processing_status": "ready",
-  "records_read": 1,
-  "records_valid": 1,
+  "records_read": 36,
+  "records_valid": 36,
   "records_invalid": 0,
-  "page_count": 1,
-  "extracted_character_count": 2664,
+  "page_count": 36,
+  "extracted_character_count": 129665,
   "empty_pages": [],
   "missing_values": {
     "empty_pages": []
@@ -130,9 +130,9 @@ Duy ingestion module
   "required_missing_values_removed": 0,
   "optional_missing_values": {},
   "duplicate_rows_removed": 0,
-  "raw_output_path": "data/raw/pdf/sample_pdf_raw.pdf",
-  "staging_output_path": "data/staging/pdf/sample_pdf_text.txt",
-  "clean_output_path": null,
+  "raw_output_path": "data/raw/pdf/dataflow_technical_report_raw.pdf",
+  "staging_output_path": "data/staging/pdf/dataflow_pdf_pages_staging.csv",
+  "clean_output_path": "data/clean/pdf/dataflow_pdf_pages_clean.csv",
   "metadata_output_path": "logs/pdf_metadata.json",
   "start_time": "2026-06-13T16:13:28.855088+00:00",
   "end_time": "2026-06-13T16:13:28.878859+00:00",
@@ -158,4 +158,3 @@ Duy ingestion module
 - Use `clean_output_path` for dashboard, prediction, suggestions, and report evidence.
 - Display optional missing values as data quality limitations, not ingestion failures.
 - Treat `records_invalid > 0` or `missing_required_columns` as warning/error signals.
-

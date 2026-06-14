@@ -19,7 +19,7 @@ week2/data/staging/pdf/document_pages.jsonl
 ```text
 PDF input
   -> Duy PDF ingestion
-  -> data/staging/pdf/sample_pdf_text.txt
+  -> data/staging/pdf/dataflow_pdf_text.txt
   -> data/staging/pdf/document_pages.jsonl
   -> Lap document_loader.py
   -> Lap chunker.py
@@ -47,15 +47,15 @@ Each line in `document_pages.jsonl` is one page record.
 
 ```json
 {
-  "document_id": "doc_big_data_engineer2_template_16",
-  "file_name": "big-data-engineer2 - Template 16 .pdf",
+  "document_id": "doc_dataflow_technical_report",
+  "file_name": "DataFlow_Technical_Report.pdf",
   "page_number": 1,
-  "text": "First Last\nBig Data Engineer...",
-  "character_count": 2577,
+  "text": "December 19, 2025 DataFlow...",
+  "character_count": 3533,
   "is_empty": false,
-  "source": "big-data-engineer2 - Template 16 .pdf",
-  "raw_output_path": "data/raw/pdf/sample_pdf_raw.pdf",
-  "staging_text_path": "data/staging/pdf/sample_pdf_text.txt"
+  "source": "DataFlow_Technical_Report.pdf",
+  "raw_output_path": "data/raw/pdf/dataflow_technical_report_raw.pdf",
+  "staging_text_path": "data/staging/pdf/dataflow_pdf_text.txt"
 }
 ```
 
@@ -65,15 +65,15 @@ When Lap creates chunks from page records, each chunk should preserve:
 
 ```json
 {
-  "document_id": "doc_big_data_engineer2_template_16",
-  "chunk_id": "doc_big_data_engineer2_template_16_page_1_chunk_000",
+  "document_id": "doc_dataflow_technical_report",
+  "chunk_id": "doc_dataflow_technical_report_page_1_chunk_000",
   "chunk_text": "...",
   "metadata": {
-    "file_name": "big-data-engineer2 - Template 16 .pdf",
+    "file_name": "DataFlow_Technical_Report.pdf",
     "page_number": 1,
-    "source": "big-data-engineer2 - Template 16 .pdf",
-    "raw_output_path": "data/raw/pdf/sample_pdf_raw.pdf",
-    "staging_text_path": "data/staging/pdf/sample_pdf_text.txt"
+    "source": "DataFlow_Technical_Report.pdf",
+    "raw_output_path": "data/raw/pdf/dataflow_technical_report_raw.pdf",
+    "staging_text_path": "data/staging/pdf/dataflow_pdf_text.txt"
   }
 }
 ```
@@ -108,4 +108,3 @@ Current MVP assumptions:
 | pgvector column | `document_chunks.embedding vector(384)` |
 | Similarity metric | Cosine distance |
 | Citation fields | `file_name`, `page_number`, `chunk_id` |
-

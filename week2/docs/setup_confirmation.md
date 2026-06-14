@@ -146,10 +146,10 @@ The following sample files were created for ingestion testing.
 
 ```text
 data/sample_inputs/
-├── sample.csv
-├── sample.xlsx
-├── sample.pdf
-└── sample_api_response.json
+├── Superstore.csv
+├── Product-Sales-Region.xlsx
+├── DataFlow_Technical_Report.pdf
+└── DataFlow_Technical_Report.pdf
 ```
 
 ---

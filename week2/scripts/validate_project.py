@@ -7,20 +7,22 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 REQUIRED_OUTPUTS = [
-    "data/raw/csv/sample_raw.csv",
-    "data/staging/csv/sample_staging.csv",
-    "data/clean/csv/sample_clean.csv",
+    "data/raw/csv/superstore_raw.csv",
+    "data/staging/csv/superstore_staging.csv",
+    "data/clean/csv/superstore_clean.csv",
     "logs/csv_ingestion_log.json",
-    "data/raw/excel/inventory_raw.xlsx",
-    "data/staging/excel/sample_excel_staging.csv",
-    "data/clean/excel/sample_excel_clean.csv",
+    "data/raw/excel/product_sales_region_raw.xlsx",
+    "data/staging/excel/product_sales_region_staging.csv",
+    "data/clean/excel/product_sales_region_clean.csv",
     "logs/excel_ingestion_log.json",
-    "data/raw/api/sample_api_response.json",
-    "data/staging/api/api_staging.csv",
-    "data/clean/api/api_clean.csv",
+    "data/raw/api/dummyjson_products_raw.json",
+    "data/staging/api/dummyjson_products_staging.csv",
+    "data/clean/api/dummyjson_products_clean.csv",
     "logs/api_ingestion_log.json",
-    "data/raw/pdf/sample_pdf_raw.pdf",
-    "data/staging/pdf/sample_pdf_text.txt",
+    "data/raw/pdf/dataflow_technical_report_raw.pdf",
+    "data/staging/pdf/dataflow_pdf_text.txt",
+    "data/staging/pdf/dataflow_pdf_pages_staging.csv",
+    "data/clean/pdf/dataflow_pdf_pages_clean.csv",
     "data/staging/pdf/document_pages.jsonl",
     "logs/pdf_ingestion_log.json",
     "logs/pdf_metadata.json",
@@ -34,6 +36,13 @@ REQUIRED_DOCS = [
     "docs/ingestion_to_prediction_contract.md",
     "docs/ingestion_result_contract_for_ui.md",
     "docs/team_handoff_index.md",
+]
+
+REQUIRED_NOTEBOOKS = [
+    "notebooks/data_team/csv_ingestion_demo.ipynb",
+    "notebooks/data_team/excel_ingestion_demo.ipynb",
+    "notebooks/data_team/api_ingestion_demo.ipynb",
+    "notebooks/data_team/pdf_extraction_demo.ipynb",
 ]
 
 REQUIRED_LOG_FIELDS = [
@@ -77,6 +86,15 @@ def validate_docs() -> list[str]:
     return errors
 
 
+def validate_notebooks() -> list[str]:
+    errors: list[str] = []
+    for relative in REQUIRED_NOTEBOOKS:
+        path = PROJECT_ROOT / relative
+        if not path.exists():
+            errors.append(f"Missing notebook: {relative}")
+    return errors
+
+
 def validate_logs() -> list[str]:
     errors: list[str] = []
     for log_path in sorted((PROJECT_ROOT / "logs").glob("*_ingestion_log.json")):
@@ -98,7 +116,7 @@ def validate_logs() -> list[str]:
 
 
 def main() -> int:
-    errors = validate_outputs() + validate_docs() + validate_logs()
+    errors = validate_outputs() + validate_docs() + validate_notebooks() + validate_logs()
     if errors:
         print("Validation failed")
         for error in errors:
@@ -108,6 +126,7 @@ def main() -> int:
     print("Validation passed")
     print(f"Checked {len(REQUIRED_OUTPUTS)} required outputs")
     print(f"Checked {len(REQUIRED_DOCS)} required contract docs")
+    print(f"Checked {len(REQUIRED_NOTEBOOKS)} required notebooks")
     print("Checked ingestion log schema and portable paths")
     return 0
 

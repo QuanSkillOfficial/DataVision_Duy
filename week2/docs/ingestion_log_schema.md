@@ -79,7 +79,7 @@ Examples:
 ```text
 sales_csv
 inventory_excel
-sample_api_response
+dummyjson_products_api
 resume_pdf
 ```
 
@@ -109,9 +109,9 @@ Original source location.
 Examples:
 
 ```text
-data/sample_inputs/sales.csv
-data/sample_inputs/inventory.xlsx
-data/sample_inputs/sample_api_response.json
+data/sample_inputs/Superstore.csv
+data/sample_inputs/Product-Sales-Region.xlsx
+https://dummyjson.com/products
 https://api.example.com/customers
 ```
 
@@ -230,9 +230,9 @@ Location of raw layer output.
 Examples:
 
 ```text
-data/raw/csv/sample_raw.csv
-data/raw/excel/inventory_raw.xlsx
-data/raw/api/sample_api_response.json
+data/raw/csv/superstore_raw.csv
+data/raw/excel/product_sales_region_raw.xlsx
+data/raw/api/dummyjson_products_raw.json
 ```
 
 Paths must be project-relative so logs are portable across machines. Do not write local absolute paths such as `F:\...` or `C:\...` into shared logs.
@@ -246,9 +246,9 @@ Location of parsed or intermediate staging output.
 Examples:
 
 ```text
-data/staging/csv/sample_staging.csv
-data/staging/api/api_staging.csv
-data/staging/pdf/sample_pdf_text.txt
+data/staging/csv/superstore_staging.csv
+data/staging/api/dummyjson_products_staging.csv
+data/staging/pdf/dataflow_pdf_pages_staging.csv
 ```
 
 ---
@@ -260,8 +260,8 @@ Location of cleaned output.
 Examples:
 
 ```text
-data/clean/csv/sample_clean.csv
-data/clean/excel/sample_excel_clean.csv
+data/clean/csv/superstore_clean.csv
+data/clean/excel/product_sales_region_clean.csv
 data/clean/api/api_clean.csv
 ```
 
@@ -286,19 +286,19 @@ Nguyen Minh Duy
 ```json
 {
   "run_id": "6e52a7d0-7d44-4c29-a1f3-5c79dc674db2",
-  "source_name": "sales_csv",
+  "source_name": "superstore_sales_csv",
   "source_type": "csv",
-  "input_path_or_url": "data/sample_inputs/sales.csv",
+  "input_path_or_url": "data/sample_inputs/Superstore.csv",
   "start_time": "2026-05-29T10:15:30.123456+00:00",
   "end_time": "2026-05-29T10:15:35.654321+00:00",
   "status": "success",
-  "records_read": 2823,
-  "records_valid": 2823,
+  "records_read": 9994,
+  "records_valid": 9994,
   "records_invalid": 0,
   "error_message": null,
-  "raw_output_path": "data/raw/csv/sample_raw.csv",
-  "staging_output_path": "data/staging/csv/sample_staging.csv",
-  "clean_output_path": "data/clean/csv/sample_clean.csv",
+  "raw_output_path": "data/raw/csv/superstore_raw.csv",
+  "staging_output_path": "data/staging/csv/superstore_staging.csv",
+  "clean_output_path": "data/clean/csv/superstore_clean.csv",
   "owner": "Nguyen Minh Duy"
 }
 ```
