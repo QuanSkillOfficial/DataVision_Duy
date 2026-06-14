@@ -33,10 +33,10 @@ Data Sources
 
 | Source | Module | Raw output | Staging output | Clean output |
 | --- | --- | --- | --- | --- |
-| CSV sales file | `csv_ingestor.py` | `week2/data/raw/csv/sample_raw.csv` | `week2/data/staging/csv/sample_staging.csv` | `week2/data/clean/csv/sample_clean.csv` |
-| Excel inventory file | `excel_ingestor.py` | `week2/data/raw/excel/inventory_raw.xlsx` | `week2/data/staging/excel/sample_excel_staging.csv` | `week2/data/clean/excel/sample_excel_clean.csv` |
-| API JSON sample | `api_ingestor.py` | `week2/data/raw/api/sample_api_response.json` | `week2/data/staging/api/api_staging.csv` | `week2/data/clean/api/api_clean.csv` |
-| PDF document | `pdf_ingestor.py` | `week2/data/raw/pdf/sample_pdf_raw.pdf` | `week2/data/staging/pdf/sample_pdf_text.txt` and `week2/data/staging/pdf/document_pages.jsonl` | Not applicable for Week 3 |
+| Superstore CSV | `csv_ingestor.py` | `week2/data/raw/csv/superstore_raw.csv` | `week2/data/staging/csv/superstore_staging.csv` | `week2/data/clean/csv/superstore_clean.csv` |
+| Product Sales Region Excel | `excel_ingestor.py` | `week2/data/raw/excel/product_sales_region_raw.xlsx` | `week2/data/staging/excel/product_sales_region_staging.csv` | `week2/data/clean/excel/product_sales_region_clean.csv` |
+| DummyJSON products API | `api_ingestor.py` | `week2/data/raw/api/dummyjson_products_raw.json` | `week2/data/staging/api/dummyjson_products_staging.csv` | `week2/data/clean/api/dummyjson_products_clean.csv` |
+| DataFlow technical report PDF | `pdf_ingestor.py` | `week2/data/raw/pdf/dataflow_technical_report_raw.pdf` | `week2/data/staging/pdf/dataflow_pdf_text.txt`, `week2/data/staging/pdf/dataflow_pdf_pages_staging.csv`, and `week2/data/staging/pdf/document_pages.jsonl` | `week2/data/clean/pdf/dataflow_pdf_pages_clean.csv` |
 
 ## Run All Ingestion Modules
 
@@ -49,10 +49,10 @@ python -m week2.scripts.ingestion.ingestion_engine
 Expected output:
 
 ```text
-csv: success - 2823 valid
-excel: success - 46 valid
-api: success - 15 valid
-pdf: success - 1 valid
+csv: success - 9994 valid
+excel: success - 1500 valid
+api: success - 30 valid
+pdf: success - 36 valid
 ```
 
 ## Build Prediction Payload From PDF

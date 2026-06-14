@@ -20,10 +20,10 @@ The project can ingest four source types:
 
 | Source type | Input | Output |
 | --- | --- | --- |
-| CSV | `week2/data/sample_inputs/sales.csv` | Raw CSV, staging CSV, clean CSV, JSON log |
-| Excel | `week2/data/sample_inputs/inventory.xlsx` | Raw XLSX, staging CSV, clean CSV, JSON log |
-| API JSON | `week2/data/sample_inputs/customer_api.json` | Raw JSON, staging CSV, clean CSV, JSON log |
-| PDF | `week2/data/sample_inputs/big-data-engineer2 - Template 16 .pdf` | Raw PDF, extracted text, page-level JSONL, metadata, JSON log |
+| CSV | `week2/data/sample_inputs/Superstore.csv` | Raw CSV, staging CSV, clean CSV, JSON log |
+| Excel | `week2/data/sample_inputs/Product-Sales-Region.xlsx` | Raw XLSX, staging CSV, clean CSV, JSON log |
+| API JSON | `https://dummyjson.com/products` with local raw fallback | Raw JSON, staging CSV, clean CSV, JSON log |
+| PDF | `week2/data/sample_inputs/DataFlow_Technical_Report.pdf` | Raw PDF, extracted text, page-level JSONL, page CSV, clean page CSV, metadata, JSON log |
 
 ## Run Command
 
@@ -34,10 +34,10 @@ python -m week2.scripts.ingestion.ingestion_engine
 Expected result:
 
 ```text
-csv: success - 2823 valid
-excel: success - 46 valid
-api: success - 15 valid
-pdf: success - 1 valid
+csv: success - 9994 valid
+excel: success - 1500 valid
+api: success - 30 valid
+pdf: success - 36 valid
 ```
 
 ## Validation Command
@@ -50,8 +50,9 @@ Expected result:
 
 ```text
 Validation passed
-Checked 17 required outputs
+Checked 19 required outputs
 Checked 7 required contract docs
+Checked 4 required notebooks
 Checked ingestion log schema and portable paths
 ```
 
@@ -80,7 +81,7 @@ Source file or response
 
 Clean data means required fields are present and valid. Optional missing values are allowed but must be logged separately.
 
-Example: the CSV sales file has optional missing values in fields such as `addressline2`, `state`, `postalcode`, and `territory`. These are logged under `optional_missing_values`, but the clean CSV remains valid because required fields are present.
+Example: the DummyJSON API product data has missing values in optional fields such as `brand`. These are logged under `optional_missing_values`, but the clean API dataset remains valid because required fields are present.
 
 ## Handoff to Other Members
 

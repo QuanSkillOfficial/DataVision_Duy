@@ -29,17 +29,19 @@ CSV / Excel / API / PDF sources
 
 | Output | Path |
 | --- | --- |
-| CSV raw | `data/raw/csv/sample_raw.csv` |
-| CSV staging | `data/staging/csv/sample_staging.csv` |
-| CSV clean | `data/clean/csv/sample_clean.csv` |
-| Excel raw | `data/raw/excel/inventory_raw.xlsx` |
-| Excel staging | `data/staging/excel/sample_excel_staging.csv` |
-| Excel clean | `data/clean/excel/sample_excel_clean.csv` |
-| API raw | `data/raw/api/sample_api_response.json` |
-| API staging | `data/staging/api/api_staging.csv` |
-| API clean | `data/clean/api/api_clean.csv` |
-| PDF raw | `data/raw/pdf/sample_pdf_raw.pdf` |
-| PDF text | `data/staging/pdf/sample_pdf_text.txt` |
+| CSV raw | `data/raw/csv/superstore_raw.csv` |
+| CSV staging | `data/staging/csv/superstore_staging.csv` |
+| CSV clean | `data/clean/csv/superstore_clean.csv` |
+| Excel raw | `data/raw/excel/product_sales_region_raw.xlsx` |
+| Excel staging | `data/staging/excel/product_sales_region_staging.csv` |
+| Excel clean | `data/clean/excel/product_sales_region_clean.csv` |
+| API raw | `data/raw/api/dummyjson_products_raw.json` |
+| API staging | `data/staging/api/dummyjson_products_staging.csv` |
+| API clean | `data/clean/api/dummyjson_products_clean.csv` |
+| PDF raw | `data/raw/pdf/dataflow_technical_report_raw.pdf` |
+| PDF text | `data/staging/pdf/dataflow_pdf_text.txt` |
+| PDF pages staging CSV | `data/staging/pdf/dataflow_pdf_pages_staging.csv` |
+| PDF pages clean CSV | `data/clean/pdf/dataflow_pdf_pages_clean.csv` |
 | PDF pages JSONL | `data/staging/pdf/document_pages.jsonl` |
 | PDF metadata | `logs/pdf_metadata.json` |
 
@@ -57,4 +59,3 @@ CSV / Excel / API / PDF sources
 - Lap should use `document_pages.jsonl` for page-aware chunks and citations.
 - Tuong should use `prediction_payload_builder.py` output as the prototype inference input.
 - Phi/Hung should derive Upload/Dashboard status from ingestion logs and UI contract fields.
-

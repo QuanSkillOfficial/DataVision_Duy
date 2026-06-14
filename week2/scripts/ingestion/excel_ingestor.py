@@ -32,23 +32,35 @@ except ImportError:
     )
 
 
-EXCEL_REQUIRED_FIELDS = ["product_id", "product_name"]
+EXCEL_REQUIRED_FIELDS = [
+    "date",
+    "region",
+    "product",
+    "quantity",
+    "unitprice",
+    "storelocation",
+    "customertype",
+    "discount",
+    "salesperson",
+    "totalprice",
+    "paymentmethod",
+    "returned",
+    "orderid",
+    "customername",
+    "shippingcost",
+    "orderdate",
+    "deliverydate",
+    "regionmanager",
+]
 
-
-def detect_header_row(input_path: Path, sheet_name: str) -> int:
-    preview = pd.read_excel(input_path, sheet_name=sheet_name, header=None, nrows=20)
-    for index, row in preview.iterrows():
-        normalized = [str(value).strip().lower() for value in row.dropna().tolist()]
-        if any("product id" in value for value in normalized):
-            return int(index)
-    return 0
+EXCEL_OPTIONAL_FIELDS = ["promotion"]
 
 
 def run_excel_ingestion(
-    input_path: Path = PROJECT_ROOT / "data/sample_inputs/inventory.xlsx",
-    raw_output_path: Path = PROJECT_ROOT / "data/raw/excel/inventory_raw.xlsx",
-    staging_output_path: Path = PROJECT_ROOT / "data/staging/excel/sample_excel_staging.csv",
-    clean_output_path: Path = PROJECT_ROOT / "data/clean/excel/sample_excel_clean.csv",
+    input_path: Path = PROJECT_ROOT / "data/sample_inputs/Product-Sales-Region.xlsx",
+    raw_output_path: Path = PROJECT_ROOT / "data/raw/excel/product_sales_region_raw.xlsx",
+    staging_output_path: Path = PROJECT_ROOT / "data/staging/excel/product_sales_region_staging.csv",
+    clean_output_path: Path = PROJECT_ROOT / "data/clean/excel/product_sales_region_clean.csv",
     log_output_path: Path = PROJECT_ROOT / "logs/excel_ingestion_log.json",
 ) -> dict:
     start_time = utc_now()
@@ -56,14 +68,23 @@ def run_excel_ingestion(
         excel_file = pd.ExcelFile(input_path)
         sheet_names = excel_file.sheet_names
         selected_sheet = sheet_names[0]
-        header_row = detect_header_row(input_path, selected_sheet)
-        df = pd.read_excel(input_path, sheet_name=selected_sheet, header=header_row)
+        df = pd.read_excel(input_path, sheet_name=selected_sheet)
         df = df.dropna(how="all")
         records_read = len(df)
 
         copy_raw_file(input_path, raw_output_path)
         staged = drop_empty_columns(clean_column_names(df))
         duplicate_rows = int(staged.duplicated().sum())
+        missing_values = {key: int(value) for key, value in staged.isna().sum().to_dict().items()}
+        required_missing_values = {
+            key: int(value)
+            for key, value in staged[EXCEL_REQUIRED_FIELDS].isna().sum().to_dict().items()
+        }
+        existing_optional_fields = [field for field in EXCEL_OPTIONAL_FIELDS if field in staged.columns]
+        optional_missing_values = {
+            key: int(value)
+            for key, value in staged[existing_optional_fields].isna().sum().to_dict().items()
+        }
         staged = staged.drop_duplicates()
         write_csv(staged, staging_output_path)
 
@@ -73,7 +94,7 @@ def run_excel_ingestion(
         records_valid = len(clean)
         records_invalid = records_read - records_valid
         log = base_log(
-            source_name="inventory_excel",
+            source_name="product_sales_region_excel",
             source_type="excel",
             input_path_or_url=relative_path(input_path),
             start_time=start_time,
@@ -89,17 +110,20 @@ def run_excel_ingestion(
             extra={
                 "sheet_names": sheet_names,
                 "selected_sheet": selected_sheet,
-                "detected_header_row": header_row,
                 "duplicate_rows_removed": duplicate_rows,
                 "required_missing_values_removed": validation["rows_missing_required_values"],
-                "optional_missing_values": validation["optional_missing_values"],
+                "missing_values": missing_values,
+                "required_missing_values": required_missing_values,
+                "optional_missing_values": optional_missing_values,
+                "total_missing_values": int(sum(missing_values.values())),
                 "missing_required_columns": validation["missing_required_columns"],
                 "required_fields": EXCEL_REQUIRED_FIELDS,
+                "optional_fields": EXCEL_OPTIONAL_FIELDS,
             },
         )
     except Exception as exc:
         log = base_log(
-            source_name="inventory_excel",
+            source_name="product_sales_region_excel",
             source_type="excel",
             input_path_or_url=relative_path(input_path),
             start_time=start_time,

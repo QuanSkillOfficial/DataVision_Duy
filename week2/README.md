@@ -24,7 +24,7 @@ week2/
 | `notebooks/data_team/csv_ingestion_demo.ipynb` | CSV ingestion prototype |
 | `notebooks/data_team/excel_ingestion_demo.ipynb` | Excel ingestion prototype |
 | `notebooks/data_team/api_ingestion_demo.ipynb` | API JSON ingestion prototype |
-| `notebooks/data_team/pdf_extraction_demo_final.ipynb` | PDF extraction prototype |
+| `notebooks/data_team/pdf_extraction_demo.ipynb` | PDF extraction prototype |
 
 ## Reusable Modules
 
@@ -55,7 +55,7 @@ Expected validation summary:
 
 ```text
 Validation passed
-Checked 17 required outputs
+Checked 19 required outputs
 Checked 7 required contract docs
 Checked ingestion log schema and portable paths
 ```

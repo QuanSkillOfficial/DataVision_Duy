@@ -221,10 +221,10 @@ data/raw/streaming/
 
 ```text
 data/sample_inputs/
-├── sample.csv
-├── sample.xlsx
-├── sample.pdf
-└── sample_api_response.json
+├── Superstore.csv
+├── Product-Sales-Region.xlsx
+├── DataFlow_Technical_Report.pdf
+└── DataFlow_Technical_Report.pdf
 ```
 
 ## Purpose

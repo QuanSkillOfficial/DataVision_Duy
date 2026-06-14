@@ -58,21 +58,21 @@ Uploaded document
 
 ```json
 {
-  "document_id": "doc_sample_pdf_001",
+  "document_id": "doc_dataflow_technical_report",
   "source_id": "c77b8cf3-d542-4242-af90-b5aa866715bf",
-  "file_name": "big-data-engineer2 - Template 16 .pdf",
+  "file_name": "DataFlow_Technical_Report.pdf",
   "file_type": "pdf",
-  "file_size": 63047,
-  "text_length": 2664,
-  "num_pages": 1,
+  "file_size": 2857707,
+  "text_length": 129028,
+  "num_pages": 36,
   "source_system": "manual_upload",
   "extracted_text": "Extracted document text goes here...",
   "ingestion_run_id": "c77b8cf3-d542-4242-af90-b5aa866715bf",
-  "raw_output_path": "data/raw/pdf/sample_pdf_raw.pdf",
-  "staging_output_path": "data/staging/pdf/sample_pdf_text.txt",
-  "clean_output_path": null,
-  "records_read": 1,
-  "records_valid": 1,
+  "raw_output_path": "data/raw/pdf/dataflow_technical_report_raw.pdf",
+  "staging_output_path": "data/staging/pdf/dataflow_pdf_text.txt",
+  "clean_output_path": "data/clean/pdf/dataflow_pdf_pages_clean.csv",
+  "records_read": 36,
+  "records_valid": 36,
   "records_invalid": 0,
   "empty_pages": [],
   "parsing_status": "ready"
@@ -100,7 +100,7 @@ If `extracted_text` is empty:
 | `text_length` | `pdf_metadata.extracted_character_count` or length of extracted text |
 | `num_pages` | `pdf_metadata.page_count` |
 | `source_system` | `manual_upload` for current prototype |
-| `extracted_text` | `data/staging/pdf/sample_pdf_text.txt` |
+| `extracted_text` | `data/staging/pdf/dataflow_pdf_text.txt` |
 | `raw_output_path` | Ingestion log `raw_output_path` |
 | `staging_output_path` | Ingestion log `staging_output_path` |
 | `clean_output_path` | Ingestion log `clean_output_path` |
@@ -124,4 +124,3 @@ Tuong should return:
 ```
 
 This output can later be stored by Phat in `prediction_logs` and shown by Phi/Hung in the Prediction page.
-

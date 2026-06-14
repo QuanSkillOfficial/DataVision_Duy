@@ -21,10 +21,10 @@ The main tables affected by Duy's work are:
 
 | Source type | Log file | Raw output | Staging output | Clean output |
 | --- | --- | --- | --- | --- |
-| CSV | `logs/csv_ingestion_log.json` | `data/raw/csv/sample_raw.csv` | `data/staging/csv/sample_staging.csv` | `data/clean/csv/sample_clean.csv` |
-| Excel | `logs/excel_ingestion_log.json` | `data/raw/excel/inventory_raw.xlsx` | `data/staging/excel/sample_excel_staging.csv` | `data/clean/excel/sample_excel_clean.csv` |
-| API JSON | `logs/api_ingestion_log.json` | `data/raw/api/sample_api_response.json` | `data/staging/api/api_staging.csv` | `data/clean/api/api_clean.csv` |
-| PDF | `logs/pdf_ingestion_log.json` | `data/raw/pdf/sample_pdf_raw.pdf` | `data/staging/pdf/sample_pdf_text.txt` | `null` |
+| CSV | `logs/csv_ingestion_log.json` | `data/raw/csv/superstore_raw.csv` | `data/staging/csv/superstore_staging.csv` | `data/clean/csv/superstore_clean.csv` |
+| Excel | `logs/excel_ingestion_log.json` | `data/raw/excel/product_sales_region_raw.xlsx` | `data/staging/excel/product_sales_region_staging.csv` | `data/clean/excel/product_sales_region_clean.csv` |
+| API JSON | `logs/api_ingestion_log.json` | `data/raw/api/dummyjson_products_raw.json` | `data/staging/api/dummyjson_products_staging.csv` | `data/clean/api/dummyjson_products_clean.csv` |
+| PDF | `logs/pdf_ingestion_log.json` | `data/raw/pdf/dataflow_technical_report_raw.pdf` | `data/staging/pdf/dataflow_pdf_pages_staging.csv` | `data/clean/pdf/dataflow_pdf_pages_clean.csv` |
 
 PDF ingestion also produces page-level JSONL for Lap and Phat:
 
@@ -38,7 +38,7 @@ Recommended `sources` fields for Duy's inventory and ingestion metadata:
 
 | Duy field | Database column | Notes |
 | --- | --- | --- |
-| `source_name` | `sources.source_name` | Example: `sales_csv`, `customer_api`, `sample_pdf` |
+| `source_name` | `sources.source_name` | Example: `superstore_sales_csv`, `dummyjson_products_api`, `dataflow_technical_report_pdf` |
 | `source_type` | `sources.source_type` | `csv`, `excel`, `api`, `pdf`, `database`, `streaming` |
 | `input_path_or_url` | `sources.source_location` | Project-relative path or URL |
 | Inventory `file_format` | `sources.file_format` | Example: `csv`, `xlsx`, `json`, `pdf` |
@@ -95,7 +95,7 @@ Used mainly for file/document sources such as PDF, TXT, DOCX, and future documen
 | Duy output | Database column | Notes |
 | --- | --- | --- |
 | resolved source FK | `documents.source_id` | From `sources.id` |
-| file name from `input_path_or_url` | `documents.file_name` | Example: `big-data-engineer2 - Template 16 .pdf` |
+| file name from `input_path_or_url` | `documents.file_name` | Example: `DataFlow_Technical_Report.pdf` |
 | file extension | `documents.file_type` | Example: `pdf` |
 | local file size | `documents.file_size_bytes` | Bytes |
 | future hash | `documents.file_hash_sha256` | Duy can add SHA-256 in next iteration |
@@ -114,7 +114,7 @@ Duy's PDF extraction can populate page-level text for Lap's chunking.
 | --- | --- | --- |
 | resolved document FK | `document_pages.document_id` | From `documents.id` |
 | page number | `document_pages.page_number` | Starts at 1 |
-| extracted text per page | `document_pages.page_text` | From `sample_pdf_text.txt` |
+| extracted text per page | `document_pages.page_text` | From `document_pages.jsonl` / `dataflow_pdf_text.txt` |
 | page text length | `document_pages.character_count` | `len(page_text)` |
 | empty page flag | `document_pages.is_empty` | True if page text is empty |
 
