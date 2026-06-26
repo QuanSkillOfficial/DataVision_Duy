@@ -1,0 +1,49 @@
+{
+  "source_name": "product_sales_region_excel",
+  "source_type": "excel",
+  "input_path": "week2/data/sample_inputs/Product-Sales-Region.xlsx",
+  "sheet_name": "Sheet1",
+  "raw_output_path": "week2/data/raw/excel/product_sales_region_raw.xlsx",
+  "staging_output_path": "week2/data/staging/excel/product_sales_region_staging.csv",
+  "clean_output_path": "week2/data/clean/excel/product_sales_region_clean.csv",
+  "latest_log_path": "week2/logs/excel_ingestion_log.json",
+  "run_log_dir": "logs/runs",
+  "run_history_path": "logs/ingestion_runs.jsonl",
+  "manifest_output_dir": "logs/manifests",
+  "required_fields": [
+    "date",
+    "region",
+    "product",
+    "quantity",
+    "unitprice",
+    "storelocation",
+    "customertype",
+    "discount",
+    "salesperson",
+    "totalprice",
+    "paymentmethod",
+    "returned",
+    "orderid",
+    "customername",
+    "shippingcost",
+    "orderdate",
+    "deliverydate",
+    "regionmanager"
+  ],
+  "optional_fields": [
+    "promotion"
+  ],
+  "numeric_fields": [
+    "quantity",
+    "unitprice",
+    "discount",
+    "totalprice",
+    "shippingcost"
+  ],
+  "date_fields": [
+    "date",
+    "orderdate",
+    "deliverydate"
+  ],
+  "owner": "Nguyen Minh Duy"
+}

@@ -3,4 +3,5 @@ requests
 openpyxl
 pymupdf
 pdfplumber
-
+pytest
+Pygments

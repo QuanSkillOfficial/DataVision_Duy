@@ -6,13 +6,14 @@ Team: Data Foundation Team
 
 ## Current Status
 
-The DataVision ingestion track is complete through Week 3 foundation work.
+The DataVision ingestion track is complete through Week 5 platform-readiness work.
 
 | Phase | Status | Main result |
 | --- | --- | --- |
 | Week 1 | Complete | Ingestion foundation, source inventory, raw folder structure, setup confirmation |
 | Week 2 | Complete | Working notebook prototypes for CSV, Excel, API JSON, and PDF extraction |
 | Week 3 | Complete | Reusable ingestion modules, standard output contract, portable logs, cross-team handoff contracts |
+| Week 5 | Complete | Config-driven ingestion service, run history logs, manifests, data quality score, PostgreSQL writer skeleton, pytest tests |
 
 ## What Works Now
 
@@ -29,6 +30,12 @@ The project can ingest four source types:
 
 ```powershell
 python -m week2.scripts.ingestion.ingestion_engine
+```
+
+Week 5 config-driven command:
+
+```powershell
+python -m data_engineering.pipelines.ingestion_engine --all
 ```
 
 Expected result:
@@ -104,8 +111,7 @@ Example: the DummyJSON API product data has missing values in optional fields su
 
 ## Next Recommended Work
 
-1. Convert ingestion logs into PostgreSQL `ingestion_logs`.
-2. Load `document_pages.jsonl` into Phat's `document_pages` table.
-3. Add automated tests for each ingestor using small fixture files.
-4. Add CLI arguments for custom input/output paths.
-5. Add database loading from clean outputs.
+1. Test `postgres_writer.py` against Phat's final schema_v3 database.
+2. Add a FastAPI wrapper around `run_ingestion(source_config)`.
+3. Add database insert dry-run output to the Friday demo.
+4. Coordinate final status constraints with Phat and UI badges with Phi/Hung.

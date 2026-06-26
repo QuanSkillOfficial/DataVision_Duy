@@ -1,0 +1,48 @@
+{
+  "source_name": "superstore_sales_csv",
+  "source_type": "csv",
+  "input_path": "week2/data/sample_inputs/Superstore.csv",
+  "raw_output_path": "week2/data/raw/csv/superstore_raw.csv",
+  "staging_output_path": "week2/data/staging/csv/superstore_staging.csv",
+  "clean_output_path": "week2/data/clean/csv/superstore_clean.csv",
+  "latest_log_path": "week2/logs/csv_ingestion_log.json",
+  "run_log_dir": "logs/runs",
+  "run_history_path": "logs/ingestion_runs.jsonl",
+  "manifest_output_dir": "logs/manifests",
+  "required_fields": [
+    "row_id",
+    "order_id",
+    "order_date",
+    "ship_date",
+    "customer_id",
+    "customer_name",
+    "country",
+    "city",
+    "state",
+    "region",
+    "product_id",
+    "category",
+    "sub_category",
+    "product_name",
+    "sales",
+    "quantity",
+    "discount",
+    "profit"
+  ],
+  "optional_fields": [
+    "ship_mode",
+    "segment",
+    "postal_code"
+  ],
+  "numeric_fields": [
+    "sales",
+    "quantity",
+    "discount",
+    "profit"
+  ],
+  "date_fields": [
+    "order_date",
+    "ship_date"
+  ],
+  "owner": "Nguyen Minh Duy"
+}

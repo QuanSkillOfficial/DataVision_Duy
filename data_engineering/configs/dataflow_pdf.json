@@ -1,0 +1,17 @@
+{
+  "source_name": "dataflow_technical_report_pdf",
+  "source_type": "pdf",
+  "document_id": "doc_dataflow_technical_report",
+  "input_path": "week2/data/sample_inputs/DataFlow_Technical_Report.pdf",
+  "raw_output_path": "week2/data/raw/pdf/dataflow_technical_report_raw.pdf",
+  "staging_text_output_path": "week2/data/staging/pdf/dataflow_pdf_text.txt",
+  "staging_output_path": "week2/data/staging/pdf/dataflow_pdf_pages_staging.csv",
+  "clean_output_path": "week2/data/clean/pdf/dataflow_pdf_pages_clean.csv",
+  "document_pages_output_path": "week2/data/staging/pdf/document_pages.jsonl",
+  "metadata_output_path": "week2/logs/pdf_metadata.json",
+  "latest_log_path": "week2/logs/pdf_ingestion_log.json",
+  "run_log_dir": "logs/runs",
+  "run_history_path": "logs/ingestion_runs.jsonl",
+  "manifest_output_dir": "logs/manifests",
+  "owner": "Nguyen Minh Duy"
+}
