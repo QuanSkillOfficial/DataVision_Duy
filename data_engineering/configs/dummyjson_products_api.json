@@ -1,0 +1,50 @@
+{
+  "source_name": "dummyjson_products_api",
+  "source_type": "api",
+  "api_url": "https://dummyjson.com/products",
+  "record_path": "products",
+  "use_cached_response": true,
+  "raw_output_path": "week2/data/raw/api/dummyjson_products_raw.json",
+  "staging_output_path": "week2/data/staging/api/dummyjson_products_staging.csv",
+  "clean_output_path": "week2/data/clean/api/dummyjson_products_clean.csv",
+  "latest_log_path": "week2/logs/api_ingestion_log.json",
+  "run_log_dir": "logs/runs",
+  "run_history_path": "logs/ingestion_runs.jsonl",
+  "manifest_output_dir": "logs/manifests",
+  "required_fields": [
+    "id",
+    "title",
+    "description",
+    "category",
+    "price",
+    "rating",
+    "stock",
+    "sku",
+    "availabilitystatus"
+  ],
+  "optional_fields": [
+    "brand",
+    "tags",
+    "images",
+    "thumbnail",
+    "warrantyinformation",
+    "shippinginformation",
+    "returnpolicy",
+    "minimumorderquantity",
+    "dimensions_width",
+    "dimensions_height",
+    "dimensions_depth",
+    "meta_createdat",
+    "meta_updatedat",
+    "meta_barcode",
+    "meta_qrcode",
+    "reviews"
+  ],
+  "numeric_fields": [
+    "price",
+    "rating",
+    "stock",
+    "minimumorderquantity"
+  ],
+  "owner": "Nguyen Minh Duy"
+}

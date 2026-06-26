@@ -11,6 +11,8 @@ The focus is ingestion: bringing API, CSV, Excel, PDF, and document-page text in
 | Week 1 ingestion foundation | Complete | `week1_ingestion_foundation/` |
 | Week 2 ingestion prototypes | Complete | `week2/notebooks/data_team/` |
 | Week 3 reusable ingestion modules | Complete | `week2/scripts/ingestion/` |
+| Week 5 config-driven ingestion service | Complete | `data_engineering/` |
+| Week 5 run history and manifests | Complete | `logs/runs/`, `logs/ingestion_runs.jsonl`, `logs/manifests/` |
 | Standard ingestion log schema | Complete | `week2/docs/ingestion_log_schema.md` |
 | Standard output contract | Complete | `week2/docs/standard_ingestion_output_contract.md` |
 | UI handoff contract | Complete | `week2/docs/ingestion_result_contract_for_ui.md` |
@@ -55,6 +57,28 @@ api: success - 30 valid
 pdf: success - 36 valid
 ```
 
+## Run Week 5 Config-Driven Ingestion
+
+Run one source config:
+
+```powershell
+python -m data_engineering.pipelines.ingestion_engine --config data_engineering/configs/superstore_csv.json
+```
+
+Run all default Week 5 configs:
+
+```powershell
+python -m data_engineering.pipelines.ingestion_engine --all
+```
+
+Each run writes:
+
+```text
+logs/runs/<run_id>.json
+logs/ingestion_runs.jsonl
+logs/manifests/<run_id>_manifest.json
+```
+
 ## Build Prediction Payload From PDF
 
 ```powershell
@@ -70,6 +94,13 @@ python week2/scripts/validate_project.py
 ```
 
 This checks that required outputs exist, logs use project-relative paths, and each ingestion log contains the required schema fields.
+
+Week 5 validation:
+
+```powershell
+python scripts/validate_week5.py
+pytest tests/data_tests/
+```
 
 ## Important Rules
 
@@ -89,3 +120,11 @@ This checks that required outputs exist, logs use project-relative paths, and ea
 | Tuong - Prediction | `week2/docs/ingestion_to_prediction_contract.md` |
 | Phi/Hung - Demo UI | `week2/docs/ingestion_result_contract_for_ui.md` |
 | Whole team | `week2/docs/team_handoff_index.md` |
+
+## Week 5 Integration Docs
+
+| Consumer | Contract |
+| --- | --- |
+| Phat - PostgreSQL | `docs/week5_ingestion_to_schema_v2_mapping.md` |
+| Phat - DB loading | `docs/postgres_loading_notes.md` |
+| Backend/FastAPI | `docs/ingestion_api_service_plan.md` |
