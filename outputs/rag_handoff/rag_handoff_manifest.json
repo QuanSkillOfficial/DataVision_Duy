@@ -10,7 +10,7 @@
   "empty_pages": 0,
   "empty_page_numbers": [],
   "total_characters": 129028,
-  "ingestion_run_id": "8e18bd87-27e5-4aa1-9566-805ffd552fdb",
+  "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
   "parsing_status": "ready",
   "document_pages_path": "outputs/rag_handoff/document_pages.jsonl",
   "pdf_metadata_path": "outputs/rag_handoff/pdf_metadata.json",

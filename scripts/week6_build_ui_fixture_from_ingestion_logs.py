@@ -26,6 +26,18 @@ def _optional_json(path: Path) -> dict[str, Any] | None:
     return _read_json(path)
 
 
+def _select_latest_run_per_source(runs: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    latest_by_source: dict[str, dict[str, Any]] = {}
+    for run in runs:
+        source_name = run.get("source_name")
+        if not source_name:
+            continue
+        current = latest_by_source.get(source_name)
+        if current is None or (run.get("end_time") or "") > (current.get("end_time") or ""):
+            latest_by_source[source_name] = run
+    return sorted(latest_by_source.values(), key=lambda run: run.get("source_name", ""))
+
+
 def _summarize_prediction_payload(payload: dict[str, Any] | None) -> dict[str, Any] | None:
     if payload is None:
         return None
@@ -38,7 +50,10 @@ def _summarize_prediction_payload(payload: dict[str, Any] | None) -> dict[str, A
 
 
 def build_ui_fixture() -> dict[str, Any]:
-    runs = [_read_json(path) for path in sorted(RUN_LOG_DIR.glob("*.json"))]
+    all_runs = [_read_json(path) for path in sorted(RUN_LOG_DIR.glob("*.json"))]
+    runs = _select_latest_run_per_source(
+        [run for run in all_runs if run.get("status") in {"success", "partial_success"}]
+    )
     if not runs:
         raise FileNotFoundError("No run logs found under logs/runs")
 
@@ -77,7 +92,11 @@ def build_ui_fixture() -> dict[str, Any]:
             }
         )
 
-    latest_run = max(fixture_runs, key=lambda run: run.get("end_time") or "")
+    document_runs = [run for run in fixture_runs if run.get("document_external_id")]
+    latest_run = max(
+        document_runs or fixture_runs,
+        key=lambda run: run.get("end_time") or "",
+    )
     prediction_payload = _optional_json(PREDICTION_PAYLOAD_PATH)
     prediction_context = _summarize_prediction_payload(prediction_payload)
     rag_handoff = _optional_json(RAG_HANDOFF_MANIFEST_PATH)
