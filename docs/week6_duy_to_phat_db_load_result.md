@@ -70,6 +70,18 @@ document_chunks.document_id
 rag_query_logs.document_id
 ```
 
+## Schema v4 Alignment Notes
+
+After reviewing Phat's `DataVision_Phat/week6/database/schema_v4.sql`, Duy's writer follows these schema_v4 rules:
+
+```text
+pipeline_runs uses run_name / start_time / end_time / status.
+pipeline_runs does not currently have run_id or pipeline_name.
+structured_records uses status, not processing_status.
+documents.file_hash_sha256 is filled from Duy's file manifest.
+document_pages.document_id always receives Phat's internal documents.id.
+```
+
 ## Next Execution Step
 
 After Phat provides schema/database config and confirms table columns, run:

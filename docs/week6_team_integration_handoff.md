@@ -192,7 +192,7 @@ Phat should use these files to test database insertion.
 | Phat Table | Duy Input File | Insert Rule |
 | --- | --- | --- |
 | `sources` | `logs/runs/*.json` | Insert or get by `source_name` |
-| `pipeline_runs` | `logs/runs/*.json` | Insert one row per `run_id` |
+| `pipeline_runs` | `logs/runs/*.json` | Insert one row per latest source run using `run_name = source_name + "_" + run_id` |
 | `ingestion_logs` | `logs/runs/*.json` | Insert records read/valid/invalid, paths, quality score |
 | `documents` | `week2/logs/pdf_metadata.json` | Insert one PDF document with `document_external_id` |
 | `document_pages` | `week2/data/staging/pdf/document_pages.jsonl` | Insert 36 page records using internal `documents.id` |
@@ -204,8 +204,10 @@ Phat should use these files to test database insertion.
 | --- | --- | --- |
 | `source_name` | `sources.name` | Should be unique |
 | `source_type` | `sources.source_type` | `csv`, `excel`, `api`, `pdf` |
-| `run_id` | `pipeline_runs.run_id` and `ingestion_logs.run_id` | Duy execution UUID |
-| `status` | `pipeline_runs.status`, `ingestion_logs.status` | Current values: `success`, `failed` |
+| `run_id` | `ingestion_logs.run_id`; included in `pipeline_runs.run_name` | Phat `schema_v4.sql` does not currently have `pipeline_runs.run_id` |
+| `start_time` | `pipeline_runs.start_time`, `ingestion_logs.started_at` | Timestamp from Duy run log |
+| `end_time` | `pipeline_runs.end_time`, `ingestion_logs.ended_at` | Timestamp from Duy run log |
+| `status` | `pipeline_runs.status`, `ingestion_logs.status` | Current values: `success`, `failed`, `partial_success`, `running` |
 | `records_read` | `ingestion_logs.records_read` | From run log |
 | `records_valid` | `ingestion_logs.records_valid` | From run log |
 | `records_invalid` | `ingestion_logs.records_invalid` | From run log |
@@ -220,6 +222,8 @@ Phat should use these files to test database insertion.
 | `text` | `document_pages.page_text` | Page text from JSONL |
 | `character_count` | `document_pages.character_count` | Page character count |
 | `is_empty` | `document_pages.is_empty` | Boolean |
+| clean CSV/API/Excel row | `structured_records.record_data` | Row serialized as JSONB |
+| fixed value `clean` | `structured_records.status` | Phat schema uses `status`, not `processing_status` |
 
 ### What Phat Must Return To Duy
 

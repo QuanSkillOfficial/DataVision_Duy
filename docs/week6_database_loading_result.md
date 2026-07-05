@@ -50,13 +50,24 @@ Latest dry-run result:
 
 ## Real-Run Status
 
-Real PostgreSQL insert is ready in code but still depends on Phat providing:
+Real PostgreSQL insert is aligned to Phat's reviewed `schema_v4.sql` columns:
+
+| Target | Confirmed schema_v4 mapping |
+| --- | --- |
+| `sources` | `name`, `source_type`, `source_format`, `source_path`, `url`, `owner_name`, `sample_available`, `downstream_consumer`, `status` |
+| `pipeline_runs` | `run_name`, `start_time`, `end_time`, `status` |
+| `ingestion_logs` | `run_id`, `source_id`, `pipeline_run_id`, counts, paths, quality JSONB, manifest path, timestamps |
+| `documents` | `document_external_id`, file metadata, SHA256 hash, PDF metadata JSONB, `processing_status='extracted'` |
+| `document_pages` | internal `documents.id`, `page_number`, `page_text`, `character_count`, `is_empty` |
+| `structured_records` | `source_id`, `record_data`, `status='clean'` |
+
+Real execution still depends on Phat providing:
 
 - final schema v3/v4 database
 - source unique constraint on `sources.name`
-- `pipeline_runs` table columns
+- PostgreSQL connection credentials
 - `ingestion_logs.pipeline_run_id`
 - `documents.document_external_id`
-- database credentials
+- a runnable `schema_v4.sql`
 
 Until those are confirmed, Duy's safe proof is the dry-run plan plus pytest coverage.
