@@ -2,13 +2,38 @@
 
 Owner: Nguyen Minh Duy  
 Role: Data Engineering / Ingestion Owner  
-Purpose: Define what Duy provides to each team member and what Duy needs back to complete Week 6 integration testing.
+Repository root: `F:/data/new/quanskill/DataVision_Duy`
 
-## Week 6 Main Goal
+## Purpose
 
-The main risk is that every module works separately, but the full platform has not been tested together.
+Week 6 is focused on integration, not adding many isolated features.
 
-This week should focus on:
+The main risk is:
+
+```text
+Every module works separately,
+but the full platform has not been tested together.
+```
+
+This document explains exactly:
+
+1. What outputs Duy provides to each team member.
+2. Which file paths each team member should use.
+3. Which fields are important.
+4. What each team member must return to Duy.
+5. How the team should align IDs and contracts.
+
+The Week 6 platform flow is:
+
+```text
+Duy ingestion
+  -> Phat PostgreSQL
+  -> Lap RAG / pgvector
+  -> Tuong prediction
+  -> Phi/Hung dashboard, suggestions, reports
+```
+
+The integration keywords for this week are:
 
 ```text
 connect
@@ -20,297 +45,585 @@ display
 test
 ```
 
-Duy's ingestion layer is the entry point of the platform. The goal is to make real ingestion outputs usable by:
+## Current Duy Source Outputs
+
+| Source | Source Type | Run ID | Records / Pages Valid | Data Quality Score | Main Consumer |
+| --- | --- | --- | ---: | ---: | --- |
+| `superstore_sales_csv` | `csv` | `10ed4959-5ace-4ff7-9b30-da28321d6708` | `9994` | `100.0` | Phat, Phi/Hung |
+| `dataflow_technical_report_pdf` | `pdf` | `8e18bd87-27e5-4aa1-9566-805ffd552fdb` | `36` pages | `100.0` | Phat, Lap, Tuong, Phi/Hung |
+| `dummyjson_products_api` | `api` | `9cce3b5c-b83d-4873-86e1-b99de889b077` | `30` | `99.0` | Phat, Phi/Hung |
+| `product_sales_region_excel` | `excel` | `a896a888-57f0-4ea9-9083-f860c2078f7d` | `1500` | `99.51` | Phat, Phi/Hung |
+
+Total integration-ready output:
 
 ```text
-Duy ingestion
-  -> Phat PostgreSQL
-  -> Lap RAG
-  -> Tuong prediction
-  -> Phi/Hung dashboard, suggestions, and reports
+sources: 4
+pipeline_runs: 4
+ingestion_logs: 4
+structured_records: 11524
+documents: 1
+document_pages: 36
 ```
 
-## Outputs Duy Provides
+## Common ID Rules For All Teams
 
-### 1. For Phat - Database / PostgreSQL
+These rules must be followed by everyone.
 
-Duy provides database-ready ingestion outputs for Phat to load into PostgreSQL.
+| Field | Owner | Meaning | Current Value / Example | Notes |
+| --- | --- | --- | --- | --- |
+| `source_name` | Duy | Stable source name from config | `dataflow_technical_report_pdf` | Use this before DB IDs exist |
+| `source_id` | Phat | PostgreSQL primary key from `sources.id` | `null` before DB insert | Do not use `run_id` as `source_id` |
+| `run_id` | Duy | Ingestion execution UUID | `8e18bd87-27e5-4aa1-9566-805ffd552fdb` | Same meaning as `ingestion_run_id` |
+| `ingestion_run_id` | Duy | Alias for ingestion execution UUID | `8e18bd87-27e5-4aa1-9566-805ffd552fdb` | Maps to `ingestion_logs.run_id` |
+| `document_external_id` | Duy | Stable string document key | `doc_dataflow_technical_report` | Maps to `documents.document_external_id` |
+| `document_db_id` | Phat | PostgreSQL primary key from `documents.id` | `null` before DB insert | Used by `document_pages`, `document_chunks`, `rag_query_logs` |
 
-| File / Folder | Purpose |
-| --- | --- |
-| `logs/runs/*.json` | One run-specific ingestion log per source |
-| `logs/ingestion_runs.jsonl` | Append-only ingestion run history |
-| `logs/manifests/*_manifest.json` | File manifests with SHA256 hashes |
-| `logs/db_load_dry_run/duy_to_phat_db_load_plan.json` | Dry-run database loading plan |
-| `week2/data/clean/csv/superstore_clean.csv` | Clean CSV structured records |
-| `week2/data/clean/excel/product_sales_region_clean.csv` | Clean Excel structured records |
-| `week2/data/clean/api/dummyjson_products_clean.csv` | Clean API structured records |
-| `week2/logs/pdf_metadata.json` | PDF metadata for `documents` table |
-| `week2/data/staging/pdf/document_pages.jsonl` | PDF page-level text for `document_pages` table |
-| `outputs/rag_handoff/document_pages.jsonl` | RAG-ready copy of page-level document text |
-| `docs/week6_ingestion_to_schema_v3_mapping.md` | Mapping from Duy outputs to Phat schema |
-| `docs/week6_database_loading_result.md` | DB dry-run result and real-run status |
-
-Expected target tables:
+Important:
 
 ```text
-sources
-pipeline_runs
-ingestion_logs
-documents
-document_pages
-structured_records
+source_id != ingestion_run_id
+document_external_id != document_db_id
 ```
 
-Important ID rules:
+Before database insertion:
 
-| Field | Meaning |
-| --- | --- |
-| `source_id` | PostgreSQL `sources.id`, created by Phat DB |
-| `ingestion_run_id` / `run_id` | Duy ingestion execution UUID |
-| `document_external_id` | Duy document key, e.g. `doc_dataflow_technical_report` |
-| `document_db_id` | PostgreSQL `documents.id`, created by Phat DB |
+```json
+{
+  "source_id": null,
+  "document_db_id": null,
+  "document_external_id": "doc_dataflow_technical_report",
+  "ingestion_run_id": "8e18bd87-27e5-4aa1-9566-805ffd552fdb"
+}
+```
 
-Do not use `ingestion_run_id` as `source_id`.
+After Phat loads Duy outputs into PostgreSQL:
 
-### 2. For Lap - RAG / Embeddings / Retrieval
+```json
+{
+  "source_id": 4,
+  "document_db_id": 1,
+  "document_external_id": "doc_dataflow_technical_report",
+  "ingestion_run_id": "8e18bd87-27e5-4aa1-9566-805ffd552fdb"
+}
+```
 
-Duy provides a real PDF handoff package for Lap's chunking, embedding, pgvector insertion, retrieval evaluation, and citation generation.
+## How To Regenerate Duy Outputs
 
-| File | Purpose |
-| --- | --- |
-| `outputs/rag_handoff/document_pages.jsonl` | Page-level text records |
-| `outputs/rag_handoff/pdf_metadata.json` | PDF metadata |
-| `outputs/rag_handoff/rag_handoff_summary.md` | Human-readable handoff summary |
-| `outputs/rag_handoff/rag_handoff_manifest.json` | Machine-readable handoff manifest |
-| `docs/week6_document_pages_for_rag_confirmed.md` | Confirmation of RAG readiness |
+Run from repository root:
 
-Real DataFlow PDF statistics:
+```powershell
+cd F:\data\new\quanskill\DataVision_Duy
+```
 
-| Metric | Value |
+Run all ingestion configs:
+
+```powershell
+python -m data_engineering.pipelines.ingestion_engine --all
+```
+
+Build PostgreSQL dry-run loading plan:
+
+```powershell
+python scripts/load_ingestion_outputs_to_postgres.py
+```
+
+Build RAG handoff package for Lap:
+
+```powershell
+python scripts/week6_build_rag_handoff_package.py
+```
+
+Build prediction payload for Tuong:
+
+```powershell
+python -c "from data_engineering.pipelines.prediction_payload_builder import build_pdf_prediction_payload; import json, pathlib; pathlib.Path('logs/prediction_payloads').mkdir(parents=True, exist_ok=True); pathlib.Path('logs/prediction_payloads/duy_pdf_prediction_payload.json').write_text(json.dumps(build_pdf_prediction_payload(), indent=2, ensure_ascii=False), encoding='utf-8')"
+```
+
+Build UI fixtures for Phi/Hung:
+
+```powershell
+python scripts/week6_build_ui_fixture_from_ingestion_logs.py
+```
+
+Run integration smoke test:
+
+```powershell
+python scripts/week6_end_to_end_smoke_test.py
+```
+
+Validate:
+
+```powershell
+python scripts/validate_week6.py
+pytest tests/data_tests/
+```
+
+Expected:
+
+```text
+Week 6 validation passed
+20 passed
+```
+
+## Duy -> Phat: Database / PostgreSQL Handoff
+
+### What Duy Gives Phat
+
+Phat should use these files to test database insertion.
+
+| File / Folder | Exact Path | Purpose |
+| --- | --- | --- |
+| DB dry-run loading plan | `logs/db_load_dry_run/duy_to_phat_db_load_plan.json` | Shows what Duy outputs should insert into Phat tables |
+| Run-specific logs | `logs/runs/*.json` | One ingestion log per source |
+| Append-only run history | `logs/ingestion_runs.jsonl` | All ingestion runs in JSONL format |
+| File manifests | `logs/manifests/*_manifest.json` | SHA256 hash, file size, source name, ingestion timestamp |
+| CSV clean data | `week2/data/clean/csv/superstore_clean.csv` | Structured records for `structured_records` |
+| Excel clean data | `week2/data/clean/excel/product_sales_region_clean.csv` | Structured records for `structured_records` |
+| API clean data | `week2/data/clean/api/dummyjson_products_clean.csv` | Structured records for `structured_records` |
+| PDF metadata | `week2/logs/pdf_metadata.json` | Document metadata for `documents` |
+| PDF pages JSONL | `week2/data/staging/pdf/document_pages.jsonl` | Page-level text for `document_pages` |
+| RAG-ready PDF pages | `outputs/rag_handoff/document_pages.jsonl` | Same page-level text copied for RAG handoff |
+| Schema mapping | `docs/week6_ingestion_to_schema_v3_mapping.md` | Maps Duy fields to Phat schema |
+| DB loading result note | `docs/week6_database_loading_result.md` | Current DB dry-run / real-run status |
+| Duy + Phat result note | `docs/week6_duy_to_phat_db_load_result.md` | Integration result note |
+
+### Tables Phat Should Load
+
+| Phat Table | Duy Input File | Insert Rule |
+| --- | --- | --- |
+| `sources` | `logs/runs/*.json` | Insert or get by `source_name` |
+| `pipeline_runs` | `logs/runs/*.json` | Insert one row per `run_id` |
+| `ingestion_logs` | `logs/runs/*.json` | Insert records read/valid/invalid, paths, quality score |
+| `documents` | `week2/logs/pdf_metadata.json` | Insert one PDF document with `document_external_id` |
+| `document_pages` | `week2/data/staging/pdf/document_pages.jsonl` | Insert 36 page records using internal `documents.id` |
+| `structured_records` | clean CSV/API/Excel files | Insert row data as JSONB or agreed format |
+
+### Required Field Mapping For Phat
+
+| Duy Field | Phat Table.Column | Notes |
+| --- | --- | --- |
+| `source_name` | `sources.name` | Should be unique |
+| `source_type` | `sources.source_type` | `csv`, `excel`, `api`, `pdf` |
+| `run_id` | `pipeline_runs.run_id` and `ingestion_logs.run_id` | Duy execution UUID |
+| `status` | `pipeline_runs.status`, `ingestion_logs.status` | Current values: `success`, `failed` |
+| `records_read` | `ingestion_logs.records_read` | From run log |
+| `records_valid` | `ingestion_logs.records_valid` | From run log |
+| `records_invalid` | `ingestion_logs.records_invalid` | From run log |
+| `data_quality_score` | `ingestion_logs.data_quality_score` | Number from 0 to 100 |
+| `raw_output_path` | `ingestion_logs.raw_output_path` | Project-relative path |
+| `staging_output_path` | `ingestion_logs.staging_output_path` | Project-relative path |
+| `clean_output_path` | `ingestion_logs.clean_output_path` | Project-relative path |
+| `manifest_path` | `ingestion_logs.manifest_path` | Path under `logs/manifests/` |
+| `file_hash_sha256` | `documents.file_hash_sha256` | For PDF document |
+| `document_external_id` | `documents.document_external_id` | `doc_dataflow_technical_report` |
+| `page_number` | `document_pages.page_number` | Starts at 1 |
+| `text` | `document_pages.page_text` | Page text from JSONL |
+| `character_count` | `document_pages.character_count` | Page character count |
+| `is_empty` | `document_pages.is_empty` | Boolean |
+
+### What Phat Must Return To Duy
+
+Phat should return these outputs after DB integration:
+
+| Output From Phat | Expected Path / Format | Why Duy Needs It |
+| --- | --- | --- |
+| Real `source_id` mapping | JSON or markdown table | Fill `source_id` in future payloads |
+| Real `document_db_id` mapping | JSON or markdown table | Fill `document_db_id` for PDF/RAG/prediction |
+| Insert proof | Screenshot or query output | Prove Duy outputs loaded successfully |
+| Validation query result | `validation_queries_v2.sql` output | Prove FK and quality checks pass |
+| Dashboard view samples | JSON files from Phat views | Phi/Hung can replace fixtures |
+
+Expected mapping from Phat:
+
+```json
+{
+  "source_name": "dataflow_technical_report_pdf",
+  "source_id": 4,
+  "document_external_id": "doc_dataflow_technical_report",
+  "document_db_id": 1,
+  "ingestion_run_id": "8e18bd87-27e5-4aa1-9566-805ffd552fdb"
+}
+```
+
+### Phat Acceptance Checklist
+
+Phat should confirm:
+
+```text
+[ ] sources has 4 Duy sources
+[ ] pipeline_runs has 4 Duy runs
+[ ] ingestion_logs has 4 Duy logs
+[ ] structured_records has 11524 rows or agreed sample subset
+[ ] documents has DataFlow PDF with document_external_id
+[ ] document_pages has 36 rows
+[ ] documents.document_external_id maps to document_pages.document_id through internal documents.id
+[ ] dashboard views return rows from real Duy data
+```
+
+## Duy -> Lap: RAG / Embeddings / Retrieval Handoff
+
+### What Duy Gives Lap
+
+Lap should use the RAG handoff package, not the raw PDF directly.
+
+| File | Exact Path | Purpose |
+| --- | --- | --- |
+| Page-level text JSONL | `outputs/rag_handoff/document_pages.jsonl` | Main input for chunking |
+| PDF metadata | `outputs/rag_handoff/pdf_metadata.json` | File name, page count, character count |
+| Handoff manifest | `outputs/rag_handoff/rag_handoff_manifest.json` | Machine-readable summary |
+| Handoff summary | `outputs/rag_handoff/rag_handoff_summary.md` | Human-readable summary |
+| RAG readiness doc | `docs/week6_document_pages_for_rag_confirmed.md` | Confirms page count and quality |
+
+### DataFlow PDF Facts For Lap
+
+| Field | Value |
 | --- | --- |
 | `document_external_id` | `doc_dataflow_technical_report` |
+| `source_name` | `dataflow_technical_report_pdf` |
 | `file_name` | `DataFlow_Technical_Report.pdf` |
 | `page_count` | `36` |
 | `non_empty_pages` | `36` |
 | `empty_pages` | `0` |
 | `total_characters` | `129028` |
+| `ingestion_run_id` | `8e18bd87-27e5-4aa1-9566-805ffd552fdb` |
+| `parsing_status` | `ready` |
 
-Expected flow:
+### JSONL Record Shape For Lap
 
-```text
-outputs/rag_handoff/document_pages.jsonl
-  -> Lap chunks
-  -> Lap embeddings
-  -> Phat document_chunks vector(384)
-  -> Lap retrieval
-  -> Phi/Hung citation cards
-```
-
-### 3. For Tuong - Prediction
-
-Duy provides a real document classification payload from the DataFlow PDF.
-
-| File | Purpose |
-| --- | --- |
-| `logs/prediction_payloads/duy_pdf_prediction_payload.json` | Tuong-ready prediction payload |
-| `week2/docs/ingestion_to_prediction_contract.md` | Ingestion-to-prediction contract |
-| `docs/week6_id_mapping_contract.md` | ID mapping rules |
-
-Important payload fields:
+Each line in `outputs/rag_handoff/document_pages.jsonl` should be treated as one page.
 
 ```json
 {
-  "source_id": null,
-  "source_name": "dataflow_technical_report_pdf",
+  "document_id": "doc_dataflow_technical_report",
+  "document_external_id": "doc_dataflow_technical_report",
+  "file_name": "DataFlow_Technical_Report.pdf",
+  "page_number": 1,
+  "text": "page text...",
+  "character_count": 2650,
+  "is_empty": false
+}
+```
+
+If Lap needs database insertion:
+
+```text
+Duy document_external_id
+  -> Phat documents.document_external_id
+  -> Phat documents.id
+  -> document_chunks.document_id
+```
+
+Lap should not insert string document IDs into integer FK columns.
+
+### Expected Chunk ID Convention
+
+Recommended:
+
+```text
+doc_dataflow_technical_report_page_1_chunk_000
+doc_dataflow_technical_report_page_1_chunk_001
+doc_dataflow_technical_report_page_2_chunk_000
+```
+
+### What Lap Must Return To Duy
+
+| Output From Lap | Expected Path / Format | Why Duy Needs It |
+| --- | --- | --- |
+| Confirmation that JSONL loads | markdown note | Verify PDF output is RAG-ready |
+| Page/chunk stats | markdown or JSON | Confirm pages converted to chunks |
+| Failed/empty page issues | markdown note | Duy can fix PDF extraction if needed |
+| Real RAG response fixture | JSON | Phi/Hung can display citations |
+| Required metadata changes | markdown note | Duy can update future JSONL output |
+
+Expected Lap response fixture:
+
+```json
+{
+  "question": "What is DataFlow?",
+  "answer": null,
+  "retrieved_context": [
+    {
+      "chunk_id": "doc_dataflow_technical_report_page_4_chunk_000",
+      "document_external_id": "doc_dataflow_technical_report",
+      "document_db_id": 1,
+      "file_name": "DataFlow_Technical_Report.pdf",
+      "page_number": 4,
+      "chunk_text": "...",
+      "similarity_score": 0.84
+    }
+  ],
+  "citations": [
+    {
+      "file_name": "DataFlow_Technical_Report.pdf",
+      "page_number": 4,
+      "chunk_id": "doc_dataflow_technical_report_page_4_chunk_000"
+    }
+  ],
+  "status": "retrieval_only",
+  "model": "all-MiniLM-L6-v2"
+}
+```
+
+### Lap Acceptance Checklist
+
+Lap should confirm:
+
+```text
+[ ] Loaded outputs/rag_handoff/document_pages.jsonl
+[ ] Loaded 36 pages
+[ ] Skipped 0 empty pages
+[ ] Created page-aware chunks
+[ ] Preserved document_external_id
+[ ] Generated chunk IDs with page numbers
+[ ] Generated 384-dimensional embeddings
+[ ] Inserted chunks into Phat pgvector table or prepared exact insert payload
+[ ] Returned citation-ready RAG fixture for Phi/Hung
+```
+
+## Duy -> Tuong: Prediction Handoff
+
+### What Duy Gives Tuong
+
+Tuong should use Duy's prediction payload as real ingestion input for document classification.
+
+| File | Exact Path | Purpose |
+| --- | --- | --- |
+| PDF prediction payload | `logs/prediction_payloads/duy_pdf_prediction_payload.json` | Main input for Tuong classifier |
+| Prediction contract | `week2/docs/ingestion_to_prediction_contract.md` | Field contract |
+| ID mapping contract | `docs/week6_id_mapping_contract.md` | Separates source/run/document IDs |
+| UI fixture with prediction context | `outputs/ui_fixtures/duy_latest_ingestion_summary.json` | Contains `prediction_context` block |
+
+### Required Payload Fields For Tuong
+
+```json
+{
+  "document_id": "doc_dataflow_technical_report",
   "document_external_id": "doc_dataflow_technical_report",
   "document_db_id": null,
-  "ingestion_run_id": "run-uuid",
+  "source_id": null,
+  "source_name": "dataflow_technical_report_pdf",
+  "ingestion_run_id": "8e18bd87-27e5-4aa1-9566-805ffd552fdb",
   "file_name": "DataFlow_Technical_Report.pdf",
   "file_type": "pdf",
   "file_size": 2857707,
   "text_length": 129028,
   "num_pages": 36,
   "source_system": "manual_upload",
-  "parsing_status": "ready"
+  "parsing_status": "ready",
+  "extracted_text": "..."
 }
 ```
 
-Before database loading:
+### Important Rules For Tuong
 
 ```text
-source_id = null
-document_db_id = null
+source_id is null before Phat DB insert.
+document_db_id is null before Phat DB insert.
+ingestion_run_id is the Duy run UUID.
+document_external_id is the stable document key.
 ```
 
-After Phat database loading:
+Tuong should not treat `ingestion_run_id` as `source_id`.
+
+### What Tuong Must Return To Duy
+
+| Output From Tuong | Expected Path / Format | Why Duy Needs It |
+| --- | --- | --- |
+| Single prediction response | JSON | Confirm Duy payload works |
+| Batch prediction response | JSON | Prepare multi-document ingestion |
+| Review status | `accepted`, `needs_review`, `waiting_for_source`, `failed` | Align with Phat/Phi/Hung |
+| Required field changes | markdown note | Duy can update payload builder |
+| Min text rule confirmation | markdown note | Duy can validate future PDF extraction |
+
+Expected Tuong response:
+
+```json
+{
+  "document_external_id": "doc_dataflow_technical_report",
+  "document_db_id": null,
+  "source_id": null,
+  "source_name": "dataflow_technical_report_pdf",
+  "ingestion_run_id": "8e18bd87-27e5-4aa1-9566-805ffd552fdb",
+  "predicted_document_type": "report",
+  "confidence": 0.39,
+  "status": "needs_review",
+  "review_reason": "Prediction confidence below threshold",
+  "model_version": "document_classifier_v1",
+  "top_predictions": [
+    {
+      "label": "report",
+      "score": 0.39
+    }
+  ]
+}
+```
+
+### Tuong Acceptance Checklist
+
+Tuong should confirm:
 
 ```text
-source_id = sources.id
-document_db_id = documents.id
+[ ] Payload loads from logs/prediction_payloads/duy_pdf_prediction_payload.json
+[ ] source_id=null is accepted before DB insert
+[ ] document_external_id is used as stable document key
+[ ] extracted_text length is sufficient
+[ ] Output uses accepted / needs_review / waiting_for_source / failed
+[ ] Prediction result can be inserted into Phat prediction_logs
+[ ] Prediction result can be displayed by Phi/Hung
 ```
 
-### 4. For Phi/Hung - UI / Suggestions / Reports
+## Duy -> Phi/Hung: UI / Suggestions / Reports Handoff
 
-Duy provides real ingestion fixtures for Dashboard, Suggestions, and Reports.
+### What Duy Gives Phi/Hung
 
-| File | Purpose |
+Phi/Hung should use these real output-shaped fixtures instead of invented mock ingestion data.
+
+| File | Exact Path | Purpose |
+| --- | --- | --- |
+| Latest ingestion summary | `outputs/ui_fixtures/duy_latest_ingestion_summary.json` | Main dashboard fixture |
+| Data quality summary | `outputs/ui_fixtures/duy_data_quality_summary.json` | Source-level quality signals |
+| PDF document summary | `outputs/ui_fixtures/duy_pdf_document_summary.json` | PDF/RAG document summary |
+| Backward-compatible dashboard fixture | `logs/ui_fixtures/duy_ingestion_dashboard_fixture.json` | Older path if UI already uses logs |
+| UI fixture contract | `docs/week6_phi_hung_ui_fixture_contract.md` | Field descriptions |
+
+### Main UI Fixture Shape
+
+The main fixture is:
+
+```text
+outputs/ui_fixtures/duy_latest_ingestion_summary.json
+```
+
+Top-level sections:
+
+```text
+summary
+latest_ingestion_run
+id_mapping
+prediction_context
+rag_handoff
+runs
+```
+
+### Fields Phi/Hung Can Display
+
+| UI Field | Source JSON Path | Meaning |
+| --- | --- | --- |
+| Total sources | `summary.total_sources` | Current value: `4` |
+| Total records read | `summary.total_records_read` | Current value: `11560` |
+| Total records valid | `summary.total_records_valid` | Current value: `11560` |
+| Total records invalid | `summary.total_records_invalid` | Current value: `0` |
+| Average quality score | `summary.average_data_quality_score` | Current value: `99.63` |
+| Latest status | `summary.latest_status` | Current value: `success` |
+| RAG-ready documents | `summary.rag_ready_documents` | Current value: `1` |
+| Prediction payload available | `summary.prediction_payload_available` | Current value: `true` |
+| Latest run ID | `latest_ingestion_run.run_id` | PDF run ID |
+| Latest source name | `latest_ingestion_run.source_name` | `dataflow_technical_report_pdf` |
+| File hash | `latest_ingestion_run.file_hash_sha256` | SHA256 for PDF |
+| Raw path | `latest_ingestion_run.raw_output_path` | Raw PDF path |
+| Staging path | `latest_ingestion_run.staging_output_path` | PDF pages staging CSV |
+| Clean path | `latest_ingestion_run.clean_output_path` | PDF pages clean CSV |
+| Document pages path | `latest_ingestion_run.document_pages_jsonl_path` | RAG input path |
+
+### Suggested UI Usage
+
+| UI Page | Duy Data To Use |
 | --- | --- |
-| `outputs/ui_fixtures/duy_latest_ingestion_summary.json` | Main UI ingestion fixture |
-| `outputs/ui_fixtures/duy_data_quality_summary.json` | Data quality source summary |
-| `outputs/ui_fixtures/duy_pdf_document_summary.json` | PDF document summary |
-| `logs/ui_fixtures/duy_ingestion_dashboard_fixture.json` | Backward-compatible UI fixture |
-| `docs/week6_phi_hung_ui_fixture_contract.md` | UI fixture contract |
+| Dashboard | `summary`, `latest_ingestion_run`, `runs` |
+| Suggestions | low quality score, invalid records, missing output paths |
+| Reports | file hash, run ID, source name, output paths, quality score |
+| Prediction | `prediction_context` |
+| Chatbot/RAG | `rag_handoff` |
+| Recent Activity | `runs` |
 
-Fields available for UI:
+### What Phi/Hung Must Return To Duy
 
-```text
-run_id
-ingestion_run_id
-source_id
-source_name
-source_type
-status
-records_read
-records_valid
-records_invalid
-data_quality_score
-file_hash_sha256
-raw_output_path
-staging_output_path
-clean_output_path
-document_external_id
-document_db_id
-document_pages_jsonl_path
-```
+| Output From Phi/Hung | Expected Path / Format | Why Duy Needs It |
+| --- | --- | --- |
+| Final UI contract | markdown | Confirm required ingestion fields |
+| Dashboard screenshot or sample | image or JSON | Prove Duy fixture displays correctly |
+| Missing fields list | markdown note | Duy can add fields to fixture builder |
+| Suggestion signal requirements | markdown note | Duy can expose new data quality signals |
+| Report evidence requirements | markdown note | Duy can include evidence metadata |
 
-Expected UI usage:
+### Phi/Hung Acceptance Checklist
 
-| UI Page | Duy fields used |
-| --- | --- |
-| Dashboard | run status, source count, record counts, data quality score |
-| Suggestions | invalid records, low quality signals, missing documents |
-| Reports | ingestion evidence, file hash, output paths |
-| Prediction page | document external ID, source name, ingestion run ID |
-| Chatbot/RAG page | document pages path and PDF metadata |
-
-## Inputs Duy Needs From Others
-
-### 1. From Phat
-
-Duy needs Phat's final database details to run real PostgreSQL loading.
-
-| Needed from Phat | Why Duy needs it |
-| --- | --- |
-| Final `schema_v3.sql` or `schema_v4.sql` | To align insert statements |
-| Database host, port, database, user, password | To run `--write-db` |
-| `sources` table definition | To insert/get `source_id` |
-| Unique constraint on `sources.name` | To make `insert_or_get_source()` safe |
-| `pipeline_runs` table definition | To insert run metadata |
-| `ingestion_logs` table definition | To insert run logs and data quality fields |
-| `documents.document_external_id` support | To map Duy document string ID |
-| `document_pages` table definition | To insert PDF page text |
-| `structured_records` JSONB format | To insert CSV/API/Excel clean rows |
-| Validation queries | To prove rows were inserted correctly |
-
-Questions for Phat:
+Phi/Hung should confirm:
 
 ```text
-1. Is sources.name UNIQUE?
-2. Does documents have document_external_id?
-3. Does ingestion_logs include data_quality_score, manifest_path, duplicate_count?
-4. Does ingestion_logs include pipeline_run_id?
-5. What JSONB format should structured_records.record_data use?
+[ ] Dashboard can load outputs/ui_fixtures/duy_latest_ingestion_summary.json
+[ ] UI displays source count, record counts, quality score, latest status
+[ ] UI displays latest ingestion run and file hash
+[ ] Suggestions can use invalid records / data quality score
+[ ] Reports can use ingestion evidence and output paths
+[ ] Prediction page can use prediction_context
+[ ] Chatbot/RAG page can use rag_handoff
 ```
 
-### 2. From Lap
+## Inputs Duy Needs Back From Each Team
 
-Duy needs Lap's final RAG input requirements.
+### From Phat
 
-| Needed from Lap | Why Duy needs it |
-| --- | --- |
-| Final `document_pages.jsonl` required fields | To keep PDF extraction RAG-ready |
-| Chunk ID format | To align document/page/chunk IDs |
-| Citation metadata requirements | To include fields needed by UI |
-| Empty page handling | To decide whether to keep or skip empty pages |
-| Maximum page text length, if any | To avoid oversized chunking inputs |
-| RAG response fixture | To confirm UI/report compatibility |
+| Needed From Phat | Required Format | Why It Matters |
+| --- | --- | --- |
+| `schema_v4.sql` or latest schema | SQL file | Duy aligns writer with final columns |
+| DB credentials | `.env` or JSON config | Duy can run `--write-db` |
+| Source ID mapping | JSON or query output | Duy updates payloads after DB insert |
+| Document DB ID mapping | JSON or query output | Duy passes `document_db_id` to Lap/Tuong |
+| Insert validation output | SQL result or screenshot | Proves real DB integration |
 
-Questions for Lap:
+### From Lap
 
-```text
-1. Is page_number expected to start from 1?
-2. Should chunk_id format be doc_dataflow_technical_report_page_1_chunk_000?
-3. Which metadata fields are required: file_name, page_number, source, document_external_id?
-4. Should empty pages be skipped or stored with is_empty=true?
-```
+| Needed From Lap | Required Format | Why It Matters |
+| --- | --- | --- |
+| RAG load result | markdown or JSON | Confirms Duy JSONL works |
+| Chunk stats | markdown or JSON | Confirms page text is chunkable |
+| Citation-ready response | JSON | Phi/Hung can display real citations |
+| Required metadata changes | markdown | Duy updates PDF output if needed |
 
-### 3. From Tuong
+### From Tuong
 
-Duy needs Tuong's final prediction input contract.
+| Needed From Tuong | Required Format | Why It Matters |
+| --- | --- | --- |
+| Prediction output on Duy payload | JSON | Confirms payload is model-ready |
+| Batch output shape | JSON | Duy can support multiple documents |
+| Error/low-confidence rules | markdown | Duy can validate source quality earlier |
+| Required field changes | markdown | Duy updates payload builder |
 
-| Needed from Tuong | Why Duy needs it |
-| --- | --- |
-| Required prediction input fields | To produce correct payloads |
-| Minimum `extracted_text` length | To avoid low-quality prediction inputs |
-| Accepted `file_type` values | To standardize file metadata |
-| Batch payload format | To support multi-document prediction |
-| Status values | To align with UI and database |
-| Prediction result sample | To verify end-to-end prediction flow |
+### From Phi/Hung
 
-Questions for Tuong:
-
-```text
-1. Is source_id=null acceptable before DB insert?
-2. Is document_external_id the correct field name?
-3. Should low confidence return needs_review?
-4. Is minimum extracted_text length still 50 characters?
-5. What batch payload shape do you expect from Duy?
-```
-
-### 4. From Phi/Hung
-
-Duy needs Phi/Hung's final UI display requirements.
-
-| Needed from Phi/Hung | Why Duy needs it |
-| --- | --- |
-| Final dashboard fields | To shape UI fixtures correctly |
-| Data quality display format | To format scores and warnings |
-| Status badge values | To align UI labels with backend statuses |
-| Report evidence fields | To include enough source evidence |
-| Suggestion signal fields | To support suggestion generation |
-| Recent activity requirements | To expose run history correctly |
-
-Questions for Phi/Hung:
-
-```text
-1. Is duy_latest_ingestion_summary.json enough for Dashboard?
-2. Should data_quality_score be displayed as 99.63 or 99.63%?
-3. Do Reports need raw/staging/clean paths?
-4. Do Suggestions need required_missing_values and optional_missing_values?
-5. Should file_hash_sha256 be shown in Dashboard or only Reports?
-```
+| Needed From Phi/Hung | Required Format | Why It Matters |
+| --- | --- | --- |
+| Final dashboard field list | markdown | Duy maintains fixture compatibility |
+| UI screenshot/result | image or notes | Proves display integration |
+| Suggestion evidence fields | markdown | Duy exposes right data quality signals |
+| Report evidence fields | markdown | Duy exposes right lineage/output paths |
 
 ## Week 6 Priority Order
 
-| Priority | Collaboration | Goal |
-| --- | --- | --- |
-| P0 | Duy + Phat | Prove real DB insert or dry-run with exact schema mapping |
-| P0 | Duy + Lap | Confirm DataFlow PDF handoff works for chunking/RAG |
-| P0 | Duy + Tuong | Run prediction on Duy real payload with correct ID semantics |
-| P0 | Duy + Phi/Hung | Replace mock ingestion data with Duy real UI fixtures |
-| P1 | All team | Align IDs: `source_id`, `document_external_id`, `document_db_id`, `ingestion_run_id` |
-| P1 | All team | Run end-to-end smoke test |
+| Priority | Collaboration | Main Goal | Duy Output | Team Output Back |
+| --- | --- | --- | --- | --- |
+| P0 | Duy + Phat | Prove DB loading | `logs/db_load_dry_run/duy_to_phat_db_load_plan.json` | real `source_id` / `document_db_id` mapping |
+| P0 | Duy + Lap | Prove RAG input works | `outputs/rag_handoff/document_pages.jsonl` | RAG response fixture with citations |
+| P0 | Duy + Tuong | Prove prediction input works | `logs/prediction_payloads/duy_pdf_prediction_payload.json` | prediction response with status |
+| P0 | Duy + Phi/Hung | Prove UI can display Duy data | `outputs/ui_fixtures/*.json` | screenshot or UI contract confirmation |
+| P1 | All team | Align IDs | `docs/week6_id_mapping_contract.md` | agreement on ID naming |
+| P1 | All team | Run smoke test | `scripts/week6_end_to_end_smoke_test.py` | confirm end-to-end chain |
 
-## Current Duy Verification
+## Current Verification Status
 
-Duy's project currently passes:
+Duy's repository currently verifies:
+
+```text
+python scripts/validate_week6.py
+pytest tests/data_tests/
+```
+
+Expected:
 
 ```text
 Week 6 validation passed
-Week 5 validation passed
-Week 2 validation passed
-pytest tests/data_tests/: 20 passed
+20 passed
 ```
 
 End-to-end smoke test:
@@ -319,45 +632,52 @@ End-to-end smoke test:
 python scripts/week6_end_to_end_smoke_test.py
 ```
 
-Expected result:
+Expected checks:
 
-```text
-connect: true
-insert: true
-query: true
-retrieve: true
-predict: true
-display: true
-test: true
+```json
+{
+  "connect": true,
+  "insert": true,
+  "query": true,
+  "retrieve": true,
+  "predict": true,
+  "display": true,
+  "test": true
+}
 ```
 
-## Message Duy Can Send To Team
+## Short Message Duy Can Send To The Team
 
 ```text
 Hi team, I prepared my Week 6 integration outputs.
 
 For Phat:
-- DB dry-run plan
-- run logs
-- manifests
-- clean CSV/API/Excel outputs
-- PDF metadata and document_pages.jsonl
-- schema mapping document
+- Use logs/db_load_dry_run/duy_to_phat_db_load_plan.json
+- Use logs/runs/*.json, logs/manifests/*.json
+- Use clean CSV/API/Excel outputs
+- Use week2/logs/pdf_metadata.json and week2/data/staging/pdf/document_pages.jsonl
+- Please return source_id and document_db_id mapping after DB insert.
 
 For Lap:
-- RAG handoff package with DataFlow PDF page-level text
-- 36 pages, 36 non-empty pages, 129028 characters
+- Use outputs/rag_handoff/document_pages.jsonl
+- DataFlow PDF has 36 pages, 36 non-empty pages, 129028 characters
+- document_external_id = doc_dataflow_technical_report
+- Please return chunk stats and a citation-ready RAG response fixture.
 
 For Tuong:
-- corrected prediction payload
+- Use logs/prediction_payloads/duy_pdf_prediction_payload.json
 - source_id is null before DB insert
 - ingestion_run_id is separate from source_id
-- document_external_id is doc_dataflow_technical_report
+- document_external_id = doc_dataflow_technical_report
+- Please return prediction response with accepted / needs_review / waiting_for_source / failed.
 
 For Phi/Hung:
-- latest ingestion summary fixture
-- data quality summary fixture
-- PDF document summary fixture
+- Use outputs/ui_fixtures/duy_latest_ingestion_summary.json
+- Use outputs/ui_fixtures/duy_data_quality_summary.json
+- Use outputs/ui_fixtures/duy_pdf_document_summary.json
+- Please confirm if Dashboard, Suggestions, Reports, Prediction, and RAG pages have enough fields.
 
-Please confirm if my field names and output shapes match your Week 6 integration requirements.
+Main ID rule:
+source_id != ingestion_run_id
+document_external_id != document_db_id
 ```
