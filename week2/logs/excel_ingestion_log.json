@@ -1,10 +1,10 @@
 {
-    "run_id": "a896a888-57f0-4ea9-9083-f860c2078f7d",
+    "run_id": "d670414e-4147-4cda-a87d-06e8b7c52d19",
     "source_name": "product_sales_region_excel",
     "source_type": "excel",
     "input_path_or_url": "week2/data/sample_inputs/Product-Sales-Region.xlsx",
-    "start_time": "2026-07-04T04:16:16.156814+00:00",
-    "end_time": "2026-07-04T04:16:16.720431+00:00",
+    "start_time": "2026-07-05T08:17:57.131144+00:00",
+    "end_time": "2026-07-05T08:17:57.738765+00:00",
     "status": "success",
     "records_read": 1500,
     "records_valid": 1500,
@@ -134,12 +134,12 @@
     },
     "data_quality_score": 99.51,
     "file_manifest": {
-        "run_id": "a896a888-57f0-4ea9-9083-f860c2078f7d",
+        "run_id": "d670414e-4147-4cda-a87d-06e8b7c52d19",
         "source_name": "product_sales_region_excel",
         "source_type": "excel",
         "input_path": "week2/data/sample_inputs/Product-Sales-Region.xlsx",
         "raw_output_path": "week2/data/raw/excel/product_sales_region_raw.xlsx",
-        "ingested_at": "2026-07-04T04:16:16.156814+00:00",
+        "ingested_at": "2026-07-05T08:17:57.131144+00:00",
         "file_name": "product_sales_region_raw.xlsx",
         "file_size_bytes": 149740,
         "file_hash_sha256": "9411ffd6ca8f6135f8d1c8409015a750df3fc6931480b24d50826bb349a6b9ba"

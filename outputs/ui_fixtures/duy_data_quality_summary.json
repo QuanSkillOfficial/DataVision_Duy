@@ -15,18 +15,7 @@
   },
   "sources": [
     {
-      "run_id": "10ed4959-5ace-4ff7-9b30-da28321d6708",
-      "source_name": "superstore_sales_csv",
-      "source_type": "csv",
-      "status": "success",
-      "records_read": 9994,
-      "records_valid": 9994,
-      "records_invalid": 0,
-      "data_quality_score": 100.0,
-      "file_hash_sha256": "85e495dd7ef4966fb7bea5093902c9771431eccb20c3e556ae6b6c9c3824a700"
-    },
-    {
-      "run_id": "8e18bd87-27e5-4aa1-9566-805ffd552fdb",
+      "run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
       "source_name": "dataflow_technical_report_pdf",
       "source_type": "pdf",
       "status": "success",
@@ -37,7 +26,7 @@
       "file_hash_sha256": "06c0c318db353a5c5c6dbaa84c6778cde022fde92bd1bb7f56e32c485d62fa54"
     },
     {
-      "run_id": "9cce3b5c-b83d-4873-86e1-b99de889b077",
+      "run_id": "83a3c30c-98f1-42f7-aba7-4fed188daed9",
       "source_name": "dummyjson_products_api",
       "source_type": "api",
       "status": "success",
@@ -48,7 +37,7 @@
       "file_hash_sha256": "c3e9d7c3d2105a9167573fe996cfea2424e1e57adbe2bd6fe62044100d2f57c9"
     },
     {
-      "run_id": "a896a888-57f0-4ea9-9083-f860c2078f7d",
+      "run_id": "d670414e-4147-4cda-a87d-06e8b7c52d19",
       "source_name": "product_sales_region_excel",
       "source_type": "excel",
       "status": "success",
@@ -57,6 +46,17 @@
       "records_invalid": 0,
       "data_quality_score": 99.51,
       "file_hash_sha256": "9411ffd6ca8f6135f8d1c8409015a750df3fc6931480b24d50826bb349a6b9ba"
+    },
+    {
+      "run_id": "13b921ad-4e4c-4399-b1ae-6087d7b86bf0",
+      "source_name": "superstore_sales_csv",
+      "source_type": "csv",
+      "status": "success",
+      "records_read": 9994,
+      "records_valid": 9994,
+      "records_invalid": 0,
+      "data_quality_score": 100.0,
+      "file_hash_sha256": "85e495dd7ef4966fb7bea5093902c9771431eccb20c3e556ae6b6c9c3824a700"
     }
   ]
 }

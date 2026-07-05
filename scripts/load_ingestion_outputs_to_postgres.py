@@ -28,7 +28,20 @@ def load_successful_run_logs(run_log_dir: Path = RUN_LOG_DIR) -> list[dict[str, 
     return [run for run in runs if run.get("status") in {"success", "partial_success"}]
 
 
+def select_latest_run_per_source(runs: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    latest_by_source: dict[str, dict[str, Any]] = {}
+    for run in runs:
+        source_name = run.get("source_name")
+        if not source_name:
+            continue
+        current = latest_by_source.get(source_name)
+        if current is None or (run.get("end_time") or "") > (current.get("end_time") or ""):
+            latest_by_source[source_name] = run
+    return sorted(latest_by_source.values(), key=lambda run: run.get("source_name", ""))
+
+
 def build_dry_run_plan(runs: list[dict[str, Any]]) -> dict[str, Any]:
+    runs = select_latest_run_per_source(runs)
     summaries = [build_dry_run_summary(run) for run in runs]
     return {
         "mode": "dry_run",
@@ -60,7 +73,7 @@ def run_dry_run() -> dict[str, Any]:
 
 
 def run_real_load(config_path: str | None = None) -> dict[str, Any]:
-    runs = load_successful_run_logs()
+    runs = select_latest_run_per_source(load_successful_run_logs())
     conn = get_connection(config_path)
     try:
         results = [load_ingestion_result_to_postgres(conn, run) for run in runs]
