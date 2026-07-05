@@ -1,10 +1,10 @@
 {
-    "run_id": "a58bf6df-2dec-41ca-a18b-784c68eab826",
+    "run_id": "8e18bd87-27e5-4aa1-9566-805ffd552fdb",
     "source_name": "dataflow_technical_report_pdf",
     "source_type": "pdf",
     "input_path": "week2/data/sample_inputs/DataFlow_Technical_Report.pdf",
     "raw_output_path": "week2/data/raw/pdf/dataflow_technical_report_raw.pdf",
-    "ingested_at": "2026-06-26T17:28:06.668902+00:00",
+    "ingested_at": "2026-07-04T04:16:16.798232+00:00",
     "file_name": "dataflow_technical_report_raw.pdf",
     "file_size_bytes": 2857707,
     "file_hash_sha256": "06c0c318db353a5c5c6dbaa84c6778cde022fde92bd1bb7f56e32c485d62fa54",

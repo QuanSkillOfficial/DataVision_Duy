@@ -6,7 +6,7 @@ Team: Data Foundation Team
 
 ## Current Status
 
-The DataVision ingestion track is complete through Week 5 platform-readiness work.
+The DataVision ingestion track is complete through Week 5 platform-readiness work and is now in Week 6 integration-hardening.
 
 | Phase | Status | Main result |
 | --- | --- | --- |
@@ -14,6 +14,7 @@ The DataVision ingestion track is complete through Week 5 platform-readiness wor
 | Week 2 | Complete | Working notebook prototypes for CSV, Excel, API JSON, and PDF extraction |
 | Week 3 | Complete | Reusable ingestion modules, standard output contract, portable logs, cross-team handoff contracts |
 | Week 5 | Complete | Config-driven ingestion service, run history logs, manifests, data quality score, PostgreSQL writer skeleton, pytest tests |
+| Week 6 | In progress | PostgreSQL dry-run/write-db path, DB config helper, ID mapping, Lap RAG handoff package, Tuong prediction payload, and Phi/Hung real UI fixtures |
 
 ## What Works Now
 
@@ -115,3 +116,4 @@ Example: the DummyJSON API product data has missing values in optional fields su
 2. Add a FastAPI wrapper around `run_ingestion(source_config)`.
 3. Add database insert dry-run output to the Friday demo.
 4. Coordinate final status constraints with Phat and UI badges with Phi/Hung.
+5. Execute `scripts/load_ingestion_outputs_to_postgres.py --write-db --db-config data_engineering/configs/db_config.example.json` after Phat provides schema connection details.

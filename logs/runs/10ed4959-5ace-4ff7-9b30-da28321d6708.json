@@ -1,10 +1,10 @@
 {
-    "run_id": "a8a975db-0009-4b16-9ef9-6ec833858d07",
+    "run_id": "10ed4959-5ace-4ff7-9b30-da28321d6708",
     "source_name": "superstore_sales_csv",
     "source_type": "csv",
     "input_path_or_url": "week2/data/sample_inputs/Superstore.csv",
-    "start_time": "2026-06-26T17:28:05.896183+00:00",
-    "end_time": "2026-06-26T17:28:06.160305+00:00",
+    "start_time": "2026-07-04T04:16:15.862044+00:00",
+    "end_time": "2026-07-04T04:16:16.143772+00:00",
     "status": "success",
     "records_read": 9994,
     "records_valid": 9994,
@@ -128,12 +128,12 @@
     },
     "data_quality_score": 100.0,
     "file_manifest": {
-        "run_id": "a8a975db-0009-4b16-9ef9-6ec833858d07",
+        "run_id": "10ed4959-5ace-4ff7-9b30-da28321d6708",
         "source_name": "superstore_sales_csv",
         "source_type": "csv",
         "input_path": "week2/data/sample_inputs/Superstore.csv",
         "raw_output_path": "week2/data/raw/csv/superstore_raw.csv",
-        "ingested_at": "2026-06-26T17:28:05.896183+00:00",
+        "ingested_at": "2026-07-04T04:16:15.862044+00:00",
         "file_name": "superstore_raw.csv",
         "file_size_bytes": 2304545,
         "file_hash_sha256": "85e495dd7ef4966fb7bea5093902c9771431eccb20c3e556ae6b6c9c3824a700"

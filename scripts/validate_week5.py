@@ -73,6 +73,8 @@ def validate_configs() -> list[str]:
     errors: list[str] = []
     for config_path in sorted((PROJECT_ROOT / "data_engineering/configs").glob("*.json")):
         payload = json.loads(config_path.read_text(encoding="utf-8"))
+        if "source_type" not in payload:
+            continue
         missing = [key for key in REQUIRED_CONFIG_KEYS if key not in payload]
         if payload.get("source_type") == "api":
             if "api_url" not in payload:

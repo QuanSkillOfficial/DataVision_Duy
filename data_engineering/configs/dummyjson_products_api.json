@@ -4,6 +4,7 @@
   "api_url": "https://dummyjson.com/products",
   "record_path": "products",
   "use_cached_response": true,
+  "fallback_path": "data/sample_inputs/api/dummyjson_products_sample.json",
   "raw_output_path": "week2/data/raw/api/dummyjson_products_raw.json",
   "staging_output_path": "week2/data/staging/api/dummyjson_products_staging.csv",
   "clean_output_path": "week2/data/clean/api/dummyjson_products_clean.csv",

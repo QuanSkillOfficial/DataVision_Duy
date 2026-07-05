@@ -25,6 +25,8 @@ def build_pdf_prediction_payload(
     ingestion_log_path: Path = PROJECT_ROOT / "logs/pdf_ingestion_log.json",
     metadata_path: Path = PROJECT_ROOT / "logs/pdf_metadata.json",
     source_system: str = "manual_upload",
+    source_id: int | None = None,
+    document_db_id: int | None = None,
 ) -> dict[str, Any]:
     ingestion_log = _read_json(ingestion_log_path)
     metadata = _read_json(metadata_path)
@@ -47,9 +49,16 @@ def build_pdf_prediction_payload(
     if not extracted_text.strip() and parsing_status == "ready":
         parsing_status = "partial_success"
 
+    document_external_id = metadata.get("document_id") or ingestion_log.get("document_id") or _safe_document_id(file_name)
+    source_name = metadata.get("source_name") or ingestion_log.get("source_name")
+    ingestion_run_id = ingestion_log["run_id"]
+
     return {
-        "document_id": _safe_document_id(file_name),
-        "source_id": ingestion_log["run_id"],
+        "document_id": document_external_id,
+        "document_external_id": document_external_id,
+        "document_db_id": document_db_id,
+        "source_id": source_id,
+        "source_name": source_name,
         "file_name": file_name,
         "file_type": file_type,
         "file_size": input_path.stat().st_size if input_path.exists() else None,
@@ -57,7 +66,7 @@ def build_pdf_prediction_payload(
         "num_pages": metadata.get("page_count") or metadata.get("total_pages", 0),
         "source_system": source_system,
         "extracted_text": extracted_text,
-        "ingestion_run_id": ingestion_log["run_id"],
+        "ingestion_run_id": ingestion_run_id,
         "raw_output_path": ingestion_log.get("raw_output_path"),
         "staging_output_path": text_relative_path,
         "staging_csv_output_path": metadata.get("staging_csv_output_path"),

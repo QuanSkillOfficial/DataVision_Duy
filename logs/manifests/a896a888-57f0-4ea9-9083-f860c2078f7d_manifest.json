@@ -1,10 +1,10 @@
 {
-    "run_id": "1e63fd78-2487-41b5-ab56-c70d378e0185",
+    "run_id": "a896a888-57f0-4ea9-9083-f860c2078f7d",
     "source_name": "product_sales_region_excel",
     "source_type": "excel",
     "input_path": "week2/data/sample_inputs/Product-Sales-Region.xlsx",
     "raw_output_path": "week2/data/raw/excel/product_sales_region_raw.xlsx",
-    "ingested_at": "2026-06-26T17:28:06.164221+00:00",
+    "ingested_at": "2026-07-04T04:16:16.156814+00:00",
     "file_name": "product_sales_region_raw.xlsx",
     "file_size_bytes": 149740,
     "file_hash_sha256": "9411ffd6ca8f6135f8d1c8409015a750df3fc6931480b24d50826bb349a6b9ba"
