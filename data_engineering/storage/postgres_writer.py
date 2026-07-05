@@ -61,31 +61,15 @@ def insert_pipeline_run(conn, ingestion_result: dict[str, Any]) -> int | None:
         cur.execute(
             """
             INSERT INTO pipeline_runs (
-                run_id, pipeline_name, status, started_at, ended_at, run_metadata
+                run_name, start_time, end_time, status
             )
-            VALUES (%s, %s, %s, %s, %s, %s::jsonb)
-            ON CONFLICT (run_id) DO UPDATE
-            SET
-                status = EXCLUDED.status,
-                ended_at = EXCLUDED.ended_at,
-                run_metadata = EXCLUDED.run_metadata
             RETURNING id
             """,
             (
-                ingestion_result["run_id"],
-                f"{ingestion_result['source_type']}_ingestion",
-                ingestion_result["status"],
+                f"{ingestion_result['source_name']}_{ingestion_result['run_id']}",
                 ingestion_result.get("start_time"),
                 ingestion_result.get("end_time"),
-                _json_dumps(
-                    {
-                        "source_name": ingestion_result.get("source_name"),
-                        "source_type": ingestion_result.get("source_type"),
-                        "records_read": ingestion_result.get("records_read"),
-                        "records_valid": ingestion_result.get("records_valid"),
-                        "records_invalid": ingestion_result.get("records_invalid"),
-                    }
-                ),
+                ingestion_result["status"],
             ),
         )
         row = cur.fetchone()
@@ -154,15 +138,16 @@ def insert_document(conn, pdf_metadata: dict[str, Any], source_id: int | None = 
         cur.execute(
             """
             INSERT INTO documents (
-                source_id, document_external_id, file_name, file_type, file_size_bytes, raw_path,
+                source_id, document_external_id, file_name, file_type, file_size_bytes, file_hash_sha256, raw_path,
                 staging_text_path, page_count, character_count, document_metadata,
                 processing_status
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s::jsonb, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s::jsonb, %s)
             ON CONFLICT (document_external_id) DO UPDATE
             SET
                 file_name = EXCLUDED.file_name,
                 file_size_bytes = EXCLUDED.file_size_bytes,
+                file_hash_sha256 = EXCLUDED.file_hash_sha256,
                 staging_text_path = EXCLUDED.staging_text_path,
                 page_count = EXCLUDED.page_count,
                 character_count = EXCLUDED.character_count,
@@ -177,8 +162,9 @@ def insert_document(conn, pdf_metadata: dict[str, Any], source_id: int | None = 
                 pdf_metadata.get("file_name"),
                 "pdf",
                 pdf_metadata.get("file_size_bytes"),
+                pdf_metadata.get("file_hash_sha256"),
                 pdf_metadata.get("raw_output_path"),
-                pdf_metadata.get("staging_output_path"),
+                pdf_metadata.get("staging_text_path") or pdf_metadata.get("staging_text_output_path") or pdf_metadata.get("text_output_path"),
                 pdf_metadata.get("page_count"),
                 pdf_metadata.get("total_characters"),
                 _json_dumps(pdf_metadata),
@@ -226,7 +212,7 @@ def insert_structured_records(conn, clean_csv_path: str | Path, source_id: int) 
         for _, row in df.iterrows():
             cur.execute(
                 """
-                INSERT INTO structured_records (source_id, record_data, processing_status)
+                INSERT INTO structured_records (source_id, record_data, status)
                 VALUES (%s, %s, %s)
                 """,
                 (source_id, _json_dumps(row.dropna().to_dict()), "clean"),
@@ -282,7 +268,10 @@ def load_ingestion_result_to_postgres(conn, ingestion_result: dict[str, Any]) ->
         summary["inserted"].update({"sources": 1, "pipeline_runs": 1, "ingestion_logs": 1})
 
         if ingestion_result.get("source_type") == "pdf":
-            pdf_metadata = ingestion_result.get("pdf_metadata") or {}
+            pdf_metadata = dict(ingestion_result.get("pdf_metadata") or {})
+            file_manifest = ingestion_result.get("file_manifest") or {}
+            if file_manifest.get("file_hash_sha256"):
+                pdf_metadata["file_hash_sha256"] = file_manifest["file_hash_sha256"]
             document_id = insert_document(conn, pdf_metadata, source_id=source_id)
             document_pages_path = ingestion_result.get("document_pages_output_path") or pdf_metadata.get("document_pages_output_path")
             pages_inserted = insert_document_pages(conn, document_pages_path, document_id) if document_id and document_pages_path else 0

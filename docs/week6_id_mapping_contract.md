@@ -16,7 +16,7 @@ Week 6 integration can break if different modules use the same field name for di
 | --- | --- | --- | --- | --- |
 | `source_name` | Stable source name from ingestion config | Duy | `sources.name` | Phat, Phi/Hung |
 | `source_id` | Internal PostgreSQL source primary key | Phat | `sources.id` | Duy writer, Tuong logs |
-| `ingestion_run_id` / `run_id` | UUID for one ingestion execution | Duy | `ingestion_logs.run_id`, `pipeline_runs.run_id` | Phat, Phi/Hung |
+| `ingestion_run_id` / `run_id` | UUID for one ingestion execution | Duy | `ingestion_logs.run_id`; included inside `pipeline_runs.run_name` for Phat schema_v4 | Phat, Phi/Hung |
 | `document_id` | Duy external document key, e.g. `doc_dataflow_technical_report` | Duy | `documents.document_external_id` | Phat, Lap, Tuong |
 | `document_db_id` | Internal PostgreSQL document primary key | Phat | `documents.id` | document_pages, document_chunks, rag_query_logs |
 | `chunk_id` | Stable RAG chunk key | Lap | `document_chunks.chunk_id` | Lap, Phi/Hung |
