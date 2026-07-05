@@ -5,3 +5,4 @@ pymupdf
 pdfplumber
 pytest
 Pygments
+psycopg2-binary

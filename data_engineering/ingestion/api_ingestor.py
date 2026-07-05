@@ -65,7 +65,7 @@ def run_api_ingestion(source_config: dict[str, Any]) -> dict[str, Any]:
     try:
         api_response, fallback_error = fetch_api_payload(
             api_url,
-            raw_output_path,
+            source_config.get("fallback_path") or raw_output_path,
             use_cached_response=source_config.get("use_cached_response", False),
         )
         write_json(api_response, raw_output_path)

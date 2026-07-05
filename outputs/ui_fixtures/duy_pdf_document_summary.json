@@ -1,0 +1,18 @@
+{
+  "document_external_id": "doc_dataflow_technical_report",
+  "document_db_id": null,
+  "source_name": "dataflow_technical_report_pdf",
+  "ingestion_run_id": "8e18bd87-27e5-4aa1-9566-805ffd552fdb",
+  "file_name": "DataFlow_Technical_Report.pdf",
+  "file_hash_sha256": "06c0c318db353a5c5c6dbaa84c6778cde022fde92bd1bb7f56e32c485d62fa54",
+  "page_count": 36,
+  "valid_pages": 36,
+  "empty_page_count": 0,
+  "total_characters": 129028,
+  "raw_output_path": "week2/data/raw/pdf/dataflow_technical_report_raw.pdf",
+  "staging_output_path": "week2/data/staging/pdf/dataflow_pdf_pages_staging.csv",
+  "staging_text_output_path": "week2/data/staging/pdf/dataflow_pdf_text.txt",
+  "clean_output_path": "week2/data/clean/pdf/dataflow_pdf_pages_clean.csv",
+  "document_pages_jsonl_path": "week2/data/staging/pdf/document_pages.jsonl",
+  "rag_handoff_document_pages_path": "outputs/rag_handoff/document_pages.jsonl"
+}

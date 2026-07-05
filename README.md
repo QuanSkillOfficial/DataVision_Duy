@@ -71,6 +71,18 @@ Run all default Week 5 configs:
 python -m data_engineering.pipelines.ingestion_engine --all
 ```
 
+Run with PostgreSQL dry-run after ingestion:
+
+```powershell
+python -m data_engineering.pipelines.ingestion_engine --config data_engineering/configs/superstore_csv.json --db-dry-run
+```
+
+Run with PostgreSQL write mode after Phat provides a working database config:
+
+```powershell
+python -m data_engineering.pipelines.ingestion_engine --config data_engineering/configs/superstore_csv.json --write-db --db-config data_engineering/configs/db_config.example.json
+```
+
 Each run writes:
 
 ```text
@@ -100,6 +112,38 @@ Week 5 validation:
 ```powershell
 python scripts/validate_week5.py
 pytest tests/data_tests/
+```
+
+Week 6 integration checks:
+
+```powershell
+python scripts/load_ingestion_outputs_to_postgres.py
+python scripts/week6_build_ui_fixture_from_ingestion_logs.py
+python scripts/week6_build_rag_handoff_package.py
+python scripts/week6_end_to_end_smoke_test.py
+python scripts/validate_week6.py
+```
+
+Week 6 outputs:
+
+```text
+logs/db_load_dry_run/duy_to_phat_db_load_plan.json
+logs/ui_fixtures/duy_ingestion_dashboard_fixture.json
+outputs/ui_fixtures/duy_latest_ingestion_summary.json
+outputs/ui_fixtures/duy_data_quality_summary.json
+outputs/ui_fixtures/duy_pdf_document_summary.json
+outputs/rag_handoff/document_pages.jsonl
+outputs/rag_handoff/pdf_metadata.json
+outputs/rag_handoff/rag_handoff_summary.md
+outputs/rag_handoff/rag_handoff_manifest.json
+docs/week6_id_mapping_contract.md
+docs/week6_ingestion_to_schema_v3_mapping.md
+docs/week6_phi_hung_ui_fixture_contract.md
+docs/week6_document_pages_for_rag_confirmed.md
+docs/week6_duy_to_phat_db_load_result.md
+docs/week6_database_loading_result.md
+data_engineering/configs/db_config.example.json
+data/sample_inputs/api/dummyjson_products_sample.json
 ```
 
 ## Important Rules

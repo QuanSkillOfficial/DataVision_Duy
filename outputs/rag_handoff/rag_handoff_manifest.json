@@ -1,0 +1,19 @@
+{
+  "package_owner": "Nguyen Minh Duy",
+  "consumer": "Lap - RAG and Embeddings Owner",
+  "document_external_id": "doc_dataflow_technical_report",
+  "source_name": "dataflow_technical_report_pdf",
+  "source_type": "pdf",
+  "file_name": "DataFlow_Technical_Report.pdf",
+  "page_count": 36,
+  "non_empty_pages": 36,
+  "empty_pages": 0,
+  "empty_page_numbers": [],
+  "total_characters": 129028,
+  "ingestion_run_id": "8e18bd87-27e5-4aa1-9566-805ffd552fdb",
+  "parsing_status": "ready",
+  "document_pages_path": "outputs/rag_handoff/document_pages.jsonl",
+  "pdf_metadata_path": "outputs/rag_handoff/pdf_metadata.json",
+  "source_document_pages_path": "week2/data/staging/pdf/document_pages.jsonl",
+  "source_pdf_metadata_path": "week2/logs/pdf_metadata.json"
+}

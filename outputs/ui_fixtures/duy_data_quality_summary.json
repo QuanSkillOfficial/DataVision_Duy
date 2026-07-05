@@ -1,0 +1,62 @@
+{
+  "summary": {
+    "total_sources": 4,
+    "total_runs": 4,
+    "total_records_read": 11560,
+    "total_records_valid": 11560,
+    "total_records_invalid": 0,
+    "latest_status": "success",
+    "average_data_quality_score": 99.63,
+    "status_counts": {
+      "success": 4
+    },
+    "rag_ready_documents": 1,
+    "prediction_payload_available": true
+  },
+  "sources": [
+    {
+      "run_id": "10ed4959-5ace-4ff7-9b30-da28321d6708",
+      "source_name": "superstore_sales_csv",
+      "source_type": "csv",
+      "status": "success",
+      "records_read": 9994,
+      "records_valid": 9994,
+      "records_invalid": 0,
+      "data_quality_score": 100.0,
+      "file_hash_sha256": "85e495dd7ef4966fb7bea5093902c9771431eccb20c3e556ae6b6c9c3824a700"
+    },
+    {
+      "run_id": "8e18bd87-27e5-4aa1-9566-805ffd552fdb",
+      "source_name": "dataflow_technical_report_pdf",
+      "source_type": "pdf",
+      "status": "success",
+      "records_read": 36,
+      "records_valid": 36,
+      "records_invalid": 0,
+      "data_quality_score": 100.0,
+      "file_hash_sha256": "06c0c318db353a5c5c6dbaa84c6778cde022fde92bd1bb7f56e32c485d62fa54"
+    },
+    {
+      "run_id": "9cce3b5c-b83d-4873-86e1-b99de889b077",
+      "source_name": "dummyjson_products_api",
+      "source_type": "api",
+      "status": "success",
+      "records_read": 30,
+      "records_valid": 30,
+      "records_invalid": 0,
+      "data_quality_score": 99.0,
+      "file_hash_sha256": "c3e9d7c3d2105a9167573fe996cfea2424e1e57adbe2bd6fe62044100d2f57c9"
+    },
+    {
+      "run_id": "a896a888-57f0-4ea9-9083-f860c2078f7d",
+      "source_name": "product_sales_region_excel",
+      "source_type": "excel",
+      "status": "success",
+      "records_read": 1500,
+      "records_valid": 1500,
+      "records_invalid": 0,
+      "data_quality_score": 99.51,
+      "file_hash_sha256": "9411ffd6ca8f6135f8d1c8409015a750df3fc6931480b24d50826bb349a6b9ba"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+    "document_id": "doc_dataflow_technical_report",
+    "source_name": "dataflow_technical_report_pdf",
+    "source_type": "pdf",
+    "file_name": "DataFlow_Technical_Report.pdf",
+    "file_size_bytes": 2857707,
+    "file_size_mb": 2.73,
+    "input_path": "week2/data/sample_inputs/DataFlow_Technical_Report.pdf",
+    "raw_output_path": "week2/data/raw/pdf/dataflow_technical_report_raw.pdf",
+    "staging_output_path": "week2/data/staging/pdf/dataflow_pdf_text.txt",
+    "staging_csv_output_path": "week2/data/staging/pdf/dataflow_pdf_pages_staging.csv",
+    "clean_output_path": "week2/data/clean/pdf/dataflow_pdf_pages_clean.csv",
+    "document_pages_output_path": "week2/data/staging/pdf/document_pages.jsonl",
+    "page_count": 36,
+    "total_pages": 36,
+    "pages_extracted": 36,
+    "empty_page_count": 0,
+    "total_characters": 129028,
+    "total_words": 17536,
+    "empty_pages": [],
+    "owner": "Nguyen Minh Duy"
+}
