@@ -13,6 +13,7 @@ The focus is ingestion: bringing API, CSV, Excel, PDF, and document-page text in
 | Week 3 reusable ingestion modules | Complete | `week2/scripts/ingestion/` |
 | Week 5 config-driven ingestion service | Complete | `data_engineering/` |
 | Week 5 run history and manifests | Complete | `logs/runs/`, `logs/ingestion_runs.jsonl`, `logs/manifests/` |
+| Week 6 integration handoff | Complete | `docs/week6_team_integration_handoff.md`, `outputs/*_handoff/` |
 | Standard ingestion log schema | Complete | `week2/docs/ingestion_log_schema.md` |
 | Standard output contract | Complete | `week2/docs/standard_ingestion_output_contract.md` |
 | UI handoff contract | Complete | `week2/docs/ingestion_result_contract_for_ui.md` |
@@ -136,14 +137,40 @@ outputs/rag_handoff/document_pages.jsonl
 outputs/rag_handoff/pdf_metadata.json
 outputs/rag_handoff/rag_handoff_summary.md
 outputs/rag_handoff/rag_handoff_manifest.json
+outputs/prediction_payloads/tuong_week6_prediction_payloads.json
+outputs/phat_handoff/phat_week6_mapping_summary.json
+outputs/lap_handoff/lap_week6_mapping_summary.json
+outputs/tuong_handoff/tuong_week6_mapping_summary.json
+outputs/hung_handoff/hung_week6_mapping_summary.json
 docs/week6_id_mapping_contract.md
 docs/week6_ingestion_to_schema_v3_mapping.md
+docs/week6_ingestion_to_schema_v4_mapping.md
 docs/week6_phi_hung_ui_fixture_contract.md
 docs/week6_document_pages_for_rag_confirmed.md
 docs/week6_duy_to_phat_db_load_result.md
 docs/week6_database_loading_result.md
+docs/week6_phat_mapping_review.md
+docs/week6_lap_rag_mapping_review.md
+docs/week6_tuong_prediction_mapping_review.md
+docs/week6_hung_ui_mapping_review.md
 data_engineering/configs/db_config.example.json
 data/sample_inputs/api/dummyjson_products_sample.json
+```
+
+Expected Week 6 verification:
+
+```text
+python scripts/validate_week6.py
+python scripts/week6_end_to_end_smoke_test.py
+pytest tests/data_tests/
+```
+
+Current verified result:
+
+```text
+Week 6 validation passed
+Week 6 smoke test passed
+20 pytest tests passed
 ```
 
 ## Important Rules
@@ -172,3 +199,14 @@ data/sample_inputs/api/dummyjson_products_sample.json
 | Phat - PostgreSQL | `docs/week5_ingestion_to_schema_v2_mapping.md` |
 | Phat - DB loading | `docs/postgres_loading_notes.md` |
 | Backend/FastAPI | `docs/ingestion_api_service_plan.md` |
+
+## Week 6 Integration Docs
+
+| Consumer | Contract / Review |
+| --- | --- |
+| Whole team | `docs/week6_team_integration_handoff.md` |
+| Phat - PostgreSQL | `docs/week6_phat_mapping_review.md` |
+| Lap - RAG / pgvector | `docs/week6_lap_rag_mapping_review.md` |
+| Tuong - Prediction | `docs/week6_tuong_prediction_mapping_review.md` |
+| Hung - Streamlit UI | `docs/week6_hung_ui_mapping_review.md` |
+| All modules | `docs/week6_id_mapping_contract.md` |

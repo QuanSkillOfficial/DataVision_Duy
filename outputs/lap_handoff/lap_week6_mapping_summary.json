@@ -1,0 +1,159 @@
+{
+  "handoff_owner": "Nguyen Minh Duy",
+  "consumer": "Lap - RAG and Embeddings Owner",
+  "purpose": "Map Duy PDF extraction outputs to Lap chunking, pgvector retrieval, citations, and UI response needs.",
+  "duy_outputs_for_lap": {
+    "document_pages_jsonl": "outputs/rag_handoff/document_pages.jsonl",
+    "pdf_metadata": "outputs/rag_handoff/pdf_metadata.json",
+    "rag_handoff_manifest": "outputs/rag_handoff/rag_handoff_manifest.json",
+    "rag_handoff_summary": "outputs/rag_handoff/rag_handoff_summary.md"
+  },
+  "lap_repo_files_reviewed": {
+    "schema_v4_mapping": {
+      "path": "F:/data/new/quanskill/DataVision_Lap/ai/week6_rag_to_schema_v4_mapping.md",
+      "exists": true
+    },
+    "loader_script": {
+      "path": "F:/data/new/quanskill/DataVision_Lap/ai/rag/load_document_pages_to_pgvector.py",
+      "exists": true
+    },
+    "rag_service": {
+      "path": "F:/data/new/quanskill/DataVision_Lap/ai/rag/rag_service.py",
+      "exists": true
+    },
+    "week6_summary": {
+      "path": "F:/data/new/quanskill/DataVision_Lap/ai/WEEK_6_SUMMARY.md",
+      "exists": true
+    },
+    "retrieval_eval_csv": {
+      "path": "F:/data/new/quanskill/DataVision_Lap/ai/rag/evaluation/week6_retrieval_test_cases_dataflow.csv",
+      "exists": true
+    },
+    "retrieval_eval_markdown": {
+      "path": "F:/data/new/quanskill/DataVision_Lap/ai/rag/evaluation/week6_retrieval_eval_results.md",
+      "exists": true
+    },
+    "notebook": {
+      "path": "F:/data/new/quanskill/DataVision_Lap/ai/rag/notebooks/week6_real_pgvector_rag_demo.ipynb",
+      "exists": true
+    },
+    "ui_fixture": {
+      "path": "F:/data/new/quanskill/DataVision_Lap/outputs/ui_fixtures/lap_rag_response_real.json",
+      "exists": false
+    },
+    "screenshot": {
+      "path": "F:/data/new/quanskill/DataVision_Lap/screenshots/week6_pgvector_retrieval_result.png",
+      "exists": false
+    },
+    "duy_dataflow_ingestion_result": {
+      "path": "F:/data/new/quanskill/DataVision_Lap/ai/week6_duy_dataflow_ingestion_result.md",
+      "exists": false
+    }
+  },
+  "document": {
+    "document_external_id": "doc_dataflow_technical_report",
+    "document_db_id_from_phat_if_available": 1,
+    "source_name": "dataflow_technical_report_pdf",
+    "file_name": "DataFlow_Technical_Report.pdf",
+    "page_count": 36,
+    "total_characters": 129028,
+    "parsing_status": "ready"
+  },
+  "document_pages_stats": {
+    "path": "F:/data/new/quanskill/DataVision_Duy/outputs/rag_handoff/document_pages.jsonl",
+    "exists": true,
+    "pages_loaded": 36,
+    "non_empty_pages": 36,
+    "empty_pages": 0,
+    "total_characters": 129028,
+    "first_record_keys": [
+      "character_count",
+      "document_id",
+      "file_name",
+      "is_empty",
+      "page_number",
+      "raw_output_path",
+      "source",
+      "staging_text_path",
+      "text"
+    ]
+  },
+  "lap_expected_loader_behavior": {
+    "loader": "ai/rag/document_loader.py::load_document_pages_jsonl",
+    "accepted_text_fields": [
+      "text",
+      "page_text",
+      "page_content"
+    ],
+    "empty_page_rule": "Skip records where is_empty=true",
+    "chunk_size": 512,
+    "overlap": 50,
+    "chunk_id_pattern": "doc_dataflow_technical_report_page_<page_number>_chunk_<000>"
+  },
+  "pgvector_mapping": {
+    "document_external_id": "documents.document_external_id",
+    "document_db_id": "documents.id",
+    "chunk_id": "document_chunks.chunk_id",
+    "chunk_text": "document_chunks.chunk_text",
+    "page_number": "document_chunks.page_number",
+    "metadata": "document_chunks.chunk_metadata",
+    "embedding": "document_chunks.embedding vector(384)",
+    "embedding_model": "all-MiniLM-L6-v2",
+    "embedding_dimension": 384,
+    "phat_document_chunks_count_if_available": 293,
+    "phat_document_external_id_resolved": true
+  },
+  "lap_evaluation_fixture": {
+    "exists": true,
+    "queries": 15,
+    "hit_at_1": 1.0,
+    "hit_at_3": 1.0,
+    "hit_at_5": 1.0,
+    "average_similarity": 0.734,
+    "sample_retrieved_chunk_id": "doc_dataflow_technical_report_page_4_chunk_000",
+    "evaluation_type": "fixture_or_recorded_results"
+  },
+  "lap_notebook_status": {
+    "exists": true,
+    "cell_count": 4,
+    "executed_cells": 0,
+    "output_count": 0,
+    "appears_executed": false
+  },
+  "lap_response_fixture_status": {
+    "expected_path": "outputs/ui_fixtures/lap_rag_response_real.json",
+    "found_in_lap_repo": false
+  },
+  "lap_execution_status": {
+    "code_ready_for_pgvector": true,
+    "live_pgvector_notebook_executed": false,
+    "live_ui_fixture_available": false,
+    "live_screenshot_available": false,
+    "duy_ingestion_result_doc_available": false,
+    "summary_note": "Lap repo has schema mapping and loader code. Live pgvector execution proof/UI fixture/screenshot are still pending if files are absent or notebook has no outputs."
+  },
+  "status_alignment_notes": {
+    "duy_rag_input_status": "ready",
+    "lap_retrieval_status_expected_by_ui": [
+      "retrieval_only",
+      "answered",
+      "no_answer_found",
+      "error"
+    ],
+    "lap_service_additional_statuses_seen": [
+      "no_context",
+      "no_answer",
+      "llm_error"
+    ],
+    "recommendation": "Lap and Phi/Hung should align no-answer status naming before backend integration."
+  },
+  "what_lap_should_return_to_duy": [
+    "Page/chunk ingestion stats with no TBD values",
+    "Number of embeddings generated and vectors inserted",
+    "Top-k retrieval result with chunk_id, page_number, similarity_score",
+    "Citation-ready response fixture for Phi/Hung",
+    "Any metadata change request for Duy's future PDF output",
+    "Confirmation whether live pgvector insertion used Phat documents.id=1",
+    "RAG query log insert proof for Phat rag_query_logs"
+  ]
+}

@@ -1,0 +1,499 @@
+{
+  "handoff_owner": "Nguyen Minh Duy",
+  "consumer": "Tuong - Prediction Engine Owner",
+  "purpose": "Map Duy ingestion outputs to Tuong document type prediction inputs, outputs, DB logs, RAG metadata, and UI review states.",
+  "duy_outputs_for_tuong": {
+    "batch_payload": "outputs/prediction_payloads/tuong_week6_prediction_payloads.json",
+    "batch_payload_copy": "logs/prediction_payloads/tuong_week6_prediction_payloads.json",
+    "single_pdf_payload": "logs/prediction_payloads/duy_pdf_prediction_payload.json",
+    "individual_payload_dir": "outputs/prediction_payloads/"
+  },
+  "tuong_repo_files_reviewed": {
+    "week6_real_data_prediction_eval": {
+      "path": "F:/data/new/quanskill/DataVision_Tuong/docs/week6_real_data_prediction_eval.md",
+      "exists": true
+    },
+    "week6_prediction_db_integration_result": {
+      "path": "F:/data/new/quanskill/DataVision_Tuong/docs/week6_prediction_db_integration_result.md",
+      "exists": true
+    },
+    "ingestion_to_prediction_contract": {
+      "path": "F:/data/new/quanskill/DataVision_Tuong/docs/ingestion_to_prediction_contract.md",
+      "exists": true
+    },
+    "prediction_log_contract": {
+      "path": "F:/data/new/quanskill/DataVision_Tuong/docs/prediction_log_contract.md",
+      "exists": true
+    },
+    "week6_prediction_results": {
+      "path": "F:/data/new/quanskill/DataVision_Tuong/outputs/week6_duy_prediction_results.json",
+      "exists": true
+    },
+    "ui_single_response_fixture": {
+      "path": "F:/data/new/quanskill/DataVision_Tuong/outputs/ui_fixtures/tuong_prediction_response_real.json",
+      "exists": true,
+      "description": "Real single prediction response from Tuong's prediction service — for Phi/Hung UI development",
+      "total_items": 0,
+      "item_count": 0,
+      "status_counts": {},
+      "appears_sample_fixture": true
+    },
+    "ui_batch_response_fixture": {
+      "path": "F:/data/new/quanskill/DataVision_Tuong/outputs/ui_fixtures/tuong_prediction_batch_response.json",
+      "exists": true,
+      "description": "Batch prediction response from Tuong's prediction service — covers all 4 status types for Phi/Hung UI development",
+      "total_items": 5,
+      "item_count": 5,
+      "status_counts": {
+        "accepted": 1,
+        "needs_review": 2,
+        "waiting_for_source": 1,
+        "failed": 1
+      },
+      "appears_sample_fixture": true
+    },
+    "ui_review_queue_fixture": {
+      "path": "F:/data/new/quanskill/DataVision_Tuong/outputs/ui_fixtures/tuong_prediction_review_queue_sample.json",
+      "exists": true,
+      "description": "Prediction review queue sample data for Phi/Hung manual review UI — shows items that need human review",
+      "total_items": 3,
+      "item_count": 3,
+      "status_counts": {
+        "needs_review": 3
+      },
+      "appears_sample_fixture": true
+    },
+    "rag_filter_payload": {
+      "path": "F:/data/new/quanskill/DataVision_Tuong/outputs/rag_metadata/document_type_filter_payload.json",
+      "exists": true,
+      "item_count": 5
+    }
+  },
+  "required_input_fields": [
+    "file_name",
+    "file_type",
+    "file_size",
+    "text_length",
+    "num_pages",
+    "source_system",
+    "extracted_text",
+    "document_external_id",
+    "source_name",
+    "ingestion_run_id",
+    "source_id",
+    "document_db_id"
+  ],
+  "id_semantics": {
+    "source_id": "Phat sources.id; null before DB insert",
+    "source_name": "Duy source slug from ingestion config",
+    "document_external_id": "Duy stable document key",
+    "document_db_id": "Phat documents.id; null before DB insert",
+    "ingestion_run_id": "Duy run UUID; never use as source_id"
+  },
+  "current_phat_ids_if_available": {
+    "source_id_map": {
+      "superstore_sales_csv": {
+        "source_id": 1,
+        "source_type": "csv",
+        "source_format": "csv",
+        "source_path": "week2/data/sample_inputs/Superstore.csv"
+      },
+      "dataflow_technical_report_pdf": {
+        "source_id": 2,
+        "source_type": "pdf",
+        "source_format": "pdf",
+        "source_path": "week2/data/sample_inputs/DataFlow_Technical_Report.pdf"
+      },
+      "dummyjson_products_api": {
+        "source_id": 3,
+        "source_type": "api",
+        "source_format": "json",
+        "source_path": "https://dummyjson.com/products"
+      },
+      "product_sales_region_excel": {
+        "source_id": 4,
+        "source_type": "excel",
+        "source_format": "xlsx",
+        "source_path": "week2/data/sample_inputs/Product-Sales-Region.xlsx"
+      }
+    },
+    "document_id_map": {
+      "doc_dataflow_technical_report": {
+        "document_db_id": 1,
+        "source_id": 2,
+        "file_name": "DataFlow_Technical_Report.pdf",
+        "page_count": 36,
+        "character_count": 129028,
+        "processing_status": "extracted"
+      }
+    }
+  },
+  "duy_payload_summary": {
+    "total_payloads": 10,
+    "source_counts": {
+      "dataflow_technical_report_pdf": 7,
+      "superstore_sales_csv": 1,
+      "product_sales_region_excel": 1,
+      "dummyjson_products_api": 1
+    },
+    "cases": [
+      {
+        "document_external_id": "doc_dataflow_technical_report",
+        "source_name": "dataflow_technical_report_pdf",
+        "file_name_present": true,
+        "file_type": "pdf",
+        "text_length": 129028,
+        "num_pages": 36,
+        "source_id": null,
+        "document_db_id": null,
+        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+        "test_case": "full_pdf_document",
+        "expected_status_hint": "accepted_or_needs_review"
+      },
+      {
+        "document_external_id": "doc_dataflow_technical_report_intro_pages",
+        "source_name": "dataflow_technical_report_pdf",
+        "file_name_present": true,
+        "file_type": "pdf",
+        "text_length": 9377,
+        "num_pages": 2,
+        "source_id": null,
+        "document_db_id": null,
+        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+        "test_case": "pdf_intro_section",
+        "expected_status_hint": "accepted_or_needs_review"
+      },
+      {
+        "document_external_id": "doc_dataflow_technical_report_architecture_page",
+        "source_name": "dataflow_technical_report_pdf",
+        "file_name_present": true,
+        "file_type": "pdf",
+        "text_length": 4521,
+        "num_pages": 1,
+        "source_id": null,
+        "document_db_id": null,
+        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+        "test_case": "pdf_architecture_page",
+        "expected_status_hint": "accepted_or_needs_review"
+      },
+      {
+        "document_external_id": "doc_dataflow_technical_report_related_work",
+        "source_name": "dataflow_technical_report_pdf",
+        "file_name_present": true,
+        "file_type": "pdf",
+        "text_length": 7594,
+        "num_pages": 2,
+        "source_id": null,
+        "document_db_id": null,
+        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+        "test_case": "pdf_related_work_section",
+        "expected_status_hint": "accepted_or_needs_review"
+      },
+      {
+        "document_external_id": "doc_superstore_sales_csv_summary",
+        "source_name": "superstore_sales_csv",
+        "file_name_present": true,
+        "file_type": "csv",
+        "text_length": 2516,
+        "num_pages": 0,
+        "source_id": null,
+        "document_db_id": null,
+        "ingestion_run_id": "13b921ad-4e4c-4399-b1ae-6087d7b86bf0",
+        "test_case": "csv_structured_summary",
+        "expected_status_hint": "accepted_or_needs_review"
+      },
+      {
+        "document_external_id": "doc_product_sales_region_excel_summary",
+        "source_name": "product_sales_region_excel",
+        "file_name_present": true,
+        "file_type": "xlsx",
+        "text_length": 2051,
+        "num_pages": 0,
+        "source_id": null,
+        "document_db_id": null,
+        "ingestion_run_id": "d670414e-4147-4cda-a87d-06e8b7c52d19",
+        "test_case": "excel_structured_summary",
+        "expected_status_hint": "accepted_or_needs_review"
+      },
+      {
+        "document_external_id": "doc_dummyjson_products_api_summary",
+        "source_name": "dummyjson_products_api",
+        "file_name_present": true,
+        "file_type": "json",
+        "text_length": 7679,
+        "num_pages": 0,
+        "source_id": null,
+        "document_db_id": null,
+        "ingestion_run_id": "83a3c30c-98f1-42f7-aba7-4fed188daed9",
+        "test_case": "api_structured_summary",
+        "expected_status_hint": "accepted_or_needs_review"
+      },
+      {
+        "document_external_id": "doc_short_text_quality_gate",
+        "source_name": "dataflow_technical_report_pdf",
+        "file_name_present": true,
+        "file_type": "pdf",
+        "text_length": 11,
+        "num_pages": 1,
+        "source_id": null,
+        "document_db_id": null,
+        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+        "test_case": "short_extracted_text_quality_gate",
+        "expected_status_hint": "waiting_for_source_or_needs_review"
+      },
+      {
+        "document_external_id": "doc_empty_text_quality_gate",
+        "source_name": "dataflow_technical_report_pdf",
+        "file_name_present": true,
+        "file_type": "pdf",
+        "text_length": 0,
+        "num_pages": 1,
+        "source_id": null,
+        "document_db_id": null,
+        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+        "test_case": "empty_extracted_text_quality_gate",
+        "expected_status_hint": "waiting_for_source"
+      },
+      {
+        "document_external_id": "doc_missing_file_name_validation",
+        "source_name": "dataflow_technical_report_pdf",
+        "file_name_present": false,
+        "file_type": "pdf",
+        "text_length": 90,
+        "num_pages": 1,
+        "source_id": null,
+        "document_db_id": null,
+        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+        "test_case": "missing_required_file_name",
+        "expected_status_hint": "failed"
+      }
+    ]
+  },
+  "tuong_result_summary": {
+    "evaluation_timestamp": "2026-07-05T09:13:52.805979+00:00",
+    "total_payloads": 10,
+    "status_summary": {
+      "needs_review": 2,
+      "accepted": 5,
+      "waiting_for_source": 2,
+      "failed": 1
+    },
+    "cases": [
+      {
+        "document_external_id": "doc_dataflow_technical_report",
+        "source_name": "dataflow_technical_report_pdf",
+        "predicted_document_type": "report",
+        "confidence": 0.4184,
+        "status": "needs_review",
+        "review_reason": "Prediction confidence below threshold",
+        "top_prediction": {
+          "label": "report",
+          "score": 0.4184
+        }
+      },
+      {
+        "document_external_id": "doc_dataflow_technical_report_intro_pages",
+        "source_name": "dataflow_technical_report_pdf",
+        "predicted_document_type": "contract",
+        "confidence": 0.6096,
+        "status": "accepted",
+        "review_reason": null,
+        "top_prediction": {
+          "label": "contract",
+          "score": 0.6096
+        }
+      },
+      {
+        "document_external_id": "doc_dataflow_technical_report_architecture_page",
+        "source_name": "dataflow_technical_report_pdf",
+        "predicted_document_type": "contract",
+        "confidence": 0.6128,
+        "status": "accepted",
+        "review_reason": null,
+        "top_prediction": {
+          "label": "contract",
+          "score": 0.6128
+        }
+      },
+      {
+        "document_external_id": "doc_dataflow_technical_report_related_work",
+        "source_name": "dataflow_technical_report_pdf",
+        "predicted_document_type": "contract",
+        "confidence": 0.6279,
+        "status": "accepted",
+        "review_reason": null,
+        "top_prediction": {
+          "label": "contract",
+          "score": 0.6279
+        }
+      },
+      {
+        "document_external_id": "doc_superstore_sales_csv_summary",
+        "source_name": "superstore_sales_csv",
+        "predicted_document_type": "invoice",
+        "confidence": 0.7101,
+        "status": "accepted",
+        "review_reason": null,
+        "top_prediction": {
+          "label": "invoice",
+          "score": 0.7101
+        }
+      },
+      {
+        "document_external_id": "doc_product_sales_region_excel_summary",
+        "source_name": "product_sales_region_excel",
+        "predicted_document_type": "invoice",
+        "confidence": 0.6829,
+        "status": "accepted",
+        "review_reason": null,
+        "top_prediction": {
+          "label": "invoice",
+          "score": 0.6829
+        }
+      },
+      {
+        "document_external_id": "doc_dummyjson_products_api_summary",
+        "source_name": "dummyjson_products_api",
+        "predicted_document_type": "contract",
+        "confidence": 0.3839,
+        "status": "needs_review",
+        "review_reason": "Prediction confidence below threshold",
+        "top_prediction": {
+          "label": "contract",
+          "score": 0.3839
+        }
+      },
+      {
+        "document_external_id": "doc_short_text_quality_gate",
+        "source_name": "dataflow_technical_report_pdf",
+        "predicted_document_type": null,
+        "confidence": 0.0,
+        "status": "waiting_for_source",
+        "review_reason": "Extracted text is missing or too short for reliable prediction",
+        "top_prediction": {}
+      },
+      {
+        "document_external_id": "doc_empty_text_quality_gate",
+        "source_name": "dataflow_technical_report_pdf",
+        "predicted_document_type": null,
+        "confidence": 0.0,
+        "status": "waiting_for_source",
+        "review_reason": "Extracted text is missing or too short for reliable prediction",
+        "top_prediction": {}
+      },
+      {
+        "document_external_id": "doc_missing_file_name_validation",
+        "source_name": "dataflow_technical_report_pdf",
+        "predicted_document_type": null,
+        "confidence": 0.0,
+        "status": "failed",
+        "review_reason": "Validation error: Missing required field: 'file_name'",
+        "top_prediction": {}
+      }
+    ],
+    "prediction_log_payload_count": 10
+  },
+  "real_data_quality_findings_from_tuong": {
+    "source_of_truth_file": "DataVision_Tuong/outputs/week6_duy_prediction_results.json",
+    "evaluation_doc": "DataVision_Tuong/docs/week6_real_data_prediction_eval.md",
+    "strict_top1_correct": "1/7 predictable documents (~14%) according to Tuong report",
+    "false_positive_accepted_count": 4,
+    "accepted_predictions_are_not_safe_hard_filters": true,
+    "full_dataflow_result": {
+      "document_external_id": "doc_dataflow_technical_report",
+      "source_name": "dataflow_technical_report_pdf",
+      "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+      "predicted_document_type": "report",
+      "confidence": 0.4184,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "report",
+          "score": 0.4184
+        },
+        {
+          "label": "research_paper",
+          "score": 0.2262
+        },
+        {
+          "label": "contract",
+          "score": 0.2084
+        }
+      ],
+      "review_reason": "Prediction confidence below threshold"
+    }
+  },
+  "tuong_status_rules": {
+    "accepted": "confidence >= 0.60",
+    "needs_review": "confidence < 0.60",
+    "waiting_for_source": "extracted_text length < 50",
+    "failed": "validation error or prediction exception"
+  },
+  "rag_filtering_rule": {
+    "hard_filter_allowed_only_when": "status == accepted and use_for_rag_filtering == true",
+    "current_real_data_warning": "Tuong Week 6 evaluation reports overconfident mistakes on real data; do not use low-confidence or unreviewed predictions as hard RAG filters.",
+    "tuong_rag_filter_payload_count": 5
+  },
+  "phat_prediction_log_integration_if_available": {
+    "prediction_logs_inserted": 10,
+    "status_counts": {
+      "needs_review": 2,
+      "accepted": 5,
+      "waiting_for_source": 2,
+      "failed": 1
+    },
+    "source_id_map": {
+      "superstore_sales_csv": {
+        "source_id": 1,
+        "source_type": "csv",
+        "source_format": "csv",
+        "source_path": "week2/data/sample_inputs/Superstore.csv"
+      },
+      "dataflow_technical_report_pdf": {
+        "source_id": 2,
+        "source_type": "pdf",
+        "source_format": "pdf",
+        "source_path": "week2/data/sample_inputs/DataFlow_Technical_Report.pdf"
+      },
+      "dummyjson_products_api": {
+        "source_id": 3,
+        "source_type": "api",
+        "source_format": "json",
+        "source_path": "https://dummyjson.com/products"
+      },
+      "product_sales_region_excel": {
+        "source_id": 4,
+        "source_type": "excel",
+        "source_format": "xlsx",
+        "source_path": "week2/data/sample_inputs/Product-Sales-Region.xlsx"
+      }
+    },
+    "document_id_map": {
+      "doc_dataflow_technical_report": {
+        "document_db_id": 1,
+        "source_id": 2,
+        "file_name": "DataFlow_Technical_Report.pdf",
+        "page_count": 36,
+        "character_count": 129028,
+        "processing_status": "extracted"
+      }
+    },
+    "note": "Phat output reports 10 prediction_logs inserted. Only doc_dataflow_technical_report maps to documents.id=1; synthetic section/test payloads may keep document_id null."
+  },
+  "alignment_notes": [
+    "Use Tuong outputs/week6_duy_prediction_results.json as the source of truth for the 10 Duy payloads.",
+    "Tuong UI fixtures are useful for Phi/Hung demo states but may be sample fixtures with 5 items, not the full 10 Duy payloads.",
+    "Some Tuong docs still include older 4-payload Week 5 examples; Week 6 mapping should use the 10-payload evaluation.",
+    "Duy payload source_id and document_db_id are null before DB enrichment; Phat confirmed source_id=2 and document_db_id=1 for the DataFlow PDF.",
+    "Low-confidence or unreviewed predictions should not become hard RAG filters. Tuong's evaluation shows overconfident accepted false positives."
+  ],
+  "what_tuong_should_return_to_duy": [
+    "Prediction response for each Duy payload",
+    "Batch response with accepted/needs_review/waiting_for_source/failed counts",
+    "Prediction log payloads for Phat prediction_logs",
+    "UI fixtures for Phi/Hung review queue",
+    "RAG metadata filter payload for Lap",
+    "Any required Duy payload field changes"
+  ]
+}

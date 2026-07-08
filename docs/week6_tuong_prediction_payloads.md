@@ -56,3 +56,41 @@ waiting_for_source
 failed
 batch validation error normalization
 ```
+
+## Current Tuong Result From 10 Payloads
+
+Tuong's current Week 6 source-of-truth output is:
+
+```text
+DataVision_Tuong/outputs/week6_duy_prediction_results.json
+```
+
+Result counts:
+
+| Status | Count |
+| --- | ---: |
+| `accepted` | `5` |
+| `needs_review` | `2` |
+| `waiting_for_source` | `2` |
+| `failed` | `1` |
+| Total | `10` |
+
+Important DataFlow result:
+
+```json
+{
+  "document_external_id": "doc_dataflow_technical_report",
+  "source_name": "dataflow_technical_report_pdf",
+  "predicted_document_type": "report",
+  "confidence": 0.4184,
+  "status": "needs_review",
+  "review_reason": "Prediction confidence below threshold"
+}
+```
+
+Important integration note:
+
+```text
+Tuong UI fixtures are useful for Phi/Hung demo states, but the full 10-payload evidence is the JSON result above.
+Do not use unreviewed or low-confidence prediction output as a hard RAG filter.
+```

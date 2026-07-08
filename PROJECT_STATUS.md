@@ -14,7 +14,7 @@ The DataVision ingestion track is complete through Week 5 platform-readiness wor
 | Week 2 | Complete | Working notebook prototypes for CSV, Excel, API JSON, and PDF extraction |
 | Week 3 | Complete | Reusable ingestion modules, standard output contract, portable logs, cross-team handoff contracts |
 | Week 5 | Complete | Config-driven ingestion service, run history logs, manifests, data quality score, PostgreSQL writer skeleton, pytest tests |
-| Week 6 | In progress | PostgreSQL dry-run/write-db path, DB config helper, ID mapping, Lap RAG handoff package, Tuong prediction payload, and Phi/Hung real UI fixtures |
+| Week 6 | Complete | Integration-ready handoff package for Phat, Lap, Tuong, and Hung; DB dry-run proof, RAG handoff, prediction payloads, UI fixtures, ID mapping, and smoke tests |
 
 ## What Works Now
 
@@ -100,6 +100,36 @@ Example: the DummyJSON API product data has missing values in optional fields su
 | Tuong | Prediction and ML | Clean structured CSV/API/Excel data and Duy-style PDF prediction payload |
 | Phi/Hung | Suggestions, Reports, Demo, AI UX | Ingestion result contract and data quality signals for Streamlit/demo pages |
 
+## Week 6 Integration Evidence
+
+The Week 6 target is:
+
+```text
+connect -> insert -> query -> retrieve -> predict -> display -> test
+```
+
+Current evidence:
+
+| Integration Step | Status | Evidence |
+| --- | --- | --- |
+| Connect | Complete | `scripts/week6_end_to_end_smoke_test.py` reads all integration outputs |
+| Insert | Complete as dry-run package | `logs/db_load_dry_run/duy_to_phat_db_load_plan.json` |
+| Query | Complete as UI-ready fixture | `outputs/ui_fixtures/duy_latest_ingestion_summary.json` |
+| Retrieve | Complete as RAG handoff | `outputs/rag_handoff/document_pages.jsonl` and `outputs/rag_handoff/rag_handoff_manifest.json` |
+| Predict | Complete as Tuong payload package | `outputs/prediction_payloads/tuong_week6_prediction_payloads.json` |
+| Display | Complete as Phi/Hung fixture | `outputs/ui_fixtures/*.json` |
+| Test | Complete | Week 6 validation, smoke test, and `pytest tests/data_tests/` pass |
+
+Latest verification:
+
+```text
+Week 6 validation passed
+Week 6 smoke test passed
+Week 5 validation passed
+Week 2 validation passed
+20 pytest tests passed
+```
+
 ## Cross-Team Contracts
 
 | Contract | Consumer | Purpose |
@@ -109,11 +139,16 @@ Example: the DummyJSON API product data has missing values in optional fields su
 | `week2/docs/ingestion_to_prediction_contract.md` | Tuong | Defines model-ready document metadata and extracted text |
 | `week2/docs/ingestion_result_contract_for_ui.md` | Phi/Hung | Defines dashboard/upload UI fields from ingestion logs |
 | `week2/docs/team_handoff_index.md` | Whole team | One-page index of all Duy handoff contracts |
+| `docs/week6_team_integration_handoff.md` | Whole team | Week 6 cross-team input/output map |
+| `docs/week6_phat_mapping_review.md` | Phat | Final Duy-to-Phat DB loading and dashboard view mapping |
+| `docs/week6_lap_rag_mapping_review.md` | Lap | Final Duy-to-Lap RAG handoff mapping |
+| `docs/week6_tuong_prediction_mapping_review.md` | Tuong | Final Duy-to-Tuong prediction payload mapping |
+| `docs/week6_hung_ui_mapping_review.md` | Hung | Final Duy-to-Hung UI fixture and page mapping |
 
 ## Next Recommended Work
 
-1. Test `postgres_writer.py` against Phat's final schema_v3 database.
-2. Add a FastAPI wrapper around `run_ingestion(source_config)`.
-3. Add database insert dry-run output to the Friday demo.
-4. Coordinate final status constraints with Phat and UI badges with Phi/Hung.
-5. Execute `scripts/load_ingestion_outputs_to_postgres.py --write-db --db-config data_engineering/configs/db_config.example.json` after Phat provides schema connection details.
+1. Execute real PostgreSQL write mode with Phat's live schema and credentials.
+2. Ask Phat to return final `source_id` and `document_db_id` mappings after live DB insert.
+3. Ask Lap to return real pgvector retrieval proof and citation-ready fixture.
+4. Ask Tuong to keep using the 10-payload package and return reviewed prediction status.
+5. Ask Hung to refresh `demo/fixtures/duy_latest_ingestion_summary.json` from Duy's canonical fixture.
