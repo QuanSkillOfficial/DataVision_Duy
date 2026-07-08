@@ -100,12 +100,22 @@ After Phat loads Duy outputs into PostgreSQL:
 
 ```json
 {
-  "source_id": 4,
+  "source_id": 2,
   "document_db_id": 1,
   "document_external_id": "doc_dataflow_technical_report",
   "ingestion_run_id": "8e18bd87-27e5-4aa1-9566-805ffd552fdb"
 }
 ```
+
+Current IDs confirmed from Phat Week 6 outputs:
+
+| `source_name` / `document_external_id` | Confirmed DB ID |
+| --- | ---: |
+| `superstore_sales_csv` | `source_id=1` |
+| `dataflow_technical_report_pdf` | `source_id=2` |
+| `dummyjson_products_api` | `source_id=3` |
+| `product_sales_region_excel` | `source_id=4` |
+| `doc_dataflow_technical_report` | `document_db_id=1` |
 
 ## How To Regenerate Duy Outputs
 
@@ -184,8 +194,11 @@ Phat should use these files to test database insertion.
 | PDF pages JSONL | `week2/data/staging/pdf/document_pages.jsonl` | Page-level text for `document_pages` |
 | RAG-ready PDF pages | `outputs/rag_handoff/document_pages.jsonl` | Same page-level text copied for RAG handoff |
 | Schema mapping | `docs/week6_ingestion_to_schema_v3_mapping.md` | Maps Duy fields to Phat schema |
+| Latest schema-v4 mapping alias | `docs/week6_ingestion_to_schema_v4_mapping.md` | Clarifies mapping against Phat `schema_v4.sql` |
 | DB loading result note | `docs/week6_database_loading_result.md` | Current DB dry-run / real-run status |
 | Duy + Phat result note | `docs/week6_duy_to_phat_db_load_result.md` | Integration result note |
+| Phat mapping review | `docs/week6_phat_mapping_review.md` | Human-readable review of Phat outputs and schema notes |
+| Phat machine-readable mapping | `outputs/phat_handoff/phat_week6_mapping_summary.json` | Source IDs, document IDs, counts, dashboard view samples |
 
 ### Tables Phat Should Load
 
@@ -237,15 +250,51 @@ Phat should return these outputs after DB integration:
 | Validation query result | `validation_queries_v2.sql` output | Prove FK and quality checks pass |
 | Dashboard view samples | JSON files from Phat views | Phi/Hung can replace fixtures |
 
-Expected mapping from Phat:
+Confirmed mapping from Phat:
 
 ```json
 {
   "source_name": "dataflow_technical_report_pdf",
-  "source_id": 4,
+  "source_id": 2,
   "document_external_id": "doc_dataflow_technical_report",
   "document_db_id": 1,
   "ingestion_run_id": "8e18bd87-27e5-4aa1-9566-805ffd552fdb"
+}
+```
+
+### Phat Output Files Now Available
+
+| Output | Path | Current proof |
+| --- | --- | --- |
+| Duy ingestion exports | `DataVision_Phat/week6/outputs/ingestion_data_Duy/*.json` | 4 sources, 4 ingestion logs, 1 document, 36 document pages |
+| Lap document chunks | `DataVision_Phat/week6/outputs/document_chunk_data_Lap/document_chunks_202607071256.json` | Chunks use `document_id=1`, `chunk_id`, page numbers, 384-dim embeddings |
+| Tuong prediction logs | `DataVision_Phat/week6/outputs/prediction_log_data_Tuong/prediction_logs_202607071251.json` | 10 prediction logs inserted |
+| Phi/Hung dashboard views | `DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/*.json` | Dashboard views return real integrated rows |
+
+Phat view sample row counts:
+
+| View | Rows |
+| --- | ---: |
+| `v_dashboard_overview` | 1 |
+| `v_data_quality_dashboard` | 4 |
+| `v_document_rag_readiness` | 1 |
+| `v_latest_ingestion_runs` | 4 |
+| `v_prediction_review_queue` | 5 |
+| `v_recent_activity` | 4 |
+| `v_source_quality_detail` | 4 |
+| `v_source_quality_summary` | 4 |
+| `v_rag_daily_metrics` | 0 |
+
+Dashboard overview from Phat:
+
+```json
+{
+  "total_sources": 4,
+  "total_documents": 1,
+  "successful_ingestions": 4,
+  "failed_ingestions": 0,
+  "total_rag_queries": 0,
+  "total_predictions": 10
 }
 ```
 
@@ -277,6 +326,8 @@ Lap should use the RAG handoff package, not the raw PDF directly.
 | Handoff manifest | `outputs/rag_handoff/rag_handoff_manifest.json` | Machine-readable summary |
 | Handoff summary | `outputs/rag_handoff/rag_handoff_summary.md` | Human-readable summary |
 | RAG readiness doc | `docs/week6_document_pages_for_rag_confirmed.md` | Confirms page count and quality |
+| Lap mapping review | `docs/week6_lap_rag_mapping_review.md` | Detailed Duy-to-Lap input/output contract |
+| Lap machine-readable mapping | `outputs/lap_handoff/lap_week6_mapping_summary.json` | JSON summary of page stats, ID rules, pgvector mapping |
 
 ### DataFlow PDF Facts For Lap
 
@@ -291,6 +342,11 @@ Lap should use the RAG handoff package, not the raw PDF directly.
 | `total_characters` | `129028` |
 | `ingestion_run_id` | `8e18bd87-27e5-4aa1-9566-805ffd552fdb` |
 | `parsing_status` | `ready` |
+| `document_db_id` from Phat if DB-loaded | `1` |
+| Phat document chunks proof | `293` chunks from `DataVision_Phat/week6/outputs/document_chunk_data_Lap/document_chunks_202607071256.json` |
+| Lap code readiness | `load_document_pages_to_pgvector.py` and schema-v4 mapping exist |
+| Lap live notebook proof | Pending: notebook exists but has no executed outputs |
+| Lap UI fixture proof | Pending: `outputs/ui_fixtures/lap_rag_response_real.json` not found in Lap repo |
 
 ### JSONL Record Shape For Lap
 
@@ -308,6 +364,8 @@ Each line in `outputs/rag_handoff/document_pages.jsonl` should be treated as one
 }
 ```
 
+Lap's loader accepts the page text from `text`, `page_text`, or `page_content`. Duy currently provides `text`, so no field rename is needed.
+
 If Lap needs database insertion:
 
 ```text
@@ -319,6 +377,12 @@ Duy document_external_id
 
 Lap should not insert string document IDs into integer FK columns.
 
+Current confirmed DB mapping from Phat's Week 6 outputs:
+
+```text
+doc_dataflow_technical_report -> documents.id = 1
+```
+
 ### Expected Chunk ID Convention
 
 Recommended:
@@ -329,15 +393,30 @@ doc_dataflow_technical_report_page_1_chunk_001
 doc_dataflow_technical_report_page_2_chunk_000
 ```
 
+Lap's current Week 6 chunk defaults:
+
+| Setting | Value |
+| --- | --- |
+| Chunk size | `512` |
+| Overlap | `50` |
+| Empty page handling | Skip records where `is_empty = true` |
+| Embedding model | `all-MiniLM-L6-v2` |
+| Embedding dimension | `384` |
+| pgvector field | `document_chunks.embedding vector(384)` |
+
 ### What Lap Must Return To Duy
 
 | Output From Lap | Expected Path / Format | Why Duy Needs It |
 | --- | --- | --- |
 | Confirmation that JSONL loads | markdown note | Verify PDF output is RAG-ready |
 | Page/chunk stats | markdown or JSON | Confirm pages converted to chunks |
+| Vector insert proof | screenshot, SQL output, or JSON | Confirm chunks were inserted into Phat pgvector |
+| Retrieval evaluation | markdown or CSV | Confirm top-k retrieval works on DataFlow PDF |
 | Failed/empty page issues | markdown note | Duy can fix PDF extraction if needed |
 | Real RAG response fixture | JSON | Phi/Hung can display citations |
 | Required metadata changes | markdown note | Duy can update future JSONL output |
+| Executed notebook or screenshot | notebook outputs or image | Prove live pgvector retrieval ran |
+| RAG query log proof | SQL output or JSON | Prove `rag_query_logs` insert is ready |
 
 Expected Lap response fixture:
 
@@ -381,7 +460,10 @@ Lap should confirm:
 [ ] Generated chunk IDs with page numbers
 [ ] Generated 384-dimensional embeddings
 [ ] Inserted chunks into Phat pgvector table or prepared exact insert payload
+[ ] Resolved document_external_id to internal documents.id before pgvector insert
+[ ] Returned top-k retrieval result with chunk_id, page_number, similarity_score
 [ ] Returned citation-ready RAG fixture for Phi/Hung
+[ ] Returned live execution proof rather than only fixture metrics
 ```
 
 ## Duy -> Tuong: Prediction Handoff
@@ -393,8 +475,13 @@ Tuong should use Duy's prediction payload as real ingestion input for document c
 | File | Exact Path | Purpose |
 | --- | --- | --- |
 | PDF prediction payload | `logs/prediction_payloads/duy_pdf_prediction_payload.json` | Main input for Tuong classifier |
+| Batch prediction payload | `outputs/prediction_payloads/tuong_week6_prediction_payloads.json` | Main 10-payload Week 6 test input |
+| Batch prediction payload copy | `logs/prediction_payloads/tuong_week6_prediction_payloads.json` | Backward-compatible log path |
+| Individual prediction payloads | `outputs/prediction_payloads/01_*.json` to `10_*.json` | Debug individual test cases |
 | Prediction contract | `week2/docs/ingestion_to_prediction_contract.md` | Field contract |
 | ID mapping contract | `docs/week6_id_mapping_contract.md` | Separates source/run/document IDs |
+| Tuong mapping review | `docs/week6_tuong_prediction_mapping_review.md` | Detailed Duy-to-Tuong input/output contract |
+| Tuong machine-readable mapping | `outputs/tuong_handoff/tuong_week6_mapping_summary.json` | JSON summary of payloads, results, statuses |
 | UI fixture with prediction context | `outputs/ui_fixtures/duy_latest_ingestion_summary.json` | Contains `prediction_context` block |
 
 ### Required Payload Fields For Tuong
@@ -429,12 +516,91 @@ document_external_id is the stable document key.
 
 Tuong should not treat `ingestion_run_id` as `source_id`.
 
+Current confirmed DB mapping from Phat's Week 6 outputs:
+
+```json
+{
+  "dataflow_technical_report_pdf": {
+    "source_id": 2
+  },
+  "doc_dataflow_technical_report": {
+    "document_db_id": 1
+  }
+}
+```
+
+### Duy's 10 Payloads For Tuong
+
+| # | Document External ID | Source | Test Case |
+| ---: | --- | --- | --- |
+| 1 | `doc_dataflow_technical_report` | `dataflow_technical_report_pdf` | Full PDF document |
+| 2 | `doc_dataflow_technical_report_intro_pages` | `dataflow_technical_report_pdf` | PDF intro section |
+| 3 | `doc_dataflow_technical_report_architecture_page` | `dataflow_technical_report_pdf` | PDF architecture page |
+| 4 | `doc_dataflow_technical_report_related_work` | `dataflow_technical_report_pdf` | PDF related work section |
+| 5 | `doc_superstore_sales_csv_summary` | `superstore_sales_csv` | CSV structured summary |
+| 6 | `doc_product_sales_region_excel_summary` | `product_sales_region_excel` | Excel structured summary |
+| 7 | `doc_dummyjson_products_api_summary` | `dummyjson_products_api` | API structured summary |
+| 8 | `doc_short_text_quality_gate` | `dataflow_technical_report_pdf` | Short text quality gate |
+| 9 | `doc_empty_text_quality_gate` | `dataflow_technical_report_pdf` | Empty text quality gate |
+| 10 | `doc_missing_file_name_validation` | `dataflow_technical_report_pdf` | Missing required file name |
+
+Tuong's Week 6 output currently reports:
+
+| Status | Count |
+| --- | ---: |
+| `accepted` | `5` |
+| `needs_review` | `2` |
+| `waiting_for_source` | `2` |
+| `failed` | `1` |
+
+Important real-data warning from Tuong:
+
+```text
+The current model can be overconfident on real Duy payloads.
+Low-confidence or unreviewed predictions should not be used as hard RAG filters.
+```
+
+### Tuong Output Files Reviewed
+
+Use these Tuong files when checking whether Duy's payload works with the prediction module.
+
+| Tuong Output | Exact Path | How Duy / Team Should Use It |
+| --- | --- | --- |
+| Full 10-payload prediction result | `DataVision_Tuong/outputs/week6_duy_prediction_results.json` | Main Week 6 source of truth for prediction statuses and counts |
+| Real-data evaluation report | `DataVision_Tuong/docs/week6_real_data_prediction_eval.md` | Explains low real-data confidence and overconfident accepted cases |
+| Prediction DB integration note | `DataVision_Tuong/docs/week6_prediction_db_integration_result.md` | Useful, but contains older 4-payload examples; verify against the 10-payload JSON output |
+| Single UI fixture | `DataVision_Tuong/outputs/ui_fixtures/tuong_prediction_response_real.json` | Phi/Hung demo state, not full batch evidence |
+| Batch UI fixture | `DataVision_Tuong/outputs/ui_fixtures/tuong_prediction_batch_response.json` | Sample UI batch fixture with 5 items, not the full 10-payload result |
+| Review queue fixture | `DataVision_Tuong/outputs/ui_fixtures/tuong_prediction_review_queue_sample.json` | Sample review queue for Phi/Hung |
+| RAG metadata filter payload | `DataVision_Tuong/outputs/rag_metadata/document_type_filter_payload.json` | Lap should use only safe/reviewed predictions as hard filters |
+
+Tuong's real evaluation reports:
+
+```text
+total_payloads = 10
+accepted = 5
+needs_review = 2
+waiting_for_source = 2
+failed = 1
+strict_top1_correct = 1/7 predictable documents
+```
+
+Platform decision:
+
+```text
+Prediction output is integration-ready, but current real-data accuracy requires a human-in-the-loop review workflow.
+Do not let unreviewed predictions automatically restrict RAG retrieval.
+```
+
 ### What Tuong Must Return To Duy
 
 | Output From Tuong | Expected Path / Format | Why Duy Needs It |
 | --- | --- | --- |
 | Single prediction response | JSON | Confirm Duy payload works |
 | Batch prediction response | JSON | Prepare multi-document ingestion |
+| Prediction log payloads | JSON or markdown | Phat can insert into `prediction_logs` |
+| UI fixtures | JSON | Phi/Hung can display prediction/review states |
+| RAG metadata filter payload | JSON | Lap can use only reliable metadata |
 | Review status | `accepted`, `needs_review`, `waiting_for_source`, `failed` | Align with Phat/Phi/Hung |
 | Required field changes | markdown note | Duy can update payload builder |
 | Min text rule confirmation | markdown note | Duy can validate future PDF extraction |
@@ -474,6 +640,7 @@ Tuong should confirm:
 [ ] Output uses accepted / needs_review / waiting_for_source / failed
 [ ] Prediction result can be inserted into Phat prediction_logs
 [ ] Prediction result can be displayed by Phi/Hung
+[ ] RAG filtering rule is explicit: only accepted/reviewed predictions should be hard filters
 ```
 
 ## Duy -> Phi/Hung: UI / Suggestions / Reports Handoff
@@ -489,6 +656,8 @@ Phi/Hung should use these real output-shaped fixtures instead of invented mock i
 | PDF document summary | `outputs/ui_fixtures/duy_pdf_document_summary.json` | PDF/RAG document summary |
 | Backward-compatible dashboard fixture | `logs/ui_fixtures/duy_ingestion_dashboard_fixture.json` | Older path if UI already uses logs |
 | UI fixture contract | `docs/week6_phi_hung_ui_fixture_contract.md` | Field descriptions |
+| Hung UI mapping review | `docs/week6_hung_ui_mapping_review.md` | Page-by-page mapping from Duy outputs to Hung UI |
+| Hung machine-readable mapping | `outputs/hung_handoff/hung_week6_mapping_summary.json` | JSON summary of fixtures, fields, IDs, and expected feedback |
 
 ### Main UI Fixture Shape
 
@@ -540,6 +709,30 @@ runs
 | Chatbot/RAG | `rag_handoff` |
 | Recent Activity | `runs` |
 
+### Hung Page-Level Mapping
+
+| Hung Page | Hung Service Function | Duy Fields / Files |
+| --- | --- | --- |
+| Dashboard | `get_dashboard_metrics()`, `get_ingestion_status()`, `get_recent_activity()` | `summary.*`, `latest_ingestion_run.*`, `runs[]`, `outputs/ui_fixtures/duy_latest_ingestion_summary.json` |
+| Suggestions | `generate_suggestions(context)` | `records_invalid`, `data_quality_score`, `rag_handoff.parsing_status`, `prediction_context.full_payload_path` |
+| Reports | `generate_report(evidence_context)` | `run_id`, `ingestion_run_id`, `file_hash_sha256`, raw/staging/clean paths, `records_read`, `records_valid`, `records_invalid` |
+| Prediction | `classify_document(payload)`, `classify_documents(payloads)` | `prediction_context`, `outputs/prediction_payloads/tuong_week6_prediction_payloads.json` |
+| Chatbot/RAG | `ask_rag(question, document_id=None)` | `rag_handoff.document_pages_path`, `document_external_id`, Lap's `lap_rag_response_real.json` |
+
+Confirmed DB-enriched IDs Hung can use after Phat loads Duy outputs:
+
+```json
+{
+  "dataflow_technical_report_pdf": {
+    "source_id": 2,
+    "document_external_id": "doc_dataflow_technical_report",
+    "document_db_id": 1
+  }
+}
+```
+
+Before DB loading, Duy's UI fixture intentionally keeps `source_id` and `document_db_id` as `null`. Hung should support both states.
+
 ### What Phi/Hung Must Return To Duy
 
 | Output From Phi/Hung | Expected Path / Format | Why Duy Needs It |
@@ -549,6 +742,8 @@ runs
 | Missing fields list | markdown note | Duy can add fields to fixture builder |
 | Suggestion signal requirements | markdown note | Duy can expose new data quality signals |
 | Report evidence requirements | markdown note | Duy can include evidence metadata |
+| DB-enriched UI sample | JSON or markdown note | Confirms whether UI wants Phat IDs merged into Duy fixture |
+| Status/path formatting rules | markdown note | Duy can keep future outputs display-ready |
 
 ### Phi/Hung Acceptance Checklist
 
@@ -591,6 +786,9 @@ Phi/Hung should confirm:
 | --- | --- | --- |
 | Prediction output on Duy payload | JSON | Confirms payload is model-ready |
 | Batch output shape | JSON | Duy can support multiple documents |
+| Prediction log payloads | JSON or markdown | Duy/Phat can verify `prediction_logs` mapping |
+| RAG metadata filter payload | JSON | Duy/Lap can avoid unsafe hard filters |
+| UI fixtures | JSON | Duy/Phi/Hung can align prediction display |
 | Error/low-confidence rules | markdown | Duy can validate source quality earlier |
 | Required field changes | markdown | Duy updates payload builder |
 
@@ -609,7 +807,7 @@ Phi/Hung should confirm:
 | --- | --- | --- | --- | --- |
 | P0 | Duy + Phat | Prove DB loading | `logs/db_load_dry_run/duy_to_phat_db_load_plan.json` | real `source_id` / `document_db_id` mapping |
 | P0 | Duy + Lap | Prove RAG input works | `outputs/rag_handoff/document_pages.jsonl` | RAG response fixture with citations |
-| P0 | Duy + Tuong | Prove prediction input works | `logs/prediction_payloads/duy_pdf_prediction_payload.json` | prediction response with status |
+| P0 | Duy + Tuong | Prove prediction input works | `outputs/prediction_payloads/tuong_week6_prediction_payloads.json` | prediction batch response with status |
 | P0 | Duy + Phi/Hung | Prove UI can display Duy data | `outputs/ui_fixtures/*.json` | screenshot or UI contract confirmation |
 | P1 | All team | Align IDs | `docs/week6_id_mapping_contract.md` | agreement on ID naming |
 | P1 | All team | Run smoke test | `scripts/week6_end_to_end_smoke_test.py` | confirm end-to-end chain |
@@ -670,10 +868,12 @@ For Lap:
 
 For Tuong:
 - Use logs/prediction_payloads/duy_pdf_prediction_payload.json
+- Use outputs/prediction_payloads/tuong_week6_prediction_payloads.json for the 10-payload batch test
 - source_id is null before DB insert
 - ingestion_run_id is separate from source_id
 - document_external_id = doc_dataflow_technical_report
 - Please return prediction response with accepted / needs_review / waiting_for_source / failed.
+- Please do not allow low-confidence or unreviewed predictions to become hard RAG filters.
 
 For Phi/Hung:
 - Use outputs/ui_fixtures/duy_latest_ingestion_summary.json

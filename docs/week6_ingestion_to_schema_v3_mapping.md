@@ -25,7 +25,10 @@ Duy ingestion outputs
 | `DataVision_Phat/week6/database/validation_queries_v2.sql` | Defines Week 6 validation queries |
 | `DataVision_Phat/week6/database/analytics_views_v3.sql` | Defines dashboard views powered by Duy data |
 | `DataVision_Phat/week6/docs/duy_output_to_db_loading_contract_v2.md` | Direct Duy + Phat loading contract |
-| `DataVision_Phat/week6/outputs/ingestion_data/*.json` | Actual DB-shaped examples exported from Phat |
+| `DataVision_Phat/week6/outputs/ingestion_data_Duy/*.json` | Actual Duy ingestion rows exported from Phat |
+| `DataVision_Phat/week6/outputs/document_chunk_data_Lap/*.json` | Actual Lap pgvector chunk rows tied to Duy's PDF document |
+| `DataVision_Phat/week6/outputs/prediction_log_data_Tuong/*.json` | Actual Tuong prediction log rows tied to Duy payloads |
+| `DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/*.json` | Dashboard view samples generated after loading Duy/Lap/Tuong data |
 
 ## Insert Order
 
@@ -78,6 +81,41 @@ Total `records_read` / `records_valid` in `ingestion_logs` should be:
 ```text
 9994 + 1500 + 30 + 36 = 11560
 ```
+
+## Latest Phat Output Evidence
+
+Reviewed Phat Week 6 output folder on 2026-07-08:
+
+| Evidence | Path | Current result |
+| --- | --- | --- |
+| Duy sources loaded | `DataVision_Phat/week6/outputs/ingestion_data_Duy/sources_202607051438.json` | 4 sources |
+| Duy ingestion logs loaded | `DataVision_Phat/week6/outputs/ingestion_data_Duy/ingestion_logs_202607051438.json` | 4 successful ingestion logs |
+| Duy PDF document loaded | `DataVision_Phat/week6/outputs/ingestion_data_Duy/documents_202607051439.json` | 1 document, `document_external_id=doc_dataflow_technical_report` |
+| Duy document pages loaded | `DataVision_Phat/week6/outputs/ingestion_data_Duy/document_pages_202607051442.json` | 36 pages |
+| Duy structured records loaded | `DataVision_Phat/week6/outputs/ingestion_data_Duy/structured_records_202607051442.json` | Sample export from structured records |
+| Lap chunks loaded | `DataVision_Phat/week6/outputs/document_chunk_data_Lap/document_chunks_202607071256.json` | Chunks use `document_id=1`, 384-dim embeddings, `document_external_id` in metadata |
+| Tuong predictions loaded | `DataVision_Phat/week6/outputs/prediction_log_data_Tuong/prediction_logs_202607071251.json` | 10 prediction logs |
+| Phi/Hung dashboard overview | `DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_dashboard_overview_202607071300.json` | 4 sources, 1 document, 4 successful ingestions, 10 predictions |
+
+Important resolved ID mapping from Phat output:
+
+| Duy identifier | Phat resolved ID |
+| --- | --- |
+| `source_name=superstore_sales_csv` | `source_id=1` |
+| `source_name=dataflow_technical_report_pdf` | `source_id=2` |
+| `source_name=dummyjson_products_api` | `source_id=3` |
+| `source_name=product_sales_region_excel` | `source_id=4` |
+| `document_external_id=doc_dataflow_technical_report` | `document_db_id=1` |
+
+Tuong prediction log integration result from Phat output:
+
+```text
+prediction_logs: 10
+source_id resolved: 10/10
+document_id resolved: 1/10
+```
+
+Only `doc_dataflow_technical_report` resolves to `documents.id=1`. The other 9 Tuong payloads are synthetic/test-case document IDs, so `prediction_logs.document_id = NULL` is expected.
 
 ## Table Mapping
 
@@ -259,7 +297,16 @@ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 CONSTRAINT chk_prediction_status
 ```
 
-There should be a comma before `CONSTRAINT`. This does not block Duy's ingestion mapping directly, but Phat should fix it before running the full schema from scratch.
+There should be a comma before `CONSTRAINT`. This does not block Duy's ingestion mapping directly, but Phat should fix it before running `schema_v4.sql` or `setup_database_v2.sql` from scratch.
+
+Current `prediction_logs` schema also includes:
+
+```text
+document_external_id
+ingestion_run_id
+```
+
+These fields are useful for Tuong's prediction logs and should remain aligned with Duy's payload fields.
 
 ## Acceptance Checklist
 

@@ -1,0 +1,292 @@
+{
+  "owner": "Nguyen Minh Duy",
+  "consumer": "Hung - Streamlit UI, Suggestions, Reports, Demo",
+  "purpose": "Map Duy Week 6 ingestion outputs to Hung's UI fixtures, pages, and service-client contracts.",
+  "duy_outputs_for_hung": {
+    "latest_ingestion_summary": "outputs/ui_fixtures/duy_latest_ingestion_summary.json",
+    "data_quality_summary": "outputs/ui_fixtures/duy_data_quality_summary.json",
+    "pdf_document_summary": "outputs/ui_fixtures/duy_pdf_document_summary.json",
+    "backward_compatible_dashboard_fixture": "logs/ui_fixtures/duy_ingestion_dashboard_fixture.json",
+    "rag_handoff_package": "outputs/rag_handoff/",
+    "prediction_payload_batch": "outputs/prediction_payloads/tuong_week6_prediction_payloads.json",
+    "phat_mapping_summary": "outputs/phat_handoff/phat_week6_mapping_summary.json",
+    "lap_mapping_summary": "outputs/lap_handoff/lap_week6_mapping_summary.json",
+    "tuong_mapping_summary": "outputs/tuong_handoff/tuong_week6_mapping_summary.json"
+  },
+  "hung_repo_files_reviewed": {
+    "duy_fixture_copy": {
+      "path": "F:/data/new/quanskill/DataVision_Hung/demo/fixtures/duy_latest_ingestion_summary.json",
+      "exists": true,
+      "size_bytes": 9362
+    },
+    "phat_dashboard_views_fixture": {
+      "path": "F:/data/new/quanskill/DataVision_Hung/demo/fixtures/phat_dashboard_views_sample.json",
+      "exists": true,
+      "size_bytes": 10070
+    },
+    "tuong_prediction_batch_fixture": {
+      "path": "F:/data/new/quanskill/DataVision_Hung/demo/fixtures/tuong_prediction_batch_response.json",
+      "exists": true,
+      "size_bytes": 2800
+    },
+    "lap_rag_response_fixture": {
+      "path": "F:/data/new/quanskill/DataVision_Hung/demo/fixtures/lap_rag_response_real.json",
+      "exists": true,
+      "size_bytes": 1606
+    },
+    "mock_client": {
+      "path": "F:/data/new/quanskill/DataVision_Hung/demo/services/mock_client.py",
+      "exists": true,
+      "size_bytes": 27036
+    },
+    "service_client": {
+      "path": "F:/data/new/quanskill/DataVision_Hung/demo/services/service_client.py",
+      "exists": true,
+      "size_bytes": 5416
+    },
+    "dashboard_page": {
+      "path": "F:/data/new/quanskill/DataVision_Hung/demo/views/dashboard_page.py",
+      "exists": true,
+      "size_bytes": 8830
+    },
+    "suggestions_page": {
+      "path": "F:/data/new/quanskill/DataVision_Hung/demo/views/suggestions_page.py",
+      "exists": true,
+      "size_bytes": 6386
+    },
+    "reports_page": {
+      "path": "F:/data/new/quanskill/DataVision_Hung/demo/views/reports_page.py",
+      "exists": true,
+      "size_bytes": 4911
+    },
+    "prediction_page": {
+      "path": "F:/data/new/quanskill/DataVision_Hung/demo/views/prediction_page.py",
+      "exists": true,
+      "size_bytes": 16668
+    },
+    "chatbot_page": {
+      "path": "F:/data/new/quanskill/DataVision_Hung/demo/views/chatbot_page.py",
+      "exists": true,
+      "size_bytes": 4437
+    },
+    "dashboard_contract": {
+      "path": "F:/data/new/quanskill/DataVision_Hung/docs/ui_contracts/dashboard_ui_contract.md",
+      "exists": true,
+      "size_bytes": 7530
+    },
+    "week6_handoff": {
+      "path": "F:/data/new/quanskill/DataVision_Hung/docs/W6/week6_team_integration_handoff.md",
+      "exists": true,
+      "size_bytes": 18430
+    }
+  },
+  "duy_fixture_summary": {
+    "total_sources": 4,
+    "total_runs": 4,
+    "total_records_read": 11560,
+    "total_records_valid": 11560,
+    "total_records_invalid": 0,
+    "latest_status": "success",
+    "average_data_quality_score": 99.63,
+    "status_counts": {
+      "success": 4
+    },
+    "rag_ready_documents": 1,
+    "prediction_payload_available": true
+  },
+  "latest_ingestion_run": {
+    "run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+    "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+    "source_id": null,
+    "source_name": "dataflow_technical_report_pdf",
+    "source_type": "pdf",
+    "status": "success",
+    "records_read": 36,
+    "records_valid": 36,
+    "records_invalid": 0,
+    "data_quality_score": 100.0,
+    "document_external_id": "doc_dataflow_technical_report",
+    "document_db_id": null,
+    "file_hash_sha256": "06c0c318db353a5c5c6dbaa84c6778cde022fde92bd1bb7f56e32c485d62fa54",
+    "raw_output_path": "week2/data/raw/pdf/dataflow_technical_report_raw.pdf",
+    "staging_output_path": "week2/data/staging/pdf/dataflow_pdf_pages_staging.csv",
+    "clean_output_path": "week2/data/clean/pdf/dataflow_pdf_pages_clean.csv",
+    "document_pages_jsonl_path": "week2/data/staging/pdf/document_pages.jsonl"
+  },
+  "prediction_context_summary": {
+    "document_external_id": "doc_dataflow_technical_report",
+    "source_name": "dataflow_technical_report_pdf",
+    "source_id": null,
+    "document_db_id": null,
+    "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+    "file_name": "DataFlow_Technical_Report.pdf",
+    "file_type": "pdf",
+    "text_length": 129028,
+    "num_pages": 36,
+    "full_payload_path": "logs/prediction_payloads/duy_pdf_prediction_payload.json"
+  },
+  "confirmed_db_ids_from_phat": {
+    "source_ids": {
+      "superstore_sales_csv": {
+        "source_id": 1,
+        "source_type": "csv",
+        "source_format": "csv",
+        "source_path": "week2/data/sample_inputs/Superstore.csv"
+      },
+      "dataflow_technical_report_pdf": {
+        "source_id": 2,
+        "source_type": "pdf",
+        "source_format": "pdf",
+        "source_path": "week2/data/sample_inputs/DataFlow_Technical_Report.pdf"
+      },
+      "dummyjson_products_api": {
+        "source_id": 3,
+        "source_type": "api",
+        "source_format": "json",
+        "source_path": "https://dummyjson.com/products"
+      },
+      "product_sales_region_excel": {
+        "source_id": 4,
+        "source_type": "excel",
+        "source_format": "xlsx",
+        "source_path": "week2/data/sample_inputs/Product-Sales-Region.xlsx"
+      }
+    },
+    "document_db_ids": {
+      "doc_dataflow_technical_report": {
+        "document_db_id": 1,
+        "source_id": 2,
+        "file_name": "DataFlow_Technical_Report.pdf",
+        "page_count": 36,
+        "character_count": 129028,
+        "processing_status": "extracted"
+      }
+    }
+  },
+  "page_to_data_mapping": {
+    "Dashboard": {
+      "service_function": "get_dashboard_metrics(), get_ingestion_status(), get_recent_activity()",
+      "duy_fields": [
+        "summary.total_sources",
+        "summary.total_records_read",
+        "summary.total_records_valid",
+        "summary.total_records_invalid",
+        "summary.average_data_quality_score",
+        "latest_ingestion_run.status",
+        "latest_ingestion_run.file_hash_sha256",
+        "latest_ingestion_run.raw_output_path",
+        "latest_ingestion_run.staging_output_path",
+        "latest_ingestion_run.clean_output_path",
+        "runs[]"
+      ]
+    },
+    "Suggestions": {
+      "service_function": "generate_suggestions(context)",
+      "duy_fields": [
+        "records_invalid",
+        "data_quality_score",
+        "status",
+        "document_pages_jsonl_path",
+        "prediction_context.parsing_status",
+        "rag_handoff.parsing_status"
+      ]
+    },
+    "Reports": {
+      "service_function": "generate_report(evidence_context)",
+      "duy_fields": [
+        "source_name",
+        "source_type",
+        "run_id",
+        "ingestion_run_id",
+        "file_hash_sha256",
+        "raw_output_path",
+        "staging_output_path",
+        "clean_output_path",
+        "data_quality_score",
+        "records_read",
+        "records_valid",
+        "records_invalid"
+      ]
+    },
+    "Prediction": {
+      "service_function": "classify_document(payload), classify_documents(payloads)",
+      "duy_fields": [
+        "prediction_context.document_external_id",
+        "prediction_context.document_db_id",
+        "prediction_context.source_id",
+        "prediction_context.source_name",
+        "prediction_context.ingestion_run_id",
+        "prediction_context.file_name",
+        "prediction_context.file_type",
+        "prediction_context.text_length",
+        "prediction_context.num_pages",
+        "prediction_context.full_payload_path"
+      ]
+    },
+    "Chatbot/RAG": {
+      "service_function": "ask_rag(question, document_id=None)",
+      "duy_fields": [
+        "rag_handoff.document_external_id",
+        "rag_handoff.document_pages_path",
+        "rag_handoff.pdf_metadata_path",
+        "rag_handoff.page_count",
+        "rag_handoff.total_characters"
+      ]
+    }
+  },
+  "current_hung_fixture_status": {
+    "hung_repo_exists": true,
+    "duy_fixture_loaded_by_hung": true,
+    "phat_dashboard_fixture_loaded_by_hung": true,
+    "tuong_prediction_batch_fixture_loaded_by_hung": true,
+    "lap_rag_response_fixture_loaded_by_hung": true,
+    "hung_latest_source_id": null,
+    "hung_latest_document_db_id": null,
+    "hung_prediction_context_ingestion_run_id": "3a60f989-2817-4466-87cc-e022a347304e",
+    "duy_latest_ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+    "duy_prediction_context_ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+    "hung_fixture_matches_duy_latest_run": true,
+    "hung_fixture_matches_duy_prediction_context": false
+  },
+  "cross_team_counts_for_ui": {
+    "total_sources_from_duy": 4,
+    "total_records_read_from_duy": 11560,
+    "average_data_quality_score_from_duy": 99.63,
+    "document_pages_for_rag": 36,
+    "rag_chunks_from_lap_or_phat": 293,
+    "prediction_payloads_for_tuong": 10,
+    "prediction_review_queue_rows": 5
+  },
+  "what_hung_should_return_to_duy": [
+    "Confirm Dashboard renders Duy latest ingestion summary and run list.",
+    "Confirm Suggestions can consume data_quality_score, records_invalid, prediction status, and RAG status.",
+    "Confirm Reports evidence table includes ingestion run ID, file hash, output paths, and data quality score.",
+    "Confirm whether UI wants DB-enriched IDs in Duy fixture after Phat insert.",
+    "Return missing field list if Dashboard/Suggestions/Reports need additional ingestion signals.",
+    "Return screenshot or JSON sample showing Duy fixture displayed in Streamlit."
+  ],
+  "alignment_notes": [
+    "Duy's source of truth fixture is outputs/ui_fixtures/duy_latest_ingestion_summary.json.",
+    "Hung's demo/fixtures/duy_latest_ingestion_summary.json should be refreshed from Duy's source-of-truth fixture when Duy reruns ingestion.",
+    "Before DB insert, source_id and document_db_id remain null in Duy's fixture.",
+    "After Phat DB insert, Hung can enrich dataflow_technical_report_pdf with source_id=2 and document_db_id=1.",
+    "Do not use ingestion_run_id as source_id.",
+    "The prediction_context ingestion_run_id should match the payload it references; latest_ingestion_run.ingestion_run_id remains the dashboard run ID.",
+    "Dashboard should use Phat view fixture for aggregated database metrics and Duy fixture for ingestion lineage/path details.",
+    "Reports should degrade gracefully when suggestions are empty and display Not available in current data."
+  ],
+  "missing_or_follow_up_items_for_hung": [
+    "Return a screenshot or markdown confirmation after copying the latest Duy fixture into demo/fixtures.",
+    "Confirm whether Hung wants Duy to publish a DB-enriched fixture after Phat assigns source_id and document_db_id.",
+    "Confirm any additional fields needed for report evidence rows beyond run_id, file_hash_sha256, output paths, and data_quality_score.",
+    "Confirm Suggestions thresholds for data_quality_score and RAG similarity_score."
+  ],
+  "source_files_checked": {
+    "duy_quality_fixture_present": true,
+    "duy_pdf_fixture_present": true,
+    "hung_mock_client": "F:\\data\\new\\quanskill\\DataVision_Hung\\demo\\services\\mock_client.py",
+    "hung_dashboard_page": "F:\\data\\new\\quanskill\\DataVision_Hung\\demo\\views\\dashboard_page.py",
+    "hung_suggestions_page": "F:\\data\\new\\quanskill\\DataVision_Hung\\demo\\views\\suggestions_page.py",
+    "hung_reports_page": "F:\\data\\new\\quanskill\\DataVision_Hung\\demo\\views\\reports_page.py"
+  }
+}

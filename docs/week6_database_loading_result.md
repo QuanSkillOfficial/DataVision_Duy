@@ -61,13 +61,45 @@ Real PostgreSQL insert is aligned to Phat's reviewed `schema_v4.sql` columns:
 | `document_pages` | internal `documents.id`, `page_number`, `page_text`, `character_count`, `is_empty` |
 | `structured_records` | `source_id`, `record_data`, `status='clean'` |
 
-Real execution still depends on Phat providing:
+## Phat Integration Evidence Reviewed
 
-- final schema v3/v4 database
-- source unique constraint on `sources.name`
-- PostgreSQL connection credentials
-- `ingestion_logs.pipeline_run_id`
-- `documents.document_external_id`
-- a runnable `schema_v4.sql`
+Phat has exported DB-shaped outputs showing Duy data loaded into PostgreSQL:
 
-Until those are confirmed, Duy's safe proof is the dry-run plan plus pytest coverage.
+| Evidence | Phat output path | Result |
+| --- | --- | --- |
+| Sources | `DataVision_Phat/week6/outputs/ingestion_data_Duy/sources_202607051438.json` | 4 Duy sources |
+| Ingestion logs | `DataVision_Phat/week6/outputs/ingestion_data_Duy/ingestion_logs_202607051438.json` | 4 successful runs |
+| PDF document | `DataVision_Phat/week6/outputs/ingestion_data_Duy/documents_202607051439.json` | `document_external_id=doc_dataflow_technical_report`, `documents.id=1` |
+| Document pages | `DataVision_Phat/week6/outputs/ingestion_data_Duy/document_pages_202607051442.json` | 36 pages |
+| Dashboard overview | `DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_dashboard_overview_202607071300.json` | 4 sources, 1 document, 4 successful ingestions, 10 predictions |
+| Dashboard view samples | `DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_*.json` | 12 view exports |
+| Lap chunks | `DataVision_Phat/week6/outputs/document_chunk_data_Lap/document_chunks_202607071256.json` | 293 chunks for DataFlow PDF |
+| Tuong prediction logs | `DataVision_Phat/week6/outputs/prediction_log_data_Tuong/prediction_logs_202607071251.json` | 10 prediction logs |
+
+Resolved IDs from Phat output:
+
+| Source / Document | Resolved DB ID |
+| --- | ---: |
+| `superstore_sales_csv` | `source_id=1` |
+| `dataflow_technical_report_pdf` | `source_id=2` |
+| `dummyjson_products_api` | `source_id=3` |
+| `product_sales_region_excel` | `source_id=4` |
+| `doc_dataflow_technical_report` | `document_db_id=1` |
+
+If Duy needs to run `--write-db` locally, the only remaining requirement is Phat's PostgreSQL connection credentials and a runnable local schema. Note: Phat's current `schema_v4.sql` / `setup_database_v2.sql` still appears to need a comma before `prediction_logs` constraints.
+
+## Latest Phat Mapping Files
+
+| File | Purpose |
+| --- | --- |
+| `docs/week6_ingestion_to_schema_v4_mapping.md` | Latest schema-v4 mapping alias |
+| `docs/week6_phat_mapping_review.md` | Human-readable Phat mapping review |
+| `outputs/phat_handoff/phat_week6_mapping_summary.json` | Machine-readable summary generated from Phat outputs |
+| `scripts/week6_build_phat_mapping_summary.py` | Regenerates the summary from `DataVision_Phat/week6` |
+
+Current cleanup status:
+
+```text
+Generated __pycache__ folders were removed from DataVision_Duy.
+Week1/week2 folders were kept because they are historical deliverables and active Week 6 outputs still reference week2 paths.
+```
