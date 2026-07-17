@@ -9,11 +9,83 @@ import pandas as pd
 from data_engineering.utils.path_utils import resolve_project_path
 
 
+REQUIRED_SCHEMA_COLUMNS = {
+    "sources": {
+        "id",
+        "name",
+        "source_type",
+        "source_format",
+        "source_path",
+        "url",
+        "owner_name",
+        "sample_available",
+        "downstream_consumer",
+        "status",
+        "updated_at",
+    },
+    "pipeline_runs": {"id", "run_name", "start_time", "end_time", "status"},
+    "ingestion_logs": {
+        "run_id",
+        "source_id",
+        "pipeline_run_id",
+        "source_type",
+        "input_path_or_url",
+        "status",
+        "records_read",
+        "records_valid",
+        "records_invalid",
+        "error_message",
+        "raw_output_path",
+        "staging_output_path",
+        "clean_output_path",
+        "data_quality_score",
+        "required_missing_values",
+        "optional_missing_values",
+        "duplicate_count",
+        "manifest_path",
+        "started_at",
+        "ended_at",
+    },
+    "documents": {
+        "id",
+        "source_id",
+        "document_external_id",
+        "file_name",
+        "file_type",
+        "file_size_bytes",
+        "file_hash_sha256",
+        "raw_path",
+        "staging_text_path",
+        "page_count",
+        "character_count",
+        "document_metadata",
+        "processing_status",
+        "updated_at",
+    },
+    "document_pages": {"document_id", "page_number", "page_text", "character_count", "is_empty"},
+    "structured_records": {"source_id", "record_data", "status"},
+}
+
+
 def _json_dumps(payload: Any) -> str:
     return json.dumps(payload, ensure_ascii=False)
 
 
-def insert_or_get_source(conn, ingestion_result: dict[str, Any]) -> int | None:
+def _source_format(ingestion_result: dict[str, Any]) -> str:
+    configured_format = ingestion_result.get("source_format")
+    if configured_format:
+        return str(configured_format).lower()
+
+    source_type = str(ingestion_result.get("source_type") or "").lower()
+    if source_type == "api":
+        return "json"
+
+    input_path_or_url = str(ingestion_result.get("input_path_or_url") or "")
+    suffix = Path(input_path_or_url).suffix.lower().lstrip(".")
+    return suffix or source_type
+
+
+def insert_or_get_source(conn, ingestion_result: dict[str, Any]) -> int:
     """Insert or upsert one source row.
 
     Expected Phat schema_v4 behavior:
@@ -31,7 +103,12 @@ def insert_or_get_source(conn, ingestion_result: dict[str, Any]) -> int | None:
             ON CONFLICT (name) DO UPDATE
             SET
                 source_type = EXCLUDED.source_type,
+                source_format = EXCLUDED.source_format,
+                source_path = EXCLUDED.source_path,
+                url = EXCLUDED.url,
                 owner_name = EXCLUDED.owner_name,
+                sample_available = EXCLUDED.sample_available,
+                downstream_consumer = EXCLUDED.downstream_consumer,
                 status = EXCLUDED.status,
                 updated_at = CURRENT_TIMESTAMP
             RETURNING id
@@ -39,7 +116,7 @@ def insert_or_get_source(conn, ingestion_result: dict[str, Any]) -> int | None:
             (
                 ingestion_result["source_name"],
                 ingestion_result["source_type"],
-                ingestion_result.get("source_type"),
+                _source_format(ingestion_result),
                 ingestion_result.get("input_path_or_url"),
                 ingestion_result.get("input_path_or_url") if ingestion_result.get("source_type") == "api" else None,
                 ingestion_result.get("owner"),
@@ -49,20 +126,23 @@ def insert_or_get_source(conn, ingestion_result: dict[str, Any]) -> int | None:
             ),
         )
         row = cur.fetchone()
-    return row[0] if row else None
+    if not row:
+        raise RuntimeError(f"PostgreSQL did not return a source ID for {ingestion_result['source_name']}")
+    return int(row[0])
 
 
-def insert_source(conn, ingestion_result: dict[str, Any]) -> int | None:
+def insert_source(conn, ingestion_result: dict[str, Any]) -> int:
     return insert_or_get_source(conn, ingestion_result)
 
 
-def insert_pipeline_run(conn, ingestion_result: dict[str, Any]) -> int | None:
+def insert_pipeline_run(conn, ingestion_result: dict[str, Any]) -> int:
     with conn.cursor() as cur:
         cur.execute(
             """
             INSERT INTO pipeline_runs (
                 run_name, start_time, end_time, status
             )
+            VALUES (%s, %s, %s, %s)
             RETURNING id
             """,
             (
@@ -73,7 +153,9 @@ def insert_pipeline_run(conn, ingestion_result: dict[str, Any]) -> int | None:
             ),
         )
         row = cur.fetchone()
-    return row[0] if row else None
+    if not row:
+        raise RuntimeError(f"PostgreSQL did not return a pipeline run ID for {ingestion_result['run_id']}")
+    return int(row[0])
 
 
 def _quality_fields(ingestion_result: dict[str, Any]) -> dict[str, Any]:
@@ -132,7 +214,57 @@ def insert_ingestion_log(
         )
 
 
-def insert_document(conn, pdf_metadata: dict[str, Any], source_id: int | None = None) -> int | None:
+def ingestion_run_exists(conn, run_id: str) -> bool:
+    """Return whether an ingestion run has already been loaded.
+
+    Phat's schema_v4 does not declare ingestion_logs.run_id as UNIQUE. This
+    guard keeps the loader idempotent and prevents duplicate structured rows
+    when the same run package is submitted more than once.
+    """
+    with conn.cursor() as cur:
+        cur.execute(
+            "SELECT 1 FROM ingestion_logs WHERE run_id = %s LIMIT 1",
+            (run_id,),
+        )
+        return cur.fetchone() is not None
+
+
+def get_existing_ingestion_mapping(conn, ingestion_result: dict[str, Any]) -> dict[str, int | None]:
+    """Resolve IDs for an idempotently skipped run so handoffs remain DB-enriched."""
+    with conn.cursor() as cur:
+        cur.execute(
+            """
+            SELECT source_id, pipeline_run_id
+            FROM ingestion_logs
+            WHERE run_id = %s
+            ORDER BY id DESC
+            LIMIT 1
+            """,
+            (ingestion_result["run_id"],),
+        )
+        row = cur.fetchone()
+
+    mapping: dict[str, int | None] = {
+        "source_id": int(row[0]) if row and row[0] is not None else None,
+        "pipeline_run_id": int(row[1]) if row and row[1] is not None else None,
+        "document_db_id": None,
+    }
+    document_external_id = ingestion_result.get("document_id") or (
+        ingestion_result.get("pdf_metadata") or {}
+    ).get("document_id")
+    if document_external_id:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT id FROM documents WHERE document_external_id = %s LIMIT 1",
+                (document_external_id,),
+            )
+            document_row = cur.fetchone()
+        if document_row:
+            mapping["document_db_id"] = int(document_row[0])
+    return mapping
+
+
+def insert_document(conn, pdf_metadata: dict[str, Any], source_id: int | None = None) -> int:
     """Insert one PDF document and preserve Duy's string ID as document_external_id."""
     with conn.cursor() as cur:
         cur.execute(
@@ -145,9 +277,12 @@ def insert_document(conn, pdf_metadata: dict[str, Any], source_id: int | None = 
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s::jsonb, %s)
             ON CONFLICT (document_external_id) DO UPDATE
             SET
+                source_id = EXCLUDED.source_id,
                 file_name = EXCLUDED.file_name,
+                file_type = EXCLUDED.file_type,
                 file_size_bytes = EXCLUDED.file_size_bytes,
                 file_hash_sha256 = EXCLUDED.file_hash_sha256,
+                raw_path = EXCLUDED.raw_path,
                 staging_text_path = EXCLUDED.staging_text_path,
                 page_count = EXCLUDED.page_count,
                 character_count = EXCLUDED.character_count,
@@ -158,7 +293,7 @@ def insert_document(conn, pdf_metadata: dict[str, Any], source_id: int | None = 
             """,
             (
                 source_id,
-                pdf_metadata.get("document_id"),
+                pdf_metadata.get("document_external_id") or pdf_metadata.get("document_id"),
                 pdf_metadata.get("file_name"),
                 "pdf",
                 pdf_metadata.get("file_size_bytes"),
@@ -172,7 +307,9 @@ def insert_document(conn, pdf_metadata: dict[str, Any], source_id: int | None = 
             ),
         )
         row = cur.fetchone()
-    return row[0] if row else None
+    if not row:
+        raise RuntimeError("PostgreSQL did not return a document ID")
+    return int(row[0])
 
 
 def insert_document_pages(conn, document_pages_jsonl_path: str | Path, document_id: int) -> int:
@@ -181,6 +318,9 @@ def insert_document_pages(conn, document_pages_jsonl_path: str | Path, document_
     if resolved is None or not resolved.exists():
         raise FileNotFoundError(f"document_pages JSONL not found: {document_pages_jsonl_path}")
     with resolved.open("r", encoding="utf-8") as file, conn.cursor() as cur:
+        # document_pages has no run_id or unique page constraint in schema_v4.
+        # Replace the document snapshot so a new ingestion run cannot duplicate pages.
+        cur.execute("DELETE FROM document_pages WHERE document_id = %s", (document_id,))
         for line in file:
             page = json.loads(line)
             cur.execute(
@@ -202,13 +342,28 @@ def insert_document_pages(conn, document_pages_jsonl_path: str | Path, document_
     return inserted
 
 
-def insert_structured_records(conn, clean_csv_path: str | Path, source_id: int) -> int:
+def insert_structured_records(
+    conn,
+    clean_csv_path: str | Path,
+    source_id: int,
+    *,
+    replace_existing: bool = True,
+    limit: int | None = None,
+) -> int:
     resolved = resolve_project_path(clean_csv_path)
     if resolved is None or not resolved.exists():
         raise FileNotFoundError(f"Clean CSV not found: {clean_csv_path}")
     df = pd.read_csv(resolved)
+    if limit is not None:
+        if limit < 0:
+            raise ValueError("Structured record limit must be zero or greater")
+        df = df.head(limit)
     inserted = 0
     with conn.cursor() as cur:
+        # schema_v4 structured_records has no ingestion run identifier. Treat
+        # Duy's clean output as the latest source snapshot to avoid double counts.
+        if replace_existing:
+            cur.execute("DELETE FROM structured_records WHERE source_id = %s", (source_id,))
         for _, row in df.iterrows():
             cur.execute(
                 """
@@ -221,7 +376,43 @@ def insert_structured_records(conn, clean_csv_path: str | Path, source_id: int) 
     return inserted
 
 
-def build_dry_run_summary(ingestion_result: dict[str, Any]) -> dict[str, Any]:
+def validate_target_schema(conn) -> dict[str, list[str]]:
+    """Fail before loading if Phat's database is not compatible with Duy's writer."""
+    table_names = sorted(REQUIRED_SCHEMA_COLUMNS)
+    with conn.cursor() as cur:
+        cur.execute(
+            """
+            SELECT table_name, column_name
+            FROM information_schema.columns
+            WHERE table_schema = current_schema()
+              AND table_name = ANY(%s)
+            """,
+            (table_names,),
+        )
+        rows = cur.fetchall()
+
+    actual: dict[str, set[str]] = {table: set() for table in table_names}
+    for table_name, column_name in rows:
+        if table_name in actual:
+            actual[table_name].add(column_name)
+
+    missing = {
+        table: sorted(required - actual[table])
+        for table, required in REQUIRED_SCHEMA_COLUMNS.items()
+        if required - actual[table]
+    }
+    if missing:
+        details = "; ".join(f"{table}: {columns}" for table, columns in sorted(missing.items()))
+        raise RuntimeError(f"PostgreSQL schema is not compatible with Duy Week 7 writer ({details})")
+
+    return {table: sorted(columns) for table, columns in actual.items()}
+
+
+def build_dry_run_summary(
+    ingestion_result: dict[str, Any],
+    *,
+    structured_record_limit: int | None = None,
+) -> dict[str, Any]:
     quality = _quality_fields(ingestion_result)
     target_tables = ["sources", "pipeline_runs", "ingestion_logs"]
     if ingestion_result.get("source_type") == "pdf":
@@ -244,22 +435,44 @@ def build_dry_run_summary(ingestion_result: dict[str, Any]) -> dict[str, Any]:
             "ingestion_logs": 1,
             "documents": 1 if ingestion_result.get("source_type") == "pdf" else 0,
             "document_pages": ingestion_result.get("records_valid", 0) if ingestion_result.get("source_type") == "pdf" else 0,
-            "structured_records": ingestion_result.get("records_valid", 0)
+            "structured_records": min(ingestion_result.get("records_valid", 0), structured_record_limit)
+            if structured_record_limit is not None and ingestion_result.get("source_type") in {"csv", "excel", "api"}
+            else ingestion_result.get("records_valid", 0)
             if ingestion_result.get("source_type") in {"csv", "excel", "api"}
             else 0,
         },
     }
 
 
-def load_ingestion_result_to_postgres(conn, ingestion_result: dict[str, Any]) -> dict[str, Any]:
+def load_ingestion_result_to_postgres(
+    conn,
+    ingestion_result: dict[str, Any],
+    *,
+    structured_record_limit: int | None = None,
+) -> dict[str, Any]:
+    document_external_id = ingestion_result.get("document_id") or (
+        ingestion_result.get("pdf_metadata") or {}
+    ).get("document_id")
     summary: dict[str, Any] = {
         "run_id": ingestion_result.get("run_id"),
         "source_name": ingestion_result.get("source_name"),
         "source_type": ingestion_result.get("source_type"),
         "status": "started",
         "inserted": {},
+        "document_external_id": document_external_id,
     }
+    if ingestion_result.get("status") not in {"success", "partial_success"}:
+        summary["status"] = "skipped"
+        summary["reason"] = "Only successful or partial-success ingestion runs can be loaded"
+        return summary
+
     try:
+        if ingestion_run_exists(conn, ingestion_result["run_id"]):
+            summary.update(get_existing_ingestion_mapping(conn, ingestion_result))
+            summary["status"] = "skipped"
+            summary["reason"] = "ingestion_run_id already exists"
+            return summary
+
         source_id = insert_or_get_source(conn, ingestion_result)
         pipeline_run_id = insert_pipeline_run(conn, ingestion_result)
         insert_ingestion_log(conn, ingestion_result, source_id=source_id, pipeline_run_id=pipeline_run_id)
@@ -276,9 +489,15 @@ def load_ingestion_result_to_postgres(conn, ingestion_result: dict[str, Any]) ->
             document_pages_path = ingestion_result.get("document_pages_output_path") or pdf_metadata.get("document_pages_output_path")
             pages_inserted = insert_document_pages(conn, document_pages_path, document_id) if document_id and document_pages_path else 0
             summary["document_db_id"] = document_id
+            summary["document_external_id"] = pdf_metadata.get("document_external_id") or pdf_metadata.get("document_id")
             summary["inserted"].update({"documents": 1 if document_id else 0, "document_pages": pages_inserted})
         elif ingestion_result.get("source_type") in {"csv", "excel", "api"}:
-            records_inserted = insert_structured_records(conn, ingestion_result["clean_output_path"], source_id)
+            records_inserted = insert_structured_records(
+                conn,
+                ingestion_result["clean_output_path"],
+                source_id,
+                limit=structured_record_limit,
+            )
             summary["inserted"]["structured_records"] = records_inserted
 
         conn.commit()
@@ -288,6 +507,68 @@ def load_ingestion_result_to_postgres(conn, ingestion_result: dict[str, Any]) ->
         summary["status"] = "failed"
         summary["error"] = str(exc)
     return summary
+
+
+def query_integration_counts(
+    conn,
+    *,
+    run_ids: list[str],
+    source_names: list[str],
+    document_external_ids: list[str],
+) -> dict[str, int]:
+    """Query loaded rows back from Phat's schema_v4 for integration proof."""
+    with conn.cursor() as cur:
+        cur.execute(
+            """
+            SELECT
+                (SELECT COUNT(*) FROM sources WHERE name = ANY(%s)),
+                (SELECT COUNT(*) FROM ingestion_logs WHERE run_id = ANY(%s)),
+                (
+                    SELECT COUNT(*)
+                    FROM pipeline_runs pr
+                    JOIN ingestion_logs il ON il.pipeline_run_id = pr.id
+                    WHERE il.run_id = ANY(%s)
+                ),
+                (
+                    SELECT COUNT(*)
+                    FROM documents
+                    WHERE document_external_id = ANY(%s)
+                ),
+                (
+                    SELECT COUNT(*)
+                    FROM document_pages dp
+                    JOIN documents d ON d.id = dp.document_id
+                    WHERE d.document_external_id = ANY(%s)
+                ),
+                (
+                    SELECT COUNT(*)
+                    FROM structured_records sr
+                    JOIN sources s ON s.id = sr.source_id
+                    WHERE s.name = ANY(%s)
+                )
+            """,
+            (
+                source_names,
+                run_ids,
+                run_ids,
+                document_external_ids,
+                document_external_ids,
+                source_names,
+            ),
+        )
+        row = cur.fetchone()
+
+    if row is None:
+        raise RuntimeError("PostgreSQL verification query returned no result")
+    keys = [
+        "sources",
+        "ingestion_logs",
+        "pipeline_runs",
+        "documents",
+        "document_pages",
+        "structured_records",
+    ]
+    return {key: int(value) for key, value in zip(keys, row)}
 
 
 def build_document_page_insert_plan(document_pages_jsonl_path: str | Path) -> dict[str, Any]:

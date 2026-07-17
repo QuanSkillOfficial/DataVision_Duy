@@ -1,0 +1,26 @@
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: datavision-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-datavision}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-datavision123}
+      POSTGRES_DB: ${POSTGRES_DB:-datavision_db}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - datavision_pgdata:/var/lib/postgresql/data
+      - ./deployment/database/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-datavision} -d ${POSTGRES_DB:-datavision_db}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+volumes:
+  datavision_pgdata:

@@ -4,12 +4,13 @@
   "document_db_id": null,
   "source_id": null,
   "source_name": "dataflow_technical_report_pdf",
-  "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+  "ingestion_run_id": "400d3c21-42f0-44bb-be47-09bd04f86431",
   "file_name": "short_text_sample.pdf",
   "file_type": "pdf",
   "file_size": 128,
   "text_length": 11,
   "num_pages": 1,
+  "page_range": "1",
   "source_system": "manual_upload",
   "extracted_text": "Short text.",
   "parsing_status": "partial_success",
@@ -20,5 +21,8 @@
   "records_valid": 0,
   "records_invalid": 0,
   "test_case": "short_extracted_text_quality_gate",
-  "expected_status_hint": "waiting_for_source_or_needs_review"
+  "expected_status_hint": "waiting_for_source_or_needs_review",
+  "data_quality_score": null,
+  "file_hash_sha256": null,
+  "database_identity_status": "pending_database_load"
 }

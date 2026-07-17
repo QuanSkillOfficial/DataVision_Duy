@@ -1,0 +1,25 @@
+{
+  "mode": "not_executed",
+  "status": "pending_external_database",
+  "connection_status": "unavailable",
+  "schema_version": "schema_v4_fixed_pending_from_phat",
+  "results": [],
+  "expected_full_counts": {
+    "sources": 4,
+    "pipeline_runs": 4,
+    "ingestion_logs": 4,
+    "documents": 1,
+    "document_pages": 36,
+    "structured_records": 11524
+  },
+  "expected_smoke_counts": {
+    "sources": 4,
+    "pipeline_runs": 4,
+    "ingestion_logs": 4,
+    "documents": 1,
+    "document_pages": 36,
+    "structured_records": 100
+  },
+  "next_command": "python scripts/load_ingestion_outputs_to_postgres.py --write-db --smoke",
+  "note": "This file is overwritten with source_id and document_db_id mappings after a real PostgreSQL load."
+}

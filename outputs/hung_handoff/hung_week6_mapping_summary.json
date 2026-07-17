@@ -15,67 +15,67 @@
   },
   "hung_repo_files_reviewed": {
     "duy_fixture_copy": {
-      "path": "F:/data/new/quanskill/DataVision_Hung/demo/fixtures/duy_latest_ingestion_summary.json",
+      "path": "DataVision_Hung/demo/fixtures/duy_latest_ingestion_summary.json",
       "exists": true,
       "size_bytes": 9362
     },
     "phat_dashboard_views_fixture": {
-      "path": "F:/data/new/quanskill/DataVision_Hung/demo/fixtures/phat_dashboard_views_sample.json",
+      "path": "DataVision_Hung/demo/fixtures/phat_dashboard_views_sample.json",
       "exists": true,
       "size_bytes": 10070
     },
     "tuong_prediction_batch_fixture": {
-      "path": "F:/data/new/quanskill/DataVision_Hung/demo/fixtures/tuong_prediction_batch_response.json",
+      "path": "DataVision_Hung/demo/fixtures/tuong_prediction_batch_response.json",
       "exists": true,
       "size_bytes": 2800
     },
     "lap_rag_response_fixture": {
-      "path": "F:/data/new/quanskill/DataVision_Hung/demo/fixtures/lap_rag_response_real.json",
+      "path": "DataVision_Hung/demo/fixtures/lap_rag_response_real.json",
       "exists": true,
       "size_bytes": 1606
     },
     "mock_client": {
-      "path": "F:/data/new/quanskill/DataVision_Hung/demo/services/mock_client.py",
+      "path": "DataVision_Hung/demo/services/mock_client.py",
       "exists": true,
       "size_bytes": 27036
     },
     "service_client": {
-      "path": "F:/data/new/quanskill/DataVision_Hung/demo/services/service_client.py",
+      "path": "DataVision_Hung/demo/services/service_client.py",
       "exists": true,
       "size_bytes": 5416
     },
     "dashboard_page": {
-      "path": "F:/data/new/quanskill/DataVision_Hung/demo/views/dashboard_page.py",
+      "path": "DataVision_Hung/demo/views/dashboard_page.py",
       "exists": true,
       "size_bytes": 8830
     },
     "suggestions_page": {
-      "path": "F:/data/new/quanskill/DataVision_Hung/demo/views/suggestions_page.py",
+      "path": "DataVision_Hung/demo/views/suggestions_page.py",
       "exists": true,
       "size_bytes": 6386
     },
     "reports_page": {
-      "path": "F:/data/new/quanskill/DataVision_Hung/demo/views/reports_page.py",
+      "path": "DataVision_Hung/demo/views/reports_page.py",
       "exists": true,
       "size_bytes": 4911
     },
     "prediction_page": {
-      "path": "F:/data/new/quanskill/DataVision_Hung/demo/views/prediction_page.py",
+      "path": "DataVision_Hung/demo/views/prediction_page.py",
       "exists": true,
       "size_bytes": 16668
     },
     "chatbot_page": {
-      "path": "F:/data/new/quanskill/DataVision_Hung/demo/views/chatbot_page.py",
+      "path": "DataVision_Hung/demo/views/chatbot_page.py",
       "exists": true,
       "size_bytes": 4437
     },
     "dashboard_contract": {
-      "path": "F:/data/new/quanskill/DataVision_Hung/docs/ui_contracts/dashboard_ui_contract.md",
+      "path": "DataVision_Hung/docs/ui_contracts/dashboard_ui_contract.md",
       "exists": true,
       "size_bytes": 7530
     },
     "week6_handoff": {
-      "path": "F:/data/new/quanskill/DataVision_Hung/docs/W6/week6_team_integration_handoff.md",
+      "path": "DataVision_Hung/docs/W6/week6_team_integration_handoff.md",
       "exists": true,
       "size_bytes": 18430
     }
@@ -95,8 +95,8 @@
     "prediction_payload_available": true
   },
   "latest_ingestion_run": {
-    "run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
-    "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+    "run_id": "400d3c21-42f0-44bb-be47-09bd04f86431",
+    "ingestion_run_id": "400d3c21-42f0-44bb-be47-09bd04f86431",
     "source_id": null,
     "source_name": "dataflow_technical_report_pdf",
     "source_type": "pdf",
@@ -118,7 +118,7 @@
     "source_name": "dataflow_technical_report_pdf",
     "source_id": null,
     "document_db_id": null,
-    "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+    "ingestion_run_id": "2fff9142-7da0-4fee-9001-c61d10397a7c",
     "file_name": "DataFlow_Technical_Report.pdf",
     "file_type": "pdf",
     "text_length": 129028,
@@ -243,9 +243,9 @@
     "hung_latest_source_id": null,
     "hung_latest_document_db_id": null,
     "hung_prediction_context_ingestion_run_id": "3a60f989-2817-4466-87cc-e022a347304e",
-    "duy_latest_ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
-    "duy_prediction_context_ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
-    "hung_fixture_matches_duy_latest_run": true,
+    "duy_latest_ingestion_run_id": "400d3c21-42f0-44bb-be47-09bd04f86431",
+    "duy_prediction_context_ingestion_run_id": "2fff9142-7da0-4fee-9001-c61d10397a7c",
+    "hung_fixture_matches_duy_latest_run": false,
     "hung_fixture_matches_duy_prediction_context": false
   },
   "cross_team_counts_for_ui": {
@@ -284,9 +284,9 @@
   "source_files_checked": {
     "duy_quality_fixture_present": true,
     "duy_pdf_fixture_present": true,
-    "hung_mock_client": "F:\\data\\new\\quanskill\\DataVision_Hung\\demo\\services\\mock_client.py",
-    "hung_dashboard_page": "F:\\data\\new\\quanskill\\DataVision_Hung\\demo\\views\\dashboard_page.py",
-    "hung_suggestions_page": "F:\\data\\new\\quanskill\\DataVision_Hung\\demo\\views\\suggestions_page.py",
-    "hung_reports_page": "F:\\data\\new\\quanskill\\DataVision_Hung\\demo\\views\\reports_page.py"
+    "hung_mock_client": "DataVision_Hung/demo/services/mock_client.py",
+    "hung_dashboard_page": "DataVision_Hung/demo/views/dashboard_page.py",
+    "hung_suggestions_page": "DataVision_Hung/demo/views/suggestions_page.py",
+    "hung_reports_page": "DataVision_Hung/demo/views/reports_page.py"
   }
 }

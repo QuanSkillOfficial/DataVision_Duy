@@ -288,6 +288,8 @@ Expected:
 | `logs/db_load_dry_run/duy_to_phat_db_load_plan.json` | Shows the latest insert plan |
 | `docs/week6_duy_to_phat_db_load_result.md` | Human-readable integration result |
 
+The real loader validates required target columns before writing. On a new run it replaces existing `document_pages` for the same document and `structured_records` for the same source, because schema_v4 does not store ingestion run IDs in those two tables. This prevents dashboard counts from doubling after a rerun.
+
 ## Known Phat-Side Notes
 
 The reviewed `schema_v4.sql` contains a likely syntax issue in `prediction_logs`:

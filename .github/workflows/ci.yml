@@ -1,0 +1,171 @@
+name: DataVision CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  data-engineering-ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Build shared CI fixtures
+        run: python scripts/week7_build_shared_test_fixtures.py
+      - name: Run ingestion CI smoke test
+        run: python scripts/week7_ci_ingestion_smoke_test.py
+      - name: Run data engineering tests
+        run: pytest tests/data_tests/ -q
+      - name: Validate Week 7 data pipeline contracts
+        run: python scripts/week7_data_pipeline_smoke_test.py
+
+  backend-contract-ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install backend stub dependencies
+        run: pip install -r backend_stub/requirements.txt
+      - name: Start backend contract stub
+        run: |
+          nohup uvicorn backend_stub.main:app --host 127.0.0.1 --port 8000 >/tmp/datavision-backend.log 2>&1 &
+          for i in {1..30}; do
+            curl --fail --silent http://127.0.0.1:8000/api/health && break
+            sleep 1
+          done
+      - name: Run backend contract smoke test
+        run: python scripts/week7_backend_stub_smoke_test.py
+
+  shared-readiness-ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install shared data dependencies
+        run: pip install -r requirements.txt
+      - name: Check shared repository readiness
+        run: python scripts/week7_shared_repo_readiness_check.py --allow-missing-owner-modules
+
+  integration-contract-ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install shared data dependencies
+        run: pip install -r requirements.txt
+      - name: Run local integration contract smoke test
+        run: python scripts/week7_shared_integration_smoke_test.py
+
+  # These owner jobs become active automatically after the corresponding
+  # module is merged into the shared repository. They are intentionally
+  # conditional in Duy's standalone repository.
+  database-ci:
+    if: ${{ hashFiles('week7/database/**') != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: datavision
+          POSTGRES_PASSWORD: datavision123
+          POSTGRES_DB: datavision_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U datavision -d datavision_db"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install database dependencies
+        run: pip install -r requirements.txt
+      - name: Run database setup
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: datavision_db
+          DB_USER: datavision
+          DB_PASSWORD: datavision123
+        run: |
+          if [ -f week7/database/run_database_setup.py ]; then
+            python week7/database/run_database_setup.py
+          elif [ -f week7/database/setup_local_db.sh ]; then
+            bash week7/database/setup_local_db.sh
+          else
+            echo "Database setup entrypoint is missing" >&2
+            exit 1
+          fi
+      - name: Run database smoke test
+        run: |
+          if [ -f week7/database/ci_database_smoke_test.py ]; then
+            python week7/database/ci_database_smoke_test.py
+          else
+            bash week7/database/ci_database_smoke_test.sh
+          fi
+
+  rag-ci:
+    if: ${{ hashFiles('ai/rag/scripts/week7_rag_ci_smoke_test.py') != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install shared dependencies
+        run: pip install -r requirements.txt
+      - name: Run RAG CI smoke test
+        run: python ai/rag/scripts/week7_rag_ci_smoke_test.py
+
+  prediction-ci:
+    if: ${{ hashFiles('scripts/week7_prediction_ci_smoke_test.py') != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install shared dependencies
+        run: pip install -r requirements.txt
+      - name: Run prediction CI smoke test
+        run: python scripts/week7_prediction_ci_smoke_test.py
+
+  ui-ci:
+    if: ${{ hashFiles('scripts/week7_ui_ci_smoke_test.py') != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install shared dependencies
+        run: pip install -r requirements.txt
+      - name: Run UI contract tests
+        run: pytest tests/ -q
+      - name: Run UI CI smoke test
+        run: python scripts/week7_ui_ci_smoke_test.py

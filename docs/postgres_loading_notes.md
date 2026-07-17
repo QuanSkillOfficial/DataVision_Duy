@@ -1,5 +1,7 @@
 # PostgreSQL Loading Notes
 
+> Historical Week 5 note. The executable Week 6 source of truth is `data_engineering/storage/postgres_writer.py` together with `docs/week6_database_loading_result.md`.
+
 Owner: Nguyen Minh Duy
 
 ## Current Scope
@@ -34,4 +36,3 @@ It is designed to work with Phat's schema_v2/schema_v3 direction, but it does no
 ## Current Limitation
 
 The writer is intentionally conservative for Week 5. It prepares SQL shape and dry-run checks, but full integration should wait for Phat's final schema_v3 table definitions and local database credentials.
-

@@ -2,7 +2,7 @@
 
 Owner: Nguyen Minh Duy  
 Role: Data Engineering / Ingestion Owner  
-Repository root: `F:/data/new/quanskill/DataVision_Duy`
+Repository root in the shared workspace: `DataVision_Duy/`
 
 ## Purpose
 
@@ -122,7 +122,7 @@ Current IDs confirmed from Phat Week 6 outputs:
 Run from repository root:
 
 ```powershell
-cd F:\data\new\quanskill\DataVision_Duy
+cd DataVision_Duy
 ```
 
 Run all ingestion configs:
@@ -172,7 +172,7 @@ Expected:
 
 ```text
 Week 6 validation passed
-20 passed
+28 passed
 ```
 
 ## Duy -> Phat: Database / PostgreSQL Handoff
@@ -825,7 +825,7 @@ Expected:
 
 ```text
 Week 6 validation passed
-20 passed
+28 passed
 ```
 
 End-to-end smoke test:

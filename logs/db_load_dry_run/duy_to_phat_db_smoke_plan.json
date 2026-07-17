@@ -1,0 +1,111 @@
+{
+  "mode": "smoke_dry_run",
+  "run_count": 4,
+  "runs": [
+    {
+      "target_tables": [
+        "sources",
+        "pipeline_runs",
+        "ingestion_logs",
+        "documents",
+        "document_pages"
+      ],
+      "source_name": "dataflow_technical_report_pdf",
+      "source_type": "pdf",
+      "run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282",
+      "status": "success",
+      "records_valid": 36,
+      "data_quality_score": 100.0,
+      "manifest_path": "logs/manifests/4c595851-c11e-48e3-8c79-69f6fa52d282_manifest.json",
+      "ready_for_insert": true,
+      "would_insert": {
+        "sources": 1,
+        "pipeline_runs": 1,
+        "ingestion_logs": 1,
+        "documents": 1,
+        "document_pages": 36,
+        "structured_records": 0
+      }
+    },
+    {
+      "target_tables": [
+        "sources",
+        "pipeline_runs",
+        "ingestion_logs",
+        "structured_records"
+      ],
+      "source_name": "dummyjson_products_api",
+      "source_type": "api",
+      "run_id": "7fb106e1-c920-4e92-b3c8-47402ee94ea5",
+      "status": "success",
+      "records_valid": 30,
+      "data_quality_score": 99.0,
+      "manifest_path": "logs/manifests/7fb106e1-c920-4e92-b3c8-47402ee94ea5_manifest.json",
+      "ready_for_insert": true,
+      "would_insert": {
+        "sources": 1,
+        "pipeline_runs": 1,
+        "ingestion_logs": 1,
+        "documents": 0,
+        "document_pages": 0,
+        "structured_records": 30
+      }
+    },
+    {
+      "target_tables": [
+        "sources",
+        "pipeline_runs",
+        "ingestion_logs",
+        "structured_records"
+      ],
+      "source_name": "product_sales_region_excel",
+      "source_type": "excel",
+      "run_id": "797e7ee4-9139-4157-b6b4-cb3c325ce469",
+      "status": "success",
+      "records_valid": 1500,
+      "data_quality_score": 99.51,
+      "manifest_path": "logs/manifests/797e7ee4-9139-4157-b6b4-cb3c325ce469_manifest.json",
+      "ready_for_insert": true,
+      "would_insert": {
+        "sources": 1,
+        "pipeline_runs": 1,
+        "ingestion_logs": 1,
+        "documents": 0,
+        "document_pages": 0,
+        "structured_records": 35
+      }
+    },
+    {
+      "target_tables": [
+        "sources",
+        "pipeline_runs",
+        "ingestion_logs",
+        "structured_records"
+      ],
+      "source_name": "superstore_sales_csv",
+      "source_type": "csv",
+      "run_id": "0a11e66b-59c8-4259-9759-d36589423758",
+      "status": "success",
+      "records_valid": 9994,
+      "data_quality_score": 100.0,
+      "manifest_path": "logs/manifests/0a11e66b-59c8-4259-9759-d36589423758_manifest.json",
+      "ready_for_insert": true,
+      "would_insert": {
+        "sources": 1,
+        "pipeline_runs": 1,
+        "ingestion_logs": 1,
+        "documents": 0,
+        "document_pages": 0,
+        "structured_records": 35
+      }
+    }
+  ],
+  "totals": {
+    "sources": 4,
+    "pipeline_runs": 4,
+    "ingestion_logs": 4,
+    "structured_records": 100,
+    "documents": 1,
+    "document_pages": 36
+  }
+}

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 
@@ -10,6 +11,10 @@ REQUIRED_FILES = [
     "scripts/load_ingestion_outputs_to_postgres.py",
     "scripts/week6_end_to_end_smoke_test.py",
     "scripts/week6_build_ui_fixture_from_ingestion_logs.py",
+    "scripts/week6_build_phat_mapping_summary.py",
+    "scripts/week6_build_lap_mapping_summary.py",
+    "scripts/week6_build_tuong_mapping_summary.py",
+    "scripts/week6_build_hung_mapping_summary.py",
     "docs/week6_id_mapping_contract.md",
     "docs/week6_ingestion_to_schema_v3_mapping.md",
     "docs/week6_document_pages_for_rag_confirmed.md",
@@ -29,6 +34,10 @@ REQUIRED_FILES = [
     "outputs/rag_handoff/pdf_metadata.json",
     "outputs/rag_handoff/rag_handoff_summary.md",
     "outputs/rag_handoff/rag_handoff_manifest.json",
+    "outputs/phat_handoff/phat_week6_mapping_summary.json",
+    "outputs/lap_handoff/lap_week6_mapping_summary.json",
+    "outputs/tuong_handoff/tuong_week6_mapping_summary.json",
+    "outputs/hung_handoff/hung_week6_mapping_summary.json",
     "tests/data_tests/test_week6_db_payload_mapping.py",
 ]
 
@@ -186,6 +195,86 @@ def validate_rag_handoff() -> list[str]:
     return errors
 
 
+def _iter_string_values(payload):
+    if isinstance(payload, dict):
+        for value in payload.values():
+            yield from _iter_string_values(value)
+    elif isinstance(payload, list):
+        for value in payload:
+            yield from _iter_string_values(value)
+    elif isinstance(payload, str):
+        yield payload
+
+
+def validate_portable_handoff_paths() -> list[str]:
+    errors: list[str] = []
+    paths = [
+        PROJECT_ROOT / "outputs/phat_handoff/phat_week6_mapping_summary.json",
+        PROJECT_ROOT / "outputs/lap_handoff/lap_week6_mapping_summary.json",
+        PROJECT_ROOT / "outputs/tuong_handoff/tuong_week6_mapping_summary.json",
+        PROJECT_ROOT / "outputs/hung_handoff/hung_week6_mapping_summary.json",
+    ]
+    for path in paths:
+        if not path.exists():
+            continue
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        absolute_paths = [value for value in _iter_string_values(payload) if re.match(r"^[A-Za-z]:[/\\]", value)]
+        if absolute_paths:
+            errors.append(f"Handoff summary contains local absolute paths: {path.relative_to(PROJECT_ROOT).as_posix()}")
+    return errors
+
+
+def validate_cross_team_integration_proof() -> list[str]:
+    errors: list[str] = []
+    phat = json.loads((PROJECT_ROOT / "outputs/phat_handoff/phat_week6_mapping_summary.json").read_text(encoding="utf-8"))
+    lap = json.loads((PROJECT_ROOT / "outputs/lap_handoff/lap_week6_mapping_summary.json").read_text(encoding="utf-8"))
+    tuong = json.loads((PROJECT_ROOT / "outputs/tuong_handoff/tuong_week6_mapping_summary.json").read_text(encoding="utf-8"))
+    hung = json.loads((PROJECT_ROOT / "outputs/hung_handoff/hung_week6_mapping_summary.json").read_text(encoding="utf-8"))
+
+    integration = phat.get("integration_status", {})
+    required_phat_checks = [
+        "duy_ingestion_loaded",
+        "document_external_id_resolved",
+        "structured_records_loaded",
+        "lap_chunks_loaded",
+        "tuong_prediction_logs_loaded",
+        "phi_hung_dashboard_views_exported",
+    ]
+    if not all(integration.get(check) is True for check in required_phat_checks):
+        errors.append("Phat handoff summary does not prove the full Week 6 database integration chain")
+    if lap.get("lap_evaluation_fixture", {}).get("queries", 0) < 15:
+        errors.append("Lap handoff summary should include at least 15 retrieval evaluation queries")
+    if tuong.get("tuong_result_summary", {}).get("total_payloads") != 10:
+        errors.append("Tuong handoff summary should include all 10 Duy prediction payloads")
+    hung_status = hung.get("current_hung_fixture_status", {})
+    required_hung_fixtures = [
+        "duy_fixture_loaded_by_hung",
+        "phat_dashboard_fixture_loaded_by_hung",
+        "tuong_prediction_batch_fixture_loaded_by_hung",
+        "lap_rag_response_fixture_loaded_by_hung",
+    ]
+    if not all(hung_status.get(check) is True for check in required_hung_fixtures):
+        errors.append("Hung handoff summary is missing one or more real-output fixtures")
+    return errors
+
+
+def collect_cross_team_warnings() -> list[str]:
+    warnings: list[str] = []
+    lap = json.loads((PROJECT_ROOT / "outputs/lap_handoff/lap_week6_mapping_summary.json").read_text(encoding="utf-8"))
+    tuong = json.loads((PROJECT_ROOT / "outputs/tuong_handoff/tuong_week6_mapping_summary.json").read_text(encoding="utf-8"))
+    hung = json.loads((PROJECT_ROOT / "outputs/hung_handoff/hung_week6_mapping_summary.json").read_text(encoding="utf-8"))
+
+    if not lap.get("lap_execution_status", {}).get("live_pgvector_notebook_executed"):
+        warnings.append("Lap notebook has no executed live pgvector output; Phat chunk exports remain the integration proof.")
+    if not lap.get("lap_execution_status", {}).get("live_ui_fixture_available"):
+        warnings.append("Lap repository has not published outputs/ui_fixtures/lap_rag_response_real.json.")
+    if not tuong.get("lineage_alignment", {}).get("all_current_lineage_matches"):
+        warnings.append("Tuong results use an earlier Duy ingestion_run_id snapshot; stable document IDs still match.")
+    if not hung.get("current_hung_fixture_status", {}).get("hung_fixture_matches_duy_latest_run"):
+        warnings.append("Hung's copied Duy fixture should be refreshed after Duy's latest ingestion run.")
+    return warnings
+
+
 def main() -> int:
     errors = (
         validate_required_files()
@@ -195,12 +284,15 @@ def main() -> int:
         + validate_prediction_payload()
         + validate_rag_handoff()
         + validate_api_fallback_sample()
+        + validate_portable_handoff_paths()
+        + validate_cross_team_integration_proof()
     )
     if errors:
         print("Week 6 validation failed")
         for error in errors:
             print(f"- {error}")
         return 1
+    warnings = collect_cross_team_warnings()
     print("Week 6 validation passed")
     print(f"Checked {len(REQUIRED_FILES)} required Week 6 files")
     print("Checked DB dry-run mapping")
@@ -209,6 +301,10 @@ def main() -> int:
     print("Checked Tuong prediction payload ID semantics")
     print("Checked Lap RAG handoff package")
     print("Checked API fallback sample")
+    print("Checked portable cross-repository handoff paths")
+    print("Checked Phat/Lap/Tuong/Hung integration evidence")
+    for warning in warnings:
+        print(f"Warning: {warning}")
     return 0
 
 

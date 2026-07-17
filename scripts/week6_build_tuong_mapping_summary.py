@@ -12,6 +12,16 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 TUONG_ROOT = PROJECT_ROOT.parent / "DataVision_Tuong"
 
 
+def portable_path(path: Path) -> str:
+    resolved = path.resolve()
+    for base in (PROJECT_ROOT.resolve(), PROJECT_ROOT.parent.resolve()):
+        try:
+            return resolved.relative_to(base).as_posix()
+        except ValueError:
+            continue
+    return f"external/{path.name}"
+
+
 def read_json(path: Path, default: Any = None) -> Any:
     if not path.exists():
         return default
@@ -53,6 +63,7 @@ def result_summary(results_doc: dict[str, Any]) -> dict[str, Any]:
             {
                 "document_external_id": result.get("document_external_id"),
                 "source_name": result.get("source_name"),
+                "ingestion_run_id": result.get("ingestion_run_id"),
                 "predicted_document_type": result.get("predicted_document_type"),
                 "confidence": result.get("confidence"),
                 "status": result.get("status"),
@@ -71,7 +82,7 @@ def result_summary(results_doc: dict[str, Any]) -> dict[str, Any]:
 
 def read_file_status(path: Path) -> dict[str, Any]:
     return {
-        "path": path.as_posix(),
+        "path": portable_path(path),
         "exists": path.exists(),
     }
 
@@ -79,12 +90,12 @@ def read_file_status(path: Path) -> dict[str, Any]:
 def ui_fixture_summary(path: Path) -> dict[str, Any]:
     fixture = read_json(path, {})
     if not fixture:
-        return {"path": path.as_posix(), "exists": False}
+        return {"path": portable_path(path), "exists": False}
 
     if isinstance(fixture, dict):
         results = fixture.get("results") or fixture.get("review_items") or []
         return {
-            "path": path.as_posix(),
+            "path": portable_path(path),
             "exists": True,
             "description": fixture.get("description"),
             "total_items": fixture.get("total_items", len(results)),
@@ -92,7 +103,7 @@ def ui_fixture_summary(path: Path) -> dict[str, Any]:
             "status_counts": dict(Counter(item.get("status") for item in results)),
             "appears_sample_fixture": fixture.get("total_items", len(results)) != 10,
         }
-    return {"path": path.as_posix(), "exists": True, "item_count": len(fixture)}
+    return {"path": portable_path(path), "exists": True, "item_count": len(fixture)}
 
 
 def main() -> None:
@@ -108,6 +119,24 @@ def main() -> None:
     ui_batch = TUONG_ROOT / "outputs" / "ui_fixtures" / "tuong_prediction_batch_response.json"
     ui_review = TUONG_ROOT / "outputs" / "ui_fixtures" / "tuong_prediction_review_queue_sample.json"
     rag_filter_path = TUONG_ROOT / "outputs" / "rag_metadata" / "document_type_filter_payload.json"
+    duy_payload_summary = payload_summary(payloads)
+    tuong_result_summary = result_summary(tuong_results)
+    payload_lineage = {
+        case["document_external_id"]: case.get("ingestion_run_id")
+        for case in duy_payload_summary["cases"]
+        if case.get("document_external_id")
+    }
+    result_lineage = {
+        case["document_external_id"]: case.get("ingestion_run_id")
+        for case in tuong_result_summary["cases"]
+        if case.get("document_external_id")
+    }
+    common_documents = sorted(set(payload_lineage) & set(result_lineage))
+    matching_lineage = [
+        document_id
+        for document_id in common_documents
+        if payload_lineage[document_id] == result_lineage[document_id]
+    ]
 
     summary = {
         "handoff_owner": "Nguyen Minh Duy",
@@ -129,7 +158,7 @@ def main() -> None:
             "ui_batch_response_fixture": ui_fixture_summary(ui_batch),
             "ui_review_queue_fixture": ui_fixture_summary(ui_review),
             "rag_filter_payload": {
-                "path": rag_filter_path.as_posix(),
+                "path": portable_path(rag_filter_path),
                 "exists": rag_filter_path.exists(),
                 "item_count": len(tuong_rag_filter) if isinstance(tuong_rag_filter, list) else 0,
             },
@@ -159,8 +188,20 @@ def main() -> None:
             "source_id_map": phat_summary.get("source_id_map", {}),
             "document_id_map": phat_summary.get("document_id_map", {}),
         },
-        "duy_payload_summary": payload_summary(payloads),
-        "tuong_result_summary": result_summary(tuong_results),
+        "duy_payload_summary": duy_payload_summary,
+        "tuong_result_summary": tuong_result_summary,
+        "lineage_alignment": {
+            "documents_in_current_duy_payload": len(payload_lineage),
+            "documents_in_tuong_result": len(result_lineage),
+            "matching_document_external_ids": len(common_documents),
+            "matching_ingestion_run_ids": len(matching_lineage),
+            "all_document_ids_match": set(payload_lineage) == set(result_lineage),
+            "all_current_lineage_matches": (
+                set(payload_lineage) == set(result_lineage)
+                and len(matching_lineage) == len(payload_lineage)
+            ),
+            "note": "Stable document IDs prove contract compatibility. Re-run Tuong only when exact latest ingestion_run_id lineage is required.",
+        },
         "real_data_quality_findings_from_tuong": {
             "source_of_truth_file": "DataVision_Tuong/outputs/week6_duy_prediction_results.json",
             "evaluation_doc": "DataVision_Tuong/docs/week6_real_data_prediction_eval.md",
@@ -198,6 +239,7 @@ def main() -> None:
             "Use Tuong outputs/week6_duy_prediction_results.json as the source of truth for the 10 Duy payloads.",
             "Tuong UI fixtures are useful for Phi/Hung demo states but may be sample fixtures with 5 items, not the full 10 Duy payloads.",
             "Some Tuong docs still include older 4-payload Week 5 examples; Week 6 mapping should use the 10-payload evaluation.",
+            "Duy may regenerate ingestion_run_id values after a fresh ingestion run; Tuong results remain valid for their original run but should be rerun before logging against newer run IDs.",
             "Duy payload source_id and document_db_id are null before DB enrichment; Phat confirmed source_id=2 and document_db_id=1 for the DataFlow PDF.",
             "Low-confidence or unreviewed predictions should not become hard RAG filters. Tuong's evaluation shows overconfident accepted false positives.",
         ],

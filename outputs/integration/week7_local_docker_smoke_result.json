@@ -1,0 +1,36 @@
+{
+  "status": "contract_passed_runtime_not_run",
+  "checks": {
+    "database_compose_config": true,
+    "full_compose_config": true
+  },
+  "steps": {
+    "database_compose_config": {
+      "command": [
+        "docker",
+        "compose",
+        "-f",
+        ".\\docker-compose.db.yml",
+        "config",
+        "--quiet"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "WARNING: Error loading config file: open <docker-config>: Access is denied.\nWARNING: Error loading config file: open <docker-config>: Access is denied.\n"
+    },
+    "full_compose_config": {
+      "command": [
+        "docker",
+        "compose",
+        "-f",
+        ".\\docker-compose.yml",
+        "config",
+        "--quiet"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "WARNING: Error loading config file: open <docker-config>: Access is denied.\nWARNING: Error loading config file: open <docker-config>: Access is denied.\n"
+    }
+  },
+  "runtime_note": "No Docker service was started by this run."
+}

@@ -6,7 +6,7 @@ Team: Data Foundation Team
 
 ## Current Status
 
-The DataVision ingestion track is complete through Week 5 platform-readiness work and is now in Week 6 integration-hardening.
+The DataVision ingestion track is complete through Week 6 and now has the Week 7 CI-ready data pipeline implementation. Real Week 7 database IDs remain pending Phat's fixed schema and running PostgreSQL service.
 
 | Phase | Status | Main result |
 | --- | --- | --- |
@@ -14,7 +14,8 @@ The DataVision ingestion track is complete through Week 5 platform-readiness wor
 | Week 2 | Complete | Working notebook prototypes for CSV, Excel, API JSON, and PDF extraction |
 | Week 3 | Complete | Reusable ingestion modules, standard output contract, portable logs, cross-team handoff contracts |
 | Week 5 | Complete | Config-driven ingestion service, run history logs, manifests, data quality score, PostgreSQL writer skeleton, pytest tests |
-| Week 6 | Complete | Integration-ready handoff package for Phat, Lap, Tuong, and Hung; DB dry-run proof, RAG handoff, prediction payloads, UI fixtures, ID mapping, and smoke tests |
+| Week 6 | Complete | Executable DB writer plus Phat export proof, RAG handoff, prediction payloads, UI fixtures, portable ID mapping, and cross-team smoke tests |
+| Week 7 | Implemented locally; cross-repo runtime pending | CI fixtures and smoke tests, Docker/Compose drafts, backend contract stub, DB smoke/full modes, DB-enriched handoff contracts, readiness report, shared CI draft, and team runbook |
 
 ## What Works Now
 
@@ -100,7 +101,7 @@ Example: the DummyJSON API product data has missing values in optional fields su
 | Tuong | Prediction and ML | Clean structured CSV/API/Excel data and Duy-style PDF prediction payload |
 | Phi/Hung | Suggestions, Reports, Demo, AI UX | Ingestion result contract and data quality signals for Streamlit/demo pages |
 
-## Week 6 Integration Evidence
+## Week 6 Integration Evidence (historical milestone)
 
 The Week 6 target is:
 
@@ -108,16 +109,18 @@ The Week 6 target is:
 connect -> insert -> query -> retrieve -> predict -> display -> test
 ```
 
-Current evidence:
+The following records the Week 6 evidence package. Week 7 still requires a
+fresh Docker/database rerun because the current local environment does not have
+Phat's fixed schema and reachable PostgreSQL service:
 
 | Integration Step | Status | Evidence |
 | --- | --- | --- |
-| Connect | Complete | `scripts/week6_end_to_end_smoke_test.py` reads all integration outputs |
-| Insert | Complete as dry-run package | `logs/db_load_dry_run/duy_to_phat_db_load_plan.json` |
-| Query | Complete as UI-ready fixture | `outputs/ui_fixtures/duy_latest_ingestion_summary.json` |
-| Retrieve | Complete as RAG handoff | `outputs/rag_handoff/document_pages.jsonl` and `outputs/rag_handoff/rag_handoff_manifest.json` |
-| Predict | Complete as Tuong payload package | `outputs/prediction_payloads/tuong_week6_prediction_payloads.json` |
-| Display | Complete as Phi/Hung fixture | `outputs/ui_fixtures/*.json` |
+| Connect | Complete | Phat's PostgreSQL export proof is summarized in `outputs/phat_handoff/phat_week6_mapping_summary.json` |
+| Insert | Complete | Phat proof contains 4 sources, 4 ingestion logs, 11,524 structured records, 1 document, and 36 pages |
+| Query | Complete | Phat dashboard view exports return integrated ingestion, quality, RAG, and prediction rows |
+| Retrieve | Integrated with proof caveat | Duy supplied 36 real pages and Phat exported 293 chunks; Lap's 15-query evaluation is recorded, but Lap's notebook is not executed |
+| Predict | Complete for stable document IDs | Tuong processed all 10 Duy payloads and Phat stored 10 prediction logs; rerun only when the newest ingestion run IDs must be logged |
+| Display | Contract-connected | Hung loads Duy, Phat, Lap, and Tuong fixtures; Hung's copied Duy snapshot must be refreshed after a new Duy run |
 | Test | Complete | Week 6 validation, smoke test, and `pytest tests/data_tests/` pass |
 
 Latest verification:
@@ -127,7 +130,49 @@ Week 6 validation passed
 Week 6 smoke test passed
 Week 5 validation passed
 Week 2 validation passed
-20 pytest tests passed
+28 pytest tests passed
+```
+
+## Week 7 Project Readiness
+
+Available in this repository:
+
+```text
+.env.example
+docker-compose.db.yml
+docker-compose.yml
+backend_stub/
+deployment/
+integration/shared_repo_manifest.json
+scripts/week7_backend_stub_smoke_test.py
+scripts/week7_local_docker_integration_smoke_test.py
+scripts/week7_shared_repo_readiness_check.py
+scripts/week7_shared_integration_smoke_test.py
+.github/workflows/ci.yml
+```
+
+Contract verification:
+
+```text
+46 data-engineering tests passed
+Week 7 ingestion smoke test passed
+Week 7 validator passed (47 required files)
+Both Compose files pass `docker compose config --quiet`
+```
+
+Runtime limitation:
+
+```text
+PostgreSQL container was not started because the local Docker engine pipe was
+unavailable. FastAPI/uvicorn are declared in backend_stub/requirements.txt
+but are not installed in the current Python environment.
+```
+
+The readiness report is intentionally partial until the other repositories
+return their Week 7 artifacts:
+
+```powershell
+python scripts/week7_shared_repo_readiness_check.py
 ```
 
 ## Cross-Team Contracts
@@ -144,11 +189,21 @@ Week 2 validation passed
 | `docs/week6_lap_rag_mapping_review.md` | Lap | Final Duy-to-Lap RAG handoff mapping |
 | `docs/week6_tuong_prediction_mapping_review.md` | Tuong | Final Duy-to-Tuong prediction payload mapping |
 | `docs/week6_hung_ui_mapping_review.md` | Hung | Final Duy-to-Hung UI fixture and page mapping |
+| `docs/week7_cross_team_delivery_matrix.md` | Whole team | Exact Week 7 input/output files, ID rules, proofs and acceptance gates |
+| `docs/week7_shared_repo_structure.md` | Whole team | Shared repository tree and merge order |
+| `docs/week7_deployment_runbook.md` | Whole team | Docker, backend stub, DB loading, CI and local integration commands |
 
 ## Next Recommended Work
 
-1. Execute real PostgreSQL write mode with Phat's live schema and credentials.
-2. Ask Phat to return final `source_id` and `document_db_id` mappings after live DB insert.
-3. Ask Lap to return real pgvector retrieval proof and citation-ready fixture.
-4. Ask Tuong to keep using the 10-payload package and return reviewed prediction status.
-5. Ask Hung to refresh `demo/fixtures/duy_latest_ingestion_summary.json` from Duy's canonical fixture.
+1. Receive Phat's `schema_v4_fixed.sql`, Docker command, and Week 7 credentials.
+2. Run `python scripts/load_ingestion_outputs_to_postgres.py --write-db --smoke` and confirm 4/4/4/1/36/100 counts.
+3. Regenerate the Lap, Tuong, and Phi/Hung Week 7 outputs so `source_id` and `document_db_id` are confirmed.
+4. Merge Lap, Tuong, Phat, and Phi/Hung smoke commands into the shared workflow after each command passes independently.
+5. Start the backend stub or production backend and run the backend contract smoke test.
+6. Preserve manual-review safety: prediction labels must not become hard RAG filters without Tuong/Lap's trusted policy.
+
+## Week 7 Verification
+
+The CI-safe ingestion smoke test covers CSV, Excel, local API fallback, two-page PDF extraction, manifests, data quality, RAG page records, prediction payloads, and UI fixture creation. The Week 7 Tuong handoff now contains 20 cases: the original 10-case baseline plus 10 new PDF, structured-data, unknown-type, lineage, and numeric-validation cases. PostgreSQL smoke planning produces 4 sources, 4 logs, 1 document, 36 pages, and 100 structured rows.
+
+Latest data test result: `46 passed`.

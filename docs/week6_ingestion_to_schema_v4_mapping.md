@@ -2,7 +2,7 @@
 
 Owner: Nguyen Minh Duy  
 Partner: Phat - Database / PostgreSQL / pgvector Owner  
-Latest Phat schema: `F:/data/new/quanskill/DataVision_Phat/week6/database/schema_v4.sql`
+Latest Phat schema: `DataVision_Phat/week6/database/schema_v4.sql`
 
 ## Purpose
 

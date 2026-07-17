@@ -10,43 +10,43 @@
   },
   "lap_repo_files_reviewed": {
     "schema_v4_mapping": {
-      "path": "F:/data/new/quanskill/DataVision_Lap/ai/week6_rag_to_schema_v4_mapping.md",
+      "path": "DataVision_Lap/ai/week6_rag_to_schema_v4_mapping.md",
       "exists": true
     },
     "loader_script": {
-      "path": "F:/data/new/quanskill/DataVision_Lap/ai/rag/load_document_pages_to_pgvector.py",
+      "path": "DataVision_Lap/ai/rag/load_document_pages_to_pgvector.py",
       "exists": true
     },
     "rag_service": {
-      "path": "F:/data/new/quanskill/DataVision_Lap/ai/rag/rag_service.py",
+      "path": "DataVision_Lap/ai/rag/rag_service.py",
       "exists": true
     },
     "week6_summary": {
-      "path": "F:/data/new/quanskill/DataVision_Lap/ai/WEEK_6_SUMMARY.md",
+      "path": "DataVision_Lap/ai/WEEK_6_SUMMARY.md",
       "exists": true
     },
     "retrieval_eval_csv": {
-      "path": "F:/data/new/quanskill/DataVision_Lap/ai/rag/evaluation/week6_retrieval_test_cases_dataflow.csv",
+      "path": "DataVision_Lap/ai/rag/evaluation/week6_retrieval_test_cases_dataflow.csv",
       "exists": true
     },
     "retrieval_eval_markdown": {
-      "path": "F:/data/new/quanskill/DataVision_Lap/ai/rag/evaluation/week6_retrieval_eval_results.md",
+      "path": "DataVision_Lap/ai/rag/evaluation/week6_retrieval_eval_results.md",
       "exists": true
     },
     "notebook": {
-      "path": "F:/data/new/quanskill/DataVision_Lap/ai/rag/notebooks/week6_real_pgvector_rag_demo.ipynb",
+      "path": "DataVision_Lap/ai/rag/notebooks/week6_real_pgvector_rag_demo.ipynb",
       "exists": true
     },
     "ui_fixture": {
-      "path": "F:/data/new/quanskill/DataVision_Lap/outputs/ui_fixtures/lap_rag_response_real.json",
+      "path": "DataVision_Lap/outputs/ui_fixtures/lap_rag_response_real.json",
       "exists": false
     },
     "screenshot": {
-      "path": "F:/data/new/quanskill/DataVision_Lap/screenshots/week6_pgvector_retrieval_result.png",
+      "path": "DataVision_Lap/screenshots/week6_pgvector_retrieval_result.png",
       "exists": false
     },
     "duy_dataflow_ingestion_result": {
-      "path": "F:/data/new/quanskill/DataVision_Lap/ai/week6_duy_dataflow_ingestion_result.md",
+      "path": "DataVision_Lap/ai/week6_duy_dataflow_ingestion_result.md",
       "exists": false
     }
   },
@@ -60,7 +60,7 @@
     "parsing_status": "ready"
   },
   "document_pages_stats": {
-    "path": "F:/data/new/quanskill/DataVision_Duy/outputs/rag_handoff/document_pages.jsonl",
+    "path": "outputs/rag_handoff/document_pages.jsonl",
     "exists": true,
     "pages_loaded": 36,
     "non_empty_pages": 36,

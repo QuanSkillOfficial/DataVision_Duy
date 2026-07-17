@@ -14,8 +14,8 @@
     "prediction_payload_available": true
   },
   "latest_ingestion_run": {
-    "run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
-    "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+    "run_id": "400d3c21-42f0-44bb-be47-09bd04f86431",
+    "ingestion_run_id": "400d3c21-42f0-44bb-be47-09bd04f86431",
     "source_id": null,
     "source_name": "dataflow_technical_report_pdf",
     "source_type": "pdf",
@@ -36,8 +36,8 @@
     "page_count": 36,
     "empty_page_count": 0,
     "total_characters": 129028,
-    "start_time": "2026-07-05T08:17:57.789854+00:00",
-    "end_time": "2026-07-05T08:18:03.310515+00:00",
+    "start_time": "2026-07-15T15:06:47.728005+00:00",
+    "end_time": "2026-07-15T15:06:52.406248+00:00",
     "error_message": null
   },
   "id_mapping": {
@@ -59,7 +59,7 @@
     "text_length": 129028,
     "num_pages": 36,
     "source_system": "manual_upload",
-    "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+    "ingestion_run_id": "2fff9142-7da0-4fee-9001-c61d10397a7c",
     "raw_output_path": "week2/data/raw/pdf/dataflow_technical_report_raw.pdf",
     "staging_output_path": "week2/data/staging/pdf/dataflow_pdf_text.txt",
     "staging_csv_output_path": "week2/data/staging/pdf/dataflow_pdf_pages_staging.csv",
@@ -71,6 +71,8 @@
     "empty_pages": [],
     "empty_page_count": 0,
     "parsing_status": "ready",
+    "test_case": "full_pdf_document",
+    "expected_status_hint": "accepted_or_needs_review",
     "extracted_text_length": 129028,
     "extracted_text_preview": "--- Page 1 ---\nDecember19,2025 DataFlow: An LLM-Driven Framework for Unified Data Preparation and Workflow Automation in the Era of Data-Centric AI Hao Liang∗,†, Xiaochen Ma∗,†, Zhou Liu∗,†, Zhen Hao Wong∗, Zhengyang Zhao∗, Zimo Meng∗, Runming He∗, Chengyu Shen∗, Qifeng Cai∗, Zhaoyang Han∗, Meiyi Qiang∗, Yalin Feng∗, Tianyi Bai∗, Zewei Pan, Ziyi Guo, Yizhen Jiang, Jingwen Deng, Qijie You, Peichao Lai, Tianyu Guo, Chi Hsu Tsai, Hengyi Feng, Rui Hu, Wenkai Yu, Junbo Niu, Bohan Zeng, Ruichuan An, L",
     "full_payload_path": "logs/prediction_payloads/duy_pdf_prediction_payload.json"
@@ -87,7 +89,7 @@
     "empty_pages": 0,
     "empty_page_numbers": [],
     "total_characters": 129028,
-    "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+    "ingestion_run_id": "400d3c21-42f0-44bb-be47-09bd04f86431",
     "parsing_status": "ready",
     "document_pages_path": "outputs/rag_handoff/document_pages.jsonl",
     "pdf_metadata_path": "outputs/rag_handoff/pdf_metadata.json",
@@ -96,8 +98,8 @@
   },
   "runs": [
     {
-      "run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
-      "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+      "run_id": "400d3c21-42f0-44bb-be47-09bd04f86431",
+      "ingestion_run_id": "400d3c21-42f0-44bb-be47-09bd04f86431",
       "source_id": null,
       "source_name": "dataflow_technical_report_pdf",
       "source_type": "pdf",
@@ -118,13 +120,13 @@
       "page_count": 36,
       "empty_page_count": 0,
       "total_characters": 129028,
-      "start_time": "2026-07-05T08:17:57.789854+00:00",
-      "end_time": "2026-07-05T08:18:03.310515+00:00",
+      "start_time": "2026-07-15T15:06:47.728005+00:00",
+      "end_time": "2026-07-15T15:06:52.406248+00:00",
       "error_message": null
     },
     {
-      "run_id": "83a3c30c-98f1-42f7-aba7-4fed188daed9",
-      "ingestion_run_id": "83a3c30c-98f1-42f7-aba7-4fed188daed9",
+      "run_id": "74399524-18bc-4d01-915e-f53e12d0855f",
+      "ingestion_run_id": "74399524-18bc-4d01-915e-f53e12d0855f",
       "source_id": null,
       "source_name": "dummyjson_products_api",
       "source_type": "api",
@@ -145,13 +147,13 @@
       "page_count": null,
       "empty_page_count": null,
       "total_characters": null,
-      "start_time": "2026-07-05T08:17:57.742770+00:00",
-      "end_time": "2026-07-05T08:17:57.785855+00:00",
+      "start_time": "2026-07-15T15:06:47.676309+00:00",
+      "end_time": "2026-07-15T15:06:47.724556+00:00",
       "error_message": null
     },
     {
-      "run_id": "d670414e-4147-4cda-a87d-06e8b7c52d19",
-      "ingestion_run_id": "d670414e-4147-4cda-a87d-06e8b7c52d19",
+      "run_id": "71cd622a-9a85-4194-b274-986eee4c0322",
+      "ingestion_run_id": "71cd622a-9a85-4194-b274-986eee4c0322",
       "source_id": null,
       "source_name": "product_sales_region_excel",
       "source_type": "excel",
@@ -172,13 +174,13 @@
       "page_count": null,
       "empty_page_count": null,
       "total_characters": null,
-      "start_time": "2026-07-05T08:17:57.131144+00:00",
-      "end_time": "2026-07-05T08:17:57.738765+00:00",
+      "start_time": "2026-07-15T15:06:47.012368+00:00",
+      "end_time": "2026-07-15T15:06:47.673746+00:00",
       "error_message": null
     },
     {
-      "run_id": "13b921ad-4e4c-4399-b1ae-6087d7b86bf0",
-      "ingestion_run_id": "13b921ad-4e4c-4399-b1ae-6087d7b86bf0",
+      "run_id": "a7387b8b-547a-4810-a23a-576ccb4bb7ac",
+      "ingestion_run_id": "a7387b8b-547a-4810-a23a-576ccb4bb7ac",
       "source_id": null,
       "source_name": "superstore_sales_csv",
       "source_type": "csv",
@@ -199,8 +201,8 @@
       "page_count": null,
       "empty_page_count": null,
       "total_characters": null,
-      "start_time": "2026-07-05T08:17:56.757351+00:00",
-      "end_time": "2026-07-05T08:17:57.125144+00:00",
+      "start_time": "2026-07-15T15:06:46.734738+00:00",
+      "end_time": "2026-07-15T15:06:47.007189+00:00",
       "error_message": null
     }
   ]

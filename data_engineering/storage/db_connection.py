@@ -12,20 +12,28 @@ DEFAULT_CONFIG_PATH = "data_engineering/configs/db_config.example.json"
 
 
 def load_db_config(config_path: str | Path | None = None) -> dict[str, Any]:
+    try:
+        from dotenv import load_dotenv
+
+        load_dotenv()
+    except ImportError:
+        # Environment variables and JSON config still work without python-dotenv.
+        pass
+
     path = resolve_project_path(config_path or os.getenv("DATAVISION_DB_CONFIG") or DEFAULT_CONFIG_PATH)
     config: dict[str, Any] = {}
     if path is not None and path.exists():
         config.update(json.loads(path.read_text(encoding="utf-8")))
 
     env_mapping = {
-        "host": "DATAVISION_DB_HOST",
-        "port": "DATAVISION_DB_PORT",
-        "database": "DATAVISION_DB_NAME",
-        "user": "DATAVISION_DB_USER",
-        "password": "DATAVISION_DB_PASSWORD",
+        "host": ("DB_HOST", "DATAVISION_DB_HOST"),
+        "port": ("DB_PORT", "DATAVISION_DB_PORT"),
+        "database": ("DB_NAME", "DATAVISION_DB_NAME"),
+        "user": ("DB_USER", "DATAVISION_DB_USER"),
+        "password": ("DB_PASSWORD", "DATAVISION_DB_PASSWORD"),
     }
-    for key, env_name in env_mapping.items():
-        value = os.getenv(env_name)
+    for key, env_names in env_mapping.items():
+        value = next((os.getenv(env_name) for env_name in env_names if os.getenv(env_name)), None)
         if value:
             config[key] = int(value) if key == "port" else value
     return config
