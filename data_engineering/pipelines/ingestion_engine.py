@@ -9,8 +9,13 @@ from data_engineering.ingestion.api_ingestor import run_api_ingestion
 from data_engineering.ingestion.csv_ingestor import run_csv_ingestion
 from data_engineering.ingestion.excel_ingestor import run_excel_ingestion
 from data_engineering.ingestion.pdf_ingestor import run_pdf_ingestion
+from data_engineering.pipelines.handoff_context import allocate_structured_record_limits
 from data_engineering.storage.db_connection import get_connection
-from data_engineering.storage.postgres_writer import build_dry_run_summary, load_ingestion_result_to_postgres
+from data_engineering.storage.postgres_writer import (
+    build_dry_run_summary,
+    load_ingestion_result_to_postgres,
+    validate_target_schema,
+)
 from data_engineering.utils.path_utils import resolve_project_path
 
 
@@ -53,30 +58,56 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Run DataVision ingestion pipeline")
     parser.add_argument("--config", action="append", help="Path to a source config JSON file")
     parser.add_argument("--all", action="store_true", help="Run all default source configs")
-    parser.add_argument("--db-dry-run", action="store_true", help="Print PostgreSQL insert plan after ingestion")
-    parser.add_argument("--write-db", action="store_true", help="Insert ingestion results into PostgreSQL after ingestion")
+    db_mode = parser.add_mutually_exclusive_group()
+    db_mode.add_argument("--db-dry-run", action="store_true", help="Print PostgreSQL insert plan after ingestion")
+    db_mode.add_argument("--write-db", action="store_true", help="Insert ingestion results into PostgreSQL after ingestion")
     parser.add_argument("--db-config", help="Path to database config JSON for --write-db")
+    parser.add_argument("--smoke", action="store_true", help="Limit PostgreSQL structured rows to 100 for CI")
+    parser.add_argument("--limit-structured-records", type=int, help="Limit structured rows written to PostgreSQL")
     args = parser.parse_args()
 
     config_paths = default_config_paths() if args.all or not args.config else args.config
     results = run_configs(config_paths)
     for result in results:
         print(f"{result['source_type']}: {result['status']} - {result['records_valid']} valid")
+        if result.get("error_message"):
+            print(f"  error: {result['error_message']}")
+
+    has_ingestion_failure = any(result.get("status") == "failed" for result in results)
+    has_database_failure = False
+    structured_record_limit = args.limit_structured_records
+    if args.smoke:
+        structured_record_limit = min(structured_record_limit, 100) if structured_record_limit is not None else 100
+    structured_limits = allocate_structured_record_limits(results, structured_record_limit)
 
     if args.db_dry_run:
         for result in results:
-            summary = build_dry_run_summary(result)
+            summary = build_dry_run_summary(
+                result,
+                structured_record_limit=structured_limits.get(result["source_name"]),
+            )
             print(f"DB dry-run: {summary['source_name']} -> {summary['target_tables']}")
 
     if args.write_db:
         conn = get_connection(args.db_config)
         try:
+            validate_target_schema(conn)
             for result in results:
-                summary = load_ingestion_result_to_postgres(conn, result)
+                summary = load_ingestion_result_to_postgres(
+                    conn,
+                    result,
+                    structured_record_limit=structured_limits.get(result["source_name"]),
+                )
                 print(f"DB write: {summary['source_name']} -> {summary['status']}")
+                if summary.get("error"):
+                    print(f"  error: {summary['error']}")
+                has_database_failure = has_database_failure or summary["status"] == "failed"
+        except Exception as exc:
+            print(f"DB write failed: {exc}")
+            has_database_failure = True
         finally:
             conn.close()
-    return 0
+    return 1 if has_ingestion_failure or has_database_failure else 0
 
 
 if __name__ == "__main__":

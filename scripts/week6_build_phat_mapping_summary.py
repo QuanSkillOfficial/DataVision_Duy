@@ -11,6 +11,16 @@ DEFAULT_PHAT_WEEK6_ROOT = PROJECT_ROOT.parent / "DataVision_Phat" / "week6"
 OUTPUT_PATH = PROJECT_ROOT / "outputs" / "phat_handoff" / "phat_week6_mapping_summary.json"
 
 
+def _portable_path(path: Path) -> str:
+    resolved = path.resolve()
+    for base in (PROJECT_ROOT.resolve(), PROJECT_ROOT.parent.resolve()):
+        try:
+            return resolved.relative_to(base).as_posix()
+        except ValueError:
+            continue
+    return f"external/{path.name}"
+
+
 def _read_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -32,7 +42,7 @@ def _records(payload: dict[str, Any]) -> list[dict[str, Any]]:
 def _schema_findings(schema_path: Path) -> dict[str, Any]:
     if not schema_path.exists():
         return {
-            "schema_file": schema_path.as_posix(),
+            "schema_file": _portable_path(schema_path),
             "exists": False,
             "notes": ["schema_v4.sql not found"],
         }
@@ -58,7 +68,7 @@ def _schema_findings(schema_path: Path) -> dict[str, Any]:
         notes.append("documents.document_external_id not found.")
 
     return {
-        "schema_file": schema_path.as_posix(),
+        "schema_file": _portable_path(schema_path),
         "exists": True,
         "has_vector_extension": has_vector_extension,
         "has_source_unique_constraint": has_source_unique,
@@ -100,7 +110,7 @@ def build_mapping_summary(phat_week6_root: Path = DEFAULT_PHAT_WEEK6_ROOT) -> di
     data_quality = _records(_read_json(data_quality_file)) if data_quality_file else []
     dashboard_views = {
         view_file.stem.rsplit("_", 1)[0]: {
-            "path": view_file.as_posix(),
+            "path": _portable_path(view_file),
             "row_count": len(_records(_read_json(view_file))),
         }
         for view_file in view_files
@@ -134,23 +144,23 @@ def build_mapping_summary(phat_week6_root: Path = DEFAULT_PHAT_WEEK6_ROOT) -> di
 
     return {
         "source": "DataVision_Phat/week6 outputs",
-        "phat_week6_root": phat_week6_root.as_posix(),
+        "phat_week6_root": _portable_path(phat_week6_root),
         "files_used": {
-            "schema_v4": (phat_week6_root / "database" / "schema_v4.sql").as_posix(),
-            "setup_database_v2": (phat_week6_root / "database" / "setup_database_v2.sql").as_posix(),
-            "reset_database_v2": (phat_week6_root / "database" / "reset_database_v2.sql").as_posix(),
-            "analytics_views_v3": (phat_week6_root / "database" / "analytics_views_v3.sql").as_posix(),
-            "validation_queries_v2": (phat_week6_root / "database" / "validation_queries_v2.sql").as_posix(),
-            "validate_ingestion_data": (phat_week6_root / "database" / "validate_ingestion_data.sql").as_posix(),
-            "sources": sources_file.as_posix() if sources_file else None,
-            "documents": documents_file.as_posix() if documents_file else None,
-            "ingestion_logs": ingestion_logs_file.as_posix() if ingestion_logs_file else None,
-            "document_pages": document_pages_file.as_posix() if document_pages_file else None,
-            "structured_records": structured_records_file.as_posix() if structured_records_file else None,
-            "prediction_logs": prediction_logs_file.as_posix() if prediction_logs_file else None,
-            "document_chunks": chunks_file.as_posix() if chunks_file else None,
-            "dashboard_overview": dashboard_file.as_posix() if dashboard_file else None,
-            "data_quality_dashboard": data_quality_file.as_posix() if data_quality_file else None,
+            "schema_v4": _portable_path(phat_week6_root / "database" / "schema_v4.sql"),
+            "setup_database_v2": _portable_path(phat_week6_root / "database" / "setup_database_v2.sql"),
+            "reset_database_v2": _portable_path(phat_week6_root / "database" / "reset_database_v2.sql"),
+            "analytics_views_v3": _portable_path(phat_week6_root / "database" / "analytics_views_v3.sql"),
+            "validation_queries_v2": _portable_path(phat_week6_root / "database" / "validation_queries_v2.sql"),
+            "validate_ingestion_data": _portable_path(phat_week6_root / "database" / "validate_ingestion_data.sql"),
+            "sources": _portable_path(sources_file) if sources_file else None,
+            "documents": _portable_path(documents_file) if documents_file else None,
+            "ingestion_logs": _portable_path(ingestion_logs_file) if ingestion_logs_file else None,
+            "document_pages": _portable_path(document_pages_file) if document_pages_file else None,
+            "structured_records": _portable_path(structured_records_file) if structured_records_file else None,
+            "prediction_logs": _portable_path(prediction_logs_file) if prediction_logs_file else None,
+            "document_chunks": _portable_path(chunks_file) if chunks_file else None,
+            "dashboard_overview": _portable_path(dashboard_file) if dashboard_file else None,
+            "data_quality_dashboard": _portable_path(data_quality_file) if data_quality_file else None,
         },
         "schema_findings": _schema_findings(phat_week6_root / "database" / "schema_v4.sql"),
         "source_id_map": source_id_map,

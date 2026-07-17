@@ -1,0 +1,141 @@
+{
+  "name": "datavision-platform-week7",
+  "purpose": "Shared merge contract for local Docker, CI smoke tests, and Week 8 staging preparation.",
+  "source_repositories": {
+    "duy": "DataVision_Duy",
+    "phat": "DataVision_Phat",
+    "lap": "DataVision_Lap",
+    "tuong": "DataVision_Tuong",
+    "phi_hung": "DataVision_Hung"
+  },
+  "target_structure": {
+    "data_engineering": "Duy ingestion, handoff builders, database writer, validation",
+    "ai/rag": "Lap chunking, embeddings, pgvector loader, retrieval",
+    "ai/prediction": "Tuong inference, safety policy, prediction log builder",
+    "database": "Phat schema, views, setup, smoke data, validation",
+    "demo": "Phi/Hung UI, services, fixtures, backend client",
+    "backend_stub": "Contract-only API used before production backend is available",
+    "tests": "Module tests and shared contract tests",
+    "scripts": "CI smoke tests, handoff builders, integration checks",
+    "deployment": "Dockerfiles, database init, local and staging runbooks",
+    "outputs": "Versioned handoff JSON, UI fixtures, validation evidence"
+  },
+  "canonical_ids": {
+    "source_id": "Integer sources.id. Never use an ingestion run UUID here.",
+    "source_name": "Stable human-readable source key.",
+    "document_external_id": "Stable Duy/Lap/Tuong string key, for example doc_dataflow_technical_report.",
+    "document_db_id": "Integer documents.id resolved by Phat.",
+    "ingestion_run_id": "Run UUID from Duy logs and pipeline_runs.",
+    "document_id_in_database": "Use documents.id for integer foreign keys after resolution."
+  },
+  "merge_order": [
+    "Duy data contracts and stable fixtures",
+    "Phat schema, Docker database, setup and validation",
+    "Duy database loader smoke write",
+    "Lap chunk insert and pgvector retrieval",
+    "Tuong prediction logs and review queue",
+    "Phi/Hung fixture validation and UI smoke test",
+    "Shared CI workflow and integration smoke test"
+  ],
+  "owner_contracts": {
+    "Duy": {
+      "provides": [
+        "outputs/rag_handoff/week7_document_pages_db_enriched.jsonl",
+        "outputs/rag_handoff/week7_rag_handoff_manifest.json",
+        "outputs/prediction_payloads/tuong_week7_prediction_payloads.json",
+        "outputs/ui_fixtures/duy_week7_database_enriched_summary.json",
+        "scripts/load_ingestion_outputs_to_postgres.py",
+        "scripts/week7_ci_ingestion_smoke_test.py"
+      ],
+      "receives": [
+        "Phat fixed schema and database credentials",
+        "Lap final page/chunk metadata requirements",
+        "Tuong final prediction input validation result",
+        "Phi/Hung final UI field validation result"
+      ]
+    },
+    "Phat": {
+      "provides": [
+        "week7/database/schema_v4_fixed.sql",
+        "week7/database/setup_database_v3.sql",
+        "week7/database/ci_database_smoke_test.py",
+        "week7/outputs/db_validation/duy_data_load_counts.json",
+        "week7/outputs/dashboard_view_samples/"
+      ],
+      "receives": [
+        "Duy loader, run logs, manifests, clean files and DB-enriched PDF handoff",
+        "Lap chunk insert/search proof",
+        "Tuong normalized prediction log payloads",
+        "Phi/Hung view field requirements"
+      ]
+    },
+    "Lap": {
+      "provides": [
+        "ai/rag/scripts/week7_rag_ci_smoke_test.py",
+        "ai/rag/scripts/week7_pgvector_smoke_test.py",
+        "outputs/rag/week7_pgvector_insert_result.json",
+        "outputs/rag/week7_pgvector_query_result.json",
+        "outputs/rag/week7_rag_query_log_payload.json",
+        "outputs/ui_fixtures/lap_rag_response_real.json"
+      ],
+      "receives": [
+        "Duy DB-enriched document pages and PDF metadata",
+        "Phat documents.id and document_chunks schema",
+        "Tuong safe document-type metadata policy",
+        "Phi/Hung citation display contract"
+      ]
+    },
+    "Tuong": {
+      "provides": [
+        "scripts/week7_prediction_ci_smoke_test.py",
+        "outputs/week7_duy_prediction_results.json",
+        "outputs/db_integration/week7_prediction_log_payloads.json",
+        "outputs/ui_fixtures/tuong_prediction_batch_response.json",
+        "outputs/ui_fixtures/tuong_prediction_review_queue_sample.json",
+        "outputs/rag_metadata/document_type_filter_payload.json"
+      ],
+      "receives": [
+        "Duy DB-enriched prediction payloads",
+        "Phat final prediction_logs column mapping",
+        "Lap safe filtering requirements",
+        "Phi/Hung review and feedback UI contract"
+      ]
+    },
+    "Phi/Hung": {
+      "provides": [
+        "scripts/week7_ui_ci_smoke_test.py",
+        "demo/services/fixture_validator.py",
+        "demo/fixtures/week7/",
+        "backend API contract and backend-client smoke test",
+        "UI fixture validation result"
+      ],
+      "receives": [
+        "Duy ingestion summary and handoff paths",
+        "Phat dashboard view samples",
+        "Lap DataFlow citation fixture",
+        "Tuong staging-safe prediction and feedback fixtures"
+      ]
+    }
+  },
+  "acceptance": {
+    "local_contract": [
+      "docker compose -f docker-compose.db.yml config --quiet",
+      "docker compose -f docker-compose.yml config --quiet",
+      "python scripts/week7_shared_integration_smoke_test.py"
+    ],
+    "shared_ci_after_merge": [
+      "python scripts/week7_ci_ingestion_smoke_test.py",
+      "python week7/database/ci_database_smoke_test.py",
+      "python ai/rag/scripts/week7_rag_ci_smoke_test.py",
+      "python scripts/week7_prediction_ci_smoke_test.py",
+      "python scripts/week7_ui_ci_smoke_test.py"
+    ],
+    "runtime_proof_required": [
+      "PostgreSQL and pgvector are reachable",
+      "Duy table counts are queried back",
+      "Lap returns chunk_id, page_number and similarity_score",
+      "Tuong prediction_logs and review queue contain rows",
+      "Phi/Hung loads the same output fixtures without schema errors"
+    ]
+  }
+}

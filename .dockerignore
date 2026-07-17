@@ -1,0 +1,15 @@
+.git
+.github
+.venv
+venv
+__pycache__
+*.pyc
+.pytest_cache
+.ci_runtime_tmp
+.pytest_runtime_tmp
+logs/runs
+logs/manifests
+week1_ingestion_foundation
+week2/notebooks
+screenshots
+*.ipynb

@@ -41,14 +41,19 @@ Latest dry-run result:
 | Function | Purpose |
 | --- | --- |
 | `insert_or_get_source()` | Inserts source or returns existing `sources.id` via `ON CONFLICT (name)` |
-| `insert_pipeline_run()` | Inserts ingestion execution metadata |
+| `insert_pipeline_run()` | Inserts ingestion execution metadata using executable schema_v4 SQL |
 | `insert_ingestion_log()` | Inserts records, status, paths, data quality, manifest path |
 | `insert_document()` | Inserts PDF metadata and preserves Duy `document_external_id` |
-| `insert_document_pages()` | Inserts page-level text using Phat internal `documents.id` |
-| `insert_structured_records()` | Inserts clean CSV/API/Excel rows as JSON records |
+| `insert_document_pages()` | Replaces the latest page snapshot, then inserts page-level text using Phat internal `documents.id` |
+| `insert_structured_records()` | Replaces the latest source snapshot, then inserts clean CSV/API/Excel rows as JSON records |
 | `load_ingestion_result_to_postgres()` | Transaction wrapper with commit/rollback |
+| `ingestion_run_exists()` | Prevents duplicate reloads because schema_v4 does not make `run_id` unique |
+| `validate_target_schema()` | Checks all required Week 6 tables/columns before the first insert |
+| `query_integration_counts()` | Queries sources, runs, logs, documents, pages, and structured rows back after loading |
 
 ## Real-Run Status
+
+The Duy-side writer now performs schema preflight, INSERT, and query-back verification. The command exits non-zero if the schema is incompatible, a database write fails, or returned row counts are below the expected Week 6 totals. Because Phat schema_v4 has no run identifier in `document_pages` or `structured_records`, Duy treats these tables as latest snapshots and replaces rows for the same document/source on a new successful run.
 
 Real PostgreSQL insert is aligned to Phat's reviewed `schema_v4.sql` columns:
 
@@ -87,6 +92,8 @@ Resolved IDs from Phat output:
 | `doc_dataflow_technical_report` | `document_db_id=1` |
 
 If Duy needs to run `--write-db` locally, the only remaining requirement is Phat's PostgreSQL connection credentials and a runnable local schema. Note: Phat's current `schema_v4.sql` / `setup_database_v2.sql` still appears to need a comma before `prediction_logs` constraints.
+
+The real cross-team load itself is already evidenced by Phat's exported rows listed above. Duy's local default remains dry-run because no database password is committed to this repository.
 
 ## Latest Phat Mapping Files
 

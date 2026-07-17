@@ -17,6 +17,16 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 LAP_ROOT = PROJECT_ROOT.parent / "DataVision_Lap"
 
 
+def portable_path(path: Path) -> str:
+    resolved = path.resolve()
+    for base in (PROJECT_ROOT.resolve(), PROJECT_ROOT.parent.resolve()):
+        try:
+            return resolved.relative_to(base).as_posix()
+        except ValueError:
+            continue
+    return f"external/{path.name}"
+
+
 def read_json(path: Path, default: Any = None) -> Any:
     if not path.exists():
         return default
@@ -25,7 +35,7 @@ def read_json(path: Path, default: Any = None) -> Any:
 
 def count_jsonl(path: Path) -> dict[str, Any]:
     stats = {
-        "path": path.as_posix(),
+        "path": portable_path(path),
         "exists": path.exists(),
         "pages_loaded": 0,
         "non_empty_pages": 0,
@@ -95,7 +105,7 @@ def read_notebook_status(path: Path) -> dict[str, Any]:
 
 def file_status(path: Path) -> dict[str, Any]:
     return {
-        "path": path.as_posix(),
+        "path": portable_path(path),
         "exists": path.exists(),
     }
 

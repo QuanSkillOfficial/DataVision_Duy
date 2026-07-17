@@ -1,25 +1,25 @@
 {
   "source": "DataVision_Phat/week6 outputs",
-  "phat_week6_root": "F:/data/new/quanskill/DataVision_Phat/week6",
+  "phat_week6_root": "DataVision_Phat/week6",
   "files_used": {
-    "schema_v4": "F:/data/new/quanskill/DataVision_Phat/week6/database/schema_v4.sql",
-    "setup_database_v2": "F:/data/new/quanskill/DataVision_Phat/week6/database/setup_database_v2.sql",
-    "reset_database_v2": "F:/data/new/quanskill/DataVision_Phat/week6/database/reset_database_v2.sql",
-    "analytics_views_v3": "F:/data/new/quanskill/DataVision_Phat/week6/database/analytics_views_v3.sql",
-    "validation_queries_v2": "F:/data/new/quanskill/DataVision_Phat/week6/database/validation_queries_v2.sql",
-    "validate_ingestion_data": "F:/data/new/quanskill/DataVision_Phat/week6/database/validate_ingestion_data.sql",
-    "sources": "F:/data/new/quanskill/DataVision_Phat/week6/outputs/ingestion_data_Duy/sources_202607051438.json",
-    "documents": "F:/data/new/quanskill/DataVision_Phat/week6/outputs/ingestion_data_Duy/documents_202607051439.json",
-    "ingestion_logs": "F:/data/new/quanskill/DataVision_Phat/week6/outputs/ingestion_data_Duy/ingestion_logs_202607051438.json",
-    "document_pages": "F:/data/new/quanskill/DataVision_Phat/week6/outputs/ingestion_data_Duy/document_pages_202607051442.json",
-    "structured_records": "F:/data/new/quanskill/DataVision_Phat/week6/outputs/ingestion_data_Duy/structured_records_202607051442.json",
-    "prediction_logs": "F:/data/new/quanskill/DataVision_Phat/week6/outputs/prediction_log_data_Tuong/prediction_logs_202607071251.json",
-    "document_chunks": "F:/data/new/quanskill/DataVision_Phat/week6/outputs/document_chunk_data_Lap/document_chunks_202607071256.json",
-    "dashboard_overview": "F:/data/new/quanskill/DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_dashboard_overview_202607071300.json",
-    "data_quality_dashboard": "F:/data/new/quanskill/DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_data_quality_dashboard_202607071300.json"
+    "schema_v4": "DataVision_Phat/week6/database/schema_v4.sql",
+    "setup_database_v2": "DataVision_Phat/week6/database/setup_database_v2.sql",
+    "reset_database_v2": "DataVision_Phat/week6/database/reset_database_v2.sql",
+    "analytics_views_v3": "DataVision_Phat/week6/database/analytics_views_v3.sql",
+    "validation_queries_v2": "DataVision_Phat/week6/database/validation_queries_v2.sql",
+    "validate_ingestion_data": "DataVision_Phat/week6/database/validate_ingestion_data.sql",
+    "sources": "DataVision_Phat/week6/outputs/ingestion_data_Duy/sources_202607051438.json",
+    "documents": "DataVision_Phat/week6/outputs/ingestion_data_Duy/documents_202607051439.json",
+    "ingestion_logs": "DataVision_Phat/week6/outputs/ingestion_data_Duy/ingestion_logs_202607051438.json",
+    "document_pages": "DataVision_Phat/week6/outputs/ingestion_data_Duy/document_pages_202607051442.json",
+    "structured_records": "DataVision_Phat/week6/outputs/ingestion_data_Duy/structured_records_202607051442.json",
+    "prediction_logs": "DataVision_Phat/week6/outputs/prediction_log_data_Tuong/prediction_logs_202607071251.json",
+    "document_chunks": "DataVision_Phat/week6/outputs/document_chunk_data_Lap/document_chunks_202607071256.json",
+    "dashboard_overview": "DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_dashboard_overview_202607071300.json",
+    "data_quality_dashboard": "DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_data_quality_dashboard_202607071300.json"
   },
   "schema_findings": {
-    "schema_file": "F:/data/new/quanskill/DataVision_Phat/week6/database/schema_v4.sql",
+    "schema_file": "DataVision_Phat/week6/database/schema_v4.sql",
     "exists": true,
     "has_vector_extension": true,
     "has_source_unique_constraint": true,
@@ -139,51 +139,51 @@
   ],
   "dashboard_view_samples": {
     "v_dashboard_overview": {
-      "path": "F:/data/new/quanskill/DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_dashboard_overview_202607071300.json",
+      "path": "DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_dashboard_overview_202607071300.json",
       "row_count": 1
     },
     "v_data_quality_dashboard": {
-      "path": "F:/data/new/quanskill/DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_data_quality_dashboard_202607071300.json",
+      "path": "DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_data_quality_dashboard_202607071300.json",
       "row_count": 4
     },
     "v_document_quality_summary": {
-      "path": "F:/data/new/quanskill/DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_document_quality_summary_202607071300.json",
+      "path": "DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_document_quality_summary_202607071300.json",
       "row_count": 1
     },
     "v_document_rag_readiness": {
-      "path": "F:/data/new/quanskill/DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_document_rag_readiness_202607071300.json",
+      "path": "DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_document_rag_readiness_202607071300.json",
       "row_count": 1
     },
     "v_ingestion_health": {
-      "path": "F:/data/new/quanskill/DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_ingestion_health_202607071300.json",
+      "path": "DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_ingestion_health_202607071300.json",
       "row_count": 1
     },
     "v_latest_ingestion_runs": {
-      "path": "F:/data/new/quanskill/DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_latest_ingestion_runs_202607071300.json",
+      "path": "DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_latest_ingestion_runs_202607071300.json",
       "row_count": 4
     },
     "v_prediction_confidence_summary": {
-      "path": "F:/data/new/quanskill/DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_prediction_confidence_summary_202607071300.json",
+      "path": "DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_prediction_confidence_summary_202607071300.json",
       "row_count": 4
     },
     "v_prediction_review_queue": {
-      "path": "F:/data/new/quanskill/DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_prediction_review_queue_202607071300.json",
+      "path": "DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_prediction_review_queue_202607071300.json",
       "row_count": 5
     },
     "v_rag_daily_metrics": {
-      "path": "F:/data/new/quanskill/DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_rag_daily_metrics_202607071300.json",
+      "path": "DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_rag_daily_metrics_202607071300.json",
       "row_count": 0
     },
     "v_recent_activity": {
-      "path": "F:/data/new/quanskill/DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_recent_activity_202607071300.json",
+      "path": "DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_recent_activity_202607071300.json",
       "row_count": 4
     },
     "v_source_quality_detail": {
-      "path": "F:/data/new/quanskill/DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_source_quality_detail_202607071300.json",
+      "path": "DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_source_quality_detail_202607071300.json",
       "row_count": 4
     },
     "v_source_quality_summary": {
-      "path": "F:/data/new/quanskill/DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_source_quality_summary_202607071300.json",
+      "path": "DataVision_Phat/week6/outputs/dashboard_view_samples_PhiHung/v_source_quality_summary_202607071300.json",
       "row_count": 4
     }
   },

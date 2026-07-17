@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import re
 from pathlib import Path
 from typing import Any
@@ -66,35 +67,42 @@ def run_pdf_ingestion(source_config: dict[str, Any]) -> dict[str, Any]:
         page_records: list[dict[str, Any]] = []
         document_pages: list[dict[str, Any]] = []
 
-        with pdfplumber.open(input_path) as pdf:
-            total_pages = len(pdf.pages)
-            for page_index, page in enumerate(pdf.pages, start=1):
-                raw_text = page.extract_text() or ""
-                clean_text = clean_extracted_text(raw_text)
-                is_empty = not bool(clean_text)
-                page_records.append(
-                    {
-                        "page_number": page_index,
-                        "raw_text": raw_text,
-                        "clean_text": clean_text,
-                        "char_count": len(clean_text),
-                        "word_count": count_words(clean_text),
-                        "is_empty_page": is_empty,
-                    }
-                )
-                document_pages.append(
-                    {
-                        "document_id": document_id,
-                        "file_name": input_path.name,
-                        "page_number": page_index,
-                        "text": clean_text,
-                        "character_count": len(clean_text),
-                        "is_empty": is_empty,
-                        "source": input_path.name,
-                        "raw_output_path": relative_path(raw_output_path),
-                        "staging_text_path": relative_path(staging_text_output_path),
-                    }
-                )
+        pdfminer_logger = logging.getLogger("pdfminer")
+        previous_pdfminer_level = pdfminer_logger.level
+        if source_config.get("suppress_pdfminer_warnings", True):
+            pdfminer_logger.setLevel(logging.ERROR)
+        try:
+            with pdfplumber.open(input_path) as pdf:
+                total_pages = len(pdf.pages)
+                for page_index, page in enumerate(pdf.pages, start=1):
+                    raw_text = page.extract_text() or ""
+                    clean_text = clean_extracted_text(raw_text)
+                    is_empty = not bool(clean_text)
+                    page_records.append(
+                        {
+                            "page_number": page_index,
+                            "raw_text": raw_text,
+                            "clean_text": clean_text,
+                            "char_count": len(clean_text),
+                            "word_count": count_words(clean_text),
+                            "is_empty_page": is_empty,
+                        }
+                    )
+                    document_pages.append(
+                        {
+                            "document_id": document_id,
+                            "file_name": input_path.name,
+                            "page_number": page_index,
+                            "text": clean_text,
+                            "character_count": len(clean_text),
+                            "is_empty": is_empty,
+                            "source": input_path.name,
+                            "raw_output_path": relative_path(raw_output_path),
+                            "staging_text_path": relative_path(staging_text_output_path),
+                        }
+                    )
+        finally:
+            pdfminer_logger.setLevel(previous_pdfminer_level)
 
         df_pages = pd.DataFrame(page_records)
         records_read = len(df_pages)

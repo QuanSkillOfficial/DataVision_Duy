@@ -19,7 +19,7 @@ Purpose: Provide Duy's real DataFlow PDF extraction output for chunking, embeddi
 | `document_external_id` | `doc_dataflow_technical_report` |
 | `source_name` | `dataflow_technical_report_pdf` |
 | `file_name` | `DataFlow_Technical_Report.pdf` |
-| `ingestion_run_id` | `1abee790-3e55-4855-b6b6-fa64ee1dbd54` |
+| `ingestion_run_id` | `4c595851-c11e-48e3-8c79-69f6fa52d282` |
 | `page_count` | `36` |
 | `non_empty_pages` | `36` |
 | `empty_pages` | `0` |

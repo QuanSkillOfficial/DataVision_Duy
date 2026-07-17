@@ -14,6 +14,7 @@ The focus is ingestion: bringing API, CSV, Excel, PDF, and document-page text in
 | Week 5 config-driven ingestion service | Complete | `data_engineering/` |
 | Week 5 run history and manifests | Complete | `logs/runs/`, `logs/ingestion_runs.jsonl`, `logs/manifests/` |
 | Week 6 integration handoff | Complete | `docs/week6_team_integration_handoff.md`, `outputs/*_handoff/` |
+| Week 7 CI-ready ingestion pipeline | Implemented; real DB IDs pending Phat | `scripts/week7_*`, `outputs/*/week7_*`, `.github/workflows/ci.yml` |
 | Standard ingestion log schema | Complete | `week2/docs/ingestion_log_schema.md` |
 | Standard output contract | Complete | `week2/docs/standard_ingestion_output_contract.md` |
 | UI handoff contract | Complete | `week2/docs/ingestion_result_contract_for_ui.md` |
@@ -41,7 +42,7 @@ Data Sources
 | DummyJSON products API | `api_ingestor.py` | `week2/data/raw/api/dummyjson_products_raw.json` | `week2/data/staging/api/dummyjson_products_staging.csv` | `week2/data/clean/api/dummyjson_products_clean.csv` |
 | DataFlow technical report PDF | `pdf_ingestor.py` | `week2/data/raw/pdf/dataflow_technical_report_raw.pdf` | `week2/data/staging/pdf/dataflow_pdf_text.txt`, `week2/data/staging/pdf/dataflow_pdf_pages_staging.csv`, and `week2/data/staging/pdf/document_pages.jsonl` | `week2/data/clean/pdf/dataflow_pdf_pages_clean.csv` |
 
-## Run All Ingestion Modules
+## Legacy Week 2 Demo Command
 
 From the repository root:
 
@@ -58,7 +59,9 @@ api: success - 30 valid
 pdf: success - 36 valid
 ```
 
-## Run Week 5 Config-Driven Ingestion
+The official shared-repo implementation is the config-driven module below. The Week 2 command remains only for historical notebook/demo validation.
+
+## Run Official Config-Driven Ingestion
 
 Run one source config:
 
@@ -92,13 +95,13 @@ logs/ingestion_runs.jsonl
 logs/manifests/<run_id>_manifest.json
 ```
 
-## Build Prediction Payload From PDF
+## Build Prediction Payloads For Tuong
 
 ```powershell
-python week2/scripts/ingestion/prediction_payload_builder.py
+python scripts/week6_build_tuong_prediction_payloads.py
 ```
 
-This builds a Tuong-ready document type classification payload from Duy's PDF ingestion outputs.
+This builds the single DataFlow PDF payload, the 10-case batch, and individual test payload files using the latest successful ingestion runs.
 
 ## Validate Project
 
@@ -124,6 +127,8 @@ python scripts/week6_build_rag_handoff_package.py
 python scripts/week6_end_to_end_smoke_test.py
 python scripts/validate_week6.py
 ```
+
+Use `python scripts/load_ingestion_outputs_to_postgres.py --write-db --db-config <config>` for a real PostgreSQL load. The loader validates Phat's target schema before writing, prevents duplicate run insertion, replaces the latest page/structured snapshots instead of duplicating rows, uses commit/rollback, queries inserted rows back, and exits non-zero when verification fails.
 
 Week 6 outputs:
 
@@ -165,13 +170,102 @@ python scripts/week6_end_to_end_smoke_test.py
 pytest tests/data_tests/
 ```
 
-Current verified result:
+Historical Week 6 verification result:
 
 ```text
 Week 6 validation passed
 Week 6 smoke test passed
-20 pytest tests passed
+28 pytest tests passed
 ```
+
+## Week 7 Shared CI, Docker and Database Integration
+
+Week 7 adds the project-level integration boundary. The detailed two-way
+handoff is in:
+
+```text
+docs/week7_cross_team_delivery_matrix.md
+docs/week7_shared_repo_structure.md
+integration/shared_repo_manifest.json
+```
+
+The local deployment draft provides:
+
+```text
+.env.example
+docker-compose.db.yml
+docker-compose.yml
+backend_stub/
+deployment/
+docs/week7_backend_stub_contract.md
+docs/week7_deployment_runbook.md
+```
+
+The external owner jobs are conditional until their modules are merged into the
+shared repository. The readiness report makes missing owner artifacts visible:
+
+```powershell
+python scripts/week7_shared_repo_readiness_check.py
+```
+
+Build deterministic shared fixtures and run the fast ingestion smoke test:
+
+```powershell
+python scripts/week7_build_shared_test_fixtures.py
+python scripts/week7_ci_ingestion_smoke_test.py
+```
+
+Run PostgreSQL dry-run, smoke write, or full write:
+
+```powershell
+python scripts/load_ingestion_outputs_to_postgres.py --dry-run --smoke
+python scripts/load_ingestion_outputs_to_postgres.py --write-db --smoke
+python scripts/load_ingestion_outputs_to_postgres.py --write-db
+```
+
+After a successful DB load, regenerate every DB-enriched handoff:
+
+```powershell
+python scripts/week7_build_rag_handoff_package.py
+python scripts/week7_build_prediction_payloads.py
+python scripts/week7_build_ui_fixtures.py
+```
+
+The Week 7 prediction builder writes a 20-case combined batch, a separate
+10-case addition for cases 11-20, and individual files for debugging.
+
+Validate the complete Week 7 data pipeline:
+
+```powershell
+pytest tests/data_tests/ -q
+python scripts/week7_data_pipeline_smoke_test.py
+python scripts/validate_week7.py
+```
+
+The builders never invent database IDs. Until a real load result exists, generated files use `pending_database_load` and null database keys. See `docs/week7_data_pipeline_runbook.md`.
+
+Current Week 7 data-engineering test result: `46 passed` including shared
+platform readiness checks.
+
+Run the project-level contract checks:
+
+```powershell
+docker compose -f docker-compose.db.yml config --quiet
+docker compose -f docker-compose.yml config --quiet
+python scripts/week7_backend_stub_smoke_test.py --base-url http://127.0.0.1:8000
+python scripts/week7_shared_integration_smoke_test.py
+```
+
+The backend smoke test requires the stub to be running:
+
+```powershell
+python -m pip install -r backend_stub/requirements.txt
+uvicorn backend_stub.main:app --host 127.0.0.1 --port 8000
+```
+
+The Docker and backend files are contract-ready. They do not replace Phat's
+fixed schema, Lap's real pgvector proof, Tuong's prediction database proof, or
+Phi/Hung's UI smoke test.
 
 ## Important Rules
 
@@ -210,3 +304,17 @@ Week 6 smoke test passed
 | Tuong - Prediction | `docs/week6_tuong_prediction_mapping_review.md` |
 | Hung - Streamlit UI | `docs/week6_hung_ui_mapping_review.md` |
 | All modules | `docs/week6_id_mapping_contract.md` |
+
+## Week 7 Integration Docs
+
+| Area | Contract / Runbook |
+| --- | --- |
+| Whole-team handoff | `docs/week7_team_integration_handoff.md` |
+| Whole data pipeline | `docs/week7_data_pipeline_runbook.md` |
+| PostgreSQL modes | `docs/week7_db_modes_for_ingestion.md` |
+| Phat DB loading | `docs/week7_duy_phat_real_db_loading_result.md` |
+| Lap RAG handoff | `docs/week7_duy_to_lap_rag_handoff.md` |
+| Tuong prediction payloads | `docs/week7_duy_to_tuong_prediction_payload_contract.md` |
+| Tuong additional cases 11-20 | `docs/week7_duy_to_tuong_additional_prediction_payloads.md` |
+| Phi/Hung UI fixture | `docs/week7_duy_to_phi_hung_ui_fixture_contract.md` |
+| CI commands | `docs/week7_duy_ci_commands.md` |

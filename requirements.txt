@@ -1,8 +1,8 @@
 pandas
 requests
 openpyxl
-pymupdf
 pdfplumber
+PyMuPDF
 pytest
-Pygments
 psycopg2-binary
+python-dotenv

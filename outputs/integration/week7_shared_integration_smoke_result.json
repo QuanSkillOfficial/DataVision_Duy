@@ -1,0 +1,56 @@
+{
+  "status": "passed",
+  "checks": {
+    "data_pipeline_contract": true,
+    "shared_repo_readiness_report": true,
+    "database_compose_contract": true,
+    "full_compose_contract": true
+  },
+  "runtime_note": "Docker services are not started by this contract smoke test.",
+  "steps": {
+    "data_pipeline": {
+      "command": [
+        "python",
+        "scripts/week7_data_pipeline_smoke_test.py"
+      ],
+      "returncode": 0,
+      "stdout": "{\n  \"status\": \"passed\",\n  \"checks\": {\n    \"outputs_exist\": true,\n    \"db_smoke_plan\": true,\n    \"rag_contract\": true,\n    \"prediction_contract\": true,\n    \"ui_contract\": true\n  },\n  \"db_smoke_counts\": {\n    \"sources\": 4,\n    \"pipeline_runs\": 4,\n    \"ingestion_logs\": 4,\n    \"structured_records\": 100,\n    \"documents\": 1,\n    \"document_pages\": 36\n  },\n  \"outputs\": {\n    \"rag_handoff\": \"outputs/rag_handoff/week7_document_pages_db_enriched.jsonl\",\n    \"rag_manifest\": \"outputs/rag_handoff/week7_rag_handoff_manifest.json\",\n    \"prediction_payloads\": \"outputs/prediction_payloads/tuong_week7_prediction_payloads.json\",\n    \"ui_fixture\": \"outputs/ui_fixtures/duy_week7_database_enriched_summary.json\"\n  }\n}\n",
+      "stderr": ""
+    },
+    "readiness": {
+      "command": [
+        "python",
+        "scripts/week7_shared_repo_readiness_check.py"
+      ],
+      "returncode": 0,
+      "stdout": "{\n  \"status\": \"partial\",\n  \"scope\": \"Week 7 shared-repository readiness, not proof of runtime integration\",\n  \"owners\": {\n    \"Duy\": {\n      \"repository_present\": true,\n      \"repository_label\": \"Duy\",\n      \"present\": [\n        \"data_engineering/ingestion/csv_ingestor.py\",\n        \"data_engineering/pipelines/ingestion_engine.py\",\n        \"data_engineering/storage/postgres_writer.py\",\n        \"scripts/week7_ci_ingestion_smoke_test.py\",\n        \"tests/data_tests\"\n      ],\n      \"missing\": [],\n      \"status\": \"ready\"\n    },\n    \"Phat\": {\n      \"repository_present\": true,\n      \"repository_label\": \"Phat\",\n      \"present\": [],\n      \"missing\": [\n        \"week7/database/schema_v4_fixed.sql\",\n        \"week7/database/setup_database_v3.sql\",\n        \"week7/database/validation_queries_v3.sql\",\n        \"week7/database/ci_database_smoke_test.py\",\n        \"week7/outputs/dashboard_view_samples\"\n      ],\n      \"status\": \"pending_owner_delivery\"\n    },\n    \"Lap\": {\n      \"repository_present\": true,\n      \"repository_label\": \"Lap\",\n      \"present\": [\n        \"ai/rag/load_document_pages_to_pgvector.py\",\n        \"ai/rag/scripts/week7_pgvector_smoke_test.py\",\n        \"ai/rag/scripts/week7_rag_ci_smoke_test.py\",\n        \"ai/ai_tests\"\n      ],\n      \"missing\": [],\n      \"status\": \"ready\"\n    },\n    \"Tuong\": {\n      \"repository_present\": true,\n      \"repository_label\": \"Tuong\",\n      \"present\": [\n        \"ai/prediction/prediction_service.py\",\n        \"ai/prediction/prediction_log_payload_builder.py\"\n      ],\n      \"missing\": [\n        \"scripts/week7_prediction_ci_smoke_test.py\",\n        \"outputs/db_integration/week7_prediction_log_payloads.json\"\n      ],\n      \"status\": \"pending_owner_delivery\"\n    },\n    \"Phi/Hung\": {\n      \"repository_present\": true,\n      \"repository_label\": \"Phi/Hung\",\n      \"present\": [\n        \"demo/streamlit_app.py\",\n        \"demo/services/service_client.py\",\n        \"demo/services/backend_client.py\"\n      ],\n      \"missing\": [\n        \"scripts/week7_ui_ci_smoke_test.py\",\n        \"demo/fixtures/week7\"\n      ],\n      \"status\": \"pending_owner_delivery\"\n    }\n  },\n  \"next_action\": \"Merge owner artifacts into the shared repository, then rerun this report with --strict.\"\n}\n",
+      "stderr": ""
+    },
+    "docker_db_compose": {
+      "command": [
+        "docker",
+        "compose",
+        "-f",
+        "docker-compose.db.yml",
+        "config",
+        "--quiet"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "WARNING: Error loading config file: open <docker-config>: Access is denied.\nWARNING: Error loading config file: open <docker-config>: Access is denied.\n"
+    },
+    "docker_full_compose": {
+      "command": [
+        "docker",
+        "compose",
+        "-f",
+        "docker-compose.yml",
+        "config",
+        "--quiet"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "WARNING: Error loading config file: open <docker-config>: Access is denied.\nWARNING: Error loading config file: open <docker-config>: Access is denied.\n"
+    }
+  }
+}

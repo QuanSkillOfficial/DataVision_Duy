@@ -10,6 +10,16 @@ HUNG_ROOT = PROJECT_ROOT.parent / "DataVision_Hung"
 OUTPUT_PATH = PROJECT_ROOT / "outputs" / "hung_handoff" / "hung_week6_mapping_summary.json"
 
 
+def portable_path(path: Path) -> str:
+    resolved = path.resolve()
+    for base in (PROJECT_ROOT.resolve(), PROJECT_ROOT.parent.resolve()):
+        try:
+            return resolved.relative_to(base).as_posix()
+        except ValueError:
+            continue
+    return f"external/{path.name}"
+
+
 def read_json(path: Path, default: Any = None) -> Any:
     if not path.exists():
         return default
@@ -18,7 +28,7 @@ def read_json(path: Path, default: Any = None) -> Any:
 
 def file_status(path: Path) -> dict[str, Any]:
     return {
-        "path": path.as_posix(),
+        "path": portable_path(path),
         "exists": path.exists(),
         "size_bytes": path.stat().st_size if path.exists() else 0,
     }
@@ -253,10 +263,10 @@ def main() -> None:
         "source_files_checked": {
             "duy_quality_fixture_present": bool(duy_quality),
             "duy_pdf_fixture_present": bool(duy_pdf),
-            "hung_mock_client": str(HUNG_ROOT / "demo" / "services" / "mock_client.py"),
-            "hung_dashboard_page": str(HUNG_ROOT / "demo" / "views" / "dashboard_page.py"),
-            "hung_suggestions_page": str(HUNG_ROOT / "demo" / "views" / "suggestions_page.py"),
-            "hung_reports_page": str(HUNG_ROOT / "demo" / "views" / "reports_page.py"),
+            "hung_mock_client": portable_path(HUNG_ROOT / "demo" / "services" / "mock_client.py"),
+            "hung_dashboard_page": portable_path(HUNG_ROOT / "demo" / "views" / "dashboard_page.py"),
+            "hung_suggestions_page": portable_path(HUNG_ROOT / "demo" / "views" / "suggestions_page.py"),
+            "hung_reports_page": portable_path(HUNG_ROOT / "demo" / "views" / "reports_page.py"),
         },
     }
 

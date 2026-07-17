@@ -77,7 +77,7 @@ Expected output back from Lap:
 
 ## Current Lap Review Status
 
-Reviewed from `F:/data/new/quanskill/DataVision_Lap`:
+Reviewed from `DataVision_Lap/` in the shared team workspace:
 
 | Item | Status |
 | --- | --- |

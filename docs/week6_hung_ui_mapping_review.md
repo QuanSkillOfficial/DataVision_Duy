@@ -2,7 +2,7 @@
 
 Owner: Nguyen Minh Duy  
 Consumer: Hung - Streamlit UI, Suggestions, Reports, Demo  
-Repository reviewed: `F:/data/new/quanskill/DataVision_Hung`
+Repository reviewed: `DataVision_Hung/` in the shared team workspace
 
 ## Purpose
 
@@ -20,26 +20,26 @@ Duy ingestion outputs
 
 | Area | Hung Path | What It Consumes |
 | --- | --- | --- |
-| Service mock layer | `F:/data/new/quanskill/DataVision_Hung/demo/services/mock_client.py` | Loads JSON fixtures and returns service envelopes |
-| Service client layer | `F:/data/new/quanskill/DataVision_Hung/demo/services/service_client.py` | Public UI-facing functions for mock/backend mode |
-| Dashboard page | `F:/data/new/quanskill/DataVision_Hung/demo/views/dashboard_page.py` | Dashboard metrics, latest ingestion status, recent activity |
-| Suggestions page | `F:/data/new/quanskill/DataVision_Hung/demo/views/suggestions_page.py` | Dashboard signals, prediction result, RAG context |
-| Reports page | `F:/data/new/quanskill/DataVision_Hung/demo/views/reports_page.py` | Source context, dashboard signals, suggestions, prediction, RAG |
-| Prediction page | `F:/data/new/quanskill/DataVision_Hung/demo/views/prediction_page.py` | Tuong prediction output and manual review workflow |
-| Chatbot page | `F:/data/new/quanskill/DataVision_Hung/demo/views/chatbot_page.py` | Lap RAG response with citations and retrieved context |
-| Dashboard contract | `F:/data/new/quanskill/DataVision_Hung/docs/ui_contracts/dashboard_ui_contract.md` | Required dashboard fields and view names |
-| Report contract | `F:/data/new/quanskill/DataVision_Hung/docs/ui_contracts/report_ui_contract.md` | Report evidence table contract |
-| Week 6 handoff | `F:/data/new/quanskill/DataVision_Hung/docs/W6/week6_team_integration_handoff.md` | UI integration requirements from Duy/Phat/Lap/Tuong |
+| Service mock layer | `DataVision_Hung/demo/services/mock_client.py` | Loads JSON fixtures and returns service envelopes |
+| Service client layer | `DataVision_Hung/demo/services/service_client.py` | Public UI-facing functions for mock/backend mode |
+| Dashboard page | `DataVision_Hung/demo/views/dashboard_page.py` | Dashboard metrics, latest ingestion status, recent activity |
+| Suggestions page | `DataVision_Hung/demo/views/suggestions_page.py` | Dashboard signals, prediction result, RAG context |
+| Reports page | `DataVision_Hung/demo/views/reports_page.py` | Source context, dashboard signals, suggestions, prediction, RAG |
+| Prediction page | `DataVision_Hung/demo/views/prediction_page.py` | Tuong prediction output and manual review workflow |
+| Chatbot page | `DataVision_Hung/demo/views/chatbot_page.py` | Lap RAG response with citations and retrieved context |
+| Dashboard contract | `DataVision_Hung/docs/ui_contracts/dashboard_ui_contract.md` | Required dashboard fields and view names |
+| Report contract | `DataVision_Hung/docs/ui_contracts/report_ui_contract.md` | Report evidence table contract |
+| Week 6 handoff | `DataVision_Hung/docs/W6/week6_team_integration_handoff.md` | UI integration requirements from Duy/Phat/Lap/Tuong |
 
 ## Hung Fixture Files Reviewed
 
 | Hung Fixture | Path | Current Usage |
 | --- | --- | --- |
-| Duy ingestion fixture copy | `F:/data/new/quanskill/DataVision_Hung/demo/fixtures/duy_latest_ingestion_summary.json` | Dashboard latest ingestion panel, Suggestions/Reports ingestion evidence |
-| Phat dashboard views fixture | `F:/data/new/quanskill/DataVision_Hung/demo/fixtures/phat_dashboard_views_sample.json` | Dashboard cards, view tables, prediction review queue |
-| Tuong prediction batch fixture | `F:/data/new/quanskill/DataVision_Hung/demo/fixtures/tuong_prediction_batch_response.json` | Prediction page and review workflow |
-| Tuong prediction review queue fixture | `F:/data/new/quanskill/DataVision_Hung/demo/fixtures/tuong_prediction_review_queue_sample.json` | Manual review panel |
-| Lap real RAG fixture | `F:/data/new/quanskill/DataVision_Hung/demo/fixtures/lap_rag_response_real.json` | Chatbot citations and retrieved context |
+| Duy ingestion fixture copy | `DataVision_Hung/demo/fixtures/duy_latest_ingestion_summary.json` | Dashboard latest ingestion panel, Suggestions/Reports ingestion evidence |
+| Phat dashboard views fixture | `DataVision_Hung/demo/fixtures/phat_dashboard_views_sample.json` | Dashboard cards, view tables, prediction review queue |
+| Tuong prediction batch fixture | `DataVision_Hung/demo/fixtures/tuong_prediction_batch_response.json` | Prediction page and review workflow |
+| Tuong prediction review queue fixture | `DataVision_Hung/demo/fixtures/tuong_prediction_review_queue_sample.json` | Manual review panel |
+| Lap real RAG fixture | `DataVision_Hung/demo/fixtures/lap_rag_response_real.json` | Chatbot citations and retrieved context |
 
 Important:
 
@@ -71,13 +71,13 @@ Hung should use these files from Duy's repository.
 Hung should treat Duy's file as the source of truth:
 
 ```text
-F:/data/new/quanskill/DataVision_Duy/outputs/ui_fixtures/duy_latest_ingestion_summary.json
+DataVision_Duy/outputs/ui_fixtures/duy_latest_ingestion_summary.json
 ```
 
 Hung can copy that file into:
 
 ```text
-F:/data/new/quanskill/DataVision_Hung/demo/fixtures/duy_latest_ingestion_summary.json
+DataVision_Hung/demo/fixtures/duy_latest_ingestion_summary.json
 ```
 
 The copied file is for Streamlit demo convenience only. If the values differ, use the Duy repo file for the latest run IDs, output paths, and prediction context.
@@ -133,7 +133,7 @@ Duy fields for Dashboard:
 Hung's dashboard also uses Phat's view fixture for aggregate database metrics:
 
 ```text
-F:/data/new/quanskill/DataVision_Hung/demo/fixtures/phat_dashboard_views_sample.json
+DataVision_Hung/demo/fixtures/phat_dashboard_views_sample.json
 ```
 
 Duy fixture should be used for ingestion lineage details that Phat views may not expose:
@@ -258,7 +258,7 @@ Duy fields Hung can show as RAG readiness:
 Lap's final UI fixture should be copied to:
 
 ```text
-F:/data/new/quanskill/DataVision_Hung/demo/fixtures/lap_rag_response_real.json
+DataVision_Hung/demo/fixtures/lap_rag_response_real.json
 ```
 
 ## ID Alignment

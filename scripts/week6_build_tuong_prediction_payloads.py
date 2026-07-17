@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import sys
+from collections import Counter
 from pathlib import Path
 
 
@@ -15,7 +16,9 @@ from data_engineering.pipelines.prediction_payload_builder import build_tuong_pr
 OUTPUT_DIR = PROJECT_ROOT / "outputs/prediction_payloads"
 LOG_OUTPUT_DIR = PROJECT_ROOT / "logs/prediction_payloads"
 BATCH_FILE_NAME = "tuong_week6_prediction_payloads.json"
+SINGLE_PDF_FILE_NAME = "duy_pdf_prediction_payload.json"
 SUMMARY_FILE = PROJECT_ROOT / "docs/week6_tuong_prediction_payloads.md"
+TUONG_RESULT_FILE = PROJECT_ROOT.parent / "DataVision_Tuong" / "outputs" / "week6_duy_prediction_results.json"
 
 
 def _write_json(path: Path, payload) -> None:
@@ -23,7 +26,7 @@ def _write_json(path: Path, payload) -> None:
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
-def _write_summary(payloads: list[dict]) -> None:
+def _write_summary(payloads: list[dict], tuong_results: dict | None = None) -> None:
     rows = [
         "# Week 6 Tuong Prediction Payloads",
         "",
@@ -90,6 +93,66 @@ def _write_summary(payloads: list[dict]) -> None:
             "```",
         ]
     )
+    prediction_results = (tuong_results or {}).get("results", [])
+    if prediction_results:
+        status_counts = Counter(result.get("status") for result in prediction_results)
+        dataflow_result = next(
+            (
+                result
+                for result in prediction_results
+                if result.get("document_external_id") == "doc_dataflow_technical_report"
+            ),
+            {},
+        )
+        rows.extend(
+            [
+                "",
+                "## Current Tuong Result From 10 Payloads",
+                "",
+                "Tuong's current Week 6 source-of-truth output is:",
+                "",
+                "```text",
+                "DataVision_Tuong/outputs/week6_duy_prediction_results.json",
+                "```",
+                "",
+                "Result counts:",
+                "",
+                "| Status | Count |",
+                "| --- | ---: |",
+                f"| `accepted` | `{status_counts.get('accepted', 0)}` |",
+                f"| `needs_review` | `{status_counts.get('needs_review', 0)}` |",
+                f"| `waiting_for_source` | `{status_counts.get('waiting_for_source', 0)}` |",
+                f"| `failed` | `{status_counts.get('failed', 0)}` |",
+                f"| Total | `{len(prediction_results)}` |",
+                "",
+                "Important DataFlow result:",
+                "",
+                "```json",
+                json.dumps(
+                    {
+                        key: dataflow_result.get(key)
+                        for key in (
+                            "document_external_id",
+                            "source_name",
+                            "predicted_document_type",
+                            "confidence",
+                            "status",
+                            "review_reason",
+                        )
+                    },
+                    indent=2,
+                    ensure_ascii=False,
+                ),
+                "```",
+                "",
+                "Important integration note:",
+                "",
+                "```text",
+                "Tuong UI fixtures are useful for Phi/Hung demo states, but the full 10-payload evidence is the JSON result above.",
+                "Do not use unreviewed or low-confidence prediction output as a hard RAG filter.",
+                "```",
+            ]
+        )
     SUMMARY_FILE.write_text("\n".join(rows) + "\n", encoding="utf-8")
 
 
@@ -100,16 +163,23 @@ def main() -> int:
 
     _write_json(OUTPUT_DIR / BATCH_FILE_NAME, payloads)
     _write_json(LOG_OUTPUT_DIR / BATCH_FILE_NAME, payloads)
+    _write_json(LOG_OUTPUT_DIR / SINGLE_PDF_FILE_NAME, payloads[0])
 
     for index, payload in enumerate(payloads, start=1):
         document_id = payload.get("document_external_id") or f"payload_{index:02d}"
         file_name = f"{index:02d}_{document_id}.json"
         _write_json(OUTPUT_DIR / file_name, payload)
 
-    _write_summary(payloads)
+    tuong_results = (
+        json.loads(TUONG_RESULT_FILE.read_text(encoding="utf-8"))
+        if TUONG_RESULT_FILE.exists()
+        else None
+    )
+    _write_summary(payloads, tuong_results)
 
     print(f"Wrote batch payloads: {(OUTPUT_DIR / BATCH_FILE_NAME).relative_to(PROJECT_ROOT).as_posix()}")
     print(f"Wrote log copy: {(LOG_OUTPUT_DIR / BATCH_FILE_NAME).relative_to(PROJECT_ROOT).as_posix()}")
+    print(f"Wrote single PDF payload: {(LOG_OUTPUT_DIR / SINGLE_PDF_FILE_NAME).relative_to(PROJECT_ROOT).as_posix()}")
     print(f"Wrote individual payloads: {len(payloads)}")
     print(f"Wrote summary: {SUMMARY_FILE.relative_to(PROJECT_ROOT).as_posix()}")
     return 0

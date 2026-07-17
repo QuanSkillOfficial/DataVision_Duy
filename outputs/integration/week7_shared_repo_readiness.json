@@ -1,0 +1,72 @@
+{
+  "status": "partial",
+  "scope": "Week 7 shared-repository readiness, not proof of runtime integration",
+  "owners": {
+    "Duy": {
+      "repository_present": true,
+      "repository_label": "Duy",
+      "present": [
+        "data_engineering/ingestion/csv_ingestor.py",
+        "data_engineering/pipelines/ingestion_engine.py",
+        "data_engineering/storage/postgres_writer.py",
+        "scripts/week7_ci_ingestion_smoke_test.py",
+        "tests/data_tests"
+      ],
+      "missing": [],
+      "status": "ready"
+    },
+    "Phat": {
+      "repository_present": true,
+      "repository_label": "Phat",
+      "present": [],
+      "missing": [
+        "week7/database/schema_v4_fixed.sql",
+        "week7/database/setup_database_v3.sql",
+        "week7/database/validation_queries_v3.sql",
+        "week7/database/ci_database_smoke_test.py",
+        "week7/outputs/dashboard_view_samples"
+      ],
+      "status": "pending_owner_delivery"
+    },
+    "Lap": {
+      "repository_present": true,
+      "repository_label": "Lap",
+      "present": [
+        "ai/rag/load_document_pages_to_pgvector.py",
+        "ai/rag/scripts/week7_pgvector_smoke_test.py",
+        "ai/rag/scripts/week7_rag_ci_smoke_test.py",
+        "ai/ai_tests"
+      ],
+      "missing": [],
+      "status": "ready"
+    },
+    "Tuong": {
+      "repository_present": true,
+      "repository_label": "Tuong",
+      "present": [
+        "ai/prediction/prediction_service.py",
+        "ai/prediction/prediction_log_payload_builder.py"
+      ],
+      "missing": [
+        "scripts/week7_prediction_ci_smoke_test.py",
+        "outputs/db_integration/week7_prediction_log_payloads.json"
+      ],
+      "status": "pending_owner_delivery"
+    },
+    "Phi/Hung": {
+      "repository_present": true,
+      "repository_label": "Phi/Hung",
+      "present": [
+        "demo/streamlit_app.py",
+        "demo/services/service_client.py",
+        "demo/services/backend_client.py"
+      ],
+      "missing": [
+        "scripts/week7_ui_ci_smoke_test.py",
+        "demo/fixtures/week7"
+      ],
+      "status": "pending_owner_delivery"
+    }
+  },
+  "next_action": "Merge owner artifacts into the shared repository, then rerun this report with --strict."
+}

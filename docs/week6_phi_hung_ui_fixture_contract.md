@@ -29,7 +29,7 @@ outputs/hung_handoff/hung_week6_mapping_summary.json
 Hung's local demo copy should be refreshed from Duy's canonical fixture when Duy reruns ingestion:
 
 ```text
-F:/data/new/quanskill/DataVision_Hung/demo/fixtures/duy_latest_ingestion_summary.json
+DataVision_Hung/demo/fixtures/duy_latest_ingestion_summary.json
 ```
 
 If the copied file and Duy's canonical file differ, use the Duy repo fixture as the latest source of truth.

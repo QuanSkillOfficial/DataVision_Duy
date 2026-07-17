@@ -27,7 +27,7 @@ Duy's repository is integration-ready for Week 6.
 | Area | Status | Evidence |
 | --- | --- | --- |
 | Config-driven ingestion | Ready | `data_engineering/pipelines/ingestion_engine.py` |
-| PostgreSQL loading handoff | Ready as dry-run and mapping package | `logs/db_load_dry_run/duy_to_phat_db_load_plan.json` |
+| PostgreSQL loading handoff | Ready with executable writer, query-back verification, and Phat DB export proof | `data_engineering/storage/postgres_writer.py`, `outputs/phat_handoff/phat_week6_mapping_summary.json` |
 | RAG handoff | Ready | `outputs/rag_handoff/document_pages.jsonl` |
 | Prediction handoff | Ready | `outputs/prediction_payloads/tuong_week6_prediction_payloads.json` |
 | UI handoff | Ready | `outputs/ui_fixtures/duy_latest_ingestion_summary.json` |
@@ -50,7 +50,7 @@ Verified result:
 ```text
 Week 6 validation passed
 Week 6 smoke test passed
-20 pytest tests passed
+28 pytest tests passed
 Week 5 validation passed
 Week 2 validation passed
 ```
@@ -136,10 +136,10 @@ These are not blockers inside Duy's repo, but they are the next true platform in
 
 | Collaboration | Remaining Work |
 | --- | --- |
-| Duy + Phat | Run real PostgreSQL write mode against live schema and return source/document DB IDs |
-| Duy + Lap | Use Duy `document_pages.jsonl` for real pgvector retrieval and return citation fixture |
-| Duy + Tuong | Continue using the 10-payload batch and route low-confidence predictions to review |
-| Duy + Hung | Refresh Hung's copied fixture from Duy canonical UI fixture and confirm UI display |
+| Duy + Phat | Shared DB exports already confirm IDs and row counts; a local replay only needs credentials and the known schema comma fix |
+| Duy + Lap | Phat exported 293 chunks, but Lap still needs an executed notebook and citation-ready fixture in the Lap repo |
+| Duy + Tuong | Stable IDs match across all 10 cases; rerun only to attach results to Duy's latest regenerated run IDs |
+| Duy + Hung | Refresh Hung's copied fixture from Duy canonical UI fixture and confirm the latest run is displayed |
 
 ## Verdict
 

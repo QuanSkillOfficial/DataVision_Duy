@@ -10,27 +10,27 @@
   },
   "tuong_repo_files_reviewed": {
     "week6_real_data_prediction_eval": {
-      "path": "F:/data/new/quanskill/DataVision_Tuong/docs/week6_real_data_prediction_eval.md",
+      "path": "DataVision_Tuong/docs/week6_real_data_prediction_eval.md",
       "exists": true
     },
     "week6_prediction_db_integration_result": {
-      "path": "F:/data/new/quanskill/DataVision_Tuong/docs/week6_prediction_db_integration_result.md",
+      "path": "DataVision_Tuong/docs/week6_prediction_db_integration_result.md",
       "exists": true
     },
     "ingestion_to_prediction_contract": {
-      "path": "F:/data/new/quanskill/DataVision_Tuong/docs/ingestion_to_prediction_contract.md",
+      "path": "DataVision_Tuong/docs/ingestion_to_prediction_contract.md",
       "exists": true
     },
     "prediction_log_contract": {
-      "path": "F:/data/new/quanskill/DataVision_Tuong/docs/prediction_log_contract.md",
+      "path": "DataVision_Tuong/docs/prediction_log_contract.md",
       "exists": true
     },
     "week6_prediction_results": {
-      "path": "F:/data/new/quanskill/DataVision_Tuong/outputs/week6_duy_prediction_results.json",
+      "path": "DataVision_Tuong/outputs/week6_duy_prediction_results.json",
       "exists": true
     },
     "ui_single_response_fixture": {
-      "path": "F:/data/new/quanskill/DataVision_Tuong/outputs/ui_fixtures/tuong_prediction_response_real.json",
+      "path": "DataVision_Tuong/outputs/ui_fixtures/tuong_prediction_response_real.json",
       "exists": true,
       "description": "Real single prediction response from Tuong's prediction service — for Phi/Hung UI development",
       "total_items": 0,
@@ -39,7 +39,7 @@
       "appears_sample_fixture": true
     },
     "ui_batch_response_fixture": {
-      "path": "F:/data/new/quanskill/DataVision_Tuong/outputs/ui_fixtures/tuong_prediction_batch_response.json",
+      "path": "DataVision_Tuong/outputs/ui_fixtures/tuong_prediction_batch_response.json",
       "exists": true,
       "description": "Batch prediction response from Tuong's prediction service — covers all 4 status types for Phi/Hung UI development",
       "total_items": 5,
@@ -53,7 +53,7 @@
       "appears_sample_fixture": true
     },
     "ui_review_queue_fixture": {
-      "path": "F:/data/new/quanskill/DataVision_Tuong/outputs/ui_fixtures/tuong_prediction_review_queue_sample.json",
+      "path": "DataVision_Tuong/outputs/ui_fixtures/tuong_prediction_review_queue_sample.json",
       "exists": true,
       "description": "Prediction review queue sample data for Phi/Hung manual review UI — shows items that need human review",
       "total_items": 3,
@@ -64,7 +64,7 @@
       "appears_sample_fixture": true
     },
     "rag_filter_payload": {
-      "path": "F:/data/new/quanskill/DataVision_Tuong/outputs/rag_metadata/document_type_filter_payload.json",
+      "path": "DataVision_Tuong/outputs/rag_metadata/document_type_filter_payload.json",
       "exists": true,
       "item_count": 5
     }
@@ -146,7 +146,7 @@
         "num_pages": 36,
         "source_id": null,
         "document_db_id": null,
-        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+        "ingestion_run_id": "400d3c21-42f0-44bb-be47-09bd04f86431",
         "test_case": "full_pdf_document",
         "expected_status_hint": "accepted_or_needs_review"
       },
@@ -159,7 +159,7 @@
         "num_pages": 2,
         "source_id": null,
         "document_db_id": null,
-        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+        "ingestion_run_id": "400d3c21-42f0-44bb-be47-09bd04f86431",
         "test_case": "pdf_intro_section",
         "expected_status_hint": "accepted_or_needs_review"
       },
@@ -172,7 +172,7 @@
         "num_pages": 1,
         "source_id": null,
         "document_db_id": null,
-        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+        "ingestion_run_id": "400d3c21-42f0-44bb-be47-09bd04f86431",
         "test_case": "pdf_architecture_page",
         "expected_status_hint": "accepted_or_needs_review"
       },
@@ -185,7 +185,7 @@
         "num_pages": 2,
         "source_id": null,
         "document_db_id": null,
-        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+        "ingestion_run_id": "400d3c21-42f0-44bb-be47-09bd04f86431",
         "test_case": "pdf_related_work_section",
         "expected_status_hint": "accepted_or_needs_review"
       },
@@ -198,7 +198,7 @@
         "num_pages": 0,
         "source_id": null,
         "document_db_id": null,
-        "ingestion_run_id": "13b921ad-4e4c-4399-b1ae-6087d7b86bf0",
+        "ingestion_run_id": "a7387b8b-547a-4810-a23a-576ccb4bb7ac",
         "test_case": "csv_structured_summary",
         "expected_status_hint": "accepted_or_needs_review"
       },
@@ -211,7 +211,7 @@
         "num_pages": 0,
         "source_id": null,
         "document_db_id": null,
-        "ingestion_run_id": "d670414e-4147-4cda-a87d-06e8b7c52d19",
+        "ingestion_run_id": "71cd622a-9a85-4194-b274-986eee4c0322",
         "test_case": "excel_structured_summary",
         "expected_status_hint": "accepted_or_needs_review"
       },
@@ -224,7 +224,7 @@
         "num_pages": 0,
         "source_id": null,
         "document_db_id": null,
-        "ingestion_run_id": "83a3c30c-98f1-42f7-aba7-4fed188daed9",
+        "ingestion_run_id": "74399524-18bc-4d01-915e-f53e12d0855f",
         "test_case": "api_structured_summary",
         "expected_status_hint": "accepted_or_needs_review"
       },
@@ -237,7 +237,7 @@
         "num_pages": 1,
         "source_id": null,
         "document_db_id": null,
-        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+        "ingestion_run_id": "400d3c21-42f0-44bb-be47-09bd04f86431",
         "test_case": "short_extracted_text_quality_gate",
         "expected_status_hint": "waiting_for_source_or_needs_review"
       },
@@ -250,7 +250,7 @@
         "num_pages": 1,
         "source_id": null,
         "document_db_id": null,
-        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+        "ingestion_run_id": "400d3c21-42f0-44bb-be47-09bd04f86431",
         "test_case": "empty_extracted_text_quality_gate",
         "expected_status_hint": "waiting_for_source"
       },
@@ -263,7 +263,7 @@
         "num_pages": 1,
         "source_id": null,
         "document_db_id": null,
-        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+        "ingestion_run_id": "400d3c21-42f0-44bb-be47-09bd04f86431",
         "test_case": "missing_required_file_name",
         "expected_status_hint": "failed"
       }
@@ -282,6 +282,7 @@
       {
         "document_external_id": "doc_dataflow_technical_report",
         "source_name": "dataflow_technical_report_pdf",
+        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
         "predicted_document_type": "report",
         "confidence": 0.4184,
         "status": "needs_review",
@@ -294,6 +295,7 @@
       {
         "document_external_id": "doc_dataflow_technical_report_intro_pages",
         "source_name": "dataflow_technical_report_pdf",
+        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
         "predicted_document_type": "contract",
         "confidence": 0.6096,
         "status": "accepted",
@@ -306,6 +308,7 @@
       {
         "document_external_id": "doc_dataflow_technical_report_architecture_page",
         "source_name": "dataflow_technical_report_pdf",
+        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
         "predicted_document_type": "contract",
         "confidence": 0.6128,
         "status": "accepted",
@@ -318,6 +321,7 @@
       {
         "document_external_id": "doc_dataflow_technical_report_related_work",
         "source_name": "dataflow_technical_report_pdf",
+        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
         "predicted_document_type": "contract",
         "confidence": 0.6279,
         "status": "accepted",
@@ -330,6 +334,7 @@
       {
         "document_external_id": "doc_superstore_sales_csv_summary",
         "source_name": "superstore_sales_csv",
+        "ingestion_run_id": "13b921ad-4e4c-4399-b1ae-6087d7b86bf0",
         "predicted_document_type": "invoice",
         "confidence": 0.7101,
         "status": "accepted",
@@ -342,6 +347,7 @@
       {
         "document_external_id": "doc_product_sales_region_excel_summary",
         "source_name": "product_sales_region_excel",
+        "ingestion_run_id": "d670414e-4147-4cda-a87d-06e8b7c52d19",
         "predicted_document_type": "invoice",
         "confidence": 0.6829,
         "status": "accepted",
@@ -354,6 +360,7 @@
       {
         "document_external_id": "doc_dummyjson_products_api_summary",
         "source_name": "dummyjson_products_api",
+        "ingestion_run_id": "83a3c30c-98f1-42f7-aba7-4fed188daed9",
         "predicted_document_type": "contract",
         "confidence": 0.3839,
         "status": "needs_review",
@@ -366,6 +373,7 @@
       {
         "document_external_id": "doc_short_text_quality_gate",
         "source_name": "dataflow_technical_report_pdf",
+        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
         "predicted_document_type": null,
         "confidence": 0.0,
         "status": "waiting_for_source",
@@ -375,6 +383,7 @@
       {
         "document_external_id": "doc_empty_text_quality_gate",
         "source_name": "dataflow_technical_report_pdf",
+        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
         "predicted_document_type": null,
         "confidence": 0.0,
         "status": "waiting_for_source",
@@ -384,6 +393,7 @@
       {
         "document_external_id": "doc_missing_file_name_validation",
         "source_name": "dataflow_technical_report_pdf",
+        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
         "predicted_document_type": null,
         "confidence": 0.0,
         "status": "failed",
@@ -392,6 +402,15 @@
       }
     ],
     "prediction_log_payload_count": 10
+  },
+  "lineage_alignment": {
+    "documents_in_current_duy_payload": 10,
+    "documents_in_tuong_result": 10,
+    "matching_document_external_ids": 10,
+    "matching_ingestion_run_ids": 0,
+    "all_document_ids_match": true,
+    "all_current_lineage_matches": false,
+    "note": "Stable document IDs prove contract compatibility. Re-run Tuong only when exact latest ingestion_run_id lineage is required."
   },
   "real_data_quality_findings_from_tuong": {
     "source_of_truth_file": "DataVision_Tuong/outputs/week6_duy_prediction_results.json",
@@ -485,6 +504,7 @@
     "Use Tuong outputs/week6_duy_prediction_results.json as the source of truth for the 10 Duy payloads.",
     "Tuong UI fixtures are useful for Phi/Hung demo states but may be sample fixtures with 5 items, not the full 10 Duy payloads.",
     "Some Tuong docs still include older 4-payload Week 5 examples; Week 6 mapping should use the 10-payload evaluation.",
+    "Duy may regenerate ingestion_run_id values after a fresh ingestion run; Tuong results remain valid for their original run but should be rerun before logging against newer run IDs.",
     "Duy payload source_id and document_db_id are null before DB enrichment; Phat confirmed source_id=2 and document_db_id=1 for the DataFlow PDF.",
     "Low-confidence or unreviewed predictions should not become hard RAG filters. Tuong's evaluation shows overconfident accepted false positives."
   ],
