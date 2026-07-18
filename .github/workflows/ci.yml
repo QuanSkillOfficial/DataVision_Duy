@@ -110,8 +110,15 @@ jobs:
           DB_USER: datavision
           DB_PASSWORD: datavision123
         run: |
-          if [ -f week7/database/run_database_setup.py ]; then
-            python week7/database/run_database_setup.py
+          if [ -f week7/database/scripts/run_database_setup.py ]; then
+            python week7/database/scripts/run_database_setup.py \
+              --host "$DB_HOST" \
+              --port "$DB_PORT" \
+              --dbname "$DB_NAME" \
+              --user "$DB_USER" \
+              --password "$DB_PASSWORD" \
+              --smoke \
+              --skip-lap
           elif [ -f week7/database/setup_local_db.sh ]; then
             bash week7/database/setup_local_db.sh
           else
@@ -119,11 +126,18 @@ jobs:
             exit 1
           fi
       - name: Run database smoke test
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+          POSTGRES_DB: datavision_db
+          POSTGRES_USER: datavision
+          POSTGRES_PASSWORD: datavision123
         run: |
-          if [ -f week7/database/ci_database_smoke_test.py ]; then
-            python week7/database/ci_database_smoke_test.py
+          if [ -f week7/database/scripts/ci_database_smoke_test.py ]; then
+            python week7/database/scripts/ci_database_smoke_test.py
           else
-            bash week7/database/ci_database_smoke_test.sh
+            echo "Database smoke-test entrypoint is missing" >&2
+            exit 1
           fi
 
   rag-ci:

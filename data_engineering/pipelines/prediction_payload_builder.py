@@ -12,6 +12,7 @@ from data_engineering.pipelines.handoff_context import (
     identity_for_document,
     identity_for_source,
     load_database_identity_map,
+    load_latest_successful_runs,
 )
 
 
@@ -55,17 +56,14 @@ def _read_csv_preview(
 
 
 def _latest_run_by_source(source_name: str, run_log_dir: str | Path = "logs/runs") -> dict[str, Any]:
-    resolved = resolve_project_path(run_log_dir)
-    if resolved is None or not resolved.exists():
-        raise FileNotFoundError(f"Run log directory not found: {run_log_dir}")
-    matches = []
-    for path in resolved.glob("*.json"):
-        run = json.loads(path.read_text(encoding="utf-8"))
-        if run.get("source_name") == source_name and run.get("status") in {"success", "partial_success"}:
-            matches.append(run)
+    matches = [
+        run
+        for run in load_latest_successful_runs(run_log_dir)
+        if run.get("source_name") == source_name
+    ]
     if not matches:
         raise FileNotFoundError(f"No successful run log found for source: {source_name}")
-    return max(matches, key=lambda item: item.get("end_time") or "")
+    return matches[0]
 
 
 def _payload_base(
@@ -440,6 +438,11 @@ def build_tuong_prediction_test_payloads(
             payload["data_quality_score"] = None
             payload["file_hash_sha256"] = None
         payload["database_identity_status"] = db_identity_map.get("status")
+        payload["database_schema_version"] = db_identity_map.get("schema_version")
+        payload["database_identity_source"] = db_identity_map.get("source")
+        payload["current_ingestion_runs_loaded"] = db_identity_map.get(
+            "current_duy_runs_loaded"
+        )
     return payloads
 
 
@@ -682,6 +685,11 @@ def build_tuong_additional_prediction_test_payloads(
 
     for payload in payloads:
         payload["database_identity_status"] = db_identity_map.get("status")
+        payload["database_schema_version"] = db_identity_map.get("schema_version")
+        payload["database_identity_source"] = db_identity_map.get("source")
+        payload["current_ingestion_runs_loaded"] = db_identity_map.get(
+            "current_duy_runs_loaded"
+        )
     return payloads
 
 

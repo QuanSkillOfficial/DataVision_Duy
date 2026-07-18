@@ -1,0 +1,86 @@
+{
+  "mode": "duy_lap_week7_external_mapping_audit",
+  "status": "blocked_on_lap_execution",
+  "handoff_contract_passed": true,
+  "live_pgvector_proof_passed": false,
+  "canonical_identity": {
+    "source_id": 4,
+    "document_external_id": "doc_dataflow_technical_report",
+    "document_db_id": 1,
+    "ingestion_run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282",
+    "rule": "source_id is Phat sources.id; document_db_id is Phat documents.id; ingestion_run_id is a Duy run UUID and is never used as source_id"
+  },
+  "lap_commit": "b1275fda7d3222d3c82972d9c224ddf858fc291f",
+  "lap_outputs": {
+    "chunk_insert_result": "DataVision_Lap/outputs/rag/week7_chunk_insert_summary.json",
+    "query_result": "DataVision_Lap/outputs/rag/week7_pgvector_query_result.json",
+    "query_log_payload": "DataVision_Lap/outputs/rag/week7_rag_query_log_payload.json",
+    "ui_fixture": "DataVision_Lap/outputs/ui_fixtures/lap_rag_response_real.json"
+  },
+  "blocking_findings": [
+    {
+      "severity": "blocking",
+      "path": "ai/rag/vector_store.py",
+      "finding": "unused torch import breaks clean test collection when torch is absent",
+      "fix": "remove the import; torch is not needed by VectorStore"
+    },
+    {
+      "severity": "high",
+      "path": "ai/rag/vector_store.py",
+      "finding": "pgvector connection/schema failures silently switch to in-memory mode",
+      "fix": "raise a clear error when use_pgvector=True; only use in-memory mode when explicitly requested"
+    },
+    {
+      "severity": "high",
+      "path": "ai/rag/vector_store.py",
+      "finding": "unresolved document IDs can be converted to None before insert",
+      "fix": "fail before INSERT when documents.id cannot be resolved"
+    },
+    {
+      "severity": "high",
+      "path": "ai/rag/load_document_pages_to_pgvector.py",
+      "finding": "duplicate filtering truncates embeddings by position and can misalign chunk/embedding pairs",
+      "fix": "filter chunks and embeddings with the same kept-index list"
+    },
+    {
+      "severity": "high",
+      "path": "ai/rag/vector_store.py",
+      "finding": "the DB path does not visibly enforce vector dimension 384",
+      "fix": "validate shape == 384 before insert and query"
+    },
+    {
+      "severity": "blocking",
+      "path": "outputs/rag/week7_chunk_insert_summary.json",
+      "finding": "no executed chunk insertion proof",
+      "fix": "run the loader against Phat's PostgreSQL and save a success result"
+    },
+    {
+      "severity": "blocking",
+      "path": "outputs/rag/week7_pgvector_query_result.json",
+      "finding": "no executed pgvector retrieval proof",
+      "fix": "run the pgvector smoke query and save retrieved chunks/citations"
+    },
+    {
+      "severity": "medium",
+      "path": "outputs/rag/week7_rag_query_log_payload.json",
+      "finding": "Lap output uses query_text, while the current insert_rag_query_log implementation expects user_query for Phat's schema.",
+      "fix": "rename query_text to user_query at the DB boundary or update the shared contract"
+    },
+    {
+      "severity": "blocking",
+      "path": "ai/ai_tests/",
+      "finding": "Lap unit-test command failed in the audit run",
+      "fix": "apply the listed Lap code fixes and rerun the command"
+    }
+  ],
+  "required_lap_actions": [
+    "Remove the unused torch import and make ai/ai_tests collection pass in a clean environment.",
+    "Make use_pgvector=True fail loudly instead of silently falling back to in-memory storage.",
+    "Fail before INSERT when document_external_id cannot resolve to documents.id.",
+    "Validate every embedding and query vector as dimension 384.",
+    "Fix duplicate filtering so chunk/embedding pairs stay aligned.",
+    "Normalize the RAG query log field to Phat's user_query column.",
+    "Run the loader and pgvector query against the shared Phat database and replace pending output files with executed results."
+  ],
+  "generated_at": "2026-07-18T17:02:11.332694+00:00"
+}

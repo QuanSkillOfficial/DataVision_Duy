@@ -62,7 +62,9 @@ Required assertions:
 4. Case 19 fails platform-contract validation even though model feature fields are present; Tuong should normalize this as `failed`, not invent a `rejected` status.
 5. Case 20 returns `failed` with `confidence=0.0` and an empty `top_predictions` list.
 6. `source_id` is never populated with `ingestion_run_id`.
-7. Null DB IDs remain null until Phat completes database loading.
+7. Real DataFlow IDs use Phat's confirmed mapping (`source_id=4`,
+   `document_db_id=1`); derived or intentionally invalid documents keep
+   `document_db_id=null` because no matching `documents` row exists.
 
 ## Current Tuong runner compatibility
 

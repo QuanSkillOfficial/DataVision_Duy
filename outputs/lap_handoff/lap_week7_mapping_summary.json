@@ -1,0 +1,302 @@
+{
+  "schema_version": "duy_lap_week7_mapping_v1",
+  "generated_at": "2026-07-18T17:02:11.332694+00:00",
+  "status": "blocked_on_lap_execution",
+  "handoff_contract_passed": true,
+  "live_pgvector_proof_passed": false,
+  "source_repositories": {
+    "duy": "DataVision_Duy",
+    "lap": "DataVision_Lap",
+    "lap_commit": "b1275fda7d3222d3c82972d9c224ddf858fc291f"
+  },
+  "canonical_identity": {
+    "source_id": 4,
+    "document_external_id": "doc_dataflow_technical_report",
+    "document_db_id": 1,
+    "ingestion_run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282",
+    "rule": "source_id is Phat sources.id; document_db_id is Phat documents.id; ingestion_run_id is a Duy run UUID and is never used as source_id"
+  },
+  "duy_input_contract": {
+    "status": "passed",
+    "files": {
+      "document_pages": "outputs/rag_handoff/week7_document_pages_db_enriched.jsonl",
+      "manifest": "outputs/rag_handoff/week7_rag_handoff_manifest.json",
+      "pdf_metadata": "outputs/rag_handoff/pdf_metadata.json"
+    },
+    "document_external_id": "doc_dataflow_technical_report",
+    "document_db_id": 1,
+    "source_id": 4,
+    "file_name": "DataFlow_Technical_Report.pdf",
+    "ingestion_run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282",
+    "page_count": 36,
+    "non_empty_pages": 36,
+    "total_characters": 129028,
+    "total_words": 17536,
+    "required_page_fields": [
+      "char_count",
+      "document_db_id",
+      "document_external_id",
+      "file_name",
+      "ingestion_run_id",
+      "is_empty",
+      "page_number",
+      "source_id",
+      "text",
+      "word_count"
+    ],
+    "errors": []
+  },
+  "lap_output_contract": {
+    "status": "passed",
+    "files": {
+      "chunk_insert_result": "DataVision_Lap/outputs/rag/week7_chunk_insert_summary.json",
+      "query_result": "DataVision_Lap/outputs/rag/week7_pgvector_query_result.json",
+      "query_log_payload": "DataVision_Lap/outputs/rag/week7_rag_query_log_payload.json",
+      "ui_fixture": "DataVision_Lap/outputs/ui_fixtures/lap_rag_response_real.json"
+    },
+    "chunk_insert": {
+      "status": "pending_db_connection",
+      "pages_loaded": 0,
+      "chunks_created": 0,
+      "chunks_inserted": 0,
+      "document_db_id": null,
+      "embedding_dimension": 384,
+      "errors": [
+        "Database connection required - set DATABASE_URL environment variable or provide connection string"
+      ]
+    },
+    "query": {
+      "status": "pending_db_connection",
+      "document_db_id": null,
+      "retrieved_count": 0,
+      "top_k": 5,
+      "has_citations": false,
+      "errors": [
+        "Database connection required - set DATABASE_URL environment variable or provide connection string"
+      ]
+    },
+    "query_log_payload": {
+      "document_id": 1,
+      "query_field": "query_text",
+      "retrieved_chunk_count": 5,
+      "top_k": 5,
+      "status": "retrieval_only",
+      "contract_issue": "Lap output uses query_text, while the current insert_rag_query_log implementation expects user_query for Phat's schema."
+    },
+    "ui_fixture": {
+      "status": "retrieval_only",
+      "document_external_id": "doc_dataflow_technical_report",
+      "document_db_id": 1,
+      "context_count": 5,
+      "citation_count": 5,
+      "retrieval_backend": "pgvector",
+      "embedding_dimension": 384,
+      "contract_status": "passed",
+      "errors": []
+    },
+    "live_execution_proof": {
+      "chunk_inserted": false,
+      "query_retrieved": false,
+      "query_log_payload_present": true,
+      "ui_fixture_is_not_db_proof": true
+    }
+  },
+  "lap_code_audit": {
+    "active_files": {
+      "ai/__init__.py": true,
+      "ai/rag/chunker.py": true,
+      "ai/rag/document_loader.py": true,
+      "ai/rag/embedder.py": true,
+      "ai/rag/vector_store.py": true,
+      "ai/rag/retriever.py": true,
+      "ai/rag/rag_pipeline.py": true,
+      "ai/rag/rag_service.py": true,
+      "ai/rag/load_document_pages_to_pgvector.py": true,
+      "ai/rag/scripts/week7_pgvector_smoke_test.py": true,
+      "ai/rag/scripts/week7_rag_ci_smoke_test.py": true,
+      "ai/ai_tests/fakes.py": true
+    },
+    "active_files_complete": true,
+    "findings": [
+      {
+        "severity": "blocking",
+        "path": "ai/rag/vector_store.py",
+        "finding": "unused torch import breaks clean test collection when torch is absent",
+        "fix": "remove the import; torch is not needed by VectorStore"
+      },
+      {
+        "severity": "high",
+        "path": "ai/rag/vector_store.py",
+        "finding": "pgvector connection/schema failures silently switch to in-memory mode",
+        "fix": "raise a clear error when use_pgvector=True; only use in-memory mode when explicitly requested"
+      },
+      {
+        "severity": "high",
+        "path": "ai/rag/vector_store.py",
+        "finding": "unresolved document IDs can be converted to None before insert",
+        "fix": "fail before INSERT when documents.id cannot be resolved"
+      },
+      {
+        "severity": "high",
+        "path": "ai/rag/load_document_pages_to_pgvector.py",
+        "finding": "duplicate filtering truncates embeddings by position and can misalign chunk/embedding pairs",
+        "fix": "filter chunks and embeddings with the same kept-index list"
+      },
+      {
+        "severity": "high",
+        "path": "ai/rag/vector_store.py",
+        "finding": "the DB path does not visibly enforce vector dimension 384",
+        "fix": "validate shape == 384 before insert and query"
+      },
+      {
+        "severity": "medium",
+        "path": "ai/rag/rag_service.py",
+        "finding": "RAG log insertion uses user_query while the checked output payload uses query_text",
+        "fix": "normalize one canonical field before INSERT; Phat schema_v4 uses user_query"
+      }
+    ],
+    "loader_command": "python -m ai.rag.load_document_pages_to_pgvector --document-pages <shared>/outputs/rag_handoff/week7_document_pages_db_enriched.jsonl --document-external-id doc_dataflow_technical_report --output-result outputs/rag/week7_chunk_insert_summary.json",
+    "query_command": "python ai/rag/scripts/week7_pgvector_smoke_test.py --query \"What is the DataFlow pipeline?\" --document-external-id doc_dataflow_technical_report --top-k 5 --output-result outputs/rag/week7_pgvector_query_result.json"
+  },
+  "lap_unit_test_execution": {
+    "status": "failed",
+    "returncode": 2,
+    "command": "python -m pytest ai/ai_tests/ -q -p no:cacheprovider",
+    "error_summary": [
+      "E   ModuleNotFoundError: No module named 'torch'",
+      "ERROR ai/ai_tests/test_chunker.py",
+      "ERROR ai/ai_tests/test_citations.py",
+      "ERROR ai/ai_tests/test_document_loader.py",
+      "ERROR ai/ai_tests/test_prediction_contract.py",
+      "ERROR ai/ai_tests/test_rag_response_contract.py",
+      "ERROR ai/ai_tests/test_retriever.py",
+      "ERROR ai/ai_tests/test_vector_store_pgvector_connection.py",
+      "!!!!!!!!!!!!!!!!!!! Interrupted: 7 errors during collection !!!!!!!!!!!!!!!!!!!",
+      "7 errors in 1.23s"
+    ]
+  },
+  "cleanup_candidates": [
+    {
+      "path": "ai/rag/notebooks/week6_real_pgvector_rag_demo.ipynb",
+      "reason": "Week 6 notebook is not an executed Week 7 proof artifact.",
+      "action": "archive outside the active RAG path or replace with an executed Week 7 proof"
+    },
+    {
+      "path": "ai/rag/evaluation/retrieval_eval_results_week3.md",
+      "reason": "Week 3 evaluation is outside the current shared-repo contract.",
+      "action": "archive under a historical folder"
+    },
+    {
+      "path": "ai/rag/evaluation/retrieval_test_cases_completed.csv",
+      "reason": "Legacy evaluation file predates the Week 7 DataFlow evaluation.",
+      "action": "archive or clearly mark as historical"
+    },
+    {
+      "path": "ai/rag/evaluation/week6_retrieval_eval_results.md",
+      "reason": "Week 6 fixture evaluation must not be presented as live pgvector proof.",
+      "action": "archive or label fixture-only"
+    },
+    {
+      "path": "ai/rag/evaluation/week6_retrieval_test_cases_dataflow.csv",
+      "reason": "Superseded by the Week 7 DataFlow evaluation cases.",
+      "action": "archive or label fixture-only"
+    },
+    {
+      "path": "ai/WEEK_6_SUMMARY.md",
+      "reason": "Historical summary duplicates current Week 7 documentation.",
+      "action": "move to an archive folder"
+    },
+    {
+      "path": "ai/week6_rag_to_schema_v4_mapping.md",
+      "reason": "Historical schema mapping is superseded by the Week 7 mapping.",
+      "action": "move to an archive folder"
+    },
+    {
+      "path": "week6_team_integration_handoff.md",
+      "reason": "Root-level Week 6 handoff duplicates the current Week 7 contracts.",
+      "action": "archive after confirming no external consumer depends on it"
+    },
+    {
+      "path": "sql/",
+      "reason": "Legacy schema/setup SQL duplicates Phat's Week 7 database owner files.",
+      "action": "remove from the active Lap module or archive as historical reference"
+    }
+  ],
+  "blocking_findings": [
+    {
+      "severity": "blocking",
+      "path": "ai/rag/vector_store.py",
+      "finding": "unused torch import breaks clean test collection when torch is absent",
+      "fix": "remove the import; torch is not needed by VectorStore"
+    },
+    {
+      "severity": "high",
+      "path": "ai/rag/vector_store.py",
+      "finding": "pgvector connection/schema failures silently switch to in-memory mode",
+      "fix": "raise a clear error when use_pgvector=True; only use in-memory mode when explicitly requested"
+    },
+    {
+      "severity": "high",
+      "path": "ai/rag/vector_store.py",
+      "finding": "unresolved document IDs can be converted to None before insert",
+      "fix": "fail before INSERT when documents.id cannot be resolved"
+    },
+    {
+      "severity": "high",
+      "path": "ai/rag/load_document_pages_to_pgvector.py",
+      "finding": "duplicate filtering truncates embeddings by position and can misalign chunk/embedding pairs",
+      "fix": "filter chunks and embeddings with the same kept-index list"
+    },
+    {
+      "severity": "high",
+      "path": "ai/rag/vector_store.py",
+      "finding": "the DB path does not visibly enforce vector dimension 384",
+      "fix": "validate shape == 384 before insert and query"
+    },
+    {
+      "severity": "blocking",
+      "path": "outputs/rag/week7_chunk_insert_summary.json",
+      "finding": "no executed chunk insertion proof",
+      "fix": "run the loader against Phat's PostgreSQL and save a success result"
+    },
+    {
+      "severity": "blocking",
+      "path": "outputs/rag/week7_pgvector_query_result.json",
+      "finding": "no executed pgvector retrieval proof",
+      "fix": "run the pgvector smoke query and save retrieved chunks/citations"
+    },
+    {
+      "severity": "medium",
+      "path": "outputs/rag/week7_rag_query_log_payload.json",
+      "finding": "Lap output uses query_text, while the current insert_rag_query_log implementation expects user_query for Phat's schema.",
+      "fix": "rename query_text to user_query at the DB boundary or update the shared contract"
+    },
+    {
+      "severity": "blocking",
+      "path": "ai/ai_tests/",
+      "finding": "Lap unit-test command failed in the audit run",
+      "fix": "apply the listed Lap code fixes and rerun the command"
+    }
+  ],
+  "required_lap_actions": [
+    "Remove the unused torch import and make ai/ai_tests collection pass in a clean environment.",
+    "Make use_pgvector=True fail loudly instead of silently falling back to in-memory storage.",
+    "Fail before INSERT when document_external_id cannot resolve to documents.id.",
+    "Validate every embedding and query vector as dimension 384.",
+    "Fix duplicate filtering so chunk/embedding pairs stay aligned.",
+    "Normalize the RAG query log field to Phat's user_query column.",
+    "Run the loader and pgvector query against the shared Phat database and replace pending output files with executed results."
+  ],
+  "commands_after_lap_patch": {
+    "lap_unit_tests": "python -m pytest ai/ai_tests/ -q",
+    "lap_ci_smoke": "python ai/rag/scripts/week7_rag_ci_smoke_test.py",
+    "lap_pgvector_loader": "python -m ai.rag.load_document_pages_to_pgvector --document-pages <shared>/outputs/rag_handoff/week7_document_pages_db_enriched.jsonl --document-external-id doc_dataflow_technical_report --output-result outputs/rag/week7_chunk_insert_summary.json",
+    "lap_pgvector_query": "python ai/rag/scripts/week7_pgvector_smoke_test.py --query \"What is the DataFlow pipeline?\" --document-external-id doc_dataflow_technical_report --top-k 5 --output-result outputs/rag/week7_pgvector_query_result.json"
+  },
+  "notes": [
+    "The DataFlow UI fixture is contract-shaped and useful for UI validation.",
+    "A fixture or payload is not counted as PostgreSQL execution proof.",
+    "Phat's external database evidence separately confirms source_id=4, document_db_id=1, document_chunks=293 and rag_query_logs=1.",
+    "The Lap-owned repository was audited read-only; cleanup candidates require a Lap-owner commit."
+  ]
+}

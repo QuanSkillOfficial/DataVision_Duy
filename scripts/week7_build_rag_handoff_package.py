@@ -79,6 +79,9 @@ def build_week7_rag_handoff(
         "schema_version": "week7_rag_handoff_v1",
         "status": "ready" if enriched and all(not page["is_empty"] for page in enriched) else "partial_success",
         "database_identity_status": identity.get("status"),
+        "database_schema_version": identity.get("schema_version"),
+        "database_identity_source": identity.get("source"),
+        "current_ingestion_run_loaded": identity.get("current_duy_runs_loaded"),
         "source_id": source_id,
         "source_name": pdf_run["source_name"],
         "document_external_id": document_external_id,
@@ -105,6 +108,11 @@ def build_week7_rag_handoff(
             "ingestion_run_id": ingestion_run_id,
             "file_hash_sha256": file_manifest.get("file_hash_sha256"),
             "database_identity_status": identity.get("status"),
+            "database_schema_version": identity.get("schema_version"),
+            "database_identity_source": identity.get("source"),
+            "current_ingestion_run_loaded": identity.get(
+                "current_duy_runs_loaded"
+            ),
         }
     )
     metadata_path.write_text(json.dumps(metadata, indent=2, ensure_ascii=False), encoding="utf-8")

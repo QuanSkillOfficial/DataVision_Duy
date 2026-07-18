@@ -1,0 +1,552 @@
+{
+  "schema_version": "duy_tuong_week7_mapping_v1",
+  "generated_at": "2026-07-18T17:36:26.219221+00:00",
+  "status": "blocked_on_tuong_refresh",
+  "handoff_contract_passed": true,
+  "tuong_output_contract_passed": false,
+  "prediction_ci_proof_passed": false,
+  "database_insert_proof_passed": false,
+  "source_repositories": {
+    "duy": "DataVision_Duy",
+    "tuong": "DataVision_Tuong",
+    "tuong_commit": "657c839b7471dcf5151c2314cfbe71b84a1a983f"
+  },
+  "canonical_identity": {
+    "source_id_map": {
+      "superstore_sales_csv": 1,
+      "product_sales_region_excel": 2,
+      "dummyjson_products_api": 3,
+      "dataflow_technical_report_pdf": 4
+    },
+    "document_external_id": "doc_dataflow_technical_report",
+    "document_db_id": 1,
+    "ingestion_run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282",
+    "rule": "source_id is Phat sources.id; document_db_id maps to prediction_logs.document_id; ingestion_run_id is never source_id"
+  },
+  "duy_input_contract": {
+    "status": "passed",
+    "files": {
+      "primary_batch": "outputs/prediction_payloads/tuong_week7_prediction_payloads.json",
+      "additional_batch": "outputs/prediction_payloads/tuong_week7_additional_prediction_payloads.json",
+      "individual_directory": "outputs/prediction_payloads/week7"
+    },
+    "primary_count": 20,
+    "additional_count": 10,
+    "individual_file_count": 20,
+    "status_hint_counts": {
+      "accepted_or_needs_review": 14,
+      "waiting_for_source_or_needs_review": 1,
+      "waiting_for_source": 1,
+      "failed": 2,
+      "accepted_or_needs_review_unknown_file_type": 1,
+      "failed_contract_validation": 1
+    },
+    "source_id_map": {
+      "superstore_sales_csv": 1,
+      "product_sales_region_excel": 2,
+      "dummyjson_products_api": 3,
+      "dataflow_technical_report_pdf": 4
+    },
+    "full_document_identity": {
+      "source_id": 4,
+      "document_external_id": "doc_dataflow_technical_report",
+      "document_db_id": 1,
+      "ingestion_run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282"
+    },
+    "document_external_ids": [
+      "doc_dataflow_technical_report",
+      "doc_dataflow_technical_report_intro_pages",
+      "doc_dataflow_technical_report_architecture_page",
+      "doc_dataflow_technical_report_related_work",
+      "doc_superstore_sales_csv_summary",
+      "doc_product_sales_region_excel_summary",
+      "doc_dummyjson_products_api_summary",
+      "doc_short_text_quality_gate",
+      "doc_empty_text_quality_gate",
+      "doc_missing_file_name_validation",
+      "doc_dataflow_system_operators_pages",
+      "doc_dataflow_pipeline_api_pages",
+      "doc_dataflow_agent_workflow_pages",
+      "doc_dataflow_agentic_rag_evaluation_pages",
+      "doc_superstore_order_profitability_sample",
+      "doc_product_sales_region_sample",
+      "doc_dummyjson_inventory_sample",
+      "doc_dataflow_technical_notes_markdown",
+      null,
+      "doc_invalid_file_size_validation"
+    ],
+    "test_cases": [
+      "full_pdf_document",
+      "pdf_intro_section",
+      "pdf_architecture_page",
+      "pdf_related_work_section",
+      "csv_structured_summary",
+      "excel_structured_summary",
+      "api_structured_summary",
+      "short_extracted_text_quality_gate",
+      "empty_extracted_text_quality_gate",
+      "missing_required_file_name",
+      "pdf_system_operators_section",
+      "pdf_pipeline_api_section",
+      "pdf_agent_workflow_section",
+      "pdf_agentic_rag_evaluation_section",
+      "csv_order_profitability_sample",
+      "excel_regional_sales_sample",
+      "api_inventory_sample",
+      "unknown_file_type_markdown",
+      "missing_document_external_id",
+      "invalid_file_size_type"
+    ],
+    "errors": []
+  },
+  "tuong_input_copy": {
+    "status": "stale",
+    "path": "DataVision_Tuong/outputs/prediction_payloads/tuong_week7_prediction_payloads.json",
+    "payload_count": 10,
+    "document_external_ids": [
+      "doc_dataflow_system_operators_pages",
+      "doc_dataflow_pipeline_api_pages",
+      "doc_dataflow_agent_workflow_pages",
+      "doc_dataflow_agentic_rag_evaluation_pages",
+      "doc_superstore_order_profitability_sample",
+      "doc_product_sales_region_sample",
+      "doc_dummyjson_inventory_sample",
+      "doc_dataflow_technical_notes_markdown",
+      null,
+      "doc_invalid_file_size_validation"
+    ],
+    "stale_or_null_source_id_count": 10,
+    "errors": [
+      "Tuong input copy contains 10 payloads instead of 20",
+      "Tuong input copy does not match Duy's current ordered batch",
+      "10 copied payloads have stale or null source_id"
+    ]
+  },
+  "tuong_output_contract": {
+    "files": {
+      "input_copy": "DataVision_Tuong/outputs/prediction_payloads/tuong_week7_prediction_payloads.json",
+      "prediction_results": "DataVision_Tuong/outputs/week7_duy_prediction_results.json",
+      "prediction_log_payloads": "DataVision_Tuong/outputs/db_integration/week7_prediction_log_payloads.json",
+      "prediction_log_insert_result": "DataVision_Tuong/outputs/db_integration/week7_prediction_log_insert_result.json",
+      "rag_filter_metadata": "DataVision_Tuong/outputs/rag_metadata/document_type_filter_payload.json",
+      "ui_single": "DataVision_Tuong/outputs/ui_fixtures/tuong_prediction_response_real.json",
+      "ui_batch": "DataVision_Tuong/outputs/ui_fixtures/tuong_prediction_batch_response.json",
+      "ui_review_queue": "DataVision_Tuong/outputs/ui_fixtures/tuong_prediction_review_queue_sample.json"
+    },
+    "prediction_results": {
+      "status": "stale_or_incomplete",
+      "count": 8,
+      "status_counts": {
+        "needs_review": 8
+      },
+      "document_external_ids": [
+        "doc_dataflow_system_operators_pages",
+        "doc_dataflow_pipeline_api_pages",
+        "doc_dataflow_agent_workflow_pages",
+        "doc_dataflow_agentic_rag_evaluation_pages",
+        "doc_superstore_order_profitability_sample",
+        "doc_product_sales_region_sample",
+        "doc_dummyjson_inventory_sample",
+        "doc_dataflow_technical_notes_markdown"
+      ],
+      "stale_or_null_source_id_count": 8,
+      "errors": [
+        "prediction result contains 8 rows instead of 20",
+        "prediction result lineage does not match Duy's ordered batch",
+        "the current result omits Duy's quality-gate or validation-error cases",
+        "8 results have stale or null source_id"
+      ]
+    },
+    "prediction_log_payloads": {
+      "status": "stale_or_incomplete",
+      "count": 1,
+      "status_counts": {
+        "needs_review": 1
+      },
+      "errors": [
+        "prediction log file contains 1 rows instead of 20"
+      ]
+    },
+    "database_insert_proof": {
+      "status": "missing",
+      "inserted_count": 0,
+      "passed": false,
+      "note": "A dry-run preview is contract evidence, not proof that rows were inserted and queried from PostgreSQL."
+    },
+    "rag_filter_metadata": {
+      "count": 1,
+      "hard_filter_count": 0,
+      "safe_rule_passed": true
+    },
+    "ui_fixtures": {
+      "single_count": 1,
+      "batch_count": 4,
+      "review_queue_count": 1,
+      "status_counts": {
+        "needs_review": 1,
+        "accepted": 1,
+        "waiting_for_source": 1,
+        "failed": 1
+      },
+      "contract_fields_passed": true,
+      "real_duy_lineage_passed": false,
+      "invalid_source_ids": [
+        100,
+        101,
+        102,
+        103
+      ],
+      "unknown_document_external_ids": [
+        "doc_001",
+        "doc_002",
+        "doc_003",
+        "doc_004"
+      ],
+      "missing_fields": [],
+      "note": "Contract-shaped sample fixtures are not real Duy lineage or DB proof."
+    },
+    "output_contract_passed": false
+  },
+  "tuong_code_audit": {
+    "active_files": {
+      "ai/prediction/config.py": true,
+      "ai/prediction/feature_builder.py": true,
+      "ai/prediction/inference.py": true,
+      "ai/prediction/batch_inference.py": true,
+      "ai/prediction/prediction_service.py": true,
+      "ai/prediction/prediction_log_payload_builder.py": true,
+      "ai/prediction/models/best_document_type_classifier.joblib": true,
+      "ai/prediction/models/model_card.json": true,
+      "scripts/run_real_payloads.py": true,
+      "scripts/week7_prediction_ci_smoke_test.py": true,
+      "scripts/insert_prediction_logs_to_postgres.py": true,
+      "scripts/build_rag_filter_metadata.py": true,
+      "scripts/build_retraining_dataset_from_feedback.py": true,
+      "tests/ai_tests": true
+    },
+    "active_files_complete": true,
+    "findings": [
+      {
+        "severity": "medium",
+        "path": ".gitignore",
+        "finding": "repository has Python cache directories but no root .gitignore",
+        "fix": "add __pycache__/, *.py[cod], .pytest_cache/, .venv/ and .env"
+      },
+      {
+        "severity": "high",
+        "path": "ai/prediction/feature_builder.py",
+        "finding": "active codebase contains both 0.80 and legacy 0.60 acceptance thresholds",
+        "fix": "make config.py the operational source of truth and rename any training-only threshold"
+      },
+      {
+        "severity": "high",
+        "path": "ai/prediction/batch_inference.py",
+        "finding": "batch responses do not preserve source_id and document_db_id",
+        "fix": "copy all five lineage fields into every normalized batch result"
+      },
+      {
+        "severity": "high",
+        "path": "scripts/run_real_payloads.py",
+        "finding": "handoff validation only prints warnings and continues",
+        "fix": "validate the 20-item contract, keep invalid test cases, and normalize each error into a failed result"
+      },
+      {
+        "severity": "high",
+        "path": "scripts/run_real_payloads.py",
+        "finding": "the official Week 7 runner does not regenerate prediction log payloads",
+        "fix": "write one DB payload per result to outputs/db_integration/week7_prediction_log_payloads.json"
+      },
+      {
+        "severity": "medium",
+        "path": "scripts/week7_prediction_ci_smoke_test.py",
+        "finding": "CI smoke accepts a non-normalized error and mocks RAG/UI builders inline",
+        "fix": "require status=failed and call the production log/RAG/UI builder paths"
+      },
+      {
+        "severity": "high",
+        "path": "requirements.txt",
+        "finding": "DB/runtime dependencies are missing: ['psycopg2-binary', 'python-dotenv']",
+        "fix": "add the dependencies or document that the shared root requirements owns them"
+      },
+      {
+        "severity": "medium",
+        "path": "ai/prediction/models/model_card.json",
+        "finding": "model card still exposes 0.60 without the Week 7 staging threshold",
+        "fix": "record both model-training metadata and staging_acceptance_threshold=0.80"
+      },
+      {
+        "severity": "medium",
+        "path": "ai/prediction/models/model_card.json",
+        "finding": "model card does not record the claimed training environment/version",
+        "fix": "add Python, scikit-learn, numpy, pandas and joblib versions"
+      },
+      {
+        "severity": "high",
+        "path": "docs/prediction_log_contract.md",
+        "finding": "contract uses the old DB column and old confidence policy",
+        "fix": "map document_db_id to prediction_logs.document_id and document the 0.80 staging gate"
+      },
+      {
+        "severity": "high",
+        "path": "docs/prediction_contract.md",
+        "finding": "legacy contract permits unsafe automatic RAG filtering at 0.60",
+        "fix": "use soft metadata by default and require accepted >=0.80 plus trust/manual review for hard filtering"
+      },
+      {
+        "severity": "medium",
+        "path": "docs/week7_prediction_api_contract.md",
+        "finding": "API contract still claims an 8-payload handoff",
+        "fix": "reference Duy's current 20-payload batch and preserve platform IDs"
+      }
+    ],
+    "cleanup_candidates": [
+      {
+        "path": "**/__pycache__/",
+        "reason": "runtime caches are present across ai/, scripts/ and tests/",
+        "action": "delete the cache directories and add a root .gitignore for Python artifacts"
+      },
+      {
+        "path": "scripts/test_prediction_on_duy_outputs.py",
+        "reason": "legacy script assigns ingestion run UUIDs to source_id and uses the old document_id string contract",
+        "action": "archive it and keep scripts/run_real_payloads.py as the official runner"
+      },
+      {
+        "path": "scripts/data/duy_dataflow_real_payload.json",
+        "reason": "stale single-payload fixture carries old IDs and run lineage",
+        "action": "archive it or regenerate it from Duy's Week 7 batch"
+      },
+      {
+        "path": "docs/prediction_contract.md",
+        "reason": "still documents the old 0.60 acceptance threshold and says accepted predictions are safe automatic RAG filters",
+        "action": "update it to the 0.80 staging policy or archive it as historical"
+      },
+      {
+        "path": "docs/prediction_log_contract.md",
+        "reason": "maps document_db_id to a non-existent prediction_logs.document_db_id column and still documents the 0.60 policy",
+        "action": "map document_db_id to prediction_logs.document_id and use the Week 7 policy"
+      },
+      {
+        "path": "docs/model_card_document_classifier.md",
+        "reason": "contains the old 0.60 operational acceptance rule",
+        "action": "separate model training metadata from the staging acceptance policy"
+      },
+      {
+        "path": "docs/model_report_week3.md",
+        "reason": "historical Week 3 report is not an active shared-repo contract",
+        "action": "move it to docs/archive/"
+      },
+      {
+        "path": "docs/tuong_week3_summary_report.md",
+        "reason": "historical Week 3 summary duplicates current Week 7 documentation",
+        "action": "move it to docs/archive/"
+      },
+      {
+        "path": "week1/",
+        "reason": "historical planning artifacts are not active prediction runtime files",
+        "action": "exclude from the shared merge or move under an archive area"
+      },
+      {
+        "path": "week2/",
+        "reason": "historical notebook/training artifacts duplicate the active model package",
+        "action": "retain outside the active shared module or archive explicitly"
+      },
+      {
+        "path": "Tuong tasks w7.pdf",
+        "reason": "manager source PDF should not sit in the active repository root",
+        "action": "move to docs/archive/manager_inputs/ or exclude from the shared merge"
+      }
+    ]
+  },
+  "tuong_execution": {
+    "unit_tests": {
+      "status": "failed",
+      "returncode": 2,
+      "command": "python -m pytest tests/ai_tests/ -q -p no:cacheprovider",
+      "error_summary": [
+        "ImportError while importing test module 'F:\\data\\new\\quanskill\\DataVision_Tuong\\tests\\ai_tests\\test_rag_filter_payload.py'.",
+        "E   ModuleNotFoundError: No module named 'sklearn'",
+        "_____________ ERROR collecting tests/ai_tests/test_ui_fixtures.py _____________",
+        "ImportError while importing test module 'F:\\data\\new\\quanskill\\DataVision_Tuong\\tests\\ai_tests\\test_ui_fixtures.py'.",
+        "E   ModuleNotFoundError: No module named 'sklearn'",
+        "ERROR tests/ai_tests/test_batch_prediction.py",
+        "ERROR tests/ai_tests/test_batch_validation_normalization.py",
+        "ERROR tests/ai_tests/test_id_semantics.py",
+        "ERROR tests/ai_tests/test_model_environment_compatibility.py",
+        "ERROR tests/ai_tests/test_prediction_inference.py",
+        "ERROR tests/ai_tests/test_prediction_log_payload.py",
+        "ERROR tests/ai_tests/test_prediction_service.py",
+        "ERROR tests/ai_tests/test_rag_filter_payload.py",
+        "ERROR tests/ai_tests/test_ui_fixtures.py"
+      ]
+    },
+    "ci_smoke": {
+      "status": "failed",
+      "returncode": 1,
+      "command": "python scripts/week7_prediction_ci_smoke_test.py",
+      "error_summary": [
+        "ModuleNotFoundError: No module named 'joblib'"
+      ]
+    }
+  },
+  "cleanup_candidates": [
+    {
+      "path": "**/__pycache__/",
+      "reason": "runtime caches are present across ai/, scripts/ and tests/",
+      "action": "delete the cache directories and add a root .gitignore for Python artifacts"
+    },
+    {
+      "path": "scripts/test_prediction_on_duy_outputs.py",
+      "reason": "legacy script assigns ingestion run UUIDs to source_id and uses the old document_id string contract",
+      "action": "archive it and keep scripts/run_real_payloads.py as the official runner"
+    },
+    {
+      "path": "scripts/data/duy_dataflow_real_payload.json",
+      "reason": "stale single-payload fixture carries old IDs and run lineage",
+      "action": "archive it or regenerate it from Duy's Week 7 batch"
+    },
+    {
+      "path": "docs/prediction_contract.md",
+      "reason": "still documents the old 0.60 acceptance threshold and says accepted predictions are safe automatic RAG filters",
+      "action": "update it to the 0.80 staging policy or archive it as historical"
+    },
+    {
+      "path": "docs/prediction_log_contract.md",
+      "reason": "maps document_db_id to a non-existent prediction_logs.document_db_id column and still documents the 0.60 policy",
+      "action": "map document_db_id to prediction_logs.document_id and use the Week 7 policy"
+    },
+    {
+      "path": "docs/model_card_document_classifier.md",
+      "reason": "contains the old 0.60 operational acceptance rule",
+      "action": "separate model training metadata from the staging acceptance policy"
+    },
+    {
+      "path": "docs/model_report_week3.md",
+      "reason": "historical Week 3 report is not an active shared-repo contract",
+      "action": "move it to docs/archive/"
+    },
+    {
+      "path": "docs/tuong_week3_summary_report.md",
+      "reason": "historical Week 3 summary duplicates current Week 7 documentation",
+      "action": "move it to docs/archive/"
+    },
+    {
+      "path": "week1/",
+      "reason": "historical planning artifacts are not active prediction runtime files",
+      "action": "exclude from the shared merge or move under an archive area"
+    },
+    {
+      "path": "week2/",
+      "reason": "historical notebook/training artifacts duplicate the active model package",
+      "action": "retain outside the active shared module or archive explicitly"
+    },
+    {
+      "path": "Tuong tasks w7.pdf",
+      "reason": "manager source PDF should not sit in the active repository root",
+      "action": "move to docs/archive/manager_inputs/ or exclude from the shared merge"
+    }
+  ],
+  "blocking_findings": [
+    {
+      "severity": "high",
+      "path": "ai/prediction/feature_builder.py",
+      "finding": "active codebase contains both 0.80 and legacy 0.60 acceptance thresholds",
+      "fix": "make config.py the operational source of truth and rename any training-only threshold"
+    },
+    {
+      "severity": "high",
+      "path": "ai/prediction/batch_inference.py",
+      "finding": "batch responses do not preserve source_id and document_db_id",
+      "fix": "copy all five lineage fields into every normalized batch result"
+    },
+    {
+      "severity": "high",
+      "path": "scripts/run_real_payloads.py",
+      "finding": "handoff validation only prints warnings and continues",
+      "fix": "validate the 20-item contract, keep invalid test cases, and normalize each error into a failed result"
+    },
+    {
+      "severity": "high",
+      "path": "scripts/run_real_payloads.py",
+      "finding": "the official Week 7 runner does not regenerate prediction log payloads",
+      "fix": "write one DB payload per result to outputs/db_integration/week7_prediction_log_payloads.json"
+    },
+    {
+      "severity": "high",
+      "path": "requirements.txt",
+      "finding": "DB/runtime dependencies are missing: ['psycopg2-binary', 'python-dotenv']",
+      "fix": "add the dependencies or document that the shared root requirements owns them"
+    },
+    {
+      "severity": "high",
+      "path": "docs/prediction_log_contract.md",
+      "finding": "contract uses the old DB column and old confidence policy",
+      "fix": "map document_db_id to prediction_logs.document_id and document the 0.80 staging gate"
+    },
+    {
+      "severity": "high",
+      "path": "docs/prediction_contract.md",
+      "finding": "legacy contract permits unsafe automatic RAG filtering at 0.60",
+      "fix": "use soft metadata by default and require accepted >=0.80 plus trust/manual review for hard filtering"
+    },
+    {
+      "severity": "blocking",
+      "path": "outputs/prediction_payloads/tuong_week7_prediction_payloads.json",
+      "finding": "Tuong has not copied Duy's current 20-payload batch",
+      "fix": "replace the input copy with the exact Duy batch without removing invalid test cases"
+    },
+    {
+      "severity": "blocking",
+      "path": "outputs/week7_duy_prediction_results.json",
+      "finding": "prediction result count/lineage is stale or incomplete",
+      "fix": "rerun all 20 payloads and preserve one normalized result per input"
+    },
+    {
+      "severity": "blocking",
+      "path": "outputs/db_integration/week7_prediction_log_payloads.json",
+      "finding": "prediction log payload file does not cover the current batch",
+      "fix": "regenerate one Phat-compatible log payload per prediction result"
+    },
+    {
+      "severity": "blocking",
+      "path": "outputs/db_integration/week7_prediction_log_insert_result.json",
+      "finding": "no real PostgreSQL insert/query-back result is present",
+      "fix": "insert current logs into Phat's DB, query them back, and save the result JSON"
+    },
+    {
+      "severity": "high",
+      "path": "outputs/ui_fixtures/",
+      "finding": "UI fixtures use synthetic source/document IDs instead of Duy/Phat lineage",
+      "fix": "regenerate UI fixtures from the current Week 7 results and review queue"
+    },
+    {
+      "severity": "blocking",
+      "path": "tests/ai_tests/ and scripts/week7_prediction_ci_smoke_test.py",
+      "finding": "Tuong checks failed in the audited environment",
+      "fix": "install the pinned requirements in a clean Python 3.11 environment and rerun both commands"
+    }
+  ],
+  "required_tuong_actions": [
+    "Copy Duy's exact 20-payload batch and keep the quality/invalid test cases.",
+    "Return 20 normalized results with all lineage fields and all four statuses where expected.",
+    "Make batch_inference preserve source_id and document_db_id.",
+    "Regenerate 20 prediction-log payloads using document_db_id -> prediction_logs.document_id.",
+    "Run a real PostgreSQL insert and save query-back evidence instead of only a one-row dry-run.",
+    "Regenerate UI fixtures from Duy/Phat IDs; remove source_id=100-style sample lineage.",
+    "Keep RAG metadata soft by default and test the production metadata builder.",
+    "Unify the 0.80 staging policy across active docs/model metadata and add missing DB dependencies."
+  ],
+  "commands_after_tuong_patch": {
+    "copy_input": "copy Duy outputs/prediction_payloads/tuong_week7_prediction_payloads.json to Tuong outputs/prediction_payloads/",
+    "run_predictions": "python scripts/run_real_payloads.py --input outputs/prediction_payloads/tuong_week7_prediction_payloads.json",
+    "unit_tests": "python -m pytest tests/ai_tests/ -q",
+    "ci_smoke": "python scripts/week7_prediction_ci_smoke_test.py",
+    "db_dry_run": "python scripts/insert_prediction_logs_to_postgres.py --input outputs/db_integration/week7_prediction_log_payloads.json --dry-run",
+    "db_write": "python scripts/insert_prediction_logs_to_postgres.py --input outputs/db_integration/week7_prediction_log_payloads.json"
+  },
+  "notes": [
+    "Tuong's current 8-result file is useful evaluation history but does not cover Duy's current 20-payload batch.",
+    "The four-state UI fixture is contract-shaped but uses synthetic IDs and is not real lineage evidence.",
+    "Phat's separate Week 7 evidence reports 10 prediction_logs; it does not prove the current Duy 20-payload batch was inserted by Tuong.",
+    "The Tuong-owned repository was audited read-only; cleanup and source fixes require a Tuong-owner commit."
+  ]
+}

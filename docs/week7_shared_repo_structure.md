@@ -2,12 +2,11 @@
 
 ## Purpose
 
-Week 7 is the transition from separate repositories to one testable platform path.
-This document is the merge map for Duy, Phat, Lap, Tuong, and Phi/Hung. It does
-not claim that the external modules have already been merged or executed from this
-repository.
+Week 7 moves the platform from separate repositories toward one reproducible
+CI and Docker workflow. This file defines the merge layout and ownership
+boundaries. It does not claim that the five repositories are already merged.
 
-The machine-readable version is:
+Machine-readable contract:
 
 ```text
 integration/shared_repo_manifest.json
@@ -17,88 +16,192 @@ integration/shared_repo_manifest.json
 
 ```text
 datavision-platform/
-├── data_engineering/       # Duy
-├── ai/
-│   ├── rag/                # Lap
-│   └── prediction/         # Tuong
-├── database/               # Phat
-├── demo/                   # Phi/Hung
-├── backend_stub/           # contract stub before production API
-├── scripts/                # shared builders and smoke tests
-├── tests/                  # module and contract tests
-├── outputs/                # handoffs, fixtures and evidence
-├── deployment/             # Dockerfiles and database init
-├── docker-compose.db.yml
-├── docker-compose.yml
-├── .env.example
-└── .github/workflows/ci.yml
+|-- data_engineering/          # Duy
+|-- ai/
+|   |-- rag/                   # Lap
+|   `-- prediction/            # Tuong
+|-- week7/
+|   `-- database/              # Phat Week 7 database package
+|       |-- schema/
+|       |-- scripts/
+|       |-- validation/
+|       `-- outputs/
+|-- demo/                      # Phi/Hung
+|-- backend_stub/
+|-- scripts/
+|-- tests/
+|-- outputs/
+|-- deployment/
+|-- docker-compose.db.yml
+|-- docker-compose.yml
+|-- .env.example
+`-- .github/workflows/ci.yml
 ```
 
-## Current Duy repository scope
+## Active owner paths
 
-Available now:
+### Duy
 
-- `data_engineering/` and Duy's deterministic test fixtures.
-- `scripts/week7_ci_ingestion_smoke_test.py`.
-- `scripts/week7_shared_integration_smoke_test.py`.
-- `docker-compose.db.yml` and the full-app draft `docker-compose.yml`.
-- `backend_stub/` with the shared API envelope.
-- `.github/workflows/ci.yml` with the data, backend-contract, readiness and
-  integration-contract jobs.
-
-Pending from other repositories:
-
-- Phat's Week 7 fixed schema, database smoke job and fresh view samples.
-- Lap's Week 7 pgvector execution proof.
-- Tuong's Week 7 prediction CI proof and database log result.
-- Phi/Hung's Week 7 fixture validator, UI smoke test and backend stub/UI merge.
-
-The readiness checker reports this explicitly:
-
-```powershell
-python scripts/week7_shared_repo_readiness_check.py
+```text
+data_engineering/
+scripts/week7_ci_ingestion_smoke_test.py
+scripts/load_ingestion_outputs_to_postgres.py
+scripts/week7_build_phat_mapping_summary.py
+tests/data_tests/
+tests/fixtures/data/
+outputs/rag_handoff/
+outputs/prediction_payloads/
+outputs/ui_fixtures/
 ```
 
-Use strict mode only after the five repositories are merged:
+### Phat
+
+```text
+week7/database/schema/schema_v4_fixed.sql
+week7/database/schema/setup_database_v3.sql
+week7/database/scripts/run_database_setup.py
+week7/database/scripts/ci_database_smoke_test.py
+week7/database/validation/validation_queries_v3.sql
+week7/database/outputs/db_validation/
+week7/database/outputs/dashboard_view_samples/
+```
+
+### Lap
+
+```text
+ai/rag/
+ai/rag/scripts/week7_pgvector_smoke_test.py
+ai/rag/scripts/week7_rag_ci_smoke_test.py
+ai/ai_tests/
+outputs/rag/
+outputs/ui_fixtures/lap_rag_response_real.json
+```
+
+### Tuong
+
+```text
+ai/prediction/
+scripts/week7_prediction_ci_smoke_test.py
+scripts/insert_prediction_logs_to_postgres.py
+tests/ai_tests/
+outputs/db_integration/
+outputs/rag_metadata/
+outputs/ui_fixtures/
+```
+
+### Phi/Hung
+
+```text
+demo/
+demo/services/
+demo/views/
+demo/fixtures/week7/
+scripts/week7_ui_ci_smoke_test.py
+tests/
+backend_stub/
+```
+
+## Current readiness
+
+The strict readiness checker currently finds all required Week 7 artifacts in
+all five sibling repositories:
 
 ```powershell
 python scripts/week7_shared_repo_readiness_check.py --strict
 ```
 
-## Canonical ID rule
+Expected result:
+
+```text
+status: ready
+Duy: ready
+Phat: ready
+Lap: ready
+Tuong: ready
+Phi/Hung: ready
+```
+
+This is artifact-level readiness (`status=ready`). Runtime/owner execution is
+tracked independently as `execution_status` and may still be `blocked`; it
+requires a running PostgreSQL + pgvector service and one end-to-end execution
+session.
+
+Owner execution audits are separate from file presence:
+
+```text
+Lap: blocked until live pgvector insert/retrieval proof passes
+Tuong: blocked until 20 results/log payloads, CI checks and DB insert proof pass
+Phi/Hung: blocked until DB-enriched fixtures and UI contract cleanup pass
+```
+
+Use:
+
+```text
+python scripts/week7_build_lap_mapping_summary.py --run-lap-tests
+python scripts/week7_build_tuong_mapping_summary.py --run-tuong-checks
+python scripts/week7_build_phi_hung_mapping_summary.py --run-hung-checks
+```
+
+The readiness checker distinguishes artifact readiness from execution
+readiness:
+
+```text
+python scripts/week7_shared_repo_readiness_check.py --strict
+python scripts/week7_shared_repo_readiness_check.py --strict --strict-execution
+```
+
+The first command checks the merge tree. The second also fails on a recorded
+owner audit blocker. For Phi/Hung, the required lineage is `source_id=4`,
+`document_external_id=doc_dataflow_technical_report`, `document_db_id=1`, and
+the corresponding `ingestion_run_id`.
+
+## Canonical IDs
 
 | Field | Meaning | Owner |
 | --- | --- | --- |
-| `source_id` | Integer `sources.id`; never an ingestion UUID | Phat |
-| `source_name` | Stable source key | Duy |
-| `document_external_id` | Stable string document key | Duy/Lap/Tuong |
-| `document_db_id` | Integer `documents.id` after lookup | Phat |
+| `source_id` | integer `sources.id` | Phat |
+| `source_name` | stable source key | Duy |
+| `document_external_id` | stable string document key | Duy |
+| `document_db_id` | integer `documents.id` | Phat |
 | `ingestion_run_id` | Duy run UUID | Duy |
 
-The string `document_external_id` must be resolved before inserting into an
-integer foreign-key column. `ingestion_run_id` must never be placed in
-`source_id`.
+Rules:
 
-## Merge and verification order
+- Never put `ingestion_run_id` into `source_id`.
+- Resolve `document_external_id` before writing an integer document FK.
+- Preserve both external and database document IDs in cross-team payloads.
+- Keep snapshot alignment separate from stable ID confirmation.
 
-1. Merge Duy contracts and stable fixtures.
-2. Apply Phat schema and start PostgreSQL + pgvector.
+## Merge order
+
+1. Merge Duy contracts, sample fixtures, tests and handoff builders.
+2. Merge Phat schema, setup scripts, validation and database outputs.
 3. Run Duy smoke DB loading and query counts back.
-4. Insert Lap chunks and run a real similarity query.
-5. Insert Tuong prediction logs and query the review queue.
-6. Replace UI fixtures with the outputs from the database and RAG/prediction jobs.
-7. Run the complete GitHub Actions workflow.
+4. Merge Lap RAG module and prove pgvector retrieval.
+5. Merge Tuong prediction module and insert prediction logs.
+6. Merge Phi/Hung UI, fixture validator and backend contract.
+7. Run all module jobs and the integration smoke job in GitHub Actions.
 
-## Files to use instead of obsolete copies
+## CI entrypoints
 
-Only one active copy of each shared concern should remain after merge:
+```text
+python scripts/week7_ci_ingestion_smoke_test.py
+pytest tests/data_tests/ -q
+python week7/database/scripts/run_database_setup.py --smoke --skip-lap
+python week7/database/scripts/ci_database_smoke_test.py
+python ai/rag/scripts/week7_rag_ci_smoke_test.py
+python scripts/week7_prediction_ci_smoke_test.py
+python scripts/week7_ui_ci_smoke_test.py
+python scripts/week7_shared_integration_smoke_test.py
+python scripts/week7_build_phi_hung_mapping_summary.py --run-hung-checks
+```
 
-- database setup belongs under Phat's `database/` or `week7/database/`;
-- RAG loading/retrieval belongs under `ai/rag/`;
-- prediction inference/log building belongs under `ai/prediction/`;
-- UI service and fixture validation belongs under `demo/`;
-- shared orchestration belongs under `scripts/`;
-- old patched SQL/scripts should be archived outside active runtime paths.
+## Cleanup rules
 
-Do not copy a file into another repository without updating its owner contract
-and its test command.
+- Keep one official implementation for each active concern.
+- Do not copy RAG runtime code into the database package.
+- Do not copy prediction runtime code into the database package.
+- Do not keep tracked `__pycache__` or `.pyc` files.
+- Remove `*_PATCHED.py` after the patched file becomes the official file.
+- Retain historical Week 5/6 evidence only under clearly historical paths.
+- Do not use obsolete paths in current CI or runbooks.

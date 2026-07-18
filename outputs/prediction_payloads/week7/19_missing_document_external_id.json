@@ -1,6 +1,6 @@
 {
   "document_db_id": null,
-  "source_id": null,
+  "source_id": 4,
   "source_name": "dataflow_technical_report_pdf",
   "ingestion_run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282",
   "file_name": "missing_document_external_id.pdf",
@@ -22,5 +22,8 @@
   "expected_status_hint": "failed_contract_validation",
   "data_quality_score": null,
   "file_hash_sha256": null,
-  "database_identity_status": "pending_database_load"
+  "database_identity_status": "database_ids_confirmed",
+  "database_schema_version": "schema_v4_fixed",
+  "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
+  "current_ingestion_runs_loaded": false
 }

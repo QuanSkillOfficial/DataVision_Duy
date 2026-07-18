@@ -2,7 +2,7 @@
   "document_id": "doc_dataflow_agentic_rag_evaluation_pages",
   "document_external_id": "doc_dataflow_agentic_rag_evaluation_pages",
   "document_db_id": null,
-  "source_id": null,
+  "source_id": 4,
   "source_name": "dataflow_technical_report_pdf",
   "ingestion_run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282",
   "file_name": "DataFlow_Technical_Report_agentic_rag_evaluation.pdf",
@@ -24,5 +24,8 @@
   "expected_status_hint": "accepted_or_needs_review",
   "data_quality_score": 100.0,
   "file_hash_sha256": "06c0c318db353a5c5c6dbaa84c6778cde022fde92bd1bb7f56e32c485d62fa54",
-  "database_identity_status": "pending_database_load"
+  "database_identity_status": "database_ids_confirmed",
+  "database_schema_version": "schema_v4_fixed",
+  "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
+  "current_ingestion_runs_loaded": false
 }

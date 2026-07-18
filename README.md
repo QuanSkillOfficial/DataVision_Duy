@@ -14,7 +14,7 @@ The focus is ingestion: bringing API, CSV, Excel, PDF, and document-page text in
 | Week 5 config-driven ingestion service | Complete | `data_engineering/` |
 | Week 5 run history and manifests | Complete | `logs/runs/`, `logs/ingestion_runs.jsonl`, `logs/manifests/` |
 | Week 6 integration handoff | Complete | `docs/week6_team_integration_handoff.md`, `outputs/*_handoff/` |
-| Week 7 CI-ready ingestion pipeline | Implemented; real DB IDs pending Phat | `scripts/week7_*`, `outputs/*/week7_*`, `.github/workflows/ci.yml` |
+| Week 7 CI-ready ingestion pipeline | Implemented; stable Phat IDs confirmed, latest-run reload and owner execution proofs tracked separately | `scripts/week7_*`, `outputs/*/week7_*`, `.github/workflows/ci.yml` |
 | Standard ingestion log schema | Complete | `week2/docs/ingestion_log_schema.md` |
 | Standard output contract | Complete | `week2/docs/standard_ingestion_output_contract.md` |
 | UI handoff contract | Complete | `week2/docs/ingestion_result_contract_for_ui.md` |
@@ -206,7 +206,13 @@ shared repository. The readiness report makes missing owner artifacts visible:
 
 ```powershell
 python scripts/week7_shared_repo_readiness_check.py
+python scripts/week7_shared_repo_readiness_check.py --strict --strict-execution
 ```
+
+`--strict` checks the shared merge tree. The generated report exposes
+`status` (artifact readiness) separately from `execution_status` (owner/runtime
+proof). `--strict-execution` additionally fails when a recorded Lap, Tuong or
+Phi/Hung execution audit is blocked.
 
 Build deterministic shared fixtures and run the fast ingestion smoke test:
 
@@ -242,10 +248,31 @@ python scripts/week7_data_pipeline_smoke_test.py
 python scripts/validate_week7.py
 ```
 
-The builders never invent database IDs. Until a real load result exists, generated files use `pending_database_load` and null database keys. See `docs/week7_data_pipeline_runbook.md`.
+The builders never invent database IDs. The current canonical Week 7 bridge
+confirms `source_id=4` and `document_db_id=1`; the latest Duy run UUID still
+requires a fresh database load. See `docs/week7_data_pipeline_runbook.md`.
+Latest-run discovery combines the tracked `logs/ingestion_runs.jsonl` history
+with local run files, so handoff regeneration also works from a clean clone.
+When the local DB result is still the tracked
+`pending_external_database` placeholder, the builders use the committed Phat
+proof at `logs/db_load_results/phat_week7_external_database_proof.json` for
+stable IDs instead of emitting `null`. A real local `--write-db` result remains
+authoritative.
 
-Current Week 7 data-engineering test result: `46 passed` including shared
+Current Week 7 data-engineering test result: `51 passed` including shared
 platform readiness checks.
+
+Audit the Phi/Hung mapping from the Duy repository:
+
+```powershell
+python scripts/week7_build_phi_hung_mapping_summary.py --run-hung-checks
+```
+
+The audit writes `outputs/hung_handoff/hung_week7_mapping_summary.json` and
+`logs/hung_handoff/hung_week7_external_proof.json`. At the current audited
+commit, Phi/Hung tests and UI smoke pass, but the copied Duy/Tuong fixtures
+still need DB-lineage refresh and the UI contract still needs the 0.80 staging
+policy update. The audit therefore remains `blocked_on_phi_hung_refresh`.
 
 Run the project-level contract checks:
 
@@ -317,4 +344,7 @@ Phi/Hung's UI smoke test.
 | Tuong prediction payloads | `docs/week7_duy_to_tuong_prediction_payload_contract.md` |
 | Tuong additional cases 11-20 | `docs/week7_duy_to_tuong_additional_prediction_payloads.md` |
 | Phi/Hung UI fixture | `docs/week7_duy_to_phi_hung_ui_fixture_contract.md` |
+| Phi/Hung mapping audit | `docs/week7_duy_phi_hung_mapping_result.md` |
+| Cross-team delivery matrix | `docs/week7_cross_team_delivery_matrix.md` |
 | CI commands | `docs/week7_duy_ci_commands.md` |
+| Final review and cleanup | `docs/week7_final_project_review.md` |

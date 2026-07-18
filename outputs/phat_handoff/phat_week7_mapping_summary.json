@@ -1,0 +1,195 @@
+{
+  "schema_version": "duy_phat_week7_mapping_v1",
+  "status": "passed",
+  "source": "DataVision_Phat/week7 real PostgreSQL evidence",
+  "phat_commit": "f4aeb3e2e8ae08b105e09853b5b38ad39681a9ce",
+  "phat_week7_root": "DataVision_Phat/week7",
+  "files_used": {
+    "schema": "DataVision_Phat/week7/database/schema/schema_v4_fixed.sql",
+    "setup": "DataVision_Phat/week7/database/schema/setup_database_v3.sql",
+    "validation": "DataVision_Phat/week7/database/validation/validation_queries_v3.sql",
+    "duy_counts": "DataVision_Phat/week7/database/outputs/db_validation/duy_data_load_counts.json",
+    "rag_counts": "DataVision_Phat/week7/database/outputs/db_validation/rag_pgvector_counts.json",
+    "prediction_counts": "DataVision_Phat/week7/database/outputs/db_validation/prediction_log_counts.json",
+    "source_ids": "DataVision_Phat/week7/database/outputs/dashboard_view_samples/v_source_quality_summary.json",
+    "latest_runs": "DataVision_Phat/week7/database/outputs/dashboard_view_samples/v_latest_ingestion_runs.json",
+    "document_readiness": "DataVision_Phat/week7/database/outputs/dashboard_view_samples/v_document_rag_readiness.json",
+    "database_ci_result": "DataVision_Phat/week7/docs/week7_database_ci_smoke_test_result.md",
+    "database_runbook": "DataVision_Phat/week7/docs/week7_database_setup_runbook.md"
+  },
+  "schema_findings": {
+    "schema_file": "DataVision_Phat/week7/database/schema/schema_v4_fixed.sql",
+    "setup_file": "DataVision_Phat/week7/database/schema/setup_database_v3.sql",
+    "has_vector_extension": true,
+    "has_source_unique_constraint": true,
+    "has_document_external_id": true,
+    "has_prediction_status_constraint": true,
+    "has_prediction_logs_missing_comma_risk": false,
+    "has_required_views": true
+  },
+  "database_ci_smoke_test_passed": true,
+  "source_id_map": {
+    "superstore_sales_csv": {
+      "source_id": 1,
+      "source_type": "csv",
+      "status": "active",
+      "total_documents": 0,
+      "total_structured_records": 9994
+    },
+    "product_sales_region_excel": {
+      "source_id": 2,
+      "source_type": "excel",
+      "status": "active",
+      "total_documents": 0,
+      "total_structured_records": 1500
+    },
+    "dummyjson_products_api": {
+      "source_id": 3,
+      "source_type": "api",
+      "status": "active",
+      "total_documents": 0,
+      "total_structured_records": 30
+    },
+    "dataflow_technical_report_pdf": {
+      "source_id": 4,
+      "source_type": "pdf",
+      "status": "active",
+      "total_documents": 1,
+      "total_structured_records": 0
+    }
+  },
+  "document_id_map": {
+    "doc_dataflow_technical_report": {
+      "document_db_id": 1,
+      "source_id": 4,
+      "file_name": "DataFlow_Technical_Report.pdf",
+      "page_count": 36,
+      "total_chunks": 293,
+      "processing_status": "processed"
+    }
+  },
+  "counts": {
+    "sources": 4,
+    "pipeline_runs": 4,
+    "ingestion_logs": 4,
+    "documents": 1,
+    "document_pages": 36,
+    "structured_records": 11524,
+    "document_chunks": 293,
+    "rag_query_logs": 1,
+    "prediction_logs": 10,
+    "prediction_review_queue": 5
+  },
+  "prediction_status_counts": {
+    "needs_review": 2,
+    "waiting_for_source": 2,
+    "accepted": 5,
+    "failed": 1
+  },
+  "dashboard_overview": {
+    "total_sources": 4,
+    "total_documents": 1,
+    "successful_ingestions": 4,
+    "failed_ingestions": 0,
+    "total_rag_queries": 1,
+    "total_predictions": 10
+  },
+  "data_quality_dashboard": [
+    {
+      "source_name": "superstore_sales_csv",
+      "run_id": "10ed4959-5ace-4ff7-9b30-da28321d6708",
+      "status": "success",
+      "records_read": 9994,
+      "records_valid": 9994,
+      "records_invalid": 0,
+      "data_quality_score": 100.0,
+      "duplicate_count": null,
+      "created_at": "2026-07-17T18:35:50.760582"
+    },
+    {
+      "source_name": "product_sales_region_excel",
+      "run_id": "a896a888-57f0-4ea9-9083-f860c2078f7d",
+      "status": "success",
+      "records_read": 1500,
+      "records_valid": 1500,
+      "records_invalid": 0,
+      "data_quality_score": 99.51,
+      "duplicate_count": null,
+      "created_at": "2026-07-17T18:35:50.760582"
+    },
+    {
+      "source_name": "dummyjson_products_api",
+      "run_id": "9cce3b5c-b83d-4873-86e1-b99de889b077",
+      "status": "success",
+      "records_read": 30,
+      "records_valid": 30,
+      "records_invalid": 0,
+      "data_quality_score": 99.0,
+      "duplicate_count": null,
+      "created_at": "2026-07-17T18:35:50.760582"
+    },
+    {
+      "source_name": "dataflow_technical_report_pdf",
+      "run_id": "8e18bd87-27e5-4aa1-9566-805ffd552fdb",
+      "status": "success",
+      "records_read": 36,
+      "records_valid": 36,
+      "records_invalid": 0,
+      "data_quality_score": 100.0,
+      "duplicate_count": null,
+      "created_at": "2026-07-17T18:35:50.760582"
+    }
+  ],
+  "snapshot_alignment": {
+    "phat_loaded_run_ids": {
+      "superstore_sales_csv": "10ed4959-5ace-4ff7-9b30-da28321d6708",
+      "product_sales_region_excel": "a896a888-57f0-4ea9-9083-f860c2078f7d",
+      "dummyjson_products_api": "9cce3b5c-b83d-4873-86e1-b99de889b077",
+      "dataflow_technical_report_pdf": "8e18bd87-27e5-4aa1-9566-805ffd552fdb"
+    },
+    "current_duy_run_ids": {
+      "dataflow_technical_report_pdf": "4c595851-c11e-48e3-8c79-69f6fa52d282",
+      "dummyjson_products_api": "7fb106e1-c920-4e92-b3c8-47402ee94ea5",
+      "product_sales_region_excel": "797e7ee4-9139-4157-b6b4-cb3c325ce469",
+      "superstore_sales_csv": "0a11e66b-59c8-4259-9759-d36589423758"
+    },
+    "all_current_run_ids_loaded": false,
+    "by_source": {
+      "dataflow_technical_report_pdf": {
+        "phat_loaded_run_id": "8e18bd87-27e5-4aa1-9566-805ffd552fdb",
+        "current_duy_run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282",
+        "matches": false
+      },
+      "dummyjson_products_api": {
+        "phat_loaded_run_id": "9cce3b5c-b83d-4873-86e1-b99de889b077",
+        "current_duy_run_id": "7fb106e1-c920-4e92-b3c8-47402ee94ea5",
+        "matches": false
+      },
+      "product_sales_region_excel": {
+        "phat_loaded_run_id": "a896a888-57f0-4ea9-9083-f860c2078f7d",
+        "current_duy_run_id": "797e7ee4-9139-4157-b6b4-cb3c325ce469",
+        "matches": false
+      },
+      "superstore_sales_csv": {
+        "phat_loaded_run_id": "10ed4959-5ace-4ff7-9b30-da28321d6708",
+        "current_duy_run_id": "0a11e66b-59c8-4259-9759-d36589423758",
+        "matches": false
+      }
+    },
+    "note": "Database identities are stable and confirmed. Current Duy run UUIDs must still be loaded with Duy's writer for current-run proof."
+  },
+  "integration_status": {
+    "phat_database_setup_proven": true,
+    "duy_snapshot_loaded": true,
+    "database_ids_confirmed": true,
+    "lap_pgvector_proven": true,
+    "tuong_prediction_logs_proven": true,
+    "dashboard_views_exported": true
+  },
+  "id_rules": {
+    "source_id": "Phat sources.id resolved by source_name",
+    "document_external_id": "Duy stable document key",
+    "document_db_id": "Phat documents.id resolved by document_external_id",
+    "ingestion_run_id": "Duy run UUID; never use as source_id"
+  }
+}

@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import data_engineering.pipelines.handoff_context as handoff_context
 from data_engineering.pipelines.handoff_context import (
     allocate_structured_record_limits,
     load_database_identity_map,
@@ -107,6 +108,206 @@ def test_week7_identity_map_reads_confirmed_source_and_document_ids(tmp_path):
     assert identity["document_db_ids"]["doc_dataflow_technical_report"] == 1
 
 
+def test_week7_identity_map_does_not_confirm_ids_from_failed_result(tmp_path):
+    result_path = tmp_path / "failed_db_result.json"
+    result_path.write_text(
+        json.dumps(
+            {
+                "status": "failed",
+                "mode": "write_db",
+                "results": [
+                    {
+                        "source_name": "dataflow_technical_report_pdf",
+                        "source_id": 4,
+                        "document_external_id": "doc_dataflow_technical_report",
+                        "document_db_id": 1,
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    identity = load_database_identity_map(result_path)
+
+    assert identity["status"] == "database_identity_incomplete"
+    assert identity["database_result_status"] == "failed"
+
+
+def test_week7_default_identity_uses_phat_proof_for_local_placeholder(tmp_path, monkeypatch):
+    local_result = tmp_path / "duy_to_phat_db_load_result.json"
+    external_proof = tmp_path / "phat_week7_external_database_proof.json"
+    local_result.write_text(
+        json.dumps({"status": "pending_external_database", "mode": "not_executed"}),
+        encoding="utf-8",
+    )
+    external_proof.write_text(
+        json.dumps(
+            {
+                "status": "passed",
+                "schema_version": "schema_v4_fixed",
+                "source": "phat-proof",
+                "results": [
+                    {
+                        "source_name": "dataflow_technical_report_pdf",
+                        "source_id": 4,
+                        "document_external_id": "doc_dataflow_technical_report",
+                        "document_db_id": 1,
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(handoff_context, "DEFAULT_DB_LOAD_RESULT", str(local_result))
+    monkeypatch.setattr(handoff_context, "DEFAULT_EXTERNAL_DB_PROOF", str(external_proof))
+
+    identity = handoff_context.load_database_identity_map(str(local_result))
+
+    assert identity["status"] == "database_ids_confirmed"
+    assert identity["source_ids"]["dataflow_technical_report_pdf"] == 4
+    assert identity["document_db_ids"]["doc_dataflow_technical_report"] == 1
+    assert identity["identity_source"] == "phat_external_proof_fallback"
+    assert identity["fallback_from"] == str(local_result)
+
+
+def test_week7_phat_mapping_summary_contains_real_database_proof():
+    summary = json.loads(
+        (
+            PROJECT_ROOT
+            / "outputs/phat_handoff/phat_week7_mapping_summary.json"
+        ).read_text(encoding="utf-8")
+    )
+
+    assert summary["status"] == "passed"
+    assert summary["database_ci_smoke_test_passed"] is True
+    assert summary["source_id_map"]["dataflow_technical_report_pdf"]["source_id"] == 4
+    assert (
+        summary["document_id_map"]["doc_dataflow_technical_report"][
+            "document_db_id"
+        ]
+        == 1
+    )
+    assert summary["counts"]["structured_records"] == 11524
+    assert summary["counts"]["document_chunks"] == 293
+    assert summary["counts"]["prediction_logs"] == 10
+    assert isinstance(
+        summary["snapshot_alignment"]["all_current_run_ids_loaded"], bool
+    )
+
+
+def test_week7_lap_mapping_separates_contract_from_live_execution():
+    summary = json.loads(
+        (
+            PROJECT_ROOT
+            / "outputs/lap_handoff/lap_week7_mapping_summary.json"
+        ).read_text(encoding="utf-8")
+    )
+
+    assert summary["handoff_contract_passed"] is True
+    assert summary["canonical_identity"] == {
+        "source_id": 4,
+        "document_external_id": "doc_dataflow_technical_report",
+        "document_db_id": 1,
+        "ingestion_run_id": summary["canonical_identity"]["ingestion_run_id"],
+        "rule": summary["canonical_identity"]["rule"],
+    }
+    assert summary["duy_input_contract"]["page_count"] == 36
+    assert summary["duy_input_contract"]["total_characters"] == 129028
+    assert summary["lap_output_contract"]["chunk_insert"]["status"] == "pending_db_connection"
+    assert summary["lap_output_contract"]["query"]["status"] == "pending_db_connection"
+    assert summary["live_pgvector_proof_passed"] is False
+    assert summary["lap_unit_test_execution"]["status"] in {"failed", "not_run"}
+    if summary["lap_unit_test_execution"]["status"] == "failed":
+        assert any(
+            "torch" in error
+            for error in summary["lap_unit_test_execution"]["error_summary"]
+        )
+    assert any(
+        finding["path"] == "ai/rag/vector_store.py"
+        and "torch import" in finding["finding"]
+        for finding in summary["blocking_findings"]
+    )
+
+
+def test_week7_tuong_mapping_separates_input_contract_from_execution_proof():
+    summary = json.loads(
+        (
+            PROJECT_ROOT
+            / "outputs/tuong_handoff/tuong_week7_mapping_summary.json"
+        ).read_text(encoding="utf-8")
+    )
+
+    assert summary["handoff_contract_passed"] is True
+    assert summary["duy_input_contract"]["primary_count"] == 20
+    assert summary["duy_input_contract"]["additional_count"] == 10
+    assert summary["canonical_identity"]["source_id_map"] == {
+        "superstore_sales_csv": 1,
+        "product_sales_region_excel": 2,
+        "dummyjson_products_api": 3,
+        "dataflow_technical_report_pdf": 4,
+    }
+    assert summary["canonical_identity"]["document_db_id"] == 1
+    assert summary["status"] in {"blocked_on_tuong_refresh", "passed"}
+
+    if summary["status"] == "passed":
+        assert summary["tuong_input_copy"]["payload_count"] == 20
+        assert summary["tuong_output_contract"]["prediction_results"]["count"] == 20
+        assert (
+            summary["tuong_output_contract"]["prediction_log_payloads"]["count"]
+            == 20
+        )
+        assert summary["prediction_ci_proof_passed"] is True
+        assert summary["database_insert_proof_passed"] is True
+    else:
+        assert summary["tuong_output_contract_passed"] is False
+        assert summary["database_insert_proof_passed"] is False
+        assert any(
+            finding["path"]
+            == "outputs/prediction_payloads/tuong_week7_prediction_payloads.json"
+            for finding in summary["blocking_findings"]
+        )
+        assert any(
+            finding["path"]
+            == "outputs/db_integration/week7_prediction_log_insert_result.json"
+            for finding in summary["blocking_findings"]
+        )
+
+
+def test_week7_phi_hung_mapping_audit_preserves_lineage_and_proof_gates():
+    summary = json.loads(
+        (
+            PROJECT_ROOT
+            / "outputs/hung_handoff/hung_week7_mapping_summary.json"
+        ).read_text(encoding="utf-8")
+    )
+    proof = json.loads(
+        (
+            PROJECT_ROOT
+            / "logs/hung_handoff/hung_week7_external_proof.json"
+        ).read_text(encoding="utf-8")
+    )
+
+    assert summary["canonical_identity"]["source_id"] == 4
+    assert summary["canonical_identity"]["document_db_id"] == 1
+    assert (
+        summary["canonical_identity"]["document_external_id"]
+        == "doc_dataflow_technical_report"
+    )
+    assert summary["status"] in {
+        "blocked_on_phi_hung_refresh",
+        "ready_with_lineage_caveat",
+        "passed",
+    }
+    assert proof["gates"] == summary["gates"]
+    if summary["status"] == "passed":
+        assert summary["gates"]["fixture_contract_passed"] is True
+        assert summary["gates"]["real_lineage_passed"] is True
+        assert summary["gates"]["ui_code_docs_passed"] is True
+    else:
+        assert summary["blocking_findings"]
+
+
 def test_week7_rag_handoff_has_database_ready_page_contract():
     manifest = json.loads(
         (PROJECT_ROOT / "outputs/rag_handoff/week7_rag_handoff_manifest.json").read_text(encoding="utf-8")
@@ -119,7 +320,13 @@ def test_week7_rag_handoff_has_database_ready_page_contract():
 
     assert manifest["page_count"] == 36
     assert manifest["total_characters"] == 129028
+    assert manifest["database_identity_status"] == "database_ids_confirmed"
+    assert manifest["source_id"] == 4
+    assert manifest["document_db_id"] == 1
+    assert isinstance(manifest["current_ingestion_run_loaded"], bool)
     assert first_page["document_external_id"] == "doc_dataflow_technical_report"
+    assert first_page["source_id"] == 4
+    assert first_page["document_db_id"] == 1
     assert first_page["ingestion_run_id"]
     assert first_page["char_count"] > 0
     assert first_page["word_count"] > 0
@@ -144,6 +351,10 @@ def test_week7_prediction_payloads_have_platform_ids_and_quality_fields():
     assert all("ingestion_run_id" in payload for payload in payloads)
     assert all("data_quality_score" in payload for payload in payloads)
     assert all("file_hash_sha256" in payload for payload in payloads)
+    assert payloads[0]["source_id"] == 4
+    assert payloads[0]["document_db_id"] == 1
+    assert payloads[0]["database_identity_status"] == "database_ids_confirmed"
+    assert isinstance(payloads[0]["current_ingestion_runs_loaded"], bool)
 
 
 def test_week7_additional_prediction_payloads_cover_new_sections_and_validation_cases():
@@ -208,6 +419,10 @@ def test_week7_ui_fixture_matches_phi_hung_contract():
     assert fixture["total_document_pages_read"] == 36
     assert fixture["average_data_quality_score"] == 99.63
     assert fixture["latest_document"]["document_external_id"] == "doc_dataflow_technical_report"
+    assert fixture["latest_document"]["source_id"] == 4
+    assert fixture["latest_document"]["document_db_id"] == 1
+    assert fixture["database_identity_status"] == "database_ids_confirmed"
+    assert isinstance(fixture["current_ingestion_runs_loaded"], bool)
     assert fixture["handoff_paths"]["rag_handoff"].endswith("week7_document_pages_db_enriched.jsonl")
 
 

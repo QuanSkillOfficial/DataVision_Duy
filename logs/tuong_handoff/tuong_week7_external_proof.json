@@ -1,0 +1,122 @@
+{
+  "mode": "duy_tuong_week7_external_mapping_audit",
+  "status": "blocked_on_tuong_refresh",
+  "handoff_contract_passed": true,
+  "tuong_output_contract_passed": false,
+  "prediction_ci_proof_passed": false,
+  "database_insert_proof_passed": false,
+  "canonical_identity": {
+    "source_id_map": {
+      "superstore_sales_csv": 1,
+      "product_sales_region_excel": 2,
+      "dummyjson_products_api": 3,
+      "dataflow_technical_report_pdf": 4
+    },
+    "document_external_id": "doc_dataflow_technical_report",
+    "document_db_id": 1,
+    "ingestion_run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282",
+    "rule": "source_id is Phat sources.id; document_db_id maps to prediction_logs.document_id; ingestion_run_id is never source_id"
+  },
+  "tuong_commit": "657c839b7471dcf5151c2314cfbe71b84a1a983f",
+  "tuong_outputs": {
+    "input_copy": "DataVision_Tuong/outputs/prediction_payloads/tuong_week7_prediction_payloads.json",
+    "prediction_results": "DataVision_Tuong/outputs/week7_duy_prediction_results.json",
+    "prediction_log_payloads": "DataVision_Tuong/outputs/db_integration/week7_prediction_log_payloads.json",
+    "prediction_log_insert_result": "DataVision_Tuong/outputs/db_integration/week7_prediction_log_insert_result.json",
+    "rag_filter_metadata": "DataVision_Tuong/outputs/rag_metadata/document_type_filter_payload.json",
+    "ui_single": "DataVision_Tuong/outputs/ui_fixtures/tuong_prediction_response_real.json",
+    "ui_batch": "DataVision_Tuong/outputs/ui_fixtures/tuong_prediction_batch_response.json",
+    "ui_review_queue": "DataVision_Tuong/outputs/ui_fixtures/tuong_prediction_review_queue_sample.json"
+  },
+  "blocking_findings": [
+    {
+      "severity": "high",
+      "path": "ai/prediction/feature_builder.py",
+      "finding": "active codebase contains both 0.80 and legacy 0.60 acceptance thresholds",
+      "fix": "make config.py the operational source of truth and rename any training-only threshold"
+    },
+    {
+      "severity": "high",
+      "path": "ai/prediction/batch_inference.py",
+      "finding": "batch responses do not preserve source_id and document_db_id",
+      "fix": "copy all five lineage fields into every normalized batch result"
+    },
+    {
+      "severity": "high",
+      "path": "scripts/run_real_payloads.py",
+      "finding": "handoff validation only prints warnings and continues",
+      "fix": "validate the 20-item contract, keep invalid test cases, and normalize each error into a failed result"
+    },
+    {
+      "severity": "high",
+      "path": "scripts/run_real_payloads.py",
+      "finding": "the official Week 7 runner does not regenerate prediction log payloads",
+      "fix": "write one DB payload per result to outputs/db_integration/week7_prediction_log_payloads.json"
+    },
+    {
+      "severity": "high",
+      "path": "requirements.txt",
+      "finding": "DB/runtime dependencies are missing: ['psycopg2-binary', 'python-dotenv']",
+      "fix": "add the dependencies or document that the shared root requirements owns them"
+    },
+    {
+      "severity": "high",
+      "path": "docs/prediction_log_contract.md",
+      "finding": "contract uses the old DB column and old confidence policy",
+      "fix": "map document_db_id to prediction_logs.document_id and document the 0.80 staging gate"
+    },
+    {
+      "severity": "high",
+      "path": "docs/prediction_contract.md",
+      "finding": "legacy contract permits unsafe automatic RAG filtering at 0.60",
+      "fix": "use soft metadata by default and require accepted >=0.80 plus trust/manual review for hard filtering"
+    },
+    {
+      "severity": "blocking",
+      "path": "outputs/prediction_payloads/tuong_week7_prediction_payloads.json",
+      "finding": "Tuong has not copied Duy's current 20-payload batch",
+      "fix": "replace the input copy with the exact Duy batch without removing invalid test cases"
+    },
+    {
+      "severity": "blocking",
+      "path": "outputs/week7_duy_prediction_results.json",
+      "finding": "prediction result count/lineage is stale or incomplete",
+      "fix": "rerun all 20 payloads and preserve one normalized result per input"
+    },
+    {
+      "severity": "blocking",
+      "path": "outputs/db_integration/week7_prediction_log_payloads.json",
+      "finding": "prediction log payload file does not cover the current batch",
+      "fix": "regenerate one Phat-compatible log payload per prediction result"
+    },
+    {
+      "severity": "blocking",
+      "path": "outputs/db_integration/week7_prediction_log_insert_result.json",
+      "finding": "no real PostgreSQL insert/query-back result is present",
+      "fix": "insert current logs into Phat's DB, query them back, and save the result JSON"
+    },
+    {
+      "severity": "high",
+      "path": "outputs/ui_fixtures/",
+      "finding": "UI fixtures use synthetic source/document IDs instead of Duy/Phat lineage",
+      "fix": "regenerate UI fixtures from the current Week 7 results and review queue"
+    },
+    {
+      "severity": "blocking",
+      "path": "tests/ai_tests/ and scripts/week7_prediction_ci_smoke_test.py",
+      "finding": "Tuong checks failed in the audited environment",
+      "fix": "install the pinned requirements in a clean Python 3.11 environment and rerun both commands"
+    }
+  ],
+  "required_tuong_actions": [
+    "Copy Duy's exact 20-payload batch and keep the quality/invalid test cases.",
+    "Return 20 normalized results with all lineage fields and all four statuses where expected.",
+    "Make batch_inference preserve source_id and document_db_id.",
+    "Regenerate 20 prediction-log payloads using document_db_id -> prediction_logs.document_id.",
+    "Run a real PostgreSQL insert and save query-back evidence instead of only a one-row dry-run.",
+    "Regenerate UI fixtures from Duy/Phat IDs; remove source_id=100-style sample lineage.",
+    "Keep RAG metadata soft by default and test the production metadata builder.",
+    "Unify the 0.80 staging policy across active docs/model metadata and add missing DB dependencies."
+  ],
+  "generated_at": "2026-07-18T17:36:26.219221+00:00"
+}

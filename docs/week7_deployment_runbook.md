@@ -7,6 +7,29 @@ staging-oriented, not a production deployment. Phat owns the final database
 schema; Duy owns the ingestion loader; Duy and Phi/Hung coordinate CI; the
 other module owners provide their smoke tests.
 
+The ten Week 7 readiness outputs are mapped as follows:
+
+| Output | Path or command |
+| --- | --- |
+| Shared repository structure | `docs/week7_shared_repo_structure.md` |
+| GitHub Actions CI draft | `.github/workflows/ci.yml` |
+| Docker database setup | `docker-compose.db.yml` |
+| Module CI smoke tests | Duy and owner-specific Week 7 smoke entrypoints |
+| Local Docker integration test | `scripts/week7_local_docker_integration_smoke_test.py` |
+| Full application Compose draft | `docker-compose.yml` |
+| Environment template | `.env.example` |
+| Backend API skeleton/stub | `backend_stub/` |
+| UI fixture mode contract | `outputs/ui_fixtures/` plus Phi/Hung `demo/fixtures/week7/` |
+| Deployment runbook | this document |
+
+Artifact presence is not the same as live execution proof. Check both fields in
+`outputs/integration/week7_shared_repo_readiness.json`:
+
+```text
+status            # merge/artifact readiness
+execution_status  # live owner/runtime readiness
+```
+
 ## Prerequisites
 
 - Docker Desktop with Compose v2.
