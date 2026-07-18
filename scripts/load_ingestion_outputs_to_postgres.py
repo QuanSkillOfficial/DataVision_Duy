@@ -12,7 +12,10 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from data_engineering.storage.db_connection import get_connection
-from data_engineering.pipelines.handoff_context import allocate_structured_record_limits
+from data_engineering.pipelines.handoff_context import (
+    allocate_structured_record_limits,
+    load_latest_successful_runs,
+)
 from data_engineering.storage.postgres_writer import (
     build_dry_run_summary,
     load_ingestion_result_to_postgres,
@@ -31,6 +34,8 @@ def _read_json(path: Path) -> dict[str, Any]:
 
 
 def load_successful_run_logs(run_log_dir: Path = RUN_LOG_DIR) -> list[dict[str, Any]]:
+    if run_log_dir.resolve() == RUN_LOG_DIR.resolve():
+        return load_latest_successful_runs(run_log_dir)
     runs = [_read_json(path) for path in sorted(run_log_dir.glob("*.json"))]
     return [run for run in runs if run.get("status") in {"success", "partial_success"}]
 

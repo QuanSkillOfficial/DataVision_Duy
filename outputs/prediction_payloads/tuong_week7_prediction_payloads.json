@@ -2,8 +2,8 @@
   {
     "document_id": "doc_dataflow_technical_report",
     "document_external_id": "doc_dataflow_technical_report",
-    "document_db_id": null,
-    "source_id": null,
+    "document_db_id": 1,
+    "source_id": 4,
     "source_name": "dataflow_technical_report_pdf",
     "file_name": "DataFlow_Technical_Report.pdf",
     "file_type": "pdf",
@@ -29,13 +29,16 @@
     "file_hash_sha256": "06c0c318db353a5c5c6dbaa84c6778cde022fde92bd1bb7f56e32c485d62fa54",
     "test_case": "full_pdf_document",
     "expected_status_hint": "accepted_or_needs_review",
-    "database_identity_status": "pending_database_load"
+    "database_identity_status": "database_ids_confirmed",
+    "database_schema_version": "schema_v4_fixed",
+    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
+    "current_ingestion_runs_loaded": false
   },
   {
     "document_id": "doc_dataflow_technical_report_intro_pages",
     "document_external_id": "doc_dataflow_technical_report_intro_pages",
     "document_db_id": null,
-    "source_id": null,
+    "source_id": 4,
     "source_name": "dataflow_technical_report_pdf",
     "ingestion_run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282",
     "file_name": "DataFlow_Technical_Report_intro_pages.pdf",
@@ -57,13 +60,16 @@
     "expected_status_hint": "accepted_or_needs_review",
     "data_quality_score": 100.0,
     "file_hash_sha256": "06c0c318db353a5c5c6dbaa84c6778cde022fde92bd1bb7f56e32c485d62fa54",
-    "database_identity_status": "pending_database_load"
+    "database_identity_status": "database_ids_confirmed",
+    "database_schema_version": "schema_v4_fixed",
+    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
+    "current_ingestion_runs_loaded": false
   },
   {
     "document_id": "doc_dataflow_technical_report_architecture_page",
     "document_external_id": "doc_dataflow_technical_report_architecture_page",
     "document_db_id": null,
-    "source_id": null,
+    "source_id": 4,
     "source_name": "dataflow_technical_report_pdf",
     "ingestion_run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282",
     "file_name": "DataFlow_Technical_Report_architecture_page.pdf",
@@ -85,13 +91,16 @@
     "expected_status_hint": "accepted_or_needs_review",
     "data_quality_score": 100.0,
     "file_hash_sha256": "06c0c318db353a5c5c6dbaa84c6778cde022fde92bd1bb7f56e32c485d62fa54",
-    "database_identity_status": "pending_database_load"
+    "database_identity_status": "database_ids_confirmed",
+    "database_schema_version": "schema_v4_fixed",
+    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
+    "current_ingestion_runs_loaded": false
   },
   {
     "document_id": "doc_dataflow_technical_report_related_work",
     "document_external_id": "doc_dataflow_technical_report_related_work",
     "document_db_id": null,
-    "source_id": null,
+    "source_id": 4,
     "source_name": "dataflow_technical_report_pdf",
     "ingestion_run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282",
     "file_name": "DataFlow_Technical_Report_related_work.pdf",
@@ -113,13 +122,16 @@
     "expected_status_hint": "accepted_or_needs_review",
     "data_quality_score": 100.0,
     "file_hash_sha256": "06c0c318db353a5c5c6dbaa84c6778cde022fde92bd1bb7f56e32c485d62fa54",
-    "database_identity_status": "pending_database_load"
+    "database_identity_status": "database_ids_confirmed",
+    "database_schema_version": "schema_v4_fixed",
+    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
+    "current_ingestion_runs_loaded": false
   },
   {
     "document_id": "doc_superstore_sales_csv_summary",
     "document_external_id": "doc_superstore_sales_csv_summary",
     "document_db_id": null,
-    "source_id": null,
+    "source_id": 1,
     "source_name": "superstore_sales_csv",
     "ingestion_run_id": "0a11e66b-59c8-4259-9759-d36589423758",
     "file_name": "superstore_clean.csv",
@@ -141,13 +153,16 @@
     "expected_status_hint": "accepted_or_needs_review",
     "data_quality_score": 100.0,
     "file_hash_sha256": "85e495dd7ef4966fb7bea5093902c9771431eccb20c3e556ae6b6c9c3824a700",
-    "database_identity_status": "pending_database_load"
+    "database_identity_status": "database_ids_confirmed",
+    "database_schema_version": "schema_v4_fixed",
+    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
+    "current_ingestion_runs_loaded": false
   },
   {
     "document_id": "doc_product_sales_region_excel_summary",
     "document_external_id": "doc_product_sales_region_excel_summary",
     "document_db_id": null,
-    "source_id": null,
+    "source_id": 2,
     "source_name": "product_sales_region_excel",
     "ingestion_run_id": "797e7ee4-9139-4157-b6b4-cb3c325ce469",
     "file_name": "product_sales_region_clean.csv",
@@ -169,13 +184,16 @@
     "expected_status_hint": "accepted_or_needs_review",
     "data_quality_score": 99.51,
     "file_hash_sha256": "9411ffd6ca8f6135f8d1c8409015a750df3fc6931480b24d50826bb349a6b9ba",
-    "database_identity_status": "pending_database_load"
+    "database_identity_status": "database_ids_confirmed",
+    "database_schema_version": "schema_v4_fixed",
+    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
+    "current_ingestion_runs_loaded": false
   },
   {
     "document_id": "doc_dummyjson_products_api_summary",
     "document_external_id": "doc_dummyjson_products_api_summary",
     "document_db_id": null,
-    "source_id": null,
+    "source_id": 3,
     "source_name": "dummyjson_products_api",
     "ingestion_run_id": "7fb106e1-c920-4e92-b3c8-47402ee94ea5",
     "file_name": "dummyjson_products_clean.csv",
@@ -197,13 +215,16 @@
     "expected_status_hint": "accepted_or_needs_review",
     "data_quality_score": 99.0,
     "file_hash_sha256": "c3e9d7c3d2105a9167573fe996cfea2424e1e57adbe2bd6fe62044100d2f57c9",
-    "database_identity_status": "pending_database_load"
+    "database_identity_status": "database_ids_confirmed",
+    "database_schema_version": "schema_v4_fixed",
+    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
+    "current_ingestion_runs_loaded": false
   },
   {
     "document_id": "doc_short_text_quality_gate",
     "document_external_id": "doc_short_text_quality_gate",
     "document_db_id": null,
-    "source_id": null,
+    "source_id": 4,
     "source_name": "dataflow_technical_report_pdf",
     "ingestion_run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282",
     "file_name": "short_text_sample.pdf",
@@ -225,13 +246,16 @@
     "expected_status_hint": "waiting_for_source_or_needs_review",
     "data_quality_score": null,
     "file_hash_sha256": null,
-    "database_identity_status": "pending_database_load"
+    "database_identity_status": "database_ids_confirmed",
+    "database_schema_version": "schema_v4_fixed",
+    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
+    "current_ingestion_runs_loaded": false
   },
   {
     "document_id": "doc_empty_text_quality_gate",
     "document_external_id": "doc_empty_text_quality_gate",
     "document_db_id": null,
-    "source_id": null,
+    "source_id": 4,
     "source_name": "dataflow_technical_report_pdf",
     "ingestion_run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282",
     "file_name": "empty_text_sample.pdf",
@@ -253,13 +277,16 @@
     "expected_status_hint": "waiting_for_source",
     "data_quality_score": null,
     "file_hash_sha256": null,
-    "database_identity_status": "pending_database_load"
+    "database_identity_status": "database_ids_confirmed",
+    "database_schema_version": "schema_v4_fixed",
+    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
+    "current_ingestion_runs_loaded": false
   },
   {
     "document_id": "doc_missing_file_name_validation",
     "document_external_id": "doc_missing_file_name_validation",
     "document_db_id": null,
-    "source_id": null,
+    "source_id": 4,
     "source_name": "dataflow_technical_report_pdf",
     "ingestion_run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282",
     "file_type": "pdf",
@@ -280,13 +307,16 @@
     "expected_status_hint": "failed",
     "data_quality_score": null,
     "file_hash_sha256": null,
-    "database_identity_status": "pending_database_load"
+    "database_identity_status": "database_ids_confirmed",
+    "database_schema_version": "schema_v4_fixed",
+    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
+    "current_ingestion_runs_loaded": false
   },
   {
     "document_id": "doc_dataflow_system_operators_pages",
     "document_external_id": "doc_dataflow_system_operators_pages",
     "document_db_id": null,
-    "source_id": null,
+    "source_id": 4,
     "source_name": "dataflow_technical_report_pdf",
     "ingestion_run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282",
     "file_name": "DataFlow_Technical_Report_system_operators_pages.pdf",
@@ -308,13 +338,16 @@
     "expected_status_hint": "accepted_or_needs_review",
     "data_quality_score": 100.0,
     "file_hash_sha256": "06c0c318db353a5c5c6dbaa84c6778cde022fde92bd1bb7f56e32c485d62fa54",
-    "database_identity_status": "pending_database_load"
+    "database_identity_status": "database_ids_confirmed",
+    "database_schema_version": "schema_v4_fixed",
+    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
+    "current_ingestion_runs_loaded": false
   },
   {
     "document_id": "doc_dataflow_pipeline_api_pages",
     "document_external_id": "doc_dataflow_pipeline_api_pages",
     "document_db_id": null,
-    "source_id": null,
+    "source_id": 4,
     "source_name": "dataflow_technical_report_pdf",
     "ingestion_run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282",
     "file_name": "DataFlow_Technical_Report_pipeline_api_pages.pdf",
@@ -336,13 +369,16 @@
     "expected_status_hint": "accepted_or_needs_review",
     "data_quality_score": 100.0,
     "file_hash_sha256": "06c0c318db353a5c5c6dbaa84c6778cde022fde92bd1bb7f56e32c485d62fa54",
-    "database_identity_status": "pending_database_load"
+    "database_identity_status": "database_ids_confirmed",
+    "database_schema_version": "schema_v4_fixed",
+    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
+    "current_ingestion_runs_loaded": false
   },
   {
     "document_id": "doc_dataflow_agent_workflow_pages",
     "document_external_id": "doc_dataflow_agent_workflow_pages",
     "document_db_id": null,
-    "source_id": null,
+    "source_id": 4,
     "source_name": "dataflow_technical_report_pdf",
     "ingestion_run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282",
     "file_name": "DataFlow_Technical_Report_agent_workflow_pages.pdf",
@@ -364,13 +400,16 @@
     "expected_status_hint": "accepted_or_needs_review",
     "data_quality_score": 100.0,
     "file_hash_sha256": "06c0c318db353a5c5c6dbaa84c6778cde022fde92bd1bb7f56e32c485d62fa54",
-    "database_identity_status": "pending_database_load"
+    "database_identity_status": "database_ids_confirmed",
+    "database_schema_version": "schema_v4_fixed",
+    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
+    "current_ingestion_runs_loaded": false
   },
   {
     "document_id": "doc_dataflow_agentic_rag_evaluation_pages",
     "document_external_id": "doc_dataflow_agentic_rag_evaluation_pages",
     "document_db_id": null,
-    "source_id": null,
+    "source_id": 4,
     "source_name": "dataflow_technical_report_pdf",
     "ingestion_run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282",
     "file_name": "DataFlow_Technical_Report_agentic_rag_evaluation.pdf",
@@ -392,13 +431,16 @@
     "expected_status_hint": "accepted_or_needs_review",
     "data_quality_score": 100.0,
     "file_hash_sha256": "06c0c318db353a5c5c6dbaa84c6778cde022fde92bd1bb7f56e32c485d62fa54",
-    "database_identity_status": "pending_database_load"
+    "database_identity_status": "database_ids_confirmed",
+    "database_schema_version": "schema_v4_fixed",
+    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
+    "current_ingestion_runs_loaded": false
   },
   {
     "document_id": "doc_superstore_order_profitability_sample",
     "document_external_id": "doc_superstore_order_profitability_sample",
     "document_db_id": null,
-    "source_id": null,
+    "source_id": 1,
     "source_name": "superstore_sales_csv",
     "ingestion_run_id": "0a11e66b-59c8-4259-9759-d36589423758",
     "file_name": "superstore_order_profitability_sample.csv",
@@ -420,13 +462,16 @@
     "expected_status_hint": "accepted_or_needs_review",
     "data_quality_score": 100.0,
     "file_hash_sha256": "85e495dd7ef4966fb7bea5093902c9771431eccb20c3e556ae6b6c9c3824a700",
-    "database_identity_status": "pending_database_load"
+    "database_identity_status": "database_ids_confirmed",
+    "database_schema_version": "schema_v4_fixed",
+    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
+    "current_ingestion_runs_loaded": false
   },
   {
     "document_id": "doc_product_sales_region_sample",
     "document_external_id": "doc_product_sales_region_sample",
     "document_db_id": null,
-    "source_id": null,
+    "source_id": 2,
     "source_name": "product_sales_region_excel",
     "ingestion_run_id": "797e7ee4-9139-4157-b6b4-cb3c325ce469",
     "file_name": "product_sales_region_sample.xlsx",
@@ -448,13 +493,16 @@
     "expected_status_hint": "accepted_or_needs_review",
     "data_quality_score": 99.51,
     "file_hash_sha256": "9411ffd6ca8f6135f8d1c8409015a750df3fc6931480b24d50826bb349a6b9ba",
-    "database_identity_status": "pending_database_load"
+    "database_identity_status": "database_ids_confirmed",
+    "database_schema_version": "schema_v4_fixed",
+    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
+    "current_ingestion_runs_loaded": false
   },
   {
     "document_id": "doc_dummyjson_inventory_sample",
     "document_external_id": "doc_dummyjson_inventory_sample",
     "document_db_id": null,
-    "source_id": null,
+    "source_id": 3,
     "source_name": "dummyjson_products_api",
     "ingestion_run_id": "7fb106e1-c920-4e92-b3c8-47402ee94ea5",
     "file_name": "dummyjson_inventory_sample.json",
@@ -476,13 +524,16 @@
     "expected_status_hint": "accepted_or_needs_review",
     "data_quality_score": 99.0,
     "file_hash_sha256": "c3e9d7c3d2105a9167573fe996cfea2424e1e57adbe2bd6fe62044100d2f57c9",
-    "database_identity_status": "pending_database_load"
+    "database_identity_status": "database_ids_confirmed",
+    "database_schema_version": "schema_v4_fixed",
+    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
+    "current_ingestion_runs_loaded": false
   },
   {
     "document_id": "doc_dataflow_technical_notes_markdown",
     "document_external_id": "doc_dataflow_technical_notes_markdown",
     "document_db_id": null,
-    "source_id": null,
+    "source_id": 4,
     "source_name": "dataflow_technical_report_pdf",
     "ingestion_run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282",
     "file_name": "DataFlow_technical_notes.md",
@@ -504,11 +555,14 @@
     "expected_status_hint": "accepted_or_needs_review_unknown_file_type",
     "data_quality_score": 100.0,
     "file_hash_sha256": null,
-    "database_identity_status": "pending_database_load"
+    "database_identity_status": "database_ids_confirmed",
+    "database_schema_version": "schema_v4_fixed",
+    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
+    "current_ingestion_runs_loaded": false
   },
   {
     "document_db_id": null,
-    "source_id": null,
+    "source_id": 4,
     "source_name": "dataflow_technical_report_pdf",
     "ingestion_run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282",
     "file_name": "missing_document_external_id.pdf",
@@ -530,13 +584,16 @@
     "expected_status_hint": "failed_contract_validation",
     "data_quality_score": null,
     "file_hash_sha256": null,
-    "database_identity_status": "pending_database_load"
+    "database_identity_status": "database_ids_confirmed",
+    "database_schema_version": "schema_v4_fixed",
+    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
+    "current_ingestion_runs_loaded": false
   },
   {
     "document_id": "doc_invalid_file_size_validation",
     "document_external_id": "doc_invalid_file_size_validation",
     "document_db_id": null,
-    "source_id": null,
+    "source_id": 4,
     "source_name": "dataflow_technical_report_pdf",
     "ingestion_run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282",
     "file_name": "invalid_file_size.pdf",
@@ -558,6 +615,9 @@
     "expected_status_hint": "failed",
     "data_quality_score": null,
     "file_hash_sha256": null,
-    "database_identity_status": "pending_database_load"
+    "database_identity_status": "database_ids_confirmed",
+    "database_schema_version": "schema_v4_fixed",
+    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
+    "current_ingestion_runs_loaded": false
   }
 ]

@@ -26,8 +26,23 @@ REQUIRED_FILES = [
     "scripts/week7_build_rag_handoff_package.py",
     "scripts/week7_build_prediction_payloads.py",
     "scripts/week7_build_ui_fixtures.py",
+    "scripts/week7_build_phat_mapping_summary.py",
+    "scripts/week7_build_lap_mapping_summary.py",
+    "scripts/week7_build_tuong_mapping_summary.py",
+    "scripts/week7_build_phi_hung_mapping_summary.py",
     "scripts/week7_data_pipeline_smoke_test.py",
     "logs/db_load_dry_run/duy_to_phat_db_smoke_plan.json",
+    "logs/db_load_results/phat_week7_external_database_proof.json",
+    "outputs/phat_handoff/phat_week7_mapping_summary.json",
+    "logs/lap_handoff/lap_week7_external_proof.json",
+    "outputs/lap_handoff/lap_week7_mapping_summary.json",
+    "docs/week7_duy_lap_mapping_result.md",
+    "logs/tuong_handoff/tuong_week7_external_proof.json",
+    "outputs/tuong_handoff/tuong_week7_mapping_summary.json",
+    "docs/week7_duy_tuong_mapping_result.md",
+    "outputs/hung_handoff/hung_week7_mapping_summary.json",
+    "logs/hung_handoff/hung_week7_external_proof.json",
+    "docs/week7_duy_phi_hung_mapping_result.md",
     "outputs/rag_handoff/week7_document_pages_db_enriched.jsonl",
     "outputs/rag_handoff/week7_rag_handoff_manifest.json",
     "outputs/prediction_payloads/tuong_week7_prediction_payloads.json",
@@ -45,6 +60,7 @@ REQUIRED_FILES = [
     "docs/week7_cross_team_delivery_matrix.md",
     "docs/week7_shared_repo_structure.md",
     "docs/week7_deployment_runbook.md",
+    "docs/week7_final_project_review.md",
     "docs/week7_backend_stub_contract.md",
     "integration/shared_repo_manifest.json",
     ".env.example",
@@ -87,6 +103,54 @@ def main() -> int:
             encoding="utf-8"
         )
     )
+    phat_mapping = json.loads(
+        (
+            PROJECT_ROOT
+            / "outputs/phat_handoff/phat_week7_mapping_summary.json"
+        ).read_text(encoding="utf-8")
+    )
+    phat_identity_proof = json.loads(
+        (
+            PROJECT_ROOT
+            / "logs/db_load_results/phat_week7_external_database_proof.json"
+        ).read_text(encoding="utf-8")
+    )
+    lap_mapping = json.loads(
+        (
+            PROJECT_ROOT
+            / "outputs/lap_handoff/lap_week7_mapping_summary.json"
+        ).read_text(encoding="utf-8")
+    )
+    lap_external_proof = json.loads(
+        (
+            PROJECT_ROOT
+            / "logs/lap_handoff/lap_week7_external_proof.json"
+        ).read_text(encoding="utf-8")
+    )
+    tuong_mapping = json.loads(
+        (
+            PROJECT_ROOT
+            / "outputs/tuong_handoff/tuong_week7_mapping_summary.json"
+        ).read_text(encoding="utf-8")
+    )
+    tuong_external_proof = json.loads(
+        (
+            PROJECT_ROOT
+            / "logs/tuong_handoff/tuong_week7_external_proof.json"
+        ).read_text(encoding="utf-8")
+    )
+    hung_mapping = json.loads(
+        (
+            PROJECT_ROOT
+            / "outputs/hung_handoff/hung_week7_mapping_summary.json"
+        ).read_text(encoding="utf-8")
+    )
+    hung_external_proof = json.loads(
+        (
+            PROJECT_ROOT
+            / "logs/hung_handoff/hung_week7_external_proof.json"
+        ).read_text(encoding="utf-8")
+    )
     team_handoff = (PROJECT_ROOT / "docs/week7_team_integration_handoff.md").read_text(
         encoding="utf-8"
     )
@@ -98,12 +162,81 @@ def main() -> int:
     assert manifest["page_count"] == 36
     assert manifest["non_empty_pages"] == 36
     assert manifest["total_characters"] == 129028
+    assert manifest["database_identity_status"] == "database_ids_confirmed"
+    assert manifest["source_id"] == 4
+    assert manifest["document_db_id"] == 1
     assert len(payloads) == 20
     assert len(additional_payloads) == 10
     assert payloads[10:] == additional_payloads
     assert all("source_id" in payload and "document_db_id" in payload for payload in payloads)
     assert ui_fixture["total_sources"] == 4
     assert ui_fixture["total_records_read"] == 11524
+    assert ui_fixture["database_identity_status"] == "database_ids_confirmed"
+    assert ui_fixture["latest_document"]["source_id"] == 4
+    assert ui_fixture["latest_document"]["document_db_id"] == 1
+    assert phat_mapping["status"] == "passed"
+    assert phat_mapping["database_ci_smoke_test_passed"] is True
+    assert phat_mapping["counts"]["structured_records"] == 11524
+    assert phat_mapping["counts"]["document_chunks"] == 293
+    assert phat_mapping["counts"]["prediction_logs"] == 10
+    assert phat_identity_proof["status"] == "passed"
+    assert phat_identity_proof["database_identity_status"] == "database_ids_confirmed"
+    assert isinstance(phat_identity_proof["current_duy_runs_loaded"], bool)
+    assert lap_mapping["handoff_contract_passed"] is True
+    assert lap_mapping["canonical_identity"]["source_id"] == 4
+    assert lap_mapping["canonical_identity"]["document_db_id"] == 1
+    assert lap_mapping["canonical_identity"]["document_external_id"] == "doc_dataflow_technical_report"
+    assert lap_external_proof["handoff_contract_passed"] is True
+    assert lap_external_proof["live_pgvector_proof_passed"] is False
+    assert lap_mapping["status"] in {"blocked_on_lap_execution", "passed"}
+    assert tuong_mapping["handoff_contract_passed"] is True
+    assert tuong_mapping["duy_input_contract"]["primary_count"] == 20
+    assert tuong_mapping["duy_input_contract"]["additional_count"] == 10
+    assert tuong_mapping["canonical_identity"]["source_id_map"] == {
+        "superstore_sales_csv": 1,
+        "product_sales_region_excel": 2,
+        "dummyjson_products_api": 3,
+        "dataflow_technical_report_pdf": 4,
+    }
+    assert tuong_mapping["canonical_identity"]["document_db_id"] == 1
+    assert tuong_mapping["canonical_identity"]["document_external_id"] == (
+        "doc_dataflow_technical_report"
+    )
+    assert tuong_mapping["status"] in {"blocked_on_tuong_refresh", "passed"}
+    assert (
+        tuong_external_proof["tuong_output_contract_passed"]
+        == tuong_mapping["tuong_output_contract_passed"]
+    )
+    assert (
+        tuong_external_proof["database_insert_proof_passed"]
+        == tuong_mapping["database_insert_proof_passed"]
+    )
+    if tuong_mapping["status"] == "passed":
+        assert tuong_mapping["tuong_output_contract_passed"] is True
+        assert tuong_mapping["prediction_ci_proof_passed"] is True
+        assert tuong_mapping["database_insert_proof_passed"] is True
+    else:
+        assert tuong_mapping["blocking_findings"]
+    assert hung_mapping["canonical_identity"]["source_id"] == 4
+    assert hung_mapping["canonical_identity"]["document_db_id"] == 1
+    assert (
+        hung_mapping["canonical_identity"]["document_external_id"]
+        == "doc_dataflow_technical_report"
+    )
+    assert hung_mapping["status"] in {
+        "blocked_on_phi_hung_refresh",
+        "ready_with_lineage_caveat",
+        "passed",
+    }
+    assert hung_external_proof["gates"] == hung_mapping["gates"]
+    if hung_mapping["status"] == "passed":
+        assert hung_mapping["gates"]["fixture_contract_passed"] is True
+        assert hung_mapping["gates"]["real_lineage_passed"] is True
+        assert hung_mapping["gates"]["ui_code_docs_passed"] is True
+        assert hung_mapping["gates"]["hung_unit_tests_passed"] is True
+        assert hung_mapping["gates"]["ui_smoke_passed"] is True
+    else:
+        assert hung_mapping["blocking_findings"]
     assert smoke_plan["totals"]["structured_records"] == 100
     for member_section in ("Duy -> Phat", "Duy -> Lap", "Duy -> Tuong", "Duy -> Phi/Hung"):
         assert member_section in team_handoff
@@ -120,9 +253,16 @@ def main() -> int:
     print("Week 7 validation passed")
     print(f"Checked {len(REQUIRED_FILES)} required Week 7 files")
     print("Checked smoke DB plan: 4 sources, 36 pages, 100 structured records")
-    print("Checked Lap, Tuong's 20 prediction payloads, Phi/Hung contracts, and shared Docker/CI drafts")
-    if manifest.get("database_identity_status") != "database_ids_confirmed":
-        print("Warning: database IDs remain pending until Phat's fixed schema and PostgreSQL are available")
+    print("Checked Phat's real Week 7 DB proof and stable source/document ID mapping")
+    print("Checked Duy-to-Lap, Duy-to-Tuong and Duy-to-Phi/Hung mapping audits, plus shared Docker/CI drafts")
+    if not lap_mapping["live_pgvector_proof_passed"]:
+        print("Note: Lap handoff contract passes, but live chunk insert/retrieval proof is still pending in the Lap repository")
+    if not tuong_mapping["tuong_output_contract_passed"]:
+        print("Note: Tuong handoff contract passes, but the current results/log/UI fixtures do not cover Duy's 20-payload batch")
+    if hung_mapping["status"] != "passed":
+        print("Note: Phi/Hung UI tests and smoke pass, but fixture lineage or UI contract cleanup is still pending in the Hung repository")
+    if not phat_identity_proof["current_duy_runs_loaded"]:
+        print("Note: stable database IDs are confirmed; latest Duy run UUIDs still require a fresh DB load")
     return 0
 
 

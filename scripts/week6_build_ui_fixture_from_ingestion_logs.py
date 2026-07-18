@@ -1,13 +1,19 @@
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 from statistics import mean
 from typing import Any
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-RUN_LOG_DIR = PROJECT_ROOT / "logs/runs"
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from data_engineering.pipelines.handoff_context import load_latest_successful_runs
+
+
 OUTPUT_PATH = PROJECT_ROOT / "logs/ui_fixtures/duy_ingestion_dashboard_fixture.json"
 PHI_HUNG_OUTPUT_PATH = PROJECT_ROOT / "outputs/ui_fixtures/duy_latest_ingestion_summary.json"
 DATA_QUALITY_OUTPUT_PATH = PROJECT_ROOT / "outputs/ui_fixtures/duy_data_quality_summary.json"
@@ -50,12 +56,9 @@ def _summarize_prediction_payload(payload: dict[str, Any] | None) -> dict[str, A
 
 
 def build_ui_fixture() -> dict[str, Any]:
-    all_runs = [_read_json(path) for path in sorted(RUN_LOG_DIR.glob("*.json"))]
-    runs = _select_latest_run_per_source(
-        [run for run in all_runs if run.get("status") in {"success", "partial_success"}]
-    )
-    if not runs:
-        raise FileNotFoundError("No run logs found under logs/runs")
+    # Use the tracked append-only history as well as local run files so this
+    # historical fixture builder works from a clean clone.
+    runs = _select_latest_run_per_source(load_latest_successful_runs())
 
     scores = [run.get("data_quality_score", 0.0) or 0.0 for run in runs]
     fixture_runs = []

@@ -47,7 +47,9 @@ source_id for each source_name
 document_db_id for doc_dataflow_technical_report
 schema version actually executed
 SQL counts for six ingestion tables
-logs/db_validation/duy_data_load_counts.json
+week7/database/outputs/db_validation/duy_data_load_counts.json
+week7/database/outputs/dashboard_view_samples/v_source_quality_summary.json
+week7/docs/week7_database_setup_runbook.md
 ```
 
 ### Acceptance query
@@ -77,8 +79,8 @@ docs/week7_duy_to_lap_rag_handoff.md
 ```json
 {
   "document_external_id": "doc_dataflow_technical_report",
-  "document_db_id": null,
-  "source_id": null,
+  "document_db_id": 1,
+  "source_id": 4,
   "file_name": "DataFlow_Technical_Report.pdf",
   "page_number": 1,
   "text": "...",
@@ -88,13 +90,15 @@ docs/week7_duy_to_lap_rag_handoff.md
 }
 ```
 
-`document_db_id` and `source_id` remain null until Phat confirms a real DB
-load. Lap must fail clearly rather than insert a null integer foreign key.
+Phat's Week 7 evidence confirms `document_db_id=1` and `source_id=4`.
+`current_ingestion_runs_loaded=false` remains explicit because the newest Duy
+run UUID has not yet been reloaded. Lap must still fail clearly if either
+integer ID is missing in a future handoff.
 
 ### Lap must return
 
 ```text
-outputs/rag/week7_pgvector_insert_result.json
+outputs/rag/week7_chunk_insert_summary.json
 outputs/rag/week7_pgvector_query_result.json
 outputs/rag/week7_rag_query_log_payload.json
 outputs/ui_fixtures/lap_rag_response_real.json
@@ -102,6 +106,18 @@ outputs/ui_fixtures/lap_rag_response_real.json
 
 The result must show `chunk_id`, integer `document_id`, `page_number`,
 384-dimensional embeddings, `similarity_score`, and citation fields.
+
+Current audit note:
+
+- Duy handoff validation passes for 36 DataFlow pages.
+- Lap's current chunk and query output files are still
+  `pending_db_connection`; they are not execution proof.
+- The DataFlow UI fixture is contract-shaped, but must be labelled as a
+  fixture until Lap replaces the pending outputs with a real database run.
+- Phat's schema uses `user_query` for `rag_query_logs`; Lap's `query_text`
+  alias must be normalized before insert.
+- The complete audit and cleanup candidate list is in
+  `docs/week7_duy_lap_mapping_result.md`.
 
 ## Duy -> Tuong
 
@@ -112,6 +128,9 @@ outputs/prediction_payloads/tuong_week7_prediction_payloads.json
 outputs/prediction_payloads/week7/*.json
 docs/week7_duy_to_tuong_prediction_payload_contract.md
 docs/week7_duy_to_tuong_additional_prediction_payloads.md
+docs/week7_duy_tuong_mapping_result.md
+outputs/tuong_handoff/tuong_week7_mapping_summary.json
+logs/tuong_handoff/tuong_week7_external_proof.json
 ```
 
 There are 20 test payloads: 10 baseline and 10 additional cases. They include
@@ -141,6 +160,15 @@ scripts/week7_prediction_ci_smoke_test.py
 Every item must use one shape and one of:
 `accepted`, `needs_review`, `waiting_for_source`, `failed`.
 Failed validation must not disappear from the batch.
+
+Current audit note:
+
+- Duy's 20-payload contract passes.
+- Tuong's repository currently has a stale 10-payload input copy, eight
+  prediction results, one prediction-log payload, and no real DB insert result.
+- Tuong's four-state UI fixture is contract-shaped but uses synthetic IDs.
+- The full findings and cleanup list are in
+  `docs/week7_duy_tuong_mapping_result.md`.
 
 ## Duy -> Phi/Hung
 
@@ -189,15 +217,16 @@ stub as production.
 Phat must provide the shared database boundary:
 
 ```text
-week7/database/schema_v4_fixed.sql
-week7/database/setup_database_v3.sql
+week7/database/schema/schema_v4_fixed.sql
+week7/database/schema/setup_database_v3.sql
 docker-compose.db.yml
-week7/database/ci_database_smoke_test.py
-week7/database/validation_queries_v3.sql
-week7/outputs/db_validation/duy_data_load_counts.json
-week7/outputs/db_validation/rag_pgvector_counts.json
-week7/outputs/db_validation/prediction_log_counts.json
-week7/outputs/dashboard_view_samples/*.json
+week7/database/scripts/run_database_setup.py
+week7/database/scripts/ci_database_smoke_test.py
+week7/database/validation/validation_queries_v3.sql
+week7/database/outputs/db_validation/duy_data_load_counts.json
+week7/database/outputs/db_validation/rag_pgvector_counts.json
+week7/database/outputs/db_validation/prediction_log_counts.json
+week7/database/outputs/dashboard_view_samples/*.json
 ```
 
 Without these files, Duy can only provide dry-run plans and contract checks.
@@ -240,6 +269,45 @@ backend-client error envelope behavior
 Streamlit fixture-mode proof
 CI job and staging demo runbook
 ```
+
+The UI must preserve the canonical Week 7 database-enriched lineage:
+
+```text
+source_id=4
+document_external_id=doc_dataflow_technical_report
+document_db_id=1
+ingestion_run_id=<the run referenced by the fixture>
+```
+
+The Duy-side audit command is:
+
+```powershell
+python scripts/week7_build_phi_hung_mapping_summary.py --run-hung-checks
+```
+
+It writes:
+
+```text
+outputs/hung_handoff/hung_week7_mapping_summary.json
+logs/hung_handoff/hung_week7_external_proof.json
+docs/week7_duy_phi_hung_mapping_result.md
+```
+
+Current audit result:
+
+```text
+Phi/Hung tests: 63 passed, 15 skipped
+UI smoke test: passed
+Duy fixture lineage: stale (null source_id/document_db_id in Hung copy)
+Tuong fixture lineage: stale (null DB IDs in Hung copy)
+Lap DataFlow fixture: contract passed
+Overall mapping: blocked_on_phi_hung_refresh
+```
+
+This is an owner-delivery blocker, not a Duy ingestion failure. Phi/Hung must
+refresh `demo/fixtures/week7/` from the canonical Duy, Phat, Lap and Tuong
+outputs, remove ignored `code_by_others` source references, and rerun the
+fixture validator before the UI mapping can be marked passed.
 
 ## Shared completion gate
 

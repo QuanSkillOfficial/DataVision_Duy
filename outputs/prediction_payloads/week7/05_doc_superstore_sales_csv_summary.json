@@ -2,7 +2,7 @@
   "document_id": "doc_superstore_sales_csv_summary",
   "document_external_id": "doc_superstore_sales_csv_summary",
   "document_db_id": null,
-  "source_id": null,
+  "source_id": 1,
   "source_name": "superstore_sales_csv",
   "ingestion_run_id": "0a11e66b-59c8-4259-9759-d36589423758",
   "file_name": "superstore_clean.csv",
@@ -24,5 +24,8 @@
   "expected_status_hint": "accepted_or_needs_review",
   "data_quality_score": 100.0,
   "file_hash_sha256": "85e495dd7ef4966fb7bea5093902c9771431eccb20c3e556ae6b6c9c3824a700",
-  "database_identity_status": "pending_database_load"
+  "database_identity_status": "database_ids_confirmed",
+  "database_schema_version": "schema_v4_fixed",
+  "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
+  "current_ingestion_runs_loaded": false
 }

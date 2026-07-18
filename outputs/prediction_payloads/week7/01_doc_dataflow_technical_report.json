@@ -1,8 +1,8 @@
 {
   "document_id": "doc_dataflow_technical_report",
   "document_external_id": "doc_dataflow_technical_report",
-  "document_db_id": null,
-  "source_id": null,
+  "document_db_id": 1,
+  "source_id": 4,
   "source_name": "dataflow_technical_report_pdf",
   "file_name": "DataFlow_Technical_Report.pdf",
   "file_type": "pdf",
@@ -28,5 +28,8 @@
   "file_hash_sha256": "06c0c318db353a5c5c6dbaa84c6778cde022fde92bd1bb7f56e32c485d62fa54",
   "test_case": "full_pdf_document",
   "expected_status_hint": "accepted_or_needs_review",
-  "database_identity_status": "pending_database_load"
+  "database_identity_status": "database_ids_confirmed",
+  "database_schema_version": "schema_v4_fixed",
+  "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
+  "current_ingestion_runs_loaded": false
 }

@@ -45,7 +45,11 @@
         "outputs/prediction_payloads/tuong_week7_prediction_payloads.json",
         "outputs/ui_fixtures/duy_week7_database_enriched_summary.json",
         "scripts/load_ingestion_outputs_to_postgres.py",
-        "scripts/week7_ci_ingestion_smoke_test.py"
+        "scripts/week7_ci_ingestion_smoke_test.py",
+        "scripts/week7_build_phi_hung_mapping_summary.py",
+        "outputs/hung_handoff/hung_week7_mapping_summary.json",
+        "logs/hung_handoff/hung_week7_external_proof.json",
+        "docs/week7_duy_phi_hung_mapping_result.md"
       ],
       "receives": [
         "Phat fixed schema and database credentials",
@@ -56,11 +60,13 @@
     },
     "Phat": {
       "provides": [
-        "week7/database/schema_v4_fixed.sql",
-        "week7/database/setup_database_v3.sql",
-        "week7/database/ci_database_smoke_test.py",
-        "week7/outputs/db_validation/duy_data_load_counts.json",
-        "week7/outputs/dashboard_view_samples/"
+        "week7/database/schema/schema_v4_fixed.sql",
+        "week7/database/schema/setup_database_v3.sql",
+        "week7/database/validation/validation_queries_v3.sql",
+        "week7/database/scripts/run_database_setup.py",
+        "week7/database/scripts/ci_database_smoke_test.py",
+        "week7/database/outputs/db_validation/duy_data_load_counts.json",
+        "week7/database/outputs/dashboard_view_samples/"
       ],
       "receives": [
         "Duy loader, run logs, manifests, clean files and DB-enriched PDF handoff",
@@ -73,16 +79,18 @@
       "provides": [
         "ai/rag/scripts/week7_rag_ci_smoke_test.py",
         "ai/rag/scripts/week7_pgvector_smoke_test.py",
-        "outputs/rag/week7_pgvector_insert_result.json",
+        "outputs/rag/week7_chunk_insert_summary.json",
         "outputs/rag/week7_pgvector_query_result.json",
         "outputs/rag/week7_rag_query_log_payload.json",
-        "outputs/ui_fixtures/lap_rag_response_real.json"
+        "outputs/ui_fixtures/lap_rag_response_real.json",
+        "docs/week7_duy_lap_mapping_result.md"
       ],
       "receives": [
         "Duy DB-enriched document pages and PDF metadata",
         "Phat documents.id and document_chunks schema",
         "Tuong safe document-type metadata policy",
-        "Phi/Hung citation display contract"
+        "Phi/Hung citation display contract",
+        "Duy mapping audit and execution acceptance gate"
       ]
     },
     "Tuong": {
@@ -92,13 +100,15 @@
         "outputs/db_integration/week7_prediction_log_payloads.json",
         "outputs/ui_fixtures/tuong_prediction_batch_response.json",
         "outputs/ui_fixtures/tuong_prediction_review_queue_sample.json",
-        "outputs/rag_metadata/document_type_filter_payload.json"
+        "outputs/rag_metadata/document_type_filter_payload.json",
+        "docs/week7_duy_tuong_mapping_result.md"
       ],
       "receives": [
         "Duy DB-enriched prediction payloads",
         "Phat final prediction_logs column mapping",
         "Lap safe filtering requirements",
-        "Phi/Hung review and feedback UI contract"
+        "Phi/Hung review and feedback UI contract",
+        "Duy mapping audit and current 20-payload acceptance gate"
       ]
     },
     "Phi/Hung": {
@@ -107,13 +117,21 @@
         "demo/services/fixture_validator.py",
         "demo/fixtures/week7/",
         "backend API contract and backend-client smoke test",
-        "UI fixture validation result"
+        "UI fixture validation result",
+        "demo/fixtures/week7/duy_latest_ingestion_summary.json",
+        "demo/fixtures/week7/phat_dashboard_views_sample.json",
+        "demo/fixtures/week7/lap_rag_response_real.json",
+        "demo/fixtures/week7/tuong_prediction_batch_response.json",
+        "demo/fixtures/week7/tuong_prediction_review_queue_sample.json",
+        "screenshots/week7_staging_ready_ui/"
       ],
       "receives": [
         "Duy ingestion summary and handoff paths",
         "Phat dashboard view samples",
         "Lap DataFlow citation fixture",
-        "Tuong staging-safe prediction and feedback fixtures"
+        "Tuong staging-safe prediction and feedback fixtures",
+        "Duy canonical identity bridge: source_id=4 and document_db_id=1",
+        "Duy fixture validation and refresh acceptance gate"
       ]
     }
   },
@@ -121,11 +139,14 @@
     "local_contract": [
       "docker compose -f docker-compose.db.yml config --quiet",
       "docker compose -f docker-compose.yml config --quiet",
+      "python scripts/week7_build_lap_mapping_summary.py --run-lap-tests",
+      "python scripts/week7_build_tuong_mapping_summary.py --run-tuong-checks",
+      "python scripts/week7_build_phi_hung_mapping_summary.py --run-hung-checks",
       "python scripts/week7_shared_integration_smoke_test.py"
     ],
     "shared_ci_after_merge": [
       "python scripts/week7_ci_ingestion_smoke_test.py",
-      "python week7/database/ci_database_smoke_test.py",
+      "python week7/database/scripts/ci_database_smoke_test.py",
       "python ai/rag/scripts/week7_rag_ci_smoke_test.py",
       "python scripts/week7_prediction_ci_smoke_test.py",
       "python scripts/week7_ui_ci_smoke_test.py"
@@ -135,7 +156,9 @@
       "Duy table counts are queried back",
       "Lap returns chunk_id, page_number and similarity_score",
       "Tuong prediction_logs and review queue contain rows",
-      "Phi/Hung loads the same output fixtures without schema errors"
+      "Phi/Hung loads the same output fixtures without schema errors",
+      "Phi/Hung fixtures preserve source_id, document_external_id, document_db_id and ingestion_run_id",
+      "Phi/Hung mapping audit reports ui_code_docs_passed=true and real_lineage_passed=true"
     ]
   }
 }

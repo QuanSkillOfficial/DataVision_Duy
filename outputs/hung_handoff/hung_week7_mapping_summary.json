@@ -1,0 +1,348 @@
+{
+  "schema_version": "duy_phi_hung_week7_mapping_v1",
+  "generated_at": "2026-07-18T18:25:42.696802+00:00",
+  "status": "blocked_on_phi_hung_refresh",
+  "source_repositories": {
+    "duy": "DataVision_Duy",
+    "phi_hung": "DataVision_Hung",
+    "hung_commit": "3e24e03e8da13641e3739449116d35d7c8c9904f"
+  },
+  "canonical_identity": {
+    "source_id_map": {
+      "superstore_sales_csv": 1,
+      "product_sales_region_excel": 2,
+      "dummyjson_products_api": 3,
+      "dataflow_technical_report_pdf": 4
+    },
+    "document_external_id": "doc_dataflow_technical_report",
+    "document_db_id": 1,
+    "source_id": 4,
+    "file_name": "DataFlow_Technical_Report.pdf",
+    "records": 11524,
+    "pages": 36,
+    "chunks": 293,
+    "rag_query_logs": 1,
+    "prediction_logs": 10,
+    "rule": "UI must display source_id as Phat integer, document_db_id as documents.id, and ingestion_run_id as Duy run UUID."
+  },
+  "duy_canonical_fixture": {
+    "status": "passed",
+    "path": "outputs/ui_fixtures/duy_week7_database_enriched_summary.json",
+    "total_sources": 4,
+    "total_runs": 4,
+    "total_records_read": 11524,
+    "average_data_quality_score": 99.63,
+    "latest_document": {
+      "source_id": 4,
+      "document_db_id": 1,
+      "document_external_id": "doc_dataflow_technical_report",
+      "file_name": "DataFlow_Technical_Report.pdf",
+      "file_hash_sha256": "06c0c318db353a5c5c6dbaa84c6778cde022fde92bd1bb7f56e32c485d62fa54",
+      "ingestion_run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282"
+    },
+    "database_identity_status": "database_ids_confirmed"
+  },
+  "hung_fixture_audit": {
+    "duy": {
+      "status": "stale_or_incomplete",
+      "path": "DataVision_Hung/demo/fixtures/week7/duy_latest_ingestion_summary.json",
+      "errors": [
+        "latest_document.source_id=None does not match Duy 4",
+        "latest_document.document_db_id=None does not match Duy 1",
+        "database_identity_status is not database_ids_confirmed",
+        "fixture metadata points to ignored code_by_others path"
+      ],
+      "source_id": null,
+      "document_db_id": null,
+      "document_external_id": "doc_dataflow_technical_report",
+      "ingestion_run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282",
+      "database_identity_status": "pending_database_load"
+    },
+    "phat": {
+      "status": "stale_or_incomplete",
+      "path": "DataVision_Hung/demo/fixtures/week7/phat_dashboard_views_sample.json",
+      "errors": [
+        "5 review-queue rows are missing document_external_id"
+      ],
+      "view_names": [
+        "v_dashboard_overview",
+        "v_data_quality_dashboard",
+        "v_document_quality_summary",
+        "v_document_rag_readiness",
+        "v_ingestion_health",
+        "v_latest_ingestion_runs",
+        "v_prediction_confidence_summary",
+        "v_prediction_review_queue",
+        "v_rag_daily_metrics",
+        "v_recent_activity",
+        "v_source_quality_detail",
+        "v_source_quality_summary"
+      ],
+      "view_row_counts": {
+        "v_dashboard_overview": 1,
+        "v_data_quality_dashboard": 4,
+        "v_document_quality_summary": 1,
+        "v_document_rag_readiness": 1,
+        "v_ingestion_health": 1,
+        "v_latest_ingestion_runs": 4,
+        "v_prediction_confidence_summary": 4,
+        "v_prediction_review_queue": 5,
+        "v_rag_daily_metrics": 1,
+        "v_recent_activity": 5,
+        "v_source_quality_detail": 4,
+        "v_source_quality_summary": 4
+      },
+      "source_id_map": {
+        "superstore_sales_csv": 1,
+        "product_sales_region_excel": 2,
+        "dummyjson_products_api": 3,
+        "dataflow_technical_report_pdf": 4
+      },
+      "rag_readiness_rows": 1,
+      "review_queue_rows": 5,
+      "review_rows_missing_document_external_id": 5,
+      "metadata": {
+        "normalized_for": "week7_ui",
+        "source_path": "code_by_others\\DataVision_Phat\\week7\\database\\outputs\\dashboard_view_samples",
+        "exact_week7_source_available": true,
+        "owner": "Phat"
+      }
+    },
+    "lap": {
+      "status": "passed",
+      "path": "DataVision_Hung/demo/fixtures/week7/lap_rag_response_real.json",
+      "errors": [],
+      "status_value": "retrieval_only",
+      "document_external_id": "doc_dataflow_technical_report",
+      "document_db_id": 1,
+      "context_rows": 5,
+      "citation_rows": 5,
+      "retrieval_backend": "pgvector",
+      "embedding_dimension": 384
+    },
+    "tuong": {
+      "status": "stale_or_incomplete",
+      "batch_path": "DataVision_Hung/demo/fixtures/week7/tuong_prediction_batch_response.json",
+      "queue_path": "DataVision_Hung/demo/fixtures/week7/tuong_prediction_review_queue_sample.json",
+      "errors": [
+        "5 batch items have null source_id",
+        "5 batch items have null document_db_id",
+        "3 review items have null document_db_id"
+      ],
+      "batch_count": 5,
+      "queue_count": 3,
+      "status_counts": {
+        "accepted": 1,
+        "failed": 1,
+        "needs_review": 2,
+        "waiting_for_source": 1
+      },
+      "batch_missing_source_id": 5,
+      "batch_missing_document_db_id": 5,
+      "queue_missing_document_db_id": 3
+    }
+  },
+  "ui_code_and_docs_audit": {
+    "status": "passed",
+    "missing_active_files": [],
+    "active_file_count": 26,
+    "active_file_total": 26,
+    "findings": [
+      {
+        "path": "demo/config.py",
+        "finding": "UI config still uses 0.60 as the prediction threshold",
+        "fix": "Use Tuong's 0.80 staging acceptance threshold; keep 0.60 only as a display band if explicitly named."
+      },
+      {
+        "path": "docs/backend_api_contract_for_ui.md",
+        "finding": "prediction API example/rule is still on the legacy 0.60/string-ID contract",
+        "fix": "Use integer source_id, document_db_id -> prediction_logs.document_id, and the 0.80 staging gate."
+      },
+      {
+        "path": "demo/services/fixture_validator.py",
+        "finding": "fixture validator does not cover all lineage fields",
+        "fix": "Validate source_id, document_external_id, document_db_id, and ingestion_run_id for DB-enriched fixtures."
+      },
+      {
+        "path": "scripts/week7_refresh_fixtures.py",
+        "finding": "fixture refresh depends on ignored code_by_others/ checkout",
+        "fix": "Accept explicit sibling repository paths and fail if the source is not the current Week 7 output."
+      }
+    ],
+    "route_contract": {
+      "base_url_has_api": true,
+      "duplicate_api_route_in_client": false,
+      "backend_stub_present": true,
+      "workflow_present": true
+    }
+  },
+  "screenshots_audit": {
+    "status": "passed",
+    "directory": "DataVision_Hung/screenshots/week7_staging_ready_ui",
+    "required_count": 8,
+    "present_count": 8,
+    "missing": [],
+    "note": "File presence is verified; screenshot freshness must be confirmed against refreshed fixtures."
+  },
+  "gates": {
+    "fixture_contract_passed": false,
+    "duy_fixture_lineage_passed": false,
+    "phat_dashboard_contract_passed": false,
+    "lap_rag_fixture_passed": true,
+    "tuong_fixture_contract_passed": false,
+    "ui_structure_passed": true,
+    "ui_code_docs_passed": false,
+    "real_lineage_passed": false,
+    "screenshots_present": true,
+    "hung_unit_tests_passed": true,
+    "ui_smoke_passed": true
+  },
+  "blocking_findings": [
+    {
+      "severity": "blocking",
+      "area": "duy_fixture",
+      "finding": "latest_document.source_id=None does not match Duy 4"
+    },
+    {
+      "severity": "blocking",
+      "area": "duy_fixture",
+      "finding": "latest_document.document_db_id=None does not match Duy 1"
+    },
+    {
+      "severity": "blocking",
+      "area": "duy_fixture",
+      "finding": "database_identity_status is not database_ids_confirmed"
+    },
+    {
+      "severity": "blocking",
+      "area": "duy_fixture",
+      "finding": "fixture metadata points to ignored code_by_others path"
+    },
+    {
+      "severity": "high",
+      "area": "phat_fixture",
+      "finding": "5 review-queue rows are missing document_external_id"
+    },
+    {
+      "severity": "blocking",
+      "area": "tuong_fixture",
+      "finding": "5 batch items have null source_id"
+    },
+    {
+      "severity": "blocking",
+      "area": "tuong_fixture",
+      "finding": "5 batch items have null document_db_id"
+    },
+    {
+      "severity": "blocking",
+      "area": "tuong_fixture",
+      "finding": "3 review items have null document_db_id"
+    },
+    {
+      "severity": "high",
+      "area": "ui_code_and_docs",
+      "path": "demo/config.py",
+      "finding": "UI config still uses 0.60 as the prediction threshold",
+      "fix": "Use Tuong's 0.80 staging acceptance threshold; keep 0.60 only as a display band if explicitly named."
+    },
+    {
+      "severity": "high",
+      "area": "ui_code_and_docs",
+      "path": "docs/backend_api_contract_for_ui.md",
+      "finding": "prediction API example/rule is still on the legacy 0.60/string-ID contract",
+      "fix": "Use integer source_id, document_db_id -> prediction_logs.document_id, and the 0.80 staging gate."
+    },
+    {
+      "severity": "high",
+      "area": "ui_code_and_docs",
+      "path": "demo/services/fixture_validator.py",
+      "finding": "fixture validator does not cover all lineage fields",
+      "fix": "Validate source_id, document_external_id, document_db_id, and ingestion_run_id for DB-enriched fixtures."
+    },
+    {
+      "severity": "high",
+      "area": "ui_code_and_docs",
+      "path": "scripts/week7_refresh_fixtures.py",
+      "finding": "fixture refresh depends on ignored code_by_others/ checkout",
+      "fix": "Accept explicit sibling repository paths and fail if the source is not the current Week 7 output."
+    }
+  ],
+  "cleanup_candidates": [
+    {
+      "path": "demo/fixtures/*.json",
+      "reason": "Root fixtures contain pre-Week 7 vendor/refund-policy and synthetic prediction data.",
+      "action": "Archive after confirming all active tests use demo/fixtures/week7/."
+    },
+    {
+      "path": "scripts/week7_refresh_fixtures.py",
+      "reason": "Refresh source is hard-coded to code_by_others/, which is ignored and absent in a clean checkout.",
+      "action": "Accept explicit --duy-root/--phat-root/--lap-root/--tuong-root arguments and fail clearly when a source is stale."
+    },
+    {
+      "path": "demo/config.py",
+      "reason": "PREDICTION_CONFIDENCE_THRESHOLD remains 0.60 while Tuong's staging acceptance gate is 0.80.",
+      "action": "Use 0.80 as the acceptance threshold; keep 0.60 only as the UI medium-confidence boundary if needed."
+    },
+    {
+      "path": "demo/services/fixture_validator.py",
+      "reason": "The validator checks that document_db_id exists as a key but accepts null lineage IDs.",
+      "action": "Require real IDs for database-enriched Week 7 fixtures and keep a separate pre-DB contract if needed."
+    },
+    {
+      "path": "docs/backend_api_contract_for_ui.md",
+      "reason": "Prediction status rules still say confidence >= 0.60 is accepted and the sample source_id is a string.",
+      "action": "Align the contract with source_id integer 4 and Tuong's 0.80 staging policy."
+    },
+    {
+      "path": "docs/Task Week 1-6.md",
+      "reason": "Historical task document is large and contains superseded mock paths and contracts.",
+      "action": "Move to docs/archive/ or clearly mark as historical."
+    },
+    {
+      "path": "materials/, frontend/, powerbi/, database/, data_engineering/",
+      "reason": "These folders are not part of the active Streamlit Week 7 runtime boundary.",
+      "action": "Keep only if owned deliverables still depend on them; otherwise archive outside the shared UI module."
+    },
+    {
+      "path": "screenshots/week2_*, screenshots/week3_*, screenshots/week5_*, screenshots/week6_*",
+      "reason": "Historical screenshots can be mistaken for the Week 7 staging demo.",
+      "action": "Archive and keep screenshots/week7_staging_ready_ui/ as the active demo evidence."
+    }
+  ],
+  "required_phi_hung_actions": [
+    "Refresh demo/fixtures/week7/duy_latest_ingestion_summary.json from Duy's DB-enriched fixture.",
+    "Keep Phat view samples, but expose document_external_id alongside document_id in review-queue display data.",
+    "Replace Tuong UI fixtures with the latest staging-safe outputs and preserve source_id/document_db_id/ingestion_run_id.",
+    "Change the UI acceptance threshold contract from 0.60 to Tuong's 0.80 staging gate.",
+    "Make fixture refresh accept explicit sibling repository paths instead of depending on ignored code_by_others/.",
+    "Require non-null DB lineage in database-enriched fixtures; retain a separate pre-DB fixture contract if needed.",
+    "Keep DataFlow pgvector fixture as the only active RAG demo source and archive root vendor/refund-policy fixtures.",
+    "Confirm Week 7 screenshot freshness after fixture refresh."
+  ],
+  "commands_after_phi_hung_patch": {
+    "unit_tests": "python -m pytest tests -q",
+    "ui_smoke": "python scripts/week7_ui_ci_smoke_test.py",
+    "fixture_refresh": "python scripts/week7_refresh_fixtures.py --duy-root ... --phat-root ... --lap-root ... --tuong-root ...",
+    "streamlit": "streamlit run demo/streamlit_app.py",
+    "backend_stub": "python backend_stub/main.py"
+  },
+  "notes": [
+    "The Week 7 Lap fixture is real DataFlow/pgvector-shaped and passes the citation contract.",
+    "The Week 7 Duy and Tuong fixtures are structurally valid but currently stale or missing DB lineage.",
+    "The audit was read-only against the sibling Hung repository; owner cleanup/source fixes require a Hung commit."
+  ],
+  "hung_execution": {
+    "unit_tests": {
+      "status": "passed",
+      "command": "python -m pytest tests -q -p no:cacheprovider",
+      "returncode": 0,
+      "output_tail": ".....sssssssssssssss.................................................... [ 92%]\n......                                                                   [100%]\n63 passed, 15 skipped in 1.14s"
+    },
+    "ui_smoke": {
+      "status": "passed",
+      "command": "python scripts/week7_ui_ci_smoke_test.py",
+      "returncode": 0,
+      "output_tail": "Week 7 UI CI smoke test passed."
+    }
+  }
+}
