@@ -15,7 +15,7 @@ The ten Week 7 readiness outputs are mapped as follows:
 | GitHub Actions CI draft | `.github/workflows/ci.yml` |
 | Docker database setup | `docker-compose.db.yml` |
 | Module CI smoke tests | Duy and owner-specific Week 7 smoke entrypoints |
-| Local Docker integration test | `scripts/week7_local_docker_integration_smoke_test.py` |
+| Local Docker integration test | `scripts/week7_duy_phat_docker_db_integration_test.py` plus the full-stack `week7_local_docker_integration_smoke_test.py` |
 | Full application Compose draft | `docker-compose.yml` |
 | Environment template | `.env.example` |
 | Backend API skeleton/stub | `backend_stub/` |
@@ -65,8 +65,9 @@ Phat's schema, or the UI image is available.
 docker compose -f docker-compose.db.yml up -d
 ```
 
-The init directory enables the `vector` extension. Phat's schema and views
-must be applied next; this repository does not silently mount a copied schema.
+The init directory enables `vector` and applies a pinned copy of Phat's Week 7
+schema contract. This snapshot exists only for Duy's standalone CI/local test;
+Phat remains the owner of the shared schema and views.
 
 Check the extension:
 
@@ -157,7 +158,7 @@ Expected smoke counts:
 
 ```text
 sources              4
-pipeline_runs        4 or more
+pipeline_runs        4
 ingestion_logs       4
 documents            1
 document_pages       36
@@ -170,6 +171,15 @@ persist the query-back result under:
 ```text
 logs/db_load_results/duy_to_phat_db_load_result.json
 ```
+
+Run the reproducible current-run proof in one command:
+
+```powershell
+python scripts/week7_duy_phat_docker_db_integration_test.py --mode smoke-then-full
+```
+
+It uses port `55432`, verifies smoke and full counts, regenerates handoffs, and
+removes its isolated Docker project and volume.
 
 ## Regenerate handoffs after confirmed database IDs
 
@@ -197,11 +207,15 @@ Start and probe the database:
 python scripts/week7_local_docker_integration_smoke_test.py --start-db
 ```
 
-Start the database and backend:
+Start the database and backend, validate the API contract, then remove the
+isolated test services and volume:
 
 ```powershell
-python scripts/week7_local_docker_integration_smoke_test.py --start-full
+python scripts/week7_local_docker_integration_smoke_test.py --start-full --cleanup
 ```
+
+The successful runtime trace is stored at
+`outputs/integration/week7_local_docker_smoke_result.json`.
 
 Stop services started by the probe:
 
@@ -215,9 +229,11 @@ python scripts/week7_local_docker_integration_smoke_test.py --down
 python scripts/week7_ci_ingestion_smoke_test.py
 python scripts/week7_shared_repo_readiness_check.py
 python scripts/week7_shared_integration_smoke_test.py
+python scripts/week7_verify_db_load_result.py --expected-structured-records 11524 --verify-handoffs
 ```
 
-After owner repositories are merged, the conditional CI jobs run:
+After owner repositories are merged, `module-discovery` activates the
+corresponding conditional CI jobs:
 
 - Phat database setup and smoke test;
 - Lap RAG CI smoke test;
@@ -226,8 +242,9 @@ After owner repositories are merged, the conditional CI jobs run:
 
 ## Week 8 staging checklist
 
-- [ ] Phat fixed schema runs from an empty PostgreSQL volume.
-- [ ] Duy smoke DB load returns all six table counts.
+- [x] Pinned Phat schema contract runs from an empty PostgreSQL volume for Duy CI.
+- [x] Duy smoke and full DB loads return all six exact table counts.
+- [ ] Phat confirms/adopts the same current run IDs in the shared team database.
 - [ ] Lap inserts and retrieves 384-dimensional vectors.
 - [ ] Tuong prediction logs and review queue are queryable.
 - [ ] Phi/Hung UI consumes the same JSON contracts in fixture mode.

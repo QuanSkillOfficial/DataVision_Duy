@@ -46,12 +46,16 @@ datavision-platform/
 data_engineering/
 scripts/week7_ci_ingestion_smoke_test.py
 scripts/load_ingestion_outputs_to_postgres.py
+scripts/week7_apply_database_schema.py
+scripts/week7_duy_phat_docker_db_integration_test.py
+scripts/week7_verify_db_load_result.py
 scripts/week7_build_phat_mapping_summary.py
 tests/data_tests/
 tests/fixtures/data/
 outputs/rag_handoff/
 outputs/prediction_payloads/
 outputs/ui_fixtures/
+outputs/integration/week7_duy_phat_docker_db_result.json
 ```
 
 ### Phat

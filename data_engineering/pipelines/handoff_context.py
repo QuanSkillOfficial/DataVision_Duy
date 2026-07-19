@@ -286,7 +286,7 @@ def build_database_enriched_ui_summary(
         "latest_document": latest_document,
         "database_identity_status": identity_map.get("status"),
         "database_schema_version": identity_map.get("schema_version"),
-        "database_identity_source": identity_map.get("source"),
+        "database_identity_source": identity_map.get("result_path"),
         "current_ingestion_runs_loaded": identity_map.get(
             "current_duy_runs_loaded"
         ),

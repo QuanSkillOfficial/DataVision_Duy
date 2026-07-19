@@ -18,8 +18,9 @@ def _display_command(command: list[str]) -> list[str]:
 
 
 def _portable_text(value: str) -> str:
+    docker_config = str(Path.home() / ".docker" / "config.json")
     return value.replace(str(PROJECT_ROOT), ".").replace(
-        r"C:\Users\miynzi\.docker\config.json", "<docker-config>"
+        docker_config, "<docker-config>"
     )
 
 
@@ -29,13 +30,15 @@ def _run(command: list[str]) -> dict:
         cwd=PROJECT_ROOT,
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         check=False,
     )
     return {
         "command": _display_command(command),
         "returncode": completed.returncode,
-        "stdout": _portable_text(completed.stdout[-4000:]),
-        "stderr": _portable_text(completed.stderr[-4000:]),
+        "stdout": _portable_text((completed.stdout or "")[-4000:]),
+        "stderr": _portable_text((completed.stderr or "")[-4000:]),
     }
 
 

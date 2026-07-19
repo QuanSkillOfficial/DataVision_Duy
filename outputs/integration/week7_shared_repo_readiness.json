@@ -117,16 +117,16 @@
       "execution_audit": {
         "status": "blocked_on_phi_hung_refresh",
         "fixture_contract_passed": false,
-        "duy_fixture_lineage_passed": false,
-        "phat_dashboard_contract_passed": false,
+        "duy_fixture_lineage_passed": true,
+        "phat_dashboard_contract_passed": true,
         "lap_rag_fixture_passed": true,
         "tuong_fixture_contract_passed": false,
         "ui_structure_passed": true,
-        "ui_code_docs_passed": false,
+        "ui_code_docs_passed": true,
         "real_lineage_passed": false,
-        "hung_unit_tests_passed": true,
+        "hung_unit_tests_passed": false,
         "ui_smoke_passed": true,
-        "blocking_findings": 12,
+        "blocking_findings": 3,
         "proof_gates_match": true
       }
     }
@@ -149,16 +149,16 @@
     "Phi/Hung": {
       "status": "blocked_on_phi_hung_refresh",
       "fixture_contract_passed": false,
-      "duy_fixture_lineage_passed": false,
-      "phat_dashboard_contract_passed": false,
+      "duy_fixture_lineage_passed": true,
+      "phat_dashboard_contract_passed": true,
       "lap_rag_fixture_passed": true,
       "tuong_fixture_contract_passed": false,
       "ui_structure_passed": true,
-      "ui_code_docs_passed": false,
+      "ui_code_docs_passed": true,
       "real_lineage_passed": false,
-      "hung_unit_tests_passed": true,
+      "hung_unit_tests_passed": false,
       "ui_smoke_passed": true,
-      "blocking_findings": 12,
+      "blocking_findings": 3,
       "proof_gates_match": true
     }
   },

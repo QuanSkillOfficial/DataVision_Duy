@@ -80,7 +80,7 @@ def build_week7_rag_handoff(
         "status": "ready" if enriched and all(not page["is_empty"] for page in enriched) else "partial_success",
         "database_identity_status": identity.get("status"),
         "database_schema_version": identity.get("schema_version"),
-        "database_identity_source": identity.get("source"),
+        "database_identity_source": identity.get("result_path"),
         "current_ingestion_run_loaded": identity.get("current_duy_runs_loaded"),
         "source_id": source_id,
         "source_name": pdf_run["source_name"],
@@ -109,7 +109,7 @@ def build_week7_rag_handoff(
             "file_hash_sha256": file_manifest.get("file_hash_sha256"),
             "database_identity_status": identity.get("status"),
             "database_schema_version": identity.get("schema_version"),
-            "database_identity_source": identity.get("source"),
+            "database_identity_source": identity.get("result_path"),
             "current_ingestion_run_loaded": identity.get(
                 "current_duy_runs_loaded"
             ),

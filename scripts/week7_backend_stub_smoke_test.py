@@ -107,12 +107,32 @@ def main() -> int:
         "--output",
         default=str(PROJECT_ROOT / "outputs/integration/week7_backend_stub_smoke_result.json"),
     )
+    parser.add_argument(
+        "--no-output",
+        action="store_true",
+        help="Do not write the standalone JSON result file.",
+    )
+    parser.add_argument(
+        "--summary-only",
+        action="store_true",
+        help="Print only status, base URL, and checks.",
+    )
     args = parser.parse_args()
     result = run_smoke_test(args.base_url)
-    output = Path(args.output)
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(result, indent=2), encoding="utf-8")
-    print(json.dumps(result, indent=2))
+    if not args.no_output:
+        output = Path(args.output)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(json.dumps(result, indent=2), encoding="utf-8")
+    printable = (
+        {
+            "status": result["status"],
+            "base_url": result["base_url"],
+            "checks": result["checks"],
+        }
+        if args.summary_only
+        else result
+    )
+    print(json.dumps(printable, indent=2))
     return 0 if result["status"] == "passed" else 1
 
 

@@ -439,7 +439,7 @@ def build_tuong_prediction_test_payloads(
             payload["file_hash_sha256"] = None
         payload["database_identity_status"] = db_identity_map.get("status")
         payload["database_schema_version"] = db_identity_map.get("schema_version")
-        payload["database_identity_source"] = db_identity_map.get("source")
+        payload["database_identity_source"] = db_identity_map.get("result_path")
         payload["current_ingestion_runs_loaded"] = db_identity_map.get(
             "current_duy_runs_loaded"
         )
@@ -686,7 +686,7 @@ def build_tuong_additional_prediction_test_payloads(
     for payload in payloads:
         payload["database_identity_status"] = db_identity_map.get("status")
         payload["database_schema_version"] = db_identity_map.get("schema_version")
-        payload["database_identity_source"] = db_identity_map.get("source")
+        payload["database_identity_source"] = db_identity_map.get("result_path")
         payload["current_ingestion_runs_loaded"] = db_identity_map.get(
             "current_duy_runs_loaded"
         )

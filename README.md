@@ -14,13 +14,17 @@ The focus is ingestion: bringing API, CSV, Excel, PDF, and document-page text in
 | Week 5 config-driven ingestion service | Complete | `data_engineering/` |
 | Week 5 run history and manifests | Complete | `logs/runs/`, `logs/ingestion_runs.jsonl`, `logs/manifests/` |
 | Week 6 integration handoff | Complete | `docs/week6_team_integration_handoff.md`, `outputs/*_handoff/` |
-| Week 7 CI-ready ingestion pipeline | Implemented; stable Phat IDs confirmed, latest-run reload and owner execution proofs tracked separately | `scripts/week7_*`, `outputs/*/week7_*`, `.github/workflows/ci.yml` |
+| Week 7 CI-ready ingestion pipeline | Complete for Duy: current-run DB load, Docker integration, CI smoke, and DB-enriched handoffs proven; sibling execution blockers tracked separately | `scripts/week7_*`, `outputs/*/week7_*`, `.github/workflows/ci.yml` |
 | Standard ingestion log schema | Complete | `week2/docs/ingestion_log_schema.md` |
 | Standard output contract | Complete | `week2/docs/standard_ingestion_output_contract.md` |
 | UI handoff contract | Complete | `week2/docs/ingestion_result_contract_for_ui.md` |
 | Database handoff contract | Complete | `week2/docs/ingestion_db_handoff_for_phat.md` |
 | Prediction handoff contract | Complete | `week2/docs/ingestion_to_prediction_contract.md` |
 | RAG page-level handoff contract | Complete | `week2/docs/document_pages_jsonl_contract_for_lap.md` |
+
+`week1_ingestion_foundation/` is retained as a historical Git submodule. Use
+`git clone --recurse-submodules <repository-url>` when the Week 1 evidence is
+needed; Week 7 ingestion, tests, Docker, and CI do not depend on that submodule.
 
 ## Architecture
 
@@ -201,8 +205,9 @@ docs/week7_backend_stub_contract.md
 docs/week7_deployment_runbook.md
 ```
 
-The external owner jobs are conditional until their modules are merged into the
-shared repository. The readiness report makes missing owner artifacts visible:
+The `module-discovery` CI job keeps external owner jobs conditional until
+their modules are merged into the shared repository. The readiness report makes
+missing owner artifacts visible:
 
 ```powershell
 python scripts/week7_shared_repo_readiness_check.py
@@ -229,6 +234,14 @@ python scripts/load_ingestion_outputs_to_postgres.py --write-db --smoke
 python scripts/load_ingestion_outputs_to_postgres.py --write-db
 ```
 
+Run the isolated Duy-to-Phat Docker proof. It loads smoke mode, upgrades the
+same run IDs to full mode, verifies exact counts, rebuilds handoffs, and removes
+the test stack:
+
+```powershell
+python scripts/week7_duy_phat_docker_db_integration_test.py --mode smoke-then-full
+```
+
 After a successful DB load, regenerate every DB-enriched handoff:
 
 ```powershell
@@ -248,18 +261,16 @@ python scripts/week7_data_pipeline_smoke_test.py
 python scripts/validate_week7.py
 ```
 
-The builders never invent database IDs. The current canonical Week 7 bridge
-confirms `source_id=4` and `document_db_id=1`; the latest Duy run UUID still
-requires a fresh database load. See `docs/week7_data_pipeline_runbook.md`.
+The builders never invent database IDs. The current canonical Week 7 DB result
+confirms `source_id=4`, `document_db_id=1`, and all four latest Duy run UUIDs.
+See `docs/week7_duy_phat_real_db_loading_result.md`.
 Latest-run discovery combines the tracked `logs/ingestion_runs.jsonl` history
 with local run files, so handoff regeneration also works from a clean clone.
-When the local DB result is still the tracked
-`pending_external_database` placeholder, the builders use the committed Phat
-proof at `logs/db_load_results/phat_week7_external_database_proof.json` for
-stable IDs instead of emitting `null`. A real local `--write-db` result remains
-authoritative.
+The committed external Phat proof remains historical fallback evidence only;
+`logs/db_load_results/duy_to_phat_db_load_result.json` is now the authoritative
+current-run result.
 
-Current Week 7 data-engineering test result: `51 passed` including shared
+Current Week 7 data-engineering test result: `59 passed` including shared
 platform readiness checks.
 
 Audit the Phi/Hung mapping from the Duy repository:
@@ -270,9 +281,11 @@ python scripts/week7_build_phi_hung_mapping_summary.py --run-hung-checks
 
 The audit writes `outputs/hung_handoff/hung_week7_mapping_summary.json` and
 `logs/hung_handoff/hung_week7_external_proof.json`. At the current audited
-commit, Phi/Hung tests and UI smoke pass, but the copied Duy/Tuong fixtures
-still need DB-lineage refresh and the UI contract still needs the 0.80 staging
-policy update. The audit therefore remains `blocked_on_phi_hung_refresh`.
+commit, Duy, Phat, and Lap fixtures plus the UI code/docs, screenshots, and UI
+smoke pass. Tuong-derived fixtures still contain eight null
+`document_db_id` values, and the full UI test suite needs the pinned Phi/Hung
+dependencies installed. The audit therefore remains
+`blocked_on_phi_hung_refresh`.
 
 Run the project-level contract checks:
 
@@ -290,9 +303,10 @@ python -m pip install -r backend_stub/requirements.txt
 uvicorn backend_stub.main:app --host 127.0.0.1 --port 8000
 ```
 
-The Docker and backend files are contract-ready. They do not replace Phat's
-fixed schema, Lap's real pgvector proof, Tuong's prediction database proof, or
-Phi/Hung's UI smoke test.
+The Docker database and Duy loader have real current-run execution proof. The
+backend remains a contract stub, and this Duy proof does not replace Lap's real
+pgvector retrieval, Tuong's prediction-log insertion, or Phi/Hung's UI owner
+proof.
 
 ## Important Rules
 

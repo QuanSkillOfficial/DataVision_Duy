@@ -6,11 +6,11 @@ Team: Data Foundation Team
 
 ## Current Status
 
-The DataVision ingestion track is complete through Week 6 and now has the Week
-7 GitHub/CI/CD/Docker readiness implementation. Phat's committed Week 7
-evidence confirms the stable database IDs (`source_id=4`,
-`document_db_id=1`); a fresh reload of the newest Duy run UUIDs and live
-cross-repository execution are tracked separately.
+The DataVision ingestion track is complete through Week 7 for Duy's ownership
+boundary. A fresh isolated PostgreSQL + pgvector run loaded all four current
+run UUIDs, confirmed `source_id=4` and `document_db_id=1`, and rebuilt the RAG,
+prediction, and UI handoffs from that current DB result. Live execution owned
+by Lap, Tuong, and Phi/Hung remains tracked separately.
 
 | Phase | Status | Main result |
 | --- | --- | --- |
@@ -19,7 +19,7 @@ cross-repository execution are tracked separately.
 | Week 3 | Complete | Reusable ingestion modules, standard output contract, portable logs, cross-team handoff contracts |
 | Week 5 | Complete | Config-driven ingestion service, run history logs, manifests, data quality score, PostgreSQL writer skeleton, pytest tests |
 | Week 6 | Complete | Executable DB writer plus Phat export proof, RAG handoff, prediction payloads, UI fixtures, portable ID mapping, and cross-team smoke tests |
-| Week 7 | Artifact-ready; owner execution blockers tracked | Shared repo manifest, GitHub Actions draft, Docker Compose database/full-app drafts, CI smoke tests, local integration contract, backend stub, UI fixture contract, DB modes, DB-enriched handoffs, readiness audits, cleanup plan, and deployment runbook |
+| Week 7 | Complete for Duy; sibling owner blockers tracked | Shared repo manifest, GitHub Actions draft, Docker Compose database/full-app drafts, 59 tests, ingestion and DB-loading CI smoke tests, real current-run PostgreSQL proof, backend stub, DB-enriched handoffs, readiness audits, cleanup plan, and deployment runbook |
 
 ## What Works Now
 
@@ -149,6 +149,9 @@ deployment/
 integration/shared_repo_manifest.json
 scripts/week7_backend_stub_smoke_test.py
 scripts/week7_local_docker_integration_smoke_test.py
+scripts/week7_duy_phat_docker_db_integration_test.py
+scripts/week7_apply_database_schema.py
+scripts/week7_verify_db_load_result.py
 scripts/week7_shared_repo_readiness_check.py
 scripts/week7_shared_integration_smoke_test.py
 .github/workflows/ci.yml
@@ -157,11 +160,13 @@ scripts/week7_shared_integration_smoke_test.py
 Artifact and contract verification:
 
 ```text
-51 data-engineering tests passed
+59 data-engineering tests passed
 Week 7 ingestion smoke test passed
-Week 7 validator passed (63 required files)
+Week 7 validator passed (96 required files)
 Both Compose files pass `docker compose config --quiet`
 Shared integration contract smoke passed
+Current-run Docker DB integration passed: 4/4/4/1/36/11,524
+Full Compose database + backend stub smoke passed; API contract passed and test services were removed
 ```
 
 Current readiness split:
@@ -188,13 +193,12 @@ The current execution blockers are recorded per owner:
 ```text
 Lap: live pgvector insertion/retrieval proof pending
 Tuong: 20-result/log/database execution proof pending
-Phi/Hung: copied fixture lineage and UI contract refresh pending
+Phi/Hung: Tuong-derived fixture IDs and full UI unit execution pending
 ```
 
-The current local environment has not started the PostgreSQL service during
-the contract checks. The runtime command is available through
-`scripts/week7_local_docker_integration_smoke_test.py --start-full` when Docker
-Desktop is running.
+The current-run PostgreSQL proof is stored in
+`outputs/integration/week7_duy_phat_docker_db_result.json`. Its isolated Docker
+project, network, and volume were removed after verification.
 
 ## Cross-Team Contracts
 
@@ -216,15 +220,15 @@ Desktop is running.
 
 ## Next Recommended Work
 
-1. Start Phat's Docker PostgreSQL + pgvector setup with the documented Week 7 credentials.
-2. Run `python scripts/load_ingestion_outputs_to_postgres.py --write-db --smoke` and confirm 4/4/4/1/36/100 counts for the newest Duy run UUIDs.
-3. Regenerate the Lap, Tuong, and Phi/Hung Week 7 outputs from that current-run load; stable `source_id=4` and `document_db_id=1` are already confirmed.
-4. Merge Lap, Tuong, Phat, and Phi/Hung smoke commands into the shared workflow after each command passes independently.
-5. Start the backend stub or production backend and run the backend contract smoke test.
+1. Give Lap the current DB-enriched 36-page handoff and obtain real chunk/retrieval proof.
+2. Give Tuong the current 20-payload batch and obtain 20 normalized results plus DB insert proof.
+3. Refresh Phi/Hung fixtures from the current Duy/Phat/Lap/Tuong owner outputs.
+4. Merge all owner smoke commands into the shared workflow after each command passes independently.
+5. Replace the validated backend stub with the production backend while preserving the tested API envelopes.
 6. Preserve manual-review safety: prediction labels must not become hard RAG filters without Tuong/Lap's trusted policy.
 
 ## Week 7 Verification
 
 The CI-safe ingestion smoke test covers CSV, Excel, local API fallback, two-page PDF extraction, manifests, data quality, RAG page records, prediction payloads, and UI fixture creation. The Week 7 Tuong handoff now contains 20 cases: the original 10-case baseline plus 10 new PDF, structured-data, unknown-type, lineage, and numeric-validation cases. PostgreSQL smoke planning produces 4 sources, 4 logs, 1 document, 36 pages, and 100 structured rows.
 
-Latest data test result: `51 passed`.
+Latest data test result: `59 passed`.

@@ -18,9 +18,9 @@ Top-level metrics include four sources, four successful latest runs, 11,524 stru
 - `parsing_status`
 
 The current fixture has `database_identity_status=database_ids_confirmed`,
-`source_id=4`, and `document_db_id=1`, based on Phat's validated Week 7
-database evidence. It also has `current_ingestion_runs_loaded=false`; the UI
-must present this as a current-run reload limitation rather than an ID failure.
+`source_id=4`, `document_db_id=1`, and
+`current_ingestion_runs_loaded=true`, based on Duy's fresh Docker load against
+Phat's schema contract.
 
 ## Phi/Hung acceptance gate
 
@@ -47,10 +47,11 @@ python scripts/week7_build_phi_hung_mapping_summary.py --run-hung-checks
 Current audited state:
 
 ```text
-Phi/Hung tests: 63 passed, 15 skipped
+Phi/Hung tests: blocked during collection because streamlit is not installed in the audited environment
 UI smoke test: passed
-Hung Duy fixture: stale (null source_id/document_db_id)
-Hung Tuong fixtures: contract-shaped but null DB lineage
+Hung Duy fixture: passed (source_id=4, document_db_id=1)
+Phat dashboard fixture: passed
+Hung Tuong fixtures: four batch and four review items have null document_db_id
 Lap DataFlow fixture: passed (pgvector, 384 dimensions, document_db_id=1)
 Mapping status: blocked_on_phi_hung_refresh
 ```
@@ -76,9 +77,6 @@ The staging acceptance threshold is `0.80`. A `0.60` value may be used only
 as a UI medium-confidence display boundary and must not be documented as the
 acceptance rule.
 
-The Phat dashboard sample must also expose `document_external_id` for
-prediction review rows whenever the row has a document FK. The UI may display
-the integer `document_id` when the external key is genuinely unavailable, but
-it must not fabricate a string key. The Duy-side audit treats missing joined
-external IDs as a mapping blocker because they prevent a traceable review
-workflow.
+The Phat dashboard sample currently passes its lineage contract. Review rows
+must continue to expose `document_external_id` whenever a document FK is
+present; the UI must not fabricate a string key.

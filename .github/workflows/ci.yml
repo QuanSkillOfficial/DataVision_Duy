@@ -29,6 +29,50 @@ jobs:
       - name: Validate Week 7 data pipeline contracts
         run: python scripts/week7_data_pipeline_smoke_test.py
 
+  data-db-loading-ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: datavision
+          POSTGRES_PASSWORD: datavision123
+          POSTGRES_DB: datavision_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U datavision -d datavision_db"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    env:
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_NAME: datavision_db
+      DB_USER: datavision
+      DB_PASSWORD: datavision123
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install data dependencies
+        run: pip install -r requirements.txt
+      - name: Apply pinned Phat schema contract
+        run: python scripts/week7_apply_database_schema.py
+      - name: Load current Duy runs in DB smoke mode
+        run: python scripts/load_ingestion_outputs_to_postgres.py --write-db --smoke
+      - name: Build DB-enriched handoffs
+        run: |
+          python scripts/week7_build_rag_handoff_package.py
+          python scripts/week7_build_prediction_payloads.py
+          python scripts/week7_build_ui_fixtures.py
+      - name: Verify current-run DB proof and handoffs
+        run: >-
+          python scripts/week7_verify_db_load_result.py
+          --expected-structured-records 100
+          --verify-handoffs
+
   backend-contract-ci:
     runs-on: ubuntu-latest
     timeout-minutes: 8
@@ -76,11 +120,46 @@ jobs:
       - name: Run local integration contract smoke test
         run: python scripts/week7_shared_integration_smoke_test.py
 
+  module-discovery:
+    runs-on: ubuntu-latest
+    outputs:
+      database: ${{ steps.detect.outputs.database }}
+      rag: ${{ steps.detect.outputs.rag }}
+      prediction: ${{ steps.detect.outputs.prediction }}
+      ui: ${{ steps.detect.outputs.ui }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: detect
+        name: Detect merged owner modules
+        shell: bash
+        run: |
+          if [ -f week7/database/scripts/ci_database_smoke_test.py ]; then
+            echo "database=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "database=false" >> "$GITHUB_OUTPUT"
+          fi
+          if [ -f ai/rag/scripts/week7_rag_ci_smoke_test.py ]; then
+            echo "rag=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "rag=false" >> "$GITHUB_OUTPUT"
+          fi
+          if [ -f scripts/week7_prediction_ci_smoke_test.py ]; then
+            echo "prediction=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "prediction=false" >> "$GITHUB_OUTPUT"
+          fi
+          if [ -f scripts/week7_ui_ci_smoke_test.py ]; then
+            echo "ui=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ui=false" >> "$GITHUB_OUTPUT"
+          fi
+
   # These owner jobs become active automatically after the corresponding
   # module is merged into the shared repository. They are intentionally
   # conditional in Duy's standalone repository.
   database-ci:
-    if: ${{ hashFiles('week7/database/**') != '' }}
+    needs: module-discovery
+    if: ${{ needs.module-discovery.outputs.database == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     services:
@@ -141,7 +220,8 @@ jobs:
           fi
 
   rag-ci:
-    if: ${{ hashFiles('ai/rag/scripts/week7_rag_ci_smoke_test.py') != '' }}
+    needs: module-discovery
+    if: ${{ needs.module-discovery.outputs.rag == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -155,7 +235,8 @@ jobs:
         run: python ai/rag/scripts/week7_rag_ci_smoke_test.py
 
   prediction-ci:
-    if: ${{ hashFiles('scripts/week7_prediction_ci_smoke_test.py') != '' }}
+    needs: module-discovery
+    if: ${{ needs.module-discovery.outputs.prediction == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -169,7 +250,8 @@ jobs:
         run: python scripts/week7_prediction_ci_smoke_test.py
 
   ui-ci:
-    if: ${{ hashFiles('scripts/week7_ui_ci_smoke_test.py') != '' }}
+    needs: module-discovery
+    if: ${{ needs.module-discovery.outputs.ui == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:

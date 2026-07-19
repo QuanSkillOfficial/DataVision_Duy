@@ -8,13 +8,16 @@ from data_engineering.ingestion.api_ingestor import fetch_api_payload
 from data_engineering.storage.db_connection import build_connection_kwargs, load_db_config
 from data_engineering.storage.postgres_writer import (
     REQUIRED_SCHEMA_COLUMNS,
+    build_document_page_insert_plan,
     build_dry_run_summary,
+    get_existing_ingestion_mapping,
     ingestion_run_exists,
     insert_document_pages,
     insert_or_get_source,
     insert_pipeline_run,
     insert_structured_records,
     query_integration_counts,
+    query_loaded_run_ids,
     validate_target_schema,
 )
 from scripts.load_ingestion_outputs_to_postgres import build_dry_run_plan, load_successful_run_logs
@@ -123,6 +126,29 @@ def test_ingestion_run_exists_queries_by_run_id():
     assert conn.cursor_obj.executed[0][1] == ("run-001",)
 
 
+def test_existing_pdf_mapping_accepts_document_external_id():
+    cursor = FakeCursor()
+    responses = iter([(4, 9), (1,)])
+    cursor.fetchone = lambda: next(responses)
+
+    mapping = get_existing_ingestion_mapping(
+        FakeConnection(cursor),
+        {
+            "run_id": "run-pdf-001",
+            "pdf_metadata": {
+                "document_external_id": "doc_dataflow_technical_report"
+            },
+        },
+    )
+
+    assert mapping == {
+        "source_id": 4,
+        "pipeline_run_id": 9,
+        "document_db_id": 1,
+    }
+    assert cursor.executed[1][1] == ("doc_dataflow_technical_report",)
+
+
 def test_query_integration_counts_returns_named_database_proof():
     cursor = FakeCursor()
     cursor.fetchone = lambda: (4, 4, 4, 1, 36, 11524)
@@ -141,6 +167,19 @@ def test_query_integration_counts_returns_named_database_proof():
         "document_pages": 36,
         "structured_records": 11524,
     }
+
+
+def test_query_loaded_run_ids_returns_actual_database_uuids():
+    cursor = FakeCursor()
+    cursor.fetchall = lambda: [("run-1",), ("run-3",)]
+
+    run_ids = query_loaded_run_ids(
+        FakeConnection(cursor),
+        ["run-1", "run-2", "run-3"],
+    )
+
+    assert run_ids == ["run-1", "run-3"]
+    assert cursor.executed[0][1] == (["run-1", "run-2", "run-3"],)
 
 
 def test_target_schema_preflight_accepts_all_week6_columns():
@@ -184,6 +223,23 @@ def test_document_pages_replace_existing_snapshot(tmp_path):
     assert inserted == 2
     assert "DELETE FROM document_pages" in conn.cursor_obj.executed[0][0]
     assert conn.cursor_obj.executed[0][1] == (7,)
+
+
+def test_document_pages_accept_week7_char_count_and_external_id(tmp_path):
+    pages = tmp_path / "document_pages.jsonl"
+    pages.write_text(
+        '{"document_external_id": "doc-1", "page_number": 1, '
+        '"text": "Page one", "char_count": 8, "is_empty": false}',
+        encoding="utf-8",
+    )
+    conn = FakeConnection()
+
+    inserted = insert_document_pages(conn, pages, document_id=7)
+    plan = build_document_page_insert_plan(pages)
+
+    assert inserted == 1
+    assert conn.cursor_obj.executed[1][1][3] == 8
+    assert plan["document_external_ids"] == {"doc-1": 1}
 
 
 def test_structured_records_replace_existing_source_snapshot(tmp_path):

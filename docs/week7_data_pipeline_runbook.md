@@ -55,16 +55,21 @@ python scripts/week7_build_ui_fixtures.py --db-load-result logs/db_load_results/
 ```
 
 The bridge confirms stable `source_id` and `document_db_id` values from Phat's
-real database evidence. It separately records whether Phat loaded Duy's latest
-run UUIDs.
+historical database evidence. The current authoritative result is now Duy's
+fresh local Docker load at
+`logs/db_load_results/duy_to_phat_db_load_result.json`.
 
-The three Week 7 builders also resolve the default identity input safely:
-`logs/db_load_results/duy_to_phat_db_load_result.json` is authoritative after a
-real local load. If it is still the tracked
-`pending_external_database` placeholder, the builders fall back to
-`logs/db_load_results/phat_week7_external_database_proof.json` for the stable
-IDs and preserve `current_duy_runs_loaded=false`. This prevents a clean clone
-from silently generating `null` database IDs.
+The three Week 7 builders resolve the default identity input from the current
+local DB proof. It confirms all four latest run UUIDs and sets
+`current_duy_runs_loaded=true`. The external Phat proof remains a fallback for
+older clean clones only; it must not replace the current-run evidence.
+
+Run the complete isolated proof with:
+
+```bash
+python scripts/week7_duy_phat_docker_db_integration_test.py --mode smoke-then-full
+python scripts/week7_verify_db_load_result.py --expected-structured-records 11524 --verify-handoffs
+```
 
 Audit the Lap boundary after regenerating the handoff:
 
@@ -123,8 +128,9 @@ python scripts/validate_week7.py
 - schema preflight failure: run Phat's fixed Week 7 setup; do not patch tables manually.
 - null DB IDs: run the real loader or build the Phat Week 7 identity bridge,
   then regenerate all three handoffs.
-- `current_ingestion_runs_loaded=false`: IDs are confirmed, but Phat's database
-  snapshot contains older Duy run UUIDs. Run a fresh `--write-db` load.
+- `current_ingestion_runs_loaded=false`: the current local DB proof was
+  replaced or not regenerated. Run the isolated Docker integration command
+  above; do not present the historical fallback as current-run proof.
 - UTF-16 Phat evidence: use `week7_build_phat_mapping_summary.py`; it reads both
   UTF-8 and UTF-16 evidence files.
 - API unavailable: the configured local JSON fallback is used.

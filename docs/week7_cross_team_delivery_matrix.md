@@ -90,9 +90,8 @@ docs/week7_duy_to_lap_rag_handoff.md
 }
 ```
 
-Phat's Week 7 evidence confirms `document_db_id=1` and `source_id=4`.
-`current_ingestion_runs_loaded=false` remains explicit because the newest Duy
-run UUID has not yet been reloaded. Lap must still fail clearly if either
+Duy's current-run Docker load confirms `document_db_id=1`, `source_id=4`, and
+`current_ingestion_runs_loaded=true`. Lap must still fail clearly if either
 integer ID is missing in a future handoff.
 
 ### Lap must return
@@ -296,18 +295,20 @@ docs/week7_duy_phi_hung_mapping_result.md
 Current audit result:
 
 ```text
-Phi/Hung tests: 63 passed, 15 skipped
+Phi/Hung tests: collection blocked because streamlit is not installed
 UI smoke test: passed
-Duy fixture lineage: stale (null source_id/document_db_id in Hung copy)
-Tuong fixture lineage: stale (null DB IDs in Hung copy)
+Duy fixture lineage: passed (source_id=4, document_db_id=1)
+Phat dashboard fixture: passed
+Tuong fixture lineage: stale (four null document_db_id values in each active fixture)
 Lap DataFlow fixture: contract passed
+UI code and backend-route docs: passed
 Overall mapping: blocked_on_phi_hung_refresh
 ```
 
 This is an owner-delivery blocker, not a Duy ingestion failure. Phi/Hung must
-refresh `demo/fixtures/week7/` from the canonical Duy, Phat, Lap and Tuong
-outputs, remove ignored `code_by_others` source references, and rerun the
-fixture validator before the UI mapping can be marked passed.
+refresh the two Tuong-derived files in `demo/fixtures/week7/`, install the
+pinned UI requirements, and rerun the unit suite plus fixture validator before
+the UI mapping can be marked passed.
 
 ## Shared completion gate
 

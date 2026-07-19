@@ -1,8 +1,12 @@
 {
-  "status": "contract_passed_runtime_not_run",
+  "status": "passed",
   "checks": {
     "database_compose_config": true,
-    "full_compose_config": true
+    "full_compose_config": true,
+    "full_up": true,
+    "backend_health": true,
+    "backend_contract_smoke": true,
+    "full_cleanup": true
   },
   "steps": {
     "database_compose_config": {
@@ -16,7 +20,7 @@
       ],
       "returncode": 0,
       "stdout": "",
-      "stderr": "WARNING: Error loading config file: open <docker-config>: Access is denied.\nWARNING: Error loading config file: open <docker-config>: Access is denied.\n"
+      "stderr": ""
     },
     "full_compose_config": {
       "command": [
@@ -29,8 +33,50 @@
       ],
       "returncode": 0,
       "stdout": "",
-      "stderr": "WARNING: Error loading config file: open <docker-config>: Access is denied.\nWARNING: Error loading config file: open <docker-config>: Access is denied.\n"
+      "stderr": ""
+    },
+    "full_up": {
+      "command": [
+        "docker",
+        "compose",
+        "-f",
+        ".\\docker-compose.yml",
+        "up",
+        "-d",
+        "db",
+        "backend"
+      ],
+      "returncode": 0,
+      "stdout": "#1 [internal] load local bake definitions\n#1 reading from stdin 566B done\n#1 DONE 0.0s\n\n#2 [internal] load build definition from Dockerfile\n#2 transferring dockerfile: 460B done\n#2 DONE 0.0s\n\n#3 [internal] load metadata for docker.io/library/python:3.11-slim\n#3 DONE 4.3s\n\n#4 [internal] load .dockerignore\n#4 transferring context: 222B done\n#4 DONE 0.0s\n\n#5 [internal] load build context\n#5 transferring context: 4.75kB done\n#5 DONE 0.1s\n\n#6 [1/6] FROM docker.io/library/python:3.11-slim@sha256:db3ff2e1800a8581e2c48a27c3995339d47bdf046da21c7627accd3d51053a93\n#6 resolve docker.io/library/python:3.11-slim@sha256:db3ff2e1800a8581e2c48a27c3995339d47bdf046da21c7627accd3d51053a93\n#6 resolve docker.io/library/python:3.11-slim@sha256:db3ff2e1800a8581e2c48a27c3995339d47bdf046da21c7627accd3d51053a93 0.1s done\n#6 DONE 0.1s\n\n#7 [2/6] WORKDIR /app\n#7 CACHED\n\n#8 [3/6] COPY backend_stub/requirements.txt /app/backend_stub/requirements.txt\n#8 CACHED\n\n#9 [4/6] RUN pip install --no-cache-dir -r /app/backend_stub/requirements.txt\n#9 CACHED\n\n#10 [5/6] COPY backend_stub /app/backend_stub\n#10 CACHED\n\n#11 [6/6] COPY outputs/ui_fixtures /app/outputs/ui_fixtures\n#11 CACHED\n\n#12 exporting to image\n#12 exporting layers done\n#12 exporting manifest sha256:eee90d09b7353ba83618c02ce70cf91f45e22305285a94f22b860e2077b23be2 0.0s done\n#12 exporting config sha256:b8282aac3e33ec5658c01879f08723b761915cb614027e531c4108edabda22f4 0.0s done\n#12 exporting attestation manifest sha256:ec3bf9a4e8049271618631743396f6898ba3a42f6f9c8092ebd4895e57a7b452 0.1s done\n#12 exporting manifest list sha256:790a810b0864fe445a362afec42bd5193c620158f53c74c259c8f61f64a54b10 0.0s done\n#12 naming to docker.io/library/datavision_duy-backend:latest\n#12 naming to docker.io/library/datavision_duy-backend:latest done\n#12 unpacking to docker.io/library/datavision_duy-backend:latest 0.0s done\n#12 DONE 0.3s\n\n#13 resolving provenance for metadata file\n#13 DONE 0.0s\n",
+      "stderr": " datavision_duy-backend  Built\n Network datavision_duy_default  Creating\n Network datavision_duy_default  Created\n Volume datavision_duy_datavision_pgdata  Creating\n Volume datavision_duy_datavision_pgdata  Created\n Container datavision_duy-db-1  Creating\n Container datavision_duy-db-1  Created\n Container datavision_duy-backend-1  Creating\n Container datavision_duy-backend-1  Created\n Container datavision_duy-db-1  Starting\n Container datavision_duy-db-1  Started\n Container datavision_duy-db-1  Waiting\n Container datavision_duy-db-1  Healthy\n Container datavision_duy-backend-1  Starting\n Container datavision_duy-backend-1  Started\n"
+    },
+    "backend_smoke": {
+      "command": [
+        "python",
+        "scripts/week7_backend_stub_smoke_test.py",
+        "--base-url",
+        "http://127.0.0.1:8000",
+        "--summary-only",
+        "--no-output"
+      ],
+      "returncode": 0,
+      "stdout": "{\n  \"status\": \"passed\",\n  \"base_url\": \"http://127.0.0.1:8000\",\n  \"checks\": {\n    \"health\": true,\n    \"dashboard\": true,\n    \"recent_activity\": true,\n    \"review_queue\": true,\n    \"rag\": true,\n    \"prediction\": true,\n    \"prediction_batch\": true,\n    \"feedback\": true,\n    \"suggestions\": true,\n    \"reports\": true,\n    \"batch_has_two_results\": true,\n    \"short_text_is_waiting_for_source\": true,\n    \"long_text_is_review_safe\": true\n  }\n}\n",
+      "stderr": ""
+    },
+    "full_cleanup": {
+      "command": [
+        "docker",
+        "compose",
+        "-f",
+        ".\\docker-compose.yml",
+        "down",
+        "--volumes",
+        "--remove-orphans"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": " Container datavision_duy-backend-1  Stopping\n Container datavision_duy-backend-1  Stopped\n Container datavision_duy-backend-1  Removing\n Container datavision_duy-backend-1  Removed\n Container datavision_duy-db-1  Stopping\n Container datavision_duy-db-1  Stopped\n Container datavision_duy-db-1  Removing\n Container datavision_duy-db-1  Removed\n Network datavision_duy_default  Removing\n Volume datavision_duy_datavision_pgdata  Removing\n Volume datavision_duy_datavision_pgdata  Removed\n Network datavision_duy_default  Removed\n"
     }
   },
-  "runtime_note": "No Docker service was started by this run."
+  "runtime_note": "Services stopped; the isolated test network and volume were removed."
 }
