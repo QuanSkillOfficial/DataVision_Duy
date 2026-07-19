@@ -1,0 +1,218 @@
+{
+  "status": "passed",
+  "mode": "smoke-then-full",
+  "schema_version": "schema_v4_fixed",
+  "docker_project": "datavision-duy-week7-integration",
+  "database_port": 55432,
+  "checks": {
+    "vector_extension": true,
+    "exact_table_counts": true,
+    "latest_run_ids_loaded": true,
+    "stable_source_ids": true,
+    "document_id_resolved": true,
+    "loader_proof_current": true,
+    "rag_handoff_current": true,
+    "ui_fixture_current": true
+  },
+  "expected_counts": {
+    "sources": 4,
+    "pipeline_runs": 4,
+    "ingestion_logs": 4,
+    "documents": 1,
+    "document_pages": 36,
+    "structured_records": 11524
+  },
+  "expected_run_ids": [
+    "0a11e66b-59c8-4259-9759-d36589423758",
+    "4c595851-c11e-48e3-8c79-69f6fa52d282",
+    "797e7ee4-9139-4157-b6b4-cb3c325ce469",
+    "7fb106e1-c920-4e92-b3c8-47402ee94ea5"
+  ],
+  "database_snapshot": {
+    "vector_extension_enabled": true,
+    "counts": {
+      "sources": 4,
+      "pipeline_runs": 4,
+      "ingestion_logs": 4,
+      "documents": 1,
+      "document_pages": 36,
+      "structured_records": 11524
+    },
+    "run_ids": [
+      "0a11e66b-59c8-4259-9759-d36589423758",
+      "4c595851-c11e-48e3-8c79-69f6fa52d282",
+      "797e7ee4-9139-4157-b6b4-cb3c325ce469",
+      "7fb106e1-c920-4e92-b3c8-47402ee94ea5"
+    ],
+    "source_ids": {
+      "superstore_sales_csv": 1,
+      "product_sales_region_excel": 2,
+      "dummyjson_products_api": 3,
+      "dataflow_technical_report_pdf": 4
+    },
+    "document_ids": {
+      "doc_dataflow_technical_report": 1
+    },
+    "host": "127.0.0.1",
+    "port": 55432,
+    "database": "datavision_db"
+  },
+  "load_results": [
+    {
+      "mode": "smoke_write_db",
+      "status": "passed",
+      "verification": {
+        "sources": 4,
+        "ingestion_logs": 4,
+        "pipeline_runs": 4,
+        "documents": 1,
+        "document_pages": 36,
+        "structured_records": 100
+      },
+      "current_duy_runs_loaded": true
+    },
+    {
+      "mode": "full_write_db",
+      "status": "passed",
+      "verification": {
+        "sources": 4,
+        "ingestion_logs": 4,
+        "pipeline_runs": 4,
+        "documents": 1,
+        "document_pages": 36,
+        "structured_records": 11524
+      },
+      "current_duy_runs_loaded": true
+    }
+  ],
+  "error": null,
+  "services_stopped": true,
+  "steps": {
+    "clean_before": {
+      "command": [
+        "docker",
+        "compose",
+        "--project-name",
+        "datavision-duy-week7-integration",
+        "-f",
+        ".\\docker-compose.db.yml",
+        "down",
+        "--volumes",
+        "--remove-orphans"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "start_database": {
+      "command": [
+        "docker",
+        "compose",
+        "--project-name",
+        "datavision-duy-week7-integration",
+        "-f",
+        ".\\docker-compose.db.yml",
+        "up",
+        "-d",
+        "db"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": " Network datavision-duy-week7-integration_default  Creating\n Network datavision-duy-week7-integration_default  Created\n Volume datavision-duy-week7-integration_datavision_pgdata  Creating\n Volume datavision-duy-week7-integration_datavision_pgdata  Created\n Container datavision-duy-week7-integration-db-1  Creating\n Container datavision-duy-week7-integration-db-1  Created\n Container datavision-duy-week7-integration-db-1  Starting\n Container datavision-duy-week7-integration-db-1  Started\n"
+    },
+    "database_ready": {
+      "command": [
+        "docker",
+        "compose",
+        "--project-name",
+        "datavision-duy-week7-integration",
+        "-f",
+        ".\\docker-compose.db.yml",
+        "exec",
+        "-T",
+        "db",
+        "pg_isready",
+        "-U",
+        "datavision",
+        "-d",
+        "datavision_db"
+      ],
+      "returncode": 0,
+      "stdout": "/var/run/postgresql:5432 - accepting connections\n",
+      "stderr": ""
+    },
+    "apply_schema": {
+      "command": [
+        "python",
+        "scripts/week7_apply_database_schema.py"
+      ],
+      "returncode": 0,
+      "stdout": "Applied schema: deployment/database/init/10_phat_schema_v4_fixed.sql\n",
+      "stderr": ""
+    },
+    "load_smoke": {
+      "command": [
+        "python",
+        "scripts/load_ingestion_outputs_to_postgres.py",
+        "--write-db",
+        "--smoke"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote DB load result: logs/db_load_results/duy_to_phat_db_load_result.json\nRuns loaded: 4\nSchema validation: passed\nVerification: passed - {'sources': 4, 'ingestion_logs': 4, 'pipeline_runs': 4, 'documents': 1, 'document_pages': 36, 'structured_records': 100}\n",
+      "stderr": ""
+    },
+    "load_full": {
+      "command": [
+        "python",
+        "scripts/load_ingestion_outputs_to_postgres.py",
+        "--write-db"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote DB load result: logs/db_load_results/duy_to_phat_db_load_result.json\nRuns loaded: 4\nSchema validation: passed\nVerification: passed - {'sources': 4, 'ingestion_logs': 4, 'pipeline_runs': 4, 'documents': 1, 'document_pages': 36, 'structured_records': 11524}\n",
+      "stderr": ""
+    },
+    "build_rag_handoff": {
+      "command": [
+        "python",
+        "scripts/week7_build_rag_handoff_package.py"
+      ],
+      "returncode": 0,
+      "stdout": "{\n  \"schema_version\": \"week7_rag_handoff_v1\",\n  \"status\": \"ready\",\n  \"database_identity_status\": \"database_ids_confirmed\",\n  \"database_schema_version\": \"schema_v4_fixed\",\n  \"database_identity_source\": \"logs/db_load_results/duy_to_phat_db_load_result.json\",\n  \"current_ingestion_run_loaded\": true,\n  \"source_id\": 4,\n  \"source_name\": \"dataflow_technical_report_pdf\",\n  \"document_external_id\": \"doc_dataflow_technical_report\",\n  \"document_db_id\": 1,\n  \"ingestion_run_id\": \"4c595851-c11e-48e3-8c79-69f6fa52d282\",\n  \"file_name\": \"DataFlow_Technical_Report.pdf\",\n  \"file_hash_sha256\": \"06c0c318db353a5c5c6dbaa84c6778cde022fde92bd1bb7f56e32c485d62fa54\",\n  \"page_count\": 36,\n  \"non_empty_pages\": 36,\n  \"empty_pages\": 0,\n  \"total_characters\": 129028,\n  \"total_words\": 17536,\n  \"document_pages_path\": \"outputs/rag_handoff/week7_document_pages_db_enriched.jsonl\",\n  \"pdf_metadata_path\": \"outputs/rag_handoff/pdf_metadata.json\",\n  \"expected_chunk_id_format\": \"doc_dataflow_technical_report_page_{page_number}_chunk_{chunk_index:03d}\"\n}\n",
+      "stderr": ""
+    },
+    "build_prediction_payloads": {
+      "command": [
+        "python",
+        "scripts/week7_build_prediction_payloads.py"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote 20 payloads to outputs/prediction_payloads/tuong_week7_prediction_payloads.json\nWrote 10 new payloads to outputs/prediction_payloads/tuong_week7_additional_prediction_payloads.json\nDatabase identity status: database_ids_confirmed\n",
+      "stderr": ""
+    },
+    "build_ui_fixture": {
+      "command": [
+        "python",
+        "scripts/week7_build_ui_fixtures.py"
+      ],
+      "returncode": 0,
+      "stdout": "Wrote outputs/ui_fixtures/duy_week7_database_enriched_summary.json\nDatabase identity status: database_ids_confirmed\n",
+      "stderr": ""
+    },
+    "clean_after": {
+      "command": [
+        "docker",
+        "compose",
+        "--project-name",
+        "datavision-duy-week7-integration",
+        "-f",
+        ".\\docker-compose.db.yml",
+        "down",
+        "--volumes",
+        "--remove-orphans"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": " Container datavision-duy-week7-integration-db-1  Stopping\n Container datavision-duy-week7-integration-db-1  Stopped\n Container datavision-duy-week7-integration-db-1  Removing\n Container datavision-duy-week7-integration-db-1  Removed\n Network datavision-duy-week7-integration_default  Removing\n Volume datavision-duy-week7-integration_datavision_pgdata  Removing\n Volume datavision-duy-week7-integration_datavision_pgdata  Removed\n Network datavision-duy-week7-integration_default  Removed\n"
+    }
+  }
+}

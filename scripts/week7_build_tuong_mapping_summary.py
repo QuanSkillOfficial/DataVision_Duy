@@ -24,6 +24,14 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TUONG_ROOT = PROJECT_ROOT.parent / "DataVision_Tuong"
 SUMMARY_OUTPUT = PROJECT_ROOT / "outputs/tuong_handoff/tuong_week7_mapping_summary.json"
 PROOF_OUTPUT = PROJECT_ROOT / "logs/tuong_handoff/tuong_week7_external_proof.json"
+WINDOWS_ABSOLUTE_PATH = re.compile(
+    r'(?<![A-Za-z])[A-Za-z]:\\(?:[^\\/:*?"<>|\r\n]+\\)*[^\\/:*?"<>|\r\n]*'
+)
+
+
+def _redact_machine_paths(text: str, repo_root: Path, label: str) -> str:
+    portable = text.replace(str(repo_root), label)
+    return WINDOWS_ABSOLUTE_PATH.sub("<local-path>", portable)
 
 VALID_STATUSES = {
     "accepted",
@@ -769,6 +777,8 @@ def _run_tuong_command(
             env=environment,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=120,
             check=False,
         )
@@ -776,9 +786,13 @@ def _run_tuong_command(
         return {
             "status": "error",
             "command": display_command,
-            "error": str(exc),
+            "error": _redact_machine_paths(
+                str(exc), tuong_root, "<tuong-repo>"
+            ),
         }
-    combined = f"{completed.stdout}\n{completed.stderr}"
+    combined = _redact_machine_paths(
+        f"{completed.stdout}\n{completed.stderr}", tuong_root, "<tuong-repo>"
+    )
     error_summary = [
         line.strip()
         for line in combined.splitlines()

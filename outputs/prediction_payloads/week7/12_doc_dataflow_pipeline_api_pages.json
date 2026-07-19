@@ -26,6 +26,6 @@
   "file_hash_sha256": "06c0c318db353a5c5c6dbaa84c6778cde022fde92bd1bb7f56e32c485d62fa54",
   "database_identity_status": "database_ids_confirmed",
   "database_schema_version": "schema_v4_fixed",
-  "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
-  "current_ingestion_runs_loaded": false
+  "database_identity_source": "logs/db_load_results/duy_to_phat_db_load_result.json",
+  "current_ingestion_runs_loaded": true
 }

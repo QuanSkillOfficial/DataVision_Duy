@@ -19,6 +19,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 from collections import Counter
@@ -33,6 +34,14 @@ SUMMARY_OUTPUT = (
     PROJECT_ROOT / "outputs/hung_handoff/hung_week7_mapping_summary.json"
 )
 PROOF_OUTPUT = PROJECT_ROOT / "logs/hung_handoff/hung_week7_external_proof.json"
+WINDOWS_ABSOLUTE_PATH = re.compile(
+    r'(?<![A-Za-z])[A-Za-z]:\\(?:[^\\/:*?"<>|\r\n]+\\)*[^\\/:*?"<>|\r\n]*'
+)
+
+
+def _redact_machine_paths(text: str, repo_root: Path, label: str) -> str:
+    portable = text.replace(str(repo_root), label)
+    return WINDOWS_ABSOLUTE_PATH.sub("<local-path>", portable)
 
 DATAFLOW_EXTERNAL_ID = "doc_dataflow_technical_report"
 DATAFLOW_FILE_NAME = "DataFlow_Technical_Report.pdf"
@@ -108,26 +117,6 @@ UI_CLEANUP_CANDIDATES = [
         "path": "demo/fixtures/*.json",
         "reason": "Root fixtures contain pre-Week 7 vendor/refund-policy and synthetic prediction data.",
         "action": "Archive after confirming all active tests use demo/fixtures/week7/.",
-    },
-    {
-        "path": "scripts/week7_refresh_fixtures.py",
-        "reason": "Refresh source is hard-coded to code_by_others/, which is ignored and absent in a clean checkout.",
-        "action": "Accept explicit --duy-root/--phat-root/--lap-root/--tuong-root arguments and fail clearly when a source is stale.",
-    },
-    {
-        "path": "demo/config.py",
-        "reason": "PREDICTION_CONFIDENCE_THRESHOLD remains 0.60 while Tuong's staging acceptance gate is 0.80.",
-        "action": "Use 0.80 as the acceptance threshold; keep 0.60 only as the UI medium-confidence boundary if needed.",
-    },
-    {
-        "path": "demo/services/fixture_validator.py",
-        "reason": "The validator checks that document_db_id exists as a key but accepts null lineage IDs.",
-        "action": "Require real IDs for database-enriched Week 7 fixtures and keep a separate pre-DB contract if needed.",
-    },
-    {
-        "path": "docs/backend_api_contract_for_ui.md",
-        "reason": "Prediction status rules still say confidence >= 0.60 is accepted and the sample source_id is a string.",
-        "action": "Align the contract with source_id integer 4 and Tuong's 0.80 staging policy.",
     },
     {
         "path": "docs/Task Week 1-6.md",
@@ -574,6 +563,8 @@ def _run_hung_command(
             env=environment,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=120,
             check=False,
         )
@@ -582,9 +573,14 @@ def _run_hung_command(
             "status": "error",
             "command": display_command,
             "returncode": None,
-            "error_summary": [str(exc)],
+            "error_summary": [
+                _redact_machine_paths(
+                    str(exc), hung_root, "<phi-hung-repo>"
+                )
+            ],
         }
-    output = (result.stdout + "\n" + result.stderr).strip()
+    output = ((result.stdout or "") + "\n" + (result.stderr or "")).strip()
+    output = _redact_machine_paths(output, hung_root, "<phi-hung-repo>")
     return {
         "status": "passed" if result.returncode == 0 else "failed",
         "command": display_command,
@@ -686,6 +682,43 @@ def _build_summary(hung_root: Path) -> dict[str, Any]:
         "real_lineage_passed": real_lineage_passed,
         "screenshots_present": screenshots["status"] == "passed",
     }
+
+    required_actions: list[str] = []
+    if duy_fixture.get("status") != "passed":
+        required_actions.append(
+            "Refresh demo/fixtures/week7/duy_latest_ingestion_summary.json "
+            "from Duy's current DB-enriched fixture."
+        )
+    if phat_fixture.get("status") != "passed":
+        required_actions.append(
+            "Refresh Phat dashboard view samples and preserve document_external_id "
+            "alongside integer document_id values."
+        )
+    if lap_fixture.get("status") != "passed":
+        required_actions.append(
+            "Replace the active RAG fixture with Lap's current DataFlow pgvector "
+            "result and complete citation lineage."
+        )
+    if tuong_fixture.get("status") != "passed":
+        required_actions.append(
+            "Replace Tuong batch and review-queue fixtures with DB-enriched outputs "
+            "that preserve non-null source_id, document_db_id, and ingestion_run_id."
+        )
+    if code_docs.get("status") != "passed" or code_docs.get("findings"):
+        required_actions.append(
+            "Resolve the UI code and contract findings listed in "
+            "ui_code_and_docs_audit, then rerun this audit."
+        )
+    if screenshots.get("status") != "passed":
+        required_actions.append(
+            "Regenerate the complete Week 7 staging screenshot set after fixture refresh."
+        )
+
+    notes = [
+        "Duy, Phat, Lap, and Tuong fixture results are calculated from the current sibling-repository snapshots.",
+        "Code, documentation, and screenshot checks are reported separately from fixture lineage and executable tests.",
+        "The audit is read-only against the sibling Phi/Hung repository; owner fixes require a Phi/Hung commit.",
+    ]
     return {
         "schema_version": "duy_phi_hung_week7_mapping_v1",
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -724,16 +757,7 @@ def _build_summary(hung_root: Path) -> dict[str, Any]:
         "gates": gates,
         "blocking_findings": findings,
         "cleanup_candidates": UI_CLEANUP_CANDIDATES,
-        "required_phi_hung_actions": [
-            "Refresh demo/fixtures/week7/duy_latest_ingestion_summary.json from Duy's DB-enriched fixture.",
-            "Keep Phat view samples, but expose document_external_id alongside document_id in review-queue display data.",
-            "Replace Tuong UI fixtures with the latest staging-safe outputs and preserve source_id/document_db_id/ingestion_run_id.",
-            "Change the UI acceptance threshold contract from 0.60 to Tuong's 0.80 staging gate.",
-            "Make fixture refresh accept explicit sibling repository paths instead of depending on ignored code_by_others/.",
-            "Require non-null DB lineage in database-enriched fixtures; retain a separate pre-DB fixture contract if needed.",
-            "Keep DataFlow pgvector fixture as the only active RAG demo source and archive root vendor/refund-policy fixtures.",
-            "Confirm Week 7 screenshot freshness after fixture refresh.",
-        ],
+        "required_phi_hung_actions": required_actions,
         "commands_after_phi_hung_patch": {
             "unit_tests": "python -m pytest tests -q",
             "ui_smoke": "python scripts/week7_ui_ci_smoke_test.py",
@@ -741,11 +765,7 @@ def _build_summary(hung_root: Path) -> dict[str, Any]:
             "streamlit": "streamlit run demo/streamlit_app.py",
             "backend_stub": "python backend_stub/main.py",
         },
-        "notes": [
-            "The Week 7 Lap fixture is real DataFlow/pgvector-shaped and passes the citation contract.",
-            "The Week 7 Duy and Tuong fixtures are structurally valid but currently stale or missing DB lineage.",
-            "The audit was read-only against the sibling Hung repository; owner cleanup/source fixes require a Hung commit.",
-        ],
+        "notes": notes,
     }
 
 
@@ -803,6 +823,10 @@ def main() -> int:
                     "finding": "Phi/Hung tests or UI smoke test failed",
                     "fix": "Install the pinned UI requirements and rerun both commands.",
                 }
+            )
+            summary["required_phi_hung_actions"].append(
+                "Install the pinned Phi/Hung requirements and rerun both the full "
+                "test suite and UI smoke test."
             )
     else:
         summary["hung_execution"] = {

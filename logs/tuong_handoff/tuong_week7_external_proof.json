@@ -118,5 +118,5 @@
     "Keep RAG metadata soft by default and test the production metadata builder.",
     "Unify the 0.80 staging policy across active docs/model metadata and add missing DB dependencies."
   ],
-  "generated_at": "2026-07-18T17:36:26.219221+00:00"
+  "generated_at": "2026-07-19T19:51:54.615584+00:00"
 }

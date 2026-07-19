@@ -10,6 +10,7 @@ python scripts/week7_build_phi_hung_mapping_summary.py --run-hung-checks
 python scripts/week7_ci_ingestion_smoke_test.py
 pytest tests/data_tests/ -q
 python scripts/week7_data_pipeline_smoke_test.py
+python scripts/week7_verify_db_load_result.py --expected-structured-records 11524 --verify-handoffs
 python scripts/validate_week7.py
 python scripts/week7_shared_repo_readiness_check.py
 python scripts/week7_shared_integration_smoke_test.py
@@ -32,12 +33,13 @@ docker compose -f docker-compose.db.yml config --quiet
 docker compose -f docker-compose.yml config --quiet
 python scripts/week7_local_docker_integration_smoke_test.py
 python scripts/week7_local_docker_integration_smoke_test.py --start-db
+python scripts/week7_duy_phat_docker_db_integration_test.py --mode smoke-then-full
 ```
 
 The default local Docker check validates Compose without starting services.
-Use `--start-db` only when Docker Desktop is running. Phat's committed Week 7
-evidence confirms stable database IDs and full snapshot counts; a fresh runtime
-load is still required to prove Duy's latest run UUIDs.
+The Duy-to-Phat runner creates a separate Docker project at port `55432`,
+proves both smoke and full DB modes, rebuilds handoffs, and removes its test
+stack. Its current result confirms all latest Duy run UUIDs.
 
 The Lap mapping command intentionally reports two separate gates:
 
@@ -57,7 +59,10 @@ The Tuong mapping command also keeps separate gates:
 A four-state sample UI fixture or a one-row dry-run does not satisfy the real
 lineage/database gate.
 
-Database integration is a separate job supplied by Phat. Its service must expose PostgreSQL + pgvector and set `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, and `DB_PASSWORD` before calling:
+The workflow contains Duy's standalone `data-db-loading-ci` job. It starts a
+pgvector service, applies the pinned Phat schema contract, loads current Duy
+runs in smoke mode, rebuilds handoffs, and verifies exact counts. Phat still
+owns the shared database job and future schema changes.
 
 ```bash
 python scripts/load_ingestion_outputs_to_postgres.py --write-db --smoke
@@ -78,7 +83,9 @@ outputs/hung_handoff/hung_week7_mapping_summary.json
 logs/hung_handoff/hung_week7_external_proof.json
 ```
 
-The audit currently reports `blocked_on_phi_hung_refresh` because the sibling
-fixture copies still have null `source_id`/`document_db_id` values. Do not
-change the canonical Duy fixture to null values to make the UI test pass;
-refresh the Phi/Hung fixtures from the owner repositories and rerun the audit.
+The audit currently reports `blocked_on_phi_hung_refresh`. Duy, Phat, and Lap
+fixtures pass, but four Tuong batch rows and four Tuong review rows still have
+null `document_db_id`; the full UI tests also require the pinned Phi/Hung
+dependencies. Do not weaken Duy's canonical DB lineage to make a downstream
+fixture pass. Refresh Tuong's fixtures, install the UI requirements, and rerun
+the audit.

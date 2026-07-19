@@ -20,6 +20,7 @@ from data_engineering.storage.postgres_writer import (
     build_dry_run_summary,
     load_ingestion_result_to_postgres,
     query_integration_counts,
+    query_loaded_run_ids,
     validate_target_schema,
 )
 
@@ -27,6 +28,7 @@ RUN_LOG_DIR = PROJECT_ROOT / "logs/runs"
 DRY_RUN_OUTPUT = PROJECT_ROOT / "logs/db_load_dry_run/duy_to_phat_db_load_plan.json"
 SMOKE_DRY_RUN_OUTPUT = PROJECT_ROOT / "logs/db_load_dry_run/duy_to_phat_db_smoke_plan.json"
 RESULT_OUTPUT = PROJECT_ROOT / "logs/db_load_results/duy_to_phat_db_load_result.json"
+SOURCE_LOAD_ORDER = {"csv": 0, "excel": 1, "api": 2, "pdf": 3}
 
 
 def _read_json(path: Path) -> dict[str, Any]:
@@ -49,7 +51,13 @@ def select_latest_run_per_source(runs: list[dict[str, Any]]) -> list[dict[str, A
         current = latest_by_source.get(source_name)
         if current is None or (run.get("end_time") or "") > (current.get("end_time") or ""):
             latest_by_source[source_name] = run
-    return sorted(latest_by_source.values(), key=lambda run: run.get("source_name", ""))
+    return sorted(
+        latest_by_source.values(),
+        key=lambda run: (
+            SOURCE_LOAD_ORDER.get(str(run.get("source_type") or "").lower(), 99),
+            run.get("source_name", ""),
+        ),
+    )
 
 
 def build_dry_run_plan(
@@ -114,24 +122,39 @@ def run_real_load(
             for run in runs
             if run.get("source_type") == "pdf"
         ]
+        current_run_ids = sorted(run["run_id"] for run in runs)
         verification = query_integration_counts(
             conn,
-            run_ids=[run["run_id"] for run in runs],
+            run_ids=current_run_ids,
             source_names=[run["source_name"] for run in runs],
             document_external_ids=[value for value in document_external_ids if value],
         )
+        database_run_ids = query_loaded_run_ids(conn, current_run_ids)
     finally:
         conn.close()
 
     expected = build_dry_run_plan(runs, structured_record_limit=structured_record_limit)["totals"]
     verification_passed = all(
-        verification.get(table, 0) >= expected_count
+        verification.get(table, 0) == expected_count
         for table, expected_count in expected.items()
     )
     result_statuses = {result.get("status") for result in results}
+    run_ids_aligned = database_run_ids == current_run_ids
     payload = {
         "mode": "smoke_write_db" if structured_record_limit is not None else "full_write_db",
-        "status": "passed" if verification_passed and "failed" not in result_statuses else "failed",
+        "status": "passed"
+        if verification_passed and run_ids_aligned and "failed" not in result_statuses
+        else "failed",
+        "connection_status": "connected",
+        "schema_version": "schema_v4_fixed",
+        "source": "Duy current-run PostgreSQL write against Phat schema_v4_fixed contract",
+        "current_duy_runs_loaded": run_ids_aligned,
+        "current_run_ids": current_run_ids,
+        "snapshot_alignment": {
+            "latest_duy_run_ids": current_run_ids,
+            "database_run_ids": database_run_ids,
+            "all_current_run_ids_loaded": run_ids_aligned,
+        },
         "run_count": len(runs),
         "results": results,
         "schema_validation": {
@@ -139,7 +162,7 @@ def run_real_load(
             "tables": {table: len(columns) for table, columns in schema_columns.items()},
         },
         "verification": verification,
-        "expected_minimum_counts": expected,
+        "expected_exact_counts": expected,
     }
     write_json(RESULT_OUTPUT, payload)
     return payload

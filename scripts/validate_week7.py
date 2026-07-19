@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -21,17 +22,30 @@ REQUIRED_FILES = [
     "data_engineering/pipelines/handoff_context.py",
     "data_engineering/storage/db_connection.py",
     "data_engineering/storage/postgres_writer.py",
+    "data_engineering/validation/data_quality.py",
+    "data_engineering/utils/path_utils.py",
+    "data_engineering/utils/log_utils.py",
+    "data_engineering/utils/file_utils.py",
+    "data_engineering/configs/superstore_csv.json",
+    "data_engineering/configs/product_sales_excel.json",
+    "data_engineering/configs/dummyjson_products_api.json",
+    "data_engineering/configs/dataflow_pdf.json",
     "scripts/load_ingestion_outputs_to_postgres.py",
+    "scripts/week7_apply_database_schema.py",
+    "scripts/week7_duy_phat_docker_db_integration_test.py",
+    "scripts/week7_verify_db_load_result.py",
     "scripts/week7_ci_ingestion_smoke_test.py",
     "scripts/week7_build_rag_handoff_package.py",
     "scripts/week7_build_prediction_payloads.py",
     "scripts/week7_build_ui_fixtures.py",
+    "scripts/week7_build_shared_test_fixtures.py",
     "scripts/week7_build_phat_mapping_summary.py",
     "scripts/week7_build_lap_mapping_summary.py",
     "scripts/week7_build_tuong_mapping_summary.py",
     "scripts/week7_build_phi_hung_mapping_summary.py",
     "scripts/week7_data_pipeline_smoke_test.py",
     "logs/db_load_dry_run/duy_to_phat_db_smoke_plan.json",
+    "logs/db_load_results/duy_to_phat_db_load_result.json",
     "logs/db_load_results/phat_week7_external_database_proof.json",
     "outputs/phat_handoff/phat_week7_mapping_summary.json",
     "logs/lap_handoff/lap_week7_external_proof.json",
@@ -54,15 +68,29 @@ REQUIRED_FILES = [
     "tests/fixtures/data/sample_dataflow_pages_small.jsonl",
     "tests/fixtures/data/sample_dataflow_small.pdf",
     "docs/week7_duy_ci_commands.md",
+    "docs/week7_ci_ingestion_smoke_test_result.md",
+    "docs/week7_db_modes_for_ingestion.md",
+    "docs/week7_duy_phat_real_db_loading_result.md",
+    "docs/week7_duy_to_lap_rag_handoff.md",
+    "docs/week7_duy_to_tuong_prediction_payload_contract.md",
+    "docs/week7_duy_to_phi_hung_ui_fixture_contract.md",
+    "docs/week7_shared_test_fixtures.md",
+    "docs/week7_data_engineering_environment.md",
+    "docs/week7_data_tests_result.md",
     "docs/week7_data_pipeline_runbook.md",
     "docs/week7_duy_to_tuong_additional_prediction_payloads.md",
     "docs/week7_team_integration_handoff.md",
     "docs/week7_cross_team_delivery_matrix.md",
     "docs/week7_shared_repo_structure.md",
+    "docs/week7_shared_repo_cleanup.md",
+    "docs/week7_ci_cd_delivery_checklist.md",
+    "docs/week7_github_ci_cd_integration_plan.md",
     "docs/week7_deployment_runbook.md",
     "docs/week7_final_project_review.md",
     "docs/week7_backend_stub_contract.md",
     "integration/shared_repo_manifest.json",
+    "requirements.txt",
+    ".gitmodules",
     ".env.example",
     "docker-compose.db.yml",
     "docker-compose.yml",
@@ -71,12 +99,30 @@ REQUIRED_FILES = [
     "backend_stub/requirements.txt",
     "deployment/Dockerfile.data",
     "deployment/database/init/00_extensions.sql",
+    "deployment/database/init/10_phat_schema_v4_fixed.sql",
+    "outputs/integration/week7_duy_phat_docker_db_result.json",
+    "outputs/integration/week7_local_docker_smoke_result.json",
+    "outputs/integration/week7_shared_repo_readiness.json",
+    "outputs/integration/week7_shared_integration_smoke_result.json",
     "scripts/week7_backend_stub_smoke_test.py",
     "scripts/week7_local_docker_integration_smoke_test.py",
     "scripts/week7_shared_repo_readiness_check.py",
     "scripts/week7_shared_integration_smoke_test.py",
     ".github/workflows/ci.yml",
 ]
+
+WINDOWS_ABSOLUTE_PATH = re.compile(r"(?<![A-Za-z])[A-Za-z]:[\\/]")
+
+
+def iter_string_values(value):
+    if isinstance(value, str):
+        yield value
+    elif isinstance(value, dict):
+        for item in value.values():
+            yield from iter_string_values(item)
+    elif isinstance(value, list):
+        for item in value:
+            yield from iter_string_values(item)
 
 
 def main() -> int:
@@ -113,6 +159,24 @@ def main() -> int:
         (
             PROJECT_ROOT
             / "logs/db_load_results/phat_week7_external_database_proof.json"
+        ).read_text(encoding="utf-8")
+    )
+    current_db_proof = json.loads(
+        (
+            PROJECT_ROOT
+            / "logs/db_load_results/duy_to_phat_db_load_result.json"
+        ).read_text(encoding="utf-8")
+    )
+    docker_db_proof = json.loads(
+        (
+            PROJECT_ROOT
+            / "outputs/integration/week7_duy_phat_docker_db_result.json"
+        ).read_text(encoding="utf-8")
+    )
+    local_docker_proof = json.loads(
+        (
+            PROJECT_ROOT
+            / "outputs/integration/week7_local_docker_smoke_result.json"
         ).read_text(encoding="utf-8")
     )
     lap_mapping = json.loads(
@@ -165,15 +229,18 @@ def main() -> int:
     assert manifest["database_identity_status"] == "database_ids_confirmed"
     assert manifest["source_id"] == 4
     assert manifest["document_db_id"] == 1
+    assert manifest["current_ingestion_run_loaded"] is True
     assert len(payloads) == 20
     assert len(additional_payloads) == 10
     assert payloads[10:] == additional_payloads
     assert all("source_id" in payload and "document_db_id" in payload for payload in payloads)
+    assert all(payload["current_ingestion_runs_loaded"] is True for payload in payloads)
     assert ui_fixture["total_sources"] == 4
     assert ui_fixture["total_records_read"] == 11524
     assert ui_fixture["database_identity_status"] == "database_ids_confirmed"
     assert ui_fixture["latest_document"]["source_id"] == 4
     assert ui_fixture["latest_document"]["document_db_id"] == 1
+    assert ui_fixture["current_ingestion_runs_loaded"] is True
     assert phat_mapping["status"] == "passed"
     assert phat_mapping["database_ci_smoke_test_passed"] is True
     assert phat_mapping["counts"]["structured_records"] == 11524
@@ -182,6 +249,34 @@ def main() -> int:
     assert phat_identity_proof["status"] == "passed"
     assert phat_identity_proof["database_identity_status"] == "database_ids_confirmed"
     assert isinstance(phat_identity_proof["current_duy_runs_loaded"], bool)
+    assert current_db_proof["status"] == "passed"
+    assert current_db_proof["connection_status"] == "connected"
+    assert current_db_proof["schema_version"] == "schema_v4_fixed"
+    assert current_db_proof["current_duy_runs_loaded"] is True
+    assert sorted(
+        current_db_proof["snapshot_alignment"]["database_run_ids"]
+    ) == sorted(current_db_proof["current_run_ids"])
+    assert (
+        current_db_proof["snapshot_alignment"]["all_current_run_ids_loaded"]
+        is True
+    )
+    assert current_db_proof["verification"] == {
+        "sources": 4,
+        "ingestion_logs": 4,
+        "pipeline_runs": 4,
+        "documents": 1,
+        "document_pages": 36,
+        "structured_records": 11524,
+    }
+    assert docker_db_proof["status"] == "passed"
+    assert docker_db_proof["services_stopped"] is True
+    assert all(docker_db_proof["checks"].values())
+    assert local_docker_proof["status"] == "passed"
+    assert local_docker_proof["checks"]["full_up"] is True
+    assert local_docker_proof["checks"]["backend_health"] is True
+    assert local_docker_proof["checks"]["backend_contract_smoke"] is True
+    assert local_docker_proof["checks"]["full_cleanup"] is True
+    assert "removed" in local_docker_proof["runtime_note"].lower()
     assert lap_mapping["handoff_contract_passed"] is True
     assert lap_mapping["canonical_identity"]["source_id"] == 4
     assert lap_mapping["canonical_identity"]["document_db_id"] == 1
@@ -243,8 +338,12 @@ def main() -> int:
     assert set(manifest_json["owner_contracts"]) == {"Duy", "Phat", "Lap", "Tuong", "Phi/Hung"}
     assert "docker-compose.db.yml" in team_handoff
     assert "backend_stub/main.py" in team_handoff
-    assert "F:\\" not in team_handoff
-    assert "C:\\Users\\" not in team_handoff
+    assert WINDOWS_ABSOLUTE_PATH.search(team_handoff) is None
+    for owner_report in (lap_mapping, tuong_mapping, hung_mapping):
+        assert all(
+            WINDOWS_ABSOLUTE_PATH.search(value) is None
+            for value in iter_string_values(owner_report)
+        )
 
     requirements = (PROJECT_ROOT / "requirements.txt").read_text(encoding="utf-8").lower()
     for dependency in ("pandas", "openpyxl", "pymupdf", "requests", "pytest", "psycopg2-binary", "python-dotenv"):
@@ -253,16 +352,14 @@ def main() -> int:
     print("Week 7 validation passed")
     print(f"Checked {len(REQUIRED_FILES)} required Week 7 files")
     print("Checked smoke DB plan: 4 sources, 36 pages, 100 structured records")
-    print("Checked Phat's real Week 7 DB proof and stable source/document ID mapping")
+    print("Checked Duy's current-run Docker DB load and Phat schema_v4 ID mapping")
     print("Checked Duy-to-Lap, Duy-to-Tuong and Duy-to-Phi/Hung mapping audits, plus shared Docker/CI drafts")
     if not lap_mapping["live_pgvector_proof_passed"]:
         print("Note: Lap handoff contract passes, but live chunk insert/retrieval proof is still pending in the Lap repository")
     if not tuong_mapping["tuong_output_contract_passed"]:
         print("Note: Tuong handoff contract passes, but the current results/log/UI fixtures do not cover Duy's 20-payload batch")
     if hung_mapping["status"] != "passed":
-        print("Note: Phi/Hung UI tests and smoke pass, but fixture lineage or UI contract cleanup is still pending in the Hung repository")
-    if not phat_identity_proof["current_duy_runs_loaded"]:
-        print("Note: stable database IDs are confirmed; latest Duy run UUIDs still require a fresh DB load")
+        print("Note: one or more Phi/Hung execution or fixture-lineage gates remain pending; see the generated mapping summary")
     return 0
 
 

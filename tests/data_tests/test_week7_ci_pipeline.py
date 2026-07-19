@@ -9,9 +9,14 @@ from data_engineering.pipelines.handoff_context import (
     load_database_identity_map,
 )
 from data_engineering.storage.db_connection import load_db_config
-from scripts.load_ingestion_outputs_to_postgres import build_dry_run_plan, load_successful_run_logs
+from scripts.load_ingestion_outputs_to_postgres import (
+    build_dry_run_plan,
+    load_successful_run_logs,
+    select_latest_run_per_source,
+)
 from scripts.week7_ci_ingestion_smoke_test import run_ci_smoke_test
 from scripts.week7_data_pipeline_smoke_test import run_smoke_test
+from scripts.week7_verify_db_load_result import verify_result
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -56,6 +61,37 @@ def test_week7_db_smoke_plan_uses_expected_counts():
         "documents": 1,
         "document_pages": 36,
     }
+
+
+def test_week7_database_load_order_preserves_canonical_source_ids():
+    runs = select_latest_run_per_source(load_successful_run_logs())
+
+    assert [run["source_type"] for run in runs] == ["csv", "excel", "api", "pdf"]
+    assert [run["source_name"] for run in runs] == [
+        "superstore_sales_csv",
+        "product_sales_region_excel",
+        "dummyjson_products_api",
+        "dataflow_technical_report_pdf",
+    ]
+
+
+def test_week7_pinned_phat_schema_supports_writer_contract():
+    schema = (
+        PROJECT_ROOT / "deployment/database/init/10_phat_schema_v4_fixed.sql"
+    ).read_text(encoding="utf-8")
+
+    for required in (
+        "CREATE EXTENSION IF NOT EXISTS vector",
+        "CREATE TABLE IF NOT EXISTS sources",
+        "CREATE TABLE IF NOT EXISTS pipeline_runs",
+        "CREATE TABLE IF NOT EXISTS ingestion_logs",
+        "CREATE TABLE IF NOT EXISTS documents",
+        "CREATE TABLE IF NOT EXISTS document_pages",
+        "CREATE TABLE IF NOT EXISTS structured_records",
+        "document_external_id VARCHAR(255) UNIQUE",
+        "embedding vector(384)",
+    ):
+        assert required in schema
 
 
 def test_week7_db_config_supports_standard_ci_environment(monkeypatch):
@@ -424,6 +460,35 @@ def test_week7_ui_fixture_matches_phi_hung_contract():
     assert fixture["database_identity_status"] == "database_ids_confirmed"
     assert isinstance(fixture["current_ingestion_runs_loaded"], bool)
     assert fixture["handoff_paths"]["rag_handoff"].endswith("week7_document_pages_db_enriched.jsonl")
+
+
+def test_week7_current_run_database_proof_is_full_and_verified():
+    verification = verify_result(
+        expected_structured_records=11524,
+        verify_handoffs=True,
+    )
+    docker_result = json.loads(
+        (
+            PROJECT_ROOT
+            / "outputs/integration/week7_duy_phat_docker_db_result.json"
+        ).read_text(encoding="utf-8")
+    )
+
+    assert verification["status"] == "passed"
+    assert all(verification["checks"].values())
+    assert docker_result["status"] == "passed"
+    assert docker_result["services_stopped"] is True
+    assert all(docker_result["checks"].values())
+
+    rag_manifest = json.loads(
+        (
+            PROJECT_ROOT
+            / "outputs/rag_handoff/week7_rag_handoff_manifest.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert rag_manifest["database_identity_source"] == (
+        "logs/db_load_results/duy_to_phat_db_load_result.json"
+    )
 
 
 def test_week7_ci_smoke_test_passes_under_two_minutes():

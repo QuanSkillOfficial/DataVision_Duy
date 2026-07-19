@@ -27,8 +27,8 @@
     "file_hash_sha256": "06c0c318db353a5c5c6dbaa84c6778cde022fde92bd1bb7f56e32c485d62fa54",
     "database_identity_status": "database_ids_confirmed",
     "database_schema_version": "schema_v4_fixed",
-    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
-    "current_ingestion_runs_loaded": false
+    "database_identity_source": "logs/db_load_results/duy_to_phat_db_load_result.json",
+    "current_ingestion_runs_loaded": true
   },
   {
     "document_id": "doc_dataflow_pipeline_api_pages",
@@ -58,8 +58,8 @@
     "file_hash_sha256": "06c0c318db353a5c5c6dbaa84c6778cde022fde92bd1bb7f56e32c485d62fa54",
     "database_identity_status": "database_ids_confirmed",
     "database_schema_version": "schema_v4_fixed",
-    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
-    "current_ingestion_runs_loaded": false
+    "database_identity_source": "logs/db_load_results/duy_to_phat_db_load_result.json",
+    "current_ingestion_runs_loaded": true
   },
   {
     "document_id": "doc_dataflow_agent_workflow_pages",
@@ -89,8 +89,8 @@
     "file_hash_sha256": "06c0c318db353a5c5c6dbaa84c6778cde022fde92bd1bb7f56e32c485d62fa54",
     "database_identity_status": "database_ids_confirmed",
     "database_schema_version": "schema_v4_fixed",
-    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
-    "current_ingestion_runs_loaded": false
+    "database_identity_source": "logs/db_load_results/duy_to_phat_db_load_result.json",
+    "current_ingestion_runs_loaded": true
   },
   {
     "document_id": "doc_dataflow_agentic_rag_evaluation_pages",
@@ -120,8 +120,8 @@
     "file_hash_sha256": "06c0c318db353a5c5c6dbaa84c6778cde022fde92bd1bb7f56e32c485d62fa54",
     "database_identity_status": "database_ids_confirmed",
     "database_schema_version": "schema_v4_fixed",
-    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
-    "current_ingestion_runs_loaded": false
+    "database_identity_source": "logs/db_load_results/duy_to_phat_db_load_result.json",
+    "current_ingestion_runs_loaded": true
   },
   {
     "document_id": "doc_superstore_order_profitability_sample",
@@ -151,8 +151,8 @@
     "file_hash_sha256": "85e495dd7ef4966fb7bea5093902c9771431eccb20c3e556ae6b6c9c3824a700",
     "database_identity_status": "database_ids_confirmed",
     "database_schema_version": "schema_v4_fixed",
-    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
-    "current_ingestion_runs_loaded": false
+    "database_identity_source": "logs/db_load_results/duy_to_phat_db_load_result.json",
+    "current_ingestion_runs_loaded": true
   },
   {
     "document_id": "doc_product_sales_region_sample",
@@ -182,8 +182,8 @@
     "file_hash_sha256": "9411ffd6ca8f6135f8d1c8409015a750df3fc6931480b24d50826bb349a6b9ba",
     "database_identity_status": "database_ids_confirmed",
     "database_schema_version": "schema_v4_fixed",
-    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
-    "current_ingestion_runs_loaded": false
+    "database_identity_source": "logs/db_load_results/duy_to_phat_db_load_result.json",
+    "current_ingestion_runs_loaded": true
   },
   {
     "document_id": "doc_dummyjson_inventory_sample",
@@ -213,8 +213,8 @@
     "file_hash_sha256": "c3e9d7c3d2105a9167573fe996cfea2424e1e57adbe2bd6fe62044100d2f57c9",
     "database_identity_status": "database_ids_confirmed",
     "database_schema_version": "schema_v4_fixed",
-    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
-    "current_ingestion_runs_loaded": false
+    "database_identity_source": "logs/db_load_results/duy_to_phat_db_load_result.json",
+    "current_ingestion_runs_loaded": true
   },
   {
     "document_id": "doc_dataflow_technical_notes_markdown",
@@ -244,8 +244,8 @@
     "file_hash_sha256": null,
     "database_identity_status": "database_ids_confirmed",
     "database_schema_version": "schema_v4_fixed",
-    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
-    "current_ingestion_runs_loaded": false
+    "database_identity_source": "logs/db_load_results/duy_to_phat_db_load_result.json",
+    "current_ingestion_runs_loaded": true
   },
   {
     "document_db_id": null,
@@ -273,8 +273,8 @@
     "file_hash_sha256": null,
     "database_identity_status": "database_ids_confirmed",
     "database_schema_version": "schema_v4_fixed",
-    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
-    "current_ingestion_runs_loaded": false
+    "database_identity_source": "logs/db_load_results/duy_to_phat_db_load_result.json",
+    "current_ingestion_runs_loaded": true
   },
   {
     "document_id": "doc_invalid_file_size_validation",
@@ -304,7 +304,7 @@
     "file_hash_sha256": null,
     "database_identity_status": "database_ids_confirmed",
     "database_schema_version": "schema_v4_fixed",
-    "database_identity_source": "outputs/phat_handoff/phat_week7_mapping_summary.json",
-    "current_ingestion_runs_loaded": false
+    "database_identity_source": "logs/db_load_results/duy_to_phat_db_load_result.json",
+    "current_ingestion_runs_loaded": true
   }
 ]

@@ -1,6 +1,6 @@
 {
   "schema_version": "duy_tuong_week7_mapping_v1",
-  "generated_at": "2026-07-18T17:36:26.219221+00:00",
+  "generated_at": "2026-07-19T19:51:54.615584+00:00",
   "status": "blocked_on_tuong_refresh",
   "handoff_contract_passed": true,
   "tuong_output_contract_passed": false,
@@ -363,10 +363,10 @@
       "returncode": 2,
       "command": "python -m pytest tests/ai_tests/ -q -p no:cacheprovider",
       "error_summary": [
-        "ImportError while importing test module 'F:\\data\\new\\quanskill\\DataVision_Tuong\\tests\\ai_tests\\test_rag_filter_payload.py'.",
+        "ImportError while importing test module '<tuong-repo>\\tests\\ai_tests\\test_rag_filter_payload.py'.",
         "E   ModuleNotFoundError: No module named 'sklearn'",
         "_____________ ERROR collecting tests/ai_tests/test_ui_fixtures.py _____________",
-        "ImportError while importing test module 'F:\\data\\new\\quanskill\\DataVision_Tuong\\tests\\ai_tests\\test_ui_fixtures.py'.",
+        "ImportError while importing test module '<tuong-repo>\\tests\\ai_tests\\test_ui_fixtures.py'.",
         "E   ModuleNotFoundError: No module named 'sklearn'",
         "ERROR tests/ai_tests/test_batch_prediction.py",
         "ERROR tests/ai_tests/test_batch_validation_normalization.py",

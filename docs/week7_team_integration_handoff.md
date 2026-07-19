@@ -61,19 +61,29 @@ ID ổn định đã xác nhận:
 | --- | ---: |
 | `doc_dataflow_technical_report` | 1 |
 
-Giới hạn cần ghi rõ:
+Ngoài snapshot tích hợp lịch sử của Phat, Duy đã chạy lại loader trên Docker
+cô lập với chính bốn run hiện tại. Bằng chứng:
 
 ```text
+logs/db_load_results/duy_to_phat_db_load_result.json
+outputs/integration/week7_duy_phat_docker_db_result.json
+
 database_ids_confirmed = true
-current_duy_runs_loaded = false
+current_duy_runs_loaded = true
 ```
 
-Phat đã nạp một snapshot Duy đầy đủ, nhưng run UUID trong snapshot đó cũ hơn
-run UUID mới nhất hiện có ở repo Duy. Vì vậy:
+Kết quả current-run xác nhận:
 
-- Có thể dùng `source_id` và `document_db_id` đã xác nhận.
-- Không được tuyên bố rằng các run mới nhất đã được nạp vào PostgreSQL.
-- Cần chạy lại Duy loader khi PostgreSQL/Docker khả dụng để có current-run proof.
+- `4` source, `4` pipeline run và `4` ingestion log;
+- `1` document, `36` document page;
+- smoke mode có `100` structured record;
+- full mode có `11,524` structured record;
+- `source_id=4` và `document_db_id=1` giữ đúng contract;
+- container, network và volume test đã được xóa sau khi xác minh.
+
+Snapshot external của Phat vẫn được giữ làm bằng chứng lịch sử cho chunks,
+prediction logs và dashboard views; không còn là nguồn xác nhận run hiện tại
+của Duy.
 
 ## 3. Quy ước ID bắt buộc
 
@@ -166,8 +176,12 @@ Loader và mapping:
 DataVision_Duy/data_engineering/storage/db_connection.py
 DataVision_Duy/data_engineering/storage/postgres_writer.py
 DataVision_Duy/scripts/load_ingestion_outputs_to_postgres.py
+DataVision_Duy/scripts/week7_duy_phat_docker_db_integration_test.py
+DataVision_Duy/scripts/week7_verify_db_load_result.py
 DataVision_Duy/scripts/week7_build_phat_mapping_summary.py
 DataVision_Duy/docs/week7_duy_phat_real_db_loading_result.md
+DataVision_Duy/logs/db_load_results/duy_to_phat_db_load_result.json
+DataVision_Duy/outputs/integration/week7_duy_phat_docker_db_result.json
 ```
 
 ### 5.2 Mapping vào bảng Phat
@@ -218,6 +232,12 @@ Full load:
 python scripts/load_ingestion_outputs_to_postgres.py --write-db
 ```
 
+One-command isolated proof:
+
+```powershell
+python scripts/week7_duy_phat_docker_db_integration_test.py --mode smoke-then-full
+```
+
 Smoke mode phải nạp:
 
 ```text
@@ -233,7 +253,7 @@ Full mode phải nạp:
 
 ```text
 4 sources
-4 or more pipeline runs
+4 pipeline runs
 4 ingestion logs
 1 document
 36 document pages
@@ -371,7 +391,7 @@ document_external_id: doc_dataflow_technical_report
 document_db_id: 1
 ingestion_run_id: Duy run UUID
 database_identity_status: database_ids_confirmed
-current_ingestion_runs_loaded: false
+current_ingestion_runs_loaded: true
 ```
 
 ### 7.2 Output Tuong trả
@@ -443,8 +463,8 @@ Acceptance:
 
 - Dashboard mở trực tiếp trong fixture mode.
 - UI hiển thị DataFlow IDs, hash, quality và handoff paths.
-- `current_ingestion_runs_loaded=false` được hiển thị như limitation, không bị
-  trình bày thành lỗi ID.
+- `current_ingestion_runs_loaded=true` phải được giữ nguyên khi copy fixture
+  hiện tại; không hạ về `false` hoặc thay ID bằng `null`.
 - Week 7 database-enriched copies preserve `source_id=4`,
   `document_external_id=doc_dataflow_technical_report`,
   `document_db_id=1`, and the relevant `ingestion_run_id`.
@@ -468,10 +488,12 @@ DataVision_Duy/logs/hung_handoff/hung_week7_external_proof.json
 DataVision_Duy/docs/week7_duy_phi_hung_mapping_result.md
 ```
 
-At the time of this handoff, the sibling UI tests and smoke test pass, but
-the copied Duy/Tuong fixtures still have null database IDs and the UI
-contract/refresh script contain legacy rules. The mapping is therefore
-`blocked_on_phi_hung_refresh` until Phi/Hung commits the refresh.
+At the time of this handoff, Duy, Phat, and Lap fixture gates pass, as do the
+UI code/docs, screenshots, and UI smoke test. Four Tuong batch rows and four
+Tuong review rows still have null `document_db_id`. The complete Phi/Hung test
+suite also needs the pinned UI dependencies installed. The mapping therefore
+remains `blocked_on_phi_hung_refresh` until Phi/Hung refreshes Tuong's fixtures
+and reruns the full tests.
 
 ## 9. Duy cần nhận gì từ từng thành viên
 

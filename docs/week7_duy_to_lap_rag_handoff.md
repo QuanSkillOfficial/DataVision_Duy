@@ -21,13 +21,12 @@
 
 Each JSONL record includes `document_external_id`, `document_db_id`, `source_id`, `ingestion_run_id`, `page_number`, `text`, `char_count`, `word_count`, and `is_empty`.
 
-Phat's committed Week 7 evidence confirms the stable IDs. The manifest records
-`current_ingestion_run_loaded=false` because Phat loaded an older Duy run UUID.
-Regenerate from the validated Phat identity bridge with:
+The current Duy-to-Phat Docker proof confirms the stable IDs and the latest PDF
+run UUID. The manifest now records `current_ingestion_run_loaded=true`.
+Regenerate from the current DB result with:
 
 ```bash
-python scripts/week7_build_phat_mapping_summary.py
-python scripts/week7_build_rag_handoff_package.py --db-load-result logs/db_load_results/phat_week7_external_database_proof.json
+python scripts/week7_build_rag_handoff_package.py
 ```
 
 Lap must map `document_external_id` to the integer `documents.id`; a string ID must never be inserted into `document_chunks.document_id`.

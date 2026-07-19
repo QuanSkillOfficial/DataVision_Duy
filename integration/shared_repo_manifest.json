@@ -8,6 +8,18 @@
     "tuong": "DataVision_Tuong",
     "phi_hung": "DataVision_Hung"
   },
+  "historical_components": {
+    "week1_ingestion_foundation": {
+      "type": "git_submodule",
+      "metadata": ".gitmodules",
+      "required_for_week7": false
+    },
+    "week2": {
+      "type": "tracked_history",
+      "required_for_week7": false,
+      "retention_reason": "Original sample inputs, notebook evidence, contracts, and legacy validator"
+    }
+  },
   "target_structure": {
     "data_engineering": "Duy ingestion, handoff builders, database writer, validation",
     "ai/rag": "Lap chunking, embeddings, pgvector loader, retrieval",
@@ -46,6 +58,10 @@
         "outputs/ui_fixtures/duy_week7_database_enriched_summary.json",
         "scripts/load_ingestion_outputs_to_postgres.py",
         "scripts/week7_ci_ingestion_smoke_test.py",
+        "scripts/week7_duy_phat_docker_db_integration_test.py",
+        "scripts/week7_verify_db_load_result.py",
+        "logs/db_load_results/duy_to_phat_db_load_result.json",
+        "outputs/integration/week7_duy_phat_docker_db_result.json",
         "scripts/week7_build_phi_hung_mapping_summary.py",
         "outputs/hung_handoff/hung_week7_mapping_summary.json",
         "logs/hung_handoff/hung_week7_external_proof.json",
@@ -142,6 +158,7 @@
       "python scripts/week7_build_lap_mapping_summary.py --run-lap-tests",
       "python scripts/week7_build_tuong_mapping_summary.py --run-tuong-checks",
       "python scripts/week7_build_phi_hung_mapping_summary.py --run-hung-checks",
+      "python scripts/week7_verify_db_load_result.py --expected-structured-records 11524 --verify-handoffs",
       "python scripts/week7_shared_integration_smoke_test.py"
     ],
     "shared_ci_after_merge": [

@@ -33,6 +33,14 @@ if str(PROJECT_ROOT) not in sys.path:
 DEFAULT_LAP_ROOT = PROJECT_ROOT.parent / "DataVision_Lap"
 SUMMARY_OUTPUT = PROJECT_ROOT / "outputs/lap_handoff/lap_week7_mapping_summary.json"
 PROOF_OUTPUT = PROJECT_ROOT / "logs/lap_handoff/lap_week7_external_proof.json"
+WINDOWS_ABSOLUTE_PATH = re.compile(
+    r'(?<![A-Za-z])[A-Za-z]:\\(?:[^\\/:*?"<>|\r\n]+\\)*[^\\/:*?"<>|\r\n]*'
+)
+
+
+def _redact_machine_paths(text: str, repo_root: Path, label: str) -> str:
+    portable = text.replace(str(repo_root), label)
+    return WINDOWS_ABSOLUTE_PATH.sub("<local-path>", portable)
 
 DATAFLOW_EXTERNAL_ID = "doc_dataflow_technical_report"
 DATAFLOW_FILE_NAME = "DataFlow_Technical_Report.pdf"
@@ -485,6 +493,8 @@ def run_lap_unit_tests(lap_root: Path) -> dict[str, Any]:
             env=environment,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=120,
             check=False,
         )
@@ -492,9 +502,11 @@ def run_lap_unit_tests(lap_root: Path) -> dict[str, Any]:
         return {
             "status": "error",
             "command": display_command,
-            "error": str(exc),
+            "error": _redact_machine_paths(str(exc), lap_root, "<lap-repo>"),
         }
-    combined_output = f"{completed.stdout}\n{completed.stderr}"
+    combined_output = _redact_machine_paths(
+        f"{completed.stdout}\n{completed.stderr}", lap_root, "<lap-repo>"
+    )
     error_summary = [
         line.strip()
         for line in combined_output.splitlines()

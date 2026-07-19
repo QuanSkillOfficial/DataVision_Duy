@@ -1,6 +1,6 @@
 {
   "schema_version": "duy_lap_week7_mapping_v1",
-  "generated_at": "2026-07-18T17:02:11.332694+00:00",
+  "generated_at": "2026-07-19T19:51:52.430090+00:00",
   "status": "blocked_on_lap_execution",
   "handoff_contract_passed": true,
   "live_pgvector_proof_passed": false,
@@ -172,7 +172,7 @@
       "ERROR ai/ai_tests/test_retriever.py",
       "ERROR ai/ai_tests/test_vector_store_pgvector_connection.py",
       "!!!!!!!!!!!!!!!!!!! Interrupted: 7 errors during collection !!!!!!!!!!!!!!!!!!!",
-      "7 errors in 1.23s"
+      "7 errors in 0.68s"
     ]
   },
   "cleanup_candidates": [

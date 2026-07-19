@@ -8,6 +8,7 @@ Duy and Phi/Hung co-lead the shared workflow. The current draft is in
 | Job | Current state | Owner |
 | --- | --- | --- |
 | `data-engineering-ci` | Active and passing in Duy's repository | Duy |
+| `data-db-loading-ci` | Active; starts pgvector, applies schema, loads current Duy smoke data, verifies handoffs | Duy |
 | `backend-contract-ci` | Active when the stub dependencies are installed | Duy/shared |
 | `shared-readiness-ci` | Active; reports missing external owner artifacts without hiding them | Duy |
 | `integration-contract-ci` | Active; validates Duy outputs and both Compose files | Duy |
@@ -16,16 +17,17 @@ Duy and Phi/Hung co-lead the shared workflow. The current draft is in
 | `prediction-ci` | Conditional until the prediction smoke script is merged | Tuong |
 | `ui-ci` | Conditional until the UI smoke script and fixtures are merged | Phi/Hung |
 
-The conditional jobs are deliberate. A standalone Duy repository must not
-pretend that another owner's files exist. After the five repositories are
-merged, remove the conditional guard or keep it only as a path-based monorepo
-optimization.
+The conditional jobs are deliberate. The `module-discovery` job checks the
+checked-out tree and exposes explicit outputs for Phat, Lap, Tuong, and
+Phi/Hung. A standalone Duy repository therefore skips absent owner jobs; the
+same jobs activate automatically after those modules are merged.
 
 ## Commands
 
 ```powershell
 python scripts/week7_ci_ingestion_smoke_test.py
 python -m pytest tests/data_tests/ -q
+python scripts/week7_verify_db_load_result.py --expected-structured-records 11524 --verify-handoffs
 python scripts/week7_backend_stub_smoke_test.py
 python scripts/week7_shared_integration_smoke_test.py
 python scripts/week7_build_phi_hung_mapping_summary.py --run-hung-checks
@@ -54,6 +56,12 @@ The final integration job should:
 
 Until these owner artifacts are merged, `scripts/week7_shared_repo_readiness_check.py`
 is the source of truth for what is still missing.
+
+Duy's local current-run database proof can be reproduced independently:
+
+```powershell
+python scripts/week7_duy_phat_docker_db_integration_test.py --mode smoke-then-full
+```
 
 The readiness checker has two distinct gates:
 

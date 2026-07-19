@@ -1,25 +1,132 @@
 {
-  "mode": "not_executed",
-  "status": "pending_external_database",
-  "connection_status": "unavailable",
-  "schema_version": "schema_v4_fixed_pending_from_phat",
-  "results": [],
-  "expected_full_counts": {
+  "mode": "full_write_db",
+  "status": "passed",
+  "connection_status": "connected",
+  "schema_version": "schema_v4_fixed",
+  "source": "Duy current-run PostgreSQL write against Phat schema_v4_fixed contract",
+  "current_duy_runs_loaded": true,
+  "current_run_ids": [
+    "0a11e66b-59c8-4259-9759-d36589423758",
+    "4c595851-c11e-48e3-8c79-69f6fa52d282",
+    "797e7ee4-9139-4157-b6b4-cb3c325ce469",
+    "7fb106e1-c920-4e92-b3c8-47402ee94ea5"
+  ],
+  "snapshot_alignment": {
+    "latest_duy_run_ids": [
+      "0a11e66b-59c8-4259-9759-d36589423758",
+      "4c595851-c11e-48e3-8c79-69f6fa52d282",
+      "797e7ee4-9139-4157-b6b4-cb3c325ce469",
+      "7fb106e1-c920-4e92-b3c8-47402ee94ea5"
+    ],
+    "database_run_ids": [
+      "0a11e66b-59c8-4259-9759-d36589423758",
+      "4c595851-c11e-48e3-8c79-69f6fa52d282",
+      "797e7ee4-9139-4157-b6b4-cb3c325ce469",
+      "7fb106e1-c920-4e92-b3c8-47402ee94ea5"
+    ],
+    "all_current_run_ids_loaded": true
+  },
+  "run_count": 4,
+  "results": [
+    {
+      "run_id": "0a11e66b-59c8-4259-9759-d36589423758",
+      "source_name": "superstore_sales_csv",
+      "source_type": "csv",
+      "status": "success",
+      "inserted": {
+        "sources": 0,
+        "pipeline_runs": 0,
+        "ingestion_logs": 0,
+        "structured_records": 9994
+      },
+      "document_external_id": null,
+      "source_id": 1,
+      "pipeline_run_id": 1,
+      "document_db_id": null,
+      "load_action": "refreshed_existing_run_snapshot",
+      "reason": "ingestion_run_id already existed; refreshed mutable source data"
+    },
+    {
+      "run_id": "797e7ee4-9139-4157-b6b4-cb3c325ce469",
+      "source_name": "product_sales_region_excel",
+      "source_type": "excel",
+      "status": "success",
+      "inserted": {
+        "sources": 0,
+        "pipeline_runs": 0,
+        "ingestion_logs": 0,
+        "structured_records": 1500
+      },
+      "document_external_id": null,
+      "source_id": 2,
+      "pipeline_run_id": 2,
+      "document_db_id": null,
+      "load_action": "refreshed_existing_run_snapshot",
+      "reason": "ingestion_run_id already existed; refreshed mutable source data"
+    },
+    {
+      "run_id": "7fb106e1-c920-4e92-b3c8-47402ee94ea5",
+      "source_name": "dummyjson_products_api",
+      "source_type": "api",
+      "status": "success",
+      "inserted": {
+        "sources": 0,
+        "pipeline_runs": 0,
+        "ingestion_logs": 0,
+        "structured_records": 30
+      },
+      "document_external_id": null,
+      "source_id": 3,
+      "pipeline_run_id": 3,
+      "document_db_id": null,
+      "load_action": "refreshed_existing_run_snapshot",
+      "reason": "ingestion_run_id already existed; refreshed mutable source data"
+    },
+    {
+      "run_id": "4c595851-c11e-48e3-8c79-69f6fa52d282",
+      "source_name": "dataflow_technical_report_pdf",
+      "source_type": "pdf",
+      "status": "success",
+      "inserted": {
+        "sources": 0,
+        "pipeline_runs": 0,
+        "ingestion_logs": 0,
+        "documents": 0,
+        "document_pages": 36
+      },
+      "document_external_id": "doc_dataflow_technical_report",
+      "source_id": 4,
+      "pipeline_run_id": 4,
+      "document_db_id": 1,
+      "load_action": "refreshed_existing_run_snapshot",
+      "reason": "ingestion_run_id already existed; refreshed mutable source data"
+    }
+  ],
+  "schema_validation": {
+    "status": "passed",
+    "tables": {
+      "document_pages": 7,
+      "documents": 15,
+      "ingestion_logs": 22,
+      "pipeline_runs": 6,
+      "sources": 16,
+      "structured_records": 5
+    }
+  },
+  "verification": {
     "sources": 4,
-    "pipeline_runs": 4,
     "ingestion_logs": 4,
+    "pipeline_runs": 4,
     "documents": 1,
     "document_pages": 36,
     "structured_records": 11524
   },
-  "expected_smoke_counts": {
+  "expected_exact_counts": {
     "sources": 4,
     "pipeline_runs": 4,
     "ingestion_logs": 4,
+    "structured_records": 11524,
     "documents": 1,
-    "document_pages": 36,
-    "structured_records": 100
-  },
-  "next_command": "python scripts/load_ingestion_outputs_to_postgres.py --write-db --smoke",
-  "note": "This file is overwritten with source_id and document_db_id mappings after a real PostgreSQL load."
+    "document_pages": 36
+  }
 }

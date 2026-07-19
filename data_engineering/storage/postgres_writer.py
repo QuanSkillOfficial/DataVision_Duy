@@ -249,9 +249,13 @@ def get_existing_ingestion_mapping(conn, ingestion_result: dict[str, Any]) -> di
         "pipeline_run_id": int(row[1]) if row and row[1] is not None else None,
         "document_db_id": None,
     }
-    document_external_id = ingestion_result.get("document_id") or (
-        ingestion_result.get("pdf_metadata") or {}
-    ).get("document_id")
+    pdf_metadata = ingestion_result.get("pdf_metadata") or {}
+    document_external_id = (
+        ingestion_result.get("document_external_id")
+        or ingestion_result.get("document_id")
+        or pdf_metadata.get("document_external_id")
+        or pdf_metadata.get("document_id")
+    )
     if document_external_id:
         with conn.cursor() as cur:
             cur.execute(
@@ -323,6 +327,12 @@ def insert_document_pages(conn, document_pages_jsonl_path: str | Path, document_
         cur.execute("DELETE FROM document_pages WHERE document_id = %s", (document_id,))
         for line in file:
             page = json.loads(line)
+            page_text = page.get("text")
+            character_count = page.get("character_count")
+            if character_count is None:
+                character_count = page.get("char_count")
+            if character_count is None and isinstance(page_text, str):
+                character_count = len(page_text)
             cur.execute(
                 """
                 INSERT INTO document_pages (
@@ -333,8 +343,8 @@ def insert_document_pages(conn, document_pages_jsonl_path: str | Path, document_
                 (
                     document_id,
                     page["page_number"],
-                    page.get("text"),
-                    page.get("character_count"),
+                    page_text,
+                    character_count,
                     page.get("is_empty", False),
                 ),
             )
@@ -450,9 +460,13 @@ def load_ingestion_result_to_postgres(
     *,
     structured_record_limit: int | None = None,
 ) -> dict[str, Any]:
-    document_external_id = ingestion_result.get("document_id") or (
-        ingestion_result.get("pdf_metadata") or {}
-    ).get("document_id")
+    pdf_metadata = ingestion_result.get("pdf_metadata") or {}
+    document_external_id = (
+        ingestion_result.get("document_external_id")
+        or ingestion_result.get("document_id")
+        or pdf_metadata.get("document_external_id")
+        or pdf_metadata.get("document_id")
+    )
     summary: dict[str, Any] = {
         "run_id": ingestion_result.get("run_id"),
         "source_name": ingestion_result.get("source_name"),
@@ -468,9 +482,60 @@ def load_ingestion_result_to_postgres(
 
     try:
         if ingestion_run_exists(conn, ingestion_result["run_id"]):
-            summary.update(get_existing_ingestion_mapping(conn, ingestion_result))
-            summary["status"] = "skipped"
-            summary["reason"] = "ingestion_run_id already exists"
+            mapping = get_existing_ingestion_mapping(conn, ingestion_result)
+            source_id = mapping.get("source_id") or insert_or_get_source(
+                conn, ingestion_result
+            )
+            summary.update(mapping)
+            summary["source_id"] = source_id
+            summary["inserted"].update(
+                {"sources": 0, "pipeline_runs": 0, "ingestion_logs": 0}
+            )
+
+            # The schema stores structured rows and PDF pages as the latest
+            # source/document snapshot, not per ingestion run. Refresh those
+            # rows so a smoke load can be upgraded to a full load without
+            # duplicating pipeline_runs or ingestion_logs.
+            if ingestion_result.get("source_type") == "pdf":
+                pdf_metadata = dict(ingestion_result.get("pdf_metadata") or {})
+                file_manifest = ingestion_result.get("file_manifest") or {}
+                if file_manifest.get("file_hash_sha256"):
+                    pdf_metadata["file_hash_sha256"] = file_manifest[
+                        "file_hash_sha256"
+                    ]
+                document_id = insert_document(conn, pdf_metadata, source_id=source_id)
+                document_pages_path = ingestion_result.get(
+                    "document_pages_output_path"
+                ) or pdf_metadata.get("document_pages_output_path")
+                pages_inserted = (
+                    insert_document_pages(conn, document_pages_path, document_id)
+                    if document_pages_path
+                    else 0
+                )
+                summary["document_db_id"] = document_id
+                summary["document_external_id"] = (
+                    pdf_metadata.get("document_external_id")
+                    or pdf_metadata.get("document_id")
+                )
+                summary["inserted"].update(
+                    {"documents": 0, "document_pages": pages_inserted}
+                )
+            elif ingestion_result.get("source_type") in {"csv", "excel", "api"}:
+                summary["inserted"]["structured_records"] = (
+                    insert_structured_records(
+                        conn,
+                        ingestion_result["clean_output_path"],
+                        int(source_id),
+                        limit=structured_record_limit,
+                    )
+                )
+
+            conn.commit()
+            summary["status"] = "success"
+            summary["load_action"] = "refreshed_existing_run_snapshot"
+            summary["reason"] = (
+                "ingestion_run_id already existed; refreshed mutable source data"
+            )
             return summary
 
         source_id = insert_or_get_source(conn, ingestion_result)
@@ -502,6 +567,7 @@ def load_ingestion_result_to_postgres(
 
         conn.commit()
         summary["status"] = "success"
+        summary["load_action"] = "inserted_new_run"
     except Exception as exc:
         conn.rollback()
         summary["status"] = "failed"
@@ -571,6 +637,24 @@ def query_integration_counts(
     return {key: int(value) for key, value in zip(keys, row)}
 
 
+def query_loaded_run_ids(conn, run_ids: list[str]) -> list[str]:
+    """Return the exact requested ingestion UUIDs currently present in PostgreSQL."""
+    if not run_ids:
+        return []
+    with conn.cursor() as cur:
+        cur.execute(
+            """
+            SELECT DISTINCT run_id
+            FROM ingestion_logs
+            WHERE run_id = ANY(%s)
+            ORDER BY run_id
+            """,
+            (run_ids,),
+        )
+        rows = cur.fetchall()
+    return [str(row[0]) for row in rows if row and row[0] is not None]
+
+
 def build_document_page_insert_plan(document_pages_jsonl_path: str | Path) -> dict[str, Any]:
     """Return a dry-run plan showing Duy external document IDs and page counts.
 
@@ -578,7 +662,11 @@ def build_document_page_insert_plan(document_pages_jsonl_path: str | Path) -> di
     Duy's string document_id. The string ID maps first to
     documents.document_external_id.
     """
-    path = Path(document_pages_jsonl_path)
+    path = resolve_project_path(document_pages_jsonl_path)
+    if path is None or not path.exists():
+        raise FileNotFoundError(
+            f"document_pages JSONL not found: {document_pages_jsonl_path}"
+        )
     external_ids: dict[str, int] = {}
     total_pages = 0
     empty_pages = 0
@@ -586,7 +674,13 @@ def build_document_page_insert_plan(document_pages_jsonl_path: str | Path) -> di
         for line in file:
             page = json.loads(line)
             total_pages += 1
-            external_id = page["document_id"]
+            external_id = page.get("document_external_id") or page.get(
+                "document_id"
+            )
+            if not external_id:
+                raise ValueError(
+                    "Each document page must include document_external_id or document_id"
+                )
             external_ids[external_id] = external_ids.get(external_id, 0) + 1
             if page.get("is_empty"):
                 empty_pages += 1

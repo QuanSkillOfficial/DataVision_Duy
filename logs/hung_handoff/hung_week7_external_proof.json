@@ -1,89 +1,37 @@
 {
   "schema_version": "duy_phi_hung_week7_mapping_v1",
-  "generated_at": "2026-07-18T18:25:42.696802+00:00",
+  "generated_at": "2026-07-19T19:51:25.055542+00:00",
   "status": "blocked_on_phi_hung_refresh",
-  "hung_commit": "3e24e03e8da13641e3739449116d35d7c8c9904f",
+  "hung_commit": "2e0f49dbf4e12d0210efa28f3f28f5ba7deb9a8e",
   "gates": {
     "fixture_contract_passed": false,
-    "duy_fixture_lineage_passed": false,
-    "phat_dashboard_contract_passed": false,
+    "duy_fixture_lineage_passed": true,
+    "phat_dashboard_contract_passed": true,
     "lap_rag_fixture_passed": true,
     "tuong_fixture_contract_passed": false,
     "ui_structure_passed": true,
-    "ui_code_docs_passed": false,
+    "ui_code_docs_passed": true,
     "real_lineage_passed": false,
     "screenshots_present": true,
-    "hung_unit_tests_passed": true,
+    "hung_unit_tests_passed": false,
     "ui_smoke_passed": true
   },
   "blocking_findings": [
     {
       "severity": "blocking",
-      "area": "duy_fixture",
-      "finding": "latest_document.source_id=None does not match Duy 4"
-    },
-    {
-      "severity": "blocking",
-      "area": "duy_fixture",
-      "finding": "latest_document.document_db_id=None does not match Duy 1"
-    },
-    {
-      "severity": "blocking",
-      "area": "duy_fixture",
-      "finding": "database_identity_status is not database_ids_confirmed"
-    },
-    {
-      "severity": "blocking",
-      "area": "duy_fixture",
-      "finding": "fixture metadata points to ignored code_by_others path"
-    },
-    {
-      "severity": "high",
-      "area": "phat_fixture",
-      "finding": "5 review-queue rows are missing document_external_id"
+      "area": "tuong_fixture",
+      "finding": "4 batch items have null document_db_id"
     },
     {
       "severity": "blocking",
       "area": "tuong_fixture",
-      "finding": "5 batch items have null source_id"
+      "finding": "4 review items have null document_db_id"
     },
     {
       "severity": "blocking",
-      "area": "tuong_fixture",
-      "finding": "5 batch items have null document_db_id"
-    },
-    {
-      "severity": "blocking",
-      "area": "tuong_fixture",
-      "finding": "3 review items have null document_db_id"
-    },
-    {
-      "severity": "high",
-      "area": "ui_code_and_docs",
-      "path": "demo/config.py",
-      "finding": "UI config still uses 0.60 as the prediction threshold",
-      "fix": "Use Tuong's 0.80 staging acceptance threshold; keep 0.60 only as a display band if explicitly named."
-    },
-    {
-      "severity": "high",
-      "area": "ui_code_and_docs",
-      "path": "docs/backend_api_contract_for_ui.md",
-      "finding": "prediction API example/rule is still on the legacy 0.60/string-ID contract",
-      "fix": "Use integer source_id, document_db_id -> prediction_logs.document_id, and the 0.80 staging gate."
-    },
-    {
-      "severity": "high",
-      "area": "ui_code_and_docs",
-      "path": "demo/services/fixture_validator.py",
-      "finding": "fixture validator does not cover all lineage fields",
-      "fix": "Validate source_id, document_external_id, document_db_id, and ingestion_run_id for DB-enriched fixtures."
-    },
-    {
-      "severity": "high",
-      "area": "ui_code_and_docs",
-      "path": "scripts/week7_refresh_fixtures.py",
-      "finding": "fixture refresh depends on ignored code_by_others/ checkout",
-      "fix": "Accept explicit sibling repository paths and fail if the source is not the current Week 7 output."
+      "area": "hung_execution",
+      "finding": "Phi/Hung tests or UI smoke test failed",
+      "fix": "Install the pinned UI requirements and rerun both commands."
     }
   ],
   "cleanup_candidates": [
@@ -91,26 +39,6 @@
       "path": "demo/fixtures/*.json",
       "reason": "Root fixtures contain pre-Week 7 vendor/refund-policy and synthetic prediction data.",
       "action": "Archive after confirming all active tests use demo/fixtures/week7/."
-    },
-    {
-      "path": "scripts/week7_refresh_fixtures.py",
-      "reason": "Refresh source is hard-coded to code_by_others/, which is ignored and absent in a clean checkout.",
-      "action": "Accept explicit --duy-root/--phat-root/--lap-root/--tuong-root arguments and fail clearly when a source is stale."
-    },
-    {
-      "path": "demo/config.py",
-      "reason": "PREDICTION_CONFIDENCE_THRESHOLD remains 0.60 while Tuong's staging acceptance gate is 0.80.",
-      "action": "Use 0.80 as the acceptance threshold; keep 0.60 only as the UI medium-confidence boundary if needed."
-    },
-    {
-      "path": "demo/services/fixture_validator.py",
-      "reason": "The validator checks that document_db_id exists as a key but accepts null lineage IDs.",
-      "action": "Require real IDs for database-enriched Week 7 fixtures and keep a separate pre-DB contract if needed."
-    },
-    {
-      "path": "docs/backend_api_contract_for_ui.md",
-      "reason": "Prediction status rules still say confidence >= 0.60 is accepted and the sample source_id is a string.",
-      "action": "Align the contract with source_id integer 4 and Tuong's 0.80 staging policy."
     },
     {
       "path": "docs/Task Week 1-6.md",
