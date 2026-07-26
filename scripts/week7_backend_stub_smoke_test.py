@@ -66,7 +66,7 @@ def run_smoke_test(base_url: str) -> dict:
             "POST",
             "/api/predict/document-type/batch",
             {
-                "payloads": [
+                "items": [
                     {"file_name": "sample.pdf", "file_type": "pdf", "extracted_text": long_text},
                     {"file_name": "short.pdf", "file_type": "pdf", "extracted_text": "short"},
                 ]
@@ -83,8 +83,8 @@ def run_smoke_test(base_url: str) -> dict:
         results[name] = {"http_status": status_code, "response": payload}
         checks[name] = _check_envelope(status_code, payload)
 
-    batch_data = results["prediction_batch"]["response"].get("data") or {}
-    predictions = batch_data.get("predictions", []) if isinstance(batch_data, dict) else []
+    batch_data = results["prediction_batch"]["response"].get("data") or []
+    predictions = batch_data if isinstance(batch_data, list) else []
     checks["batch_has_two_results"] = len(predictions) == 2
     checks["short_text_is_waiting_for_source"] = (
         len(predictions) == 2 and predictions[1].get("status") == "waiting_for_source"

@@ -187,6 +187,17 @@ def dashboard_metrics() -> dict[str, Any]:
     return _success(_dashboard_metrics(), source="Duy fixture + Phat view contract")
 
 
+@app.post("/api/dashboard/metrics")
+def dashboard_metrics_with_context(
+    payload: dict[str, Any] = Body(default_factory=dict),
+) -> dict[str, Any]:
+    return _success(
+        _dashboard_metrics(),
+        source="Duy fixture + Phat view contract",
+        source_context_count=len(payload.get("source_context", [])),
+    )
+
+
 @app.get("/api/dashboard/recent-activity")
 def dashboard_recent_activity() -> dict[str, Any]:
     return _success(_phat_views().get("v_recent_activity", []))
@@ -258,9 +269,13 @@ def predict_document_type_batch(payload: Any = Body(default_factory=dict)) -> di
     if isinstance(payload, list):
         items = payload
     else:
-        items = payload.get("payloads", []) if isinstance(payload, dict) else []
+        items = (
+            payload.get("items", payload.get("payloads", []))
+            if isinstance(payload, dict)
+            else []
+        )
     predictions = [_prediction_result(item if isinstance(item, dict) else {}) for item in items]
-    return _success({"predictions": predictions, "count": len(predictions)})
+    return _success(predictions, count=len(predictions))
 
 
 @app.post("/api/predict/feedback")
@@ -278,33 +293,55 @@ def predict_feedback(payload: dict[str, Any] = Body(default_factory=dict)) -> di
 @app.post("/api/suggestions/generate")
 def suggestions_generate(payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
     return _success(
-        {
-            "suggestions": [
-                {
-                    "title": "Backend validation pending",
-                    "priority": "medium",
-                    "source_module": "integration",
-                    "reason": "The local stub is serving contract-shaped data.",
-                    "recommended_action": "Run the shared integration stack before staging.",
-                }
-            ],
-            "request": payload,
-        }
+        [
+            {
+                "title": "Backend validation pending",
+                "priority": "medium",
+                "source_module": "integration",
+                "reason": "The local stub is serving contract-shaped data.",
+                "recommended_action": "Run the shared integration stack before staging.",
+                "request_context_present": bool(payload),
+            }
+        ]
     )
 
 
 @app.post("/api/reports/generate")
 def reports_generate(payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+    evidence = {
+        "ingestion": _duy_summary(),
+        "dashboard": _phat_views(),
+        "rag": _lap_rag_fixture(),
+        "prediction": _tuong_batch(),
+    }
     return _success(
         {
             "title": "DataVision integration report",
             "status": "contract_only",
-            "evidence": {
-                "ingestion": _duy_summary(),
-                "dashboard": _phat_views(),
-                "rag": _lap_rag_fixture(),
-                "prediction": _tuong_batch(),
-            },
+            "sections": [
+                {
+                    "Section": "Executive Summary",
+                    "Preview": "Contract-stub report generated from current integration fixtures.",
+                },
+                {
+                    "Section": "Evidence Used",
+                    "Preview": "Duy ingestion, Phat views, Lap RAG and Tuong prediction fixtures.",
+                },
+                {
+                    "Section": "Next Actions",
+                    "Preview": "Replace contract fixtures with live Week 8 staging services.",
+                },
+            ],
+            "evidence_table": [
+                {
+                    "Evidence Source": "DataVision integration fixtures",
+                    "Metric / Signal": "Contract availability",
+                    "Value": "ready",
+                    "Used In Section": "Evidence Used",
+                    "Limitation": "Backend execution remains pending.",
+                }
+            ],
+            "evidence": evidence,
             "request": payload,
         }
     )
