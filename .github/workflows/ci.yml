@@ -18,8 +18,12 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
+          cache-dependency-path: requirements-ci.txt
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-ci.txt
+          python -m pip check
       - name: Build shared CI fixtures
         run: python scripts/week7_build_shared_test_fixtures.py
       - name: Run ingestion CI smoke test
@@ -56,8 +60,12 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
+          cache-dependency-path: requirements-ci.txt
       - name: Install data dependencies
-        run: pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-ci.txt
+          python -m pip check
       - name: Apply pinned Phat schema contract
         run: python scripts/week7_apply_database_schema.py
       - name: Load current Duy runs in DB smoke mode
@@ -82,8 +90,12 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
+          cache-dependency-path: backend_stub/requirements.txt
       - name: Install backend stub dependencies
-        run: pip install -r backend_stub/requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r backend_stub/requirements.txt
+          python -m pip check
       - name: Start backend contract stub
         run: |
           nohup uvicorn backend_stub.main:app --host 127.0.0.1 --port 8000 >/tmp/datavision-backend.log 2>&1 &
@@ -93,6 +105,19 @@ jobs:
           done
       - name: Run backend contract smoke test
         run: python scripts/week7_backend_stub_smoke_test.py
+      - name: Run UI-to-backend contract tests when UI is merged
+        shell: bash
+        env:
+          QS_USE_BACKEND: "true"
+          BACKEND_BASE_URL: http://127.0.0.1:8000/api
+        run: |
+          if [ -f demo/requirements-ci.txt ] && [ -f tests/test_backend_contract_smoke.py ]; then
+            python -m pip install -r demo/requirements-ci.txt
+            python -m pip check
+            python -m pytest tests/test_backend_contract_smoke.py -q
+          else
+            echo "UI module is not merged; UI-to-backend contract tests are pending."
+          fi
 
   shared-readiness-ci:
     runs-on: ubuntu-latest
@@ -102,8 +127,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-ci.txt
       - name: Install shared data dependencies
-        run: pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-ci.txt
+          python -m pip check
       - name: Check shared repository readiness
         run: python scripts/week7_shared_repo_readiness_check.py --allow-missing-owner-modules
 
@@ -115,8 +145,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-ci.txt
       - name: Install shared data dependencies
-        run: pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-ci.txt
+          python -m pip check
       - name: Run local integration contract smoke test
         run: python scripts/week7_shared_integration_smoke_test.py
 
@@ -133,22 +168,22 @@ jobs:
         name: Detect merged owner modules
         shell: bash
         run: |
-          if [ -f week7/database/scripts/ci_database_smoke_test.py ]; then
+          if [ -f week7/database/scripts/ci_database_smoke_test.py ] && [ -f week7/database/requirements-ci.txt ]; then
             echo "database=true" >> "$GITHUB_OUTPUT"
           else
             echo "database=false" >> "$GITHUB_OUTPUT"
           fi
-          if [ -f ai/rag/scripts/week7_rag_ci_smoke_test.py ]; then
+          if [ -f ai/rag/scripts/week7_rag_ci_smoke_test.py ] && [ -f ai/rag/requirements-ci.txt ]; then
             echo "rag=true" >> "$GITHUB_OUTPUT"
           else
             echo "rag=false" >> "$GITHUB_OUTPUT"
           fi
-          if [ -f scripts/week7_prediction_ci_smoke_test.py ]; then
+          if [ -f scripts/week7_prediction_ci_smoke_test.py ] && [ -f ai/prediction/requirements-ci.txt ]; then
             echo "prediction=true" >> "$GITHUB_OUTPUT"
           else
             echo "prediction=false" >> "$GITHUB_OUTPUT"
           fi
-          if [ -f scripts/week7_ui_ci_smoke_test.py ]; then
+          if [ -f scripts/week7_ui_ci_smoke_test.py ] && [ -f demo/requirements-ci.txt ]; then
             echo "ui=true" >> "$GITHUB_OUTPUT"
           else
             echo "ui=false" >> "$GITHUB_OUTPUT"
@@ -179,8 +214,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: pip
+          cache-dependency-path: week7/database/requirements-ci.txt
       - name: Install database dependencies
-        run: pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r week7/database/requirements-ci.txt
+          python -m pip check
       - name: Run database setup
         env:
           DB_HOST: localhost
@@ -229,8 +269,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Install shared dependencies
-        run: pip install -r requirements.txt
+          cache: pip
+          cache-dependency-path: ai/rag/requirements-ci.txt
+      - name: Install RAG CI dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r ai/rag/requirements-ci.txt
+          python -m pip check
       - name: Run RAG CI smoke test
         run: python ai/rag/scripts/week7_rag_ci_smoke_test.py
 
@@ -244,8 +289,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Install shared dependencies
-        run: pip install -r requirements.txt
+          cache: pip
+          cache-dependency-path: ai/prediction/requirements-ci.txt
+      - name: Install prediction CI dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r ai/prediction/requirements-ci.txt
+          python -m pip check
       - name: Run prediction CI smoke test
         run: python scripts/week7_prediction_ci_smoke_test.py
 
@@ -254,13 +304,20 @@ jobs:
     if: ${{ needs.module-discovery.outputs.ui == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
+    env:
+      QS_USE_BACKEND: "false"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Install shared dependencies
-        run: pip install -r requirements.txt
+          cache: pip
+          cache-dependency-path: demo/requirements-ci.txt
+      - name: Install UI CI dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r demo/requirements-ci.txt
+          python -m pip check
       - name: Run UI contract tests
         run: pytest tests/ -q
       - name: Run UI CI smoke test

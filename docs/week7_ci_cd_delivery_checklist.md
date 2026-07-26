@@ -25,17 +25,24 @@
 
 - [x] RAG smoke-test files are present in the audited repository snapshot.
 - [x] Duy's 36-page DB-enriched handoff passes Lap's input contract.
-- [ ] Remove the unused `torch` dependency and return a clean unit/CI result.
+- [x] Remove the unused direct `torch` dependency.
+- [x] Add a lightweight `ai/rag/requirements-ci.txt`.
+- [x] RAG unit suite passes: 59 tests.
+- [x] RAG FakeEmbedder smoke passes: 10/10 checks without model download.
 - [ ] Real chunk insertion, retrieval and RAG-log proof are returned.
 
 ## Tuong
 
 - [x] Duy has supplied 20 input payloads.
 - [x] Prediction CI smoke-test entry point is present in Tuong's audited repository.
-- [ ] Prediction tests and CI smoke test pass in a clean Python 3.11 environment.
-- [ ] Tuong refreshes the input copy and results for all 20 current Duy payloads.
+- [x] Add `ai/prediction/requirements-ci.txt` with scikit-learn 1.7.2.
+- [x] Prediction tests pass in a clean isolated environment: 116 tests.
+- [x] Prediction CI smoke test passes.
+- [x] Tuong refreshes results and log payloads for all 20 current Duy payloads.
+- [x] UI batch and review fixtures are refreshed from the current real batch.
 - [ ] Normalized prediction logs are inserted into Phat's database.
-- [ ] Review queue output is returned.
+- [x] Review queue output is returned with 15 real `needs_review` items.
+- [ ] Replace pending `prediction_log_id` values after the database insert.
 
 ## Phi/Hung
 
@@ -44,8 +51,13 @@
 - [x] UI smoke test passes in the audited checkout.
 - [x] DataFlow RAG fixture and Week 7 screenshots are present.
 - [x] Duy fixture, Phat dashboard fixture and UI code/docs pass current contracts.
-- [ ] Refresh Tuong batch/review fixtures so all applicable `document_db_id` values are non-null.
-- [ ] Install the pinned UI requirements and rerun the full Phi/Hung unit suite.
+- [x] Refresh Tuong batch/review fixtures from the current 20-payload run.
+- [x] Preserve the failed missing-lineage case instead of dropping it.
+- [x] Add `demo/requirements-ci.txt`.
+- [x] Fixture-mode suite passes: 63 tests; 15 backend-only tests are intentionally skipped.
+- [x] UI smoke test passes.
+- [x] Backend contract suite passes separately: 15/15 tests.
+- [ ] Replace pending prediction-log IDs after Tuong inserts logs into Phat's DB.
 
 ## Shared project
 
@@ -56,6 +68,11 @@
 - [x] Local Compose contract checker.
 - [x] Shared repo readiness report.
 - [x] CI workflow draft with conditional owner jobs.
+- [x] Separate CI dependency manifests for Data, DB, RAG, Prediction and UI.
+- [x] Every CI install runs `python -m pip check`.
+- [x] Backend stub and UI client contracts are aligned and tested.
+- [x] Both Compose files pass `docker compose config --quiet`.
 - [x] Deployment runbook draft.
 - [ ] Full runtime integration after owner artifacts are merged.
 - [ ] Physical shared-repo merge and deployment runbook sign-off by the team.
+- [ ] Start a Docker daemon/staging host for DB-backed RAG and prediction-log proof.
