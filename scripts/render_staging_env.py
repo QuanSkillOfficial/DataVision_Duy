@@ -1,0 +1,74 @@
+"""Render the remote Compose environment without printing staging secrets."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import re
+from pathlib import Path
+from urllib.parse import quote
+
+
+FULL_SHA = re.compile(r"[0-9a-f]{40}")
+
+
+def required(name: str) -> str:
+    value = os.getenv(name, "").strip()
+    if not value:
+        raise ValueError(f"{name} is required")
+    return value
+
+
+def compose_value(value: str) -> str:
+    return json.dumps(value, ensure_ascii=True)
+
+
+def render(output: Path) -> None:
+    release_sha = required("RELEASE_SHA").lower()
+    if not FULL_SHA.fullmatch(release_sha):
+        raise ValueError("RELEASE_SHA must be a full 40-character lowercase Git SHA")
+
+    image_prefix = required("IMAGE_PREFIX").lower().rstrip("/")
+    if not image_prefix.startswith("ghcr.io/"):
+        raise ValueError("IMAGE_PREFIX must point to ghcr.io")
+
+    user = os.getenv("POSTGRES_USER", "datavision")
+    password = required("POSTGRES_PASSWORD")
+    database = os.getenv("POSTGRES_DB", "datavision_db")
+    database_url = (
+        f"postgresql://{quote(user, safe='')}:{quote(password, safe='')}"
+        f"@db:5432/{quote(database, safe='')}"
+    )
+    values = {
+        "COMPOSE_PROJECT_NAME": os.getenv("COMPOSE_PROJECT_NAME", "datavision-staging"),
+        "DATAVISION_RELEASE_SHA": release_sha,
+        "POSTGRES_USER": user,
+        "POSTGRES_PASSWORD": password,
+        "POSTGRES_DB": database,
+        "DATABASE_URL": database_url,
+        "RAG_EMBEDDING_MODE": os.getenv("RAG_EMBEDDING_MODE", "hash"),
+        "BACKEND_PUBLIC_PORT": os.getenv("BACKEND_PUBLIC_PORT", "8000"),
+        "UI_PUBLIC_PORT": os.getenv("UI_PUBLIC_PORT", "8501"),
+        "BACKEND_IMAGE": f"{image_prefix}-backend:{release_sha}",
+        "UI_IMAGE": f"{image_prefix}-ui:{release_sha}",
+        "SEED_IMAGE": f"{image_prefix}-seed:{release_sha}",
+    }
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(
+        "\n".join(f"{key}={compose_value(value)}" for key, value in values.items()) + "\n",
+        encoding="utf-8",
+    )
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output", required=True)
+    args = parser.parse_args()
+    render(Path(args.output))
+    print(f"Rendered staging environment at {args.output}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

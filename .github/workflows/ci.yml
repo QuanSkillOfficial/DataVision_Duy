@@ -333,7 +333,10 @@ jobs:
         with:
           python-version: "3.11"
       - name: Validate Week 8 Compose model
-        run: docker compose -f docker-compose.yml config --quiet
+        run: |
+          docker compose -f docker-compose.yml config --quiet
+          docker compose -f deployment/cloud/docker-compose.staging.yml \
+            --env-file deployment/cloud/.env.staging.example config --quiet
       - name: Run clean-volume Week 8 staging acceptance
         run: >-
           python scripts/week8_staging_smoke_test.py
