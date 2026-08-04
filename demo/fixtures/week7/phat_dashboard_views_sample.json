@@ -1,0 +1,332 @@
+{
+  "data": {
+    "v_dashboard_overview": [
+      {
+        "total_sources": 4,
+        "total_documents": 1,
+        "successful_ingestions": 4,
+        "failed_ingestions": 0,
+        "total_rag_queries": 1,
+        "total_predictions": 10
+      }
+    ],
+    "v_data_quality_dashboard": [
+      {
+        "source_name": "superstore_sales_csv",
+        "run_id": "10ed4959-5ace-4ff7-9b30-da28321d6708",
+        "status": "success",
+        "records_read": 9994,
+        "records_valid": 9994,
+        "records_invalid": 0,
+        "data_quality_score": 100.0,
+        "duplicate_count": null,
+        "created_at": "2026-07-17T18:35:50.760582"
+      },
+      {
+        "source_name": "product_sales_region_excel",
+        "run_id": "a896a888-57f0-4ea9-9083-f860c2078f7d",
+        "status": "success",
+        "records_read": 1500,
+        "records_valid": 1500,
+        "records_invalid": 0,
+        "data_quality_score": 99.51,
+        "duplicate_count": null,
+        "created_at": "2026-07-17T18:35:50.760582"
+      },
+      {
+        "source_name": "dummyjson_products_api",
+        "run_id": "9cce3b5c-b83d-4873-86e1-b99de889b077",
+        "status": "success",
+        "records_read": 30,
+        "records_valid": 30,
+        "records_invalid": 0,
+        "data_quality_score": 99.0,
+        "duplicate_count": null,
+        "created_at": "2026-07-17T18:35:50.760582"
+      },
+      {
+        "source_name": "dataflow_technical_report_pdf",
+        "run_id": "8e18bd87-27e5-4aa1-9566-805ffd552fdb",
+        "status": "success",
+        "records_read": 36,
+        "records_valid": 36,
+        "records_invalid": 0,
+        "data_quality_score": 100.0,
+        "duplicate_count": null,
+        "created_at": "2026-07-17T18:35:50.760582"
+      }
+    ],
+    "v_document_quality_summary": [
+      {
+        "processing_status": "processed",
+        "file_type": null,
+        "document_count": 1,
+        "avg_page_count": 36.0
+      }
+    ],
+    "v_document_rag_readiness": [
+      {
+        "document_external_id": "doc_dataflow_technical_report",
+        "file_name": "DataFlow_Technical_Report.pdf",
+        "source_name": "dataflow_technical_report_pdf",
+        "processing_status": "processed",
+        "page_count": 36,
+        "total_chunks": 293,
+        "created_at": "2026-07-17T18:35:50.760582",
+        "updated_at": null
+      }
+    ],
+    "v_ingestion_health": [
+      {
+        "ingestion_date": "2026-07-17",
+        "status": "success",
+        "run_count": 4,
+        "total_read": 11560,
+        "total_valid": 11560,
+        "total_invalid": 0
+      }
+    ],
+    "v_latest_ingestion_runs": [
+      {
+        "run_name": "superstore_sales_csv_10ed4959-5ace-4ff7-9b30-da28321d6708",
+        "source_name": "superstore_sales_csv",
+        "ingestion_status": "success",
+        "records_read": 9994,
+        "error_message": null,
+        "started_at": null,
+        "ended_at": null,
+        "created_at": "2026-07-17T18:35:50.760582"
+      },
+      {
+        "run_name": "product_sales_region_excel_a896a888-57f0-4ea9-9083-f860c2078f7d",
+        "source_name": "product_sales_region_excel",
+        "ingestion_status": "success",
+        "records_read": 1500,
+        "error_message": null,
+        "started_at": null,
+        "ended_at": null,
+        "created_at": "2026-07-17T18:35:50.760582"
+      },
+      {
+        "run_name": "dummyjson_products_api_9cce3b5c-b83d-4873-86e1-b99de889b077",
+        "source_name": "dummyjson_products_api",
+        "ingestion_status": "success",
+        "records_read": 30,
+        "error_message": null,
+        "started_at": null,
+        "ended_at": null,
+        "created_at": "2026-07-17T18:35:50.760582"
+      },
+      {
+        "run_name": "dataflow_technical_report_pdf_8e18bd87-27e5-4aa1-9566-805ffd552fdb",
+        "source_name": "dataflow_technical_report_pdf",
+        "ingestion_status": "success",
+        "records_read": 36,
+        "error_message": null,
+        "started_at": null,
+        "ended_at": null,
+        "created_at": "2026-07-17T18:35:50.760582"
+      }
+    ],
+    "v_prediction_confidence_summary": [
+      {
+        "model_name": "document_classifier",
+        "model_version": "document_classifier_v1",
+        "predicted_label": "invoice",
+        "prediction_count": 2,
+        "avg_confidence": 0.6964999999999999,
+        "min_confidence": 0.6829
+      },
+      {
+        "model_name": "document_classifier",
+        "model_version": "document_classifier_v1",
+        "predicted_label": "report",
+        "prediction_count": 1,
+        "avg_confidence": 0.4184,
+        "min_confidence": 0.4184
+      },
+      {
+        "model_name": "document_classifier",
+        "model_version": "document_classifier_v1",
+        "predicted_label": null,
+        "prediction_count": 3,
+        "avg_confidence": 0.0,
+        "min_confidence": 0.0
+      },
+      {
+        "model_name": "document_classifier",
+        "model_version": "document_classifier_v1",
+        "predicted_label": "contract",
+        "prediction_count": 4,
+        "avg_confidence": 0.55855,
+        "min_confidence": 0.3839
+      }
+    ],
+    "v_prediction_review_queue": [
+      {
+        "id": 1,
+        "document_id": 1,
+        "predicted_label": "report",
+        "confidence_score": 0.4184,
+        "status": "needs_review",
+        "review_reason": "Prediction confidence below threshold",
+        "created_at": "2026-07-05T09:13:52.917432"
+      },
+      {
+        "id": 7,
+        "document_id": null,
+        "predicted_label": "contract",
+        "confidence_score": 0.3839,
+        "status": "needs_review",
+        "review_reason": "Prediction confidence below threshold",
+        "created_at": "2026-07-05T09:13:52.917432"
+      },
+      {
+        "id": 8,
+        "document_id": null,
+        "predicted_label": null,
+        "confidence_score": 0.0,
+        "status": "waiting_for_source",
+        "review_reason": "Extracted text is missing or too short for reliable prediction",
+        "created_at": "2026-07-05T09:13:52.917432"
+      },
+      {
+        "id": 9,
+        "document_id": null,
+        "predicted_label": null,
+        "confidence_score": 0.0,
+        "status": "waiting_for_source",
+        "review_reason": "Extracted text is missing or too short for reliable prediction",
+        "created_at": "2026-07-05T09:13:52.917432"
+      },
+      {
+        "id": 10,
+        "document_id": null,
+        "predicted_label": null,
+        "confidence_score": 0.0,
+        "status": "failed",
+        "review_reason": "Validation error: Missing required field: 'file_name'",
+        "created_at": "2026-07-05T09:13:52.917432"
+      }
+    ],
+    "v_rag_daily_metrics": [
+      {
+        "query_date": "2026-07-17",
+        "total_queries": 1,
+        "avg_latency_ms": 77.0,
+        "avg_confidence": 0.9005318999448987,
+        "model_name": "all-MiniLM-L6-v2"
+      }
+    ],
+    "v_recent_activity": [
+      {
+        "activity_type": "RAG Query",
+        "description": "What is the DataFlow pipeline?",
+        "created_at": "2026-07-17T18:36:32.480463"
+      },
+      {
+        "activity_type": "New Source Added",
+        "description": "superstore_sales_csv",
+        "created_at": "2026-07-17T18:35:50.760582"
+      },
+      {
+        "activity_type": "New Source Added",
+        "description": "product_sales_region_excel",
+        "created_at": "2026-07-17T18:35:50.760582"
+      },
+      {
+        "activity_type": "New Source Added",
+        "description": "dummyjson_products_api",
+        "created_at": "2026-07-17T18:35:50.760582"
+      },
+      {
+        "activity_type": "New Source Added",
+        "description": "dataflow_technical_report_pdf",
+        "created_at": "2026-07-17T18:35:50.760582"
+      }
+    ],
+    "v_source_quality_detail": [
+      {
+        "source_name": "dataflow_technical_report_pdf",
+        "source_type": "pdf",
+        "total_runs": 1,
+        "avg_data_quality_score": 100.0,
+        "total_invalid_records": 0,
+        "total_duplicates": null,
+        "last_run_at": "2026-07-17T18:35:50.760582"
+      },
+      {
+        "source_name": "dummyjson_products_api",
+        "source_type": "api",
+        "total_runs": 1,
+        "avg_data_quality_score": 99.0,
+        "total_invalid_records": 0,
+        "total_duplicates": null,
+        "last_run_at": "2026-07-17T18:35:50.760582"
+      },
+      {
+        "source_name": "superstore_sales_csv",
+        "source_type": "csv",
+        "total_runs": 1,
+        "avg_data_quality_score": 100.0,
+        "total_invalid_records": 0,
+        "total_duplicates": null,
+        "last_run_at": "2026-07-17T18:35:50.760582"
+      },
+      {
+        "source_name": "product_sales_region_excel",
+        "source_type": "excel",
+        "total_runs": 1,
+        "avg_data_quality_score": 99.51,
+        "total_invalid_records": 0,
+        "total_duplicates": null,
+        "last_run_at": "2026-07-17T18:35:50.760582"
+      }
+    ],
+    "v_source_quality_summary": [
+      {
+        "source_id": 1,
+        "source_name": "superstore_sales_csv",
+        "source_type": "csv",
+        "status": "active",
+        "total_documents": 0,
+        "total_structured_records": 9994,
+        "total_invalid_records": 0
+      },
+      {
+        "source_id": 2,
+        "source_name": "product_sales_region_excel",
+        "source_type": "excel",
+        "status": "active",
+        "total_documents": 0,
+        "total_structured_records": 1500,
+        "total_invalid_records": 0
+      },
+      {
+        "source_id": 3,
+        "source_name": "dummyjson_products_api",
+        "source_type": "api",
+        "status": "active",
+        "total_documents": 0,
+        "total_structured_records": 30,
+        "total_invalid_records": 0
+      },
+      {
+        "source_id": 4,
+        "source_name": "dataflow_technical_report_pdf",
+        "source_type": "pdf",
+        "status": "active",
+        "total_documents": 1,
+        "total_structured_records": 0,
+        "total_invalid_records": 0
+      }
+    ]
+  },
+  "status": "success",
+  "metadata": {
+    "normalized_for": "week7_ui",
+    "source_path": "code_by_others\\DataVision_Phat\\week7\\database\\outputs\\dashboard_view_samples",
+    "exact_week7_source_available": true,
+    "owner": "Phat"
+  }
+}

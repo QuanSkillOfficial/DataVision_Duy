@@ -9,6 +9,7 @@ __pycache__/
 # Virtual environments
 .venv/
 venv/
+.env
 
 # Jupyter
 .ipynb_checkpoints/
@@ -24,3 +25,8 @@ Thumbs.db
 logs/runs/*.json
 logs/manifests/*_manifest.json
 outputs/integration/week7_backend_stub_smoke_result.json
+
+# Local audit inputs. These are independent repositories/reference tasks and
+# must never be committed recursively into the shared platform repository.
+/team_repositories/
+/weekly_tasks/

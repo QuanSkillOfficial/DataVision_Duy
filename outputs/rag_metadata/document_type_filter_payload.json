@@ -1,0 +1,12 @@
+[
+  {
+    "document_external_id": "doc_dataflow_technical_report",
+    "document_db_id": 1,
+    "predicted_document_type": "report",
+    "confidence": 0.3988,
+    "status": "needs_review",
+    "use_for_rag_filtering": false,
+    "filter_strength": "soft_metadata",
+    "reason": "Prediction not manually confirmed or below hard-filter threshold"
+  }
+]

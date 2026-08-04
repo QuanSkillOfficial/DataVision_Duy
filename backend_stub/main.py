@@ -6,14 +6,17 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from fastapi import Body, FastAPI
+from fastapi import Body, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 FIXTURE_DIR = PROJECT_ROOT / "outputs" / "ui_fixtures"
 
-app = FastAPI(title="DataVision Week 7 Contract Stub", version="0.1.0")
+BACKEND_MODE = os.getenv("DATAVISION_BACKEND_MODE", "fixture").lower()
+STAGING_MODE = BACKEND_MODE == "staging"
+
+app = FastAPI(title="DataVision Platform API", version="0.2.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -35,9 +38,9 @@ def _read_json(filename: str, fallback: Any) -> Any:
 
 def _metadata() -> dict[str, Any]:
     return {
-        "mode": "contract_stub",
+        "mode": BACKEND_MODE,
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "backend_validation_pending": True,
+        "backend_validation_pending": not STAGING_MODE,
     }
 
 
@@ -178,23 +181,65 @@ def _prediction_result(payload: dict[str, Any]) -> dict[str, Any]:
 
 @app.get("/api/health")
 def health() -> dict[str, Any]:
+    if STAGING_MODE:
+        try:
+            from backend_stub.runtime import health_snapshot
+
+            snapshot = health_snapshot()
+        except Exception as exc:
+            raise HTTPException(status_code=503, detail=f"Database health check failed: {exc}") from exc
+        if not snapshot.get("healthy"):
+            raise HTTPException(status_code=503, detail=snapshot)
+        return _success(snapshot)
     return _success({"service": "backend_stub", "healthy": True})
 
 
 @app.get("/api/dashboard/metrics")
 @app.get("/api/dashboard/overview")
 def dashboard_metrics() -> dict[str, Any]:
+    if STAGING_MODE:
+        from backend_stub.runtime import dashboard_metrics as live_dashboard_metrics
+
+        return _success(live_dashboard_metrics(), source="PostgreSQL analytics views")
     return _success(_dashboard_metrics(), source="Duy fixture + Phat view contract")
+
+
+@app.post("/api/dashboard/metrics")
+def dashboard_metrics_with_context(
+    payload: dict[str, Any] = Body(default_factory=dict),
+) -> dict[str, Any]:
+    if STAGING_MODE:
+        from backend_stub.runtime import dashboard_metrics as live_dashboard_metrics
+
+        source_context = payload.get("source_context", [])
+        return _success(
+            live_dashboard_metrics(source_context),
+            source="PostgreSQL analytics views",
+            source_context_count=len(source_context),
+        )
+    return _success(
+        _dashboard_metrics(),
+        source="Duy fixture + Phat view contract",
+        source_context_count=len(payload.get("source_context", [])),
+    )
 
 
 @app.get("/api/dashboard/recent-activity")
 def dashboard_recent_activity() -> dict[str, Any]:
+    if STAGING_MODE:
+        from backend_stub.runtime import recent_activity
+
+        return _success(recent_activity())
     return _success(_phat_views().get("v_recent_activity", []))
 
 
 @app.get("/api/dashboard/review-queue")
 @app.get("/api/predict/review-queue")
 def prediction_review_queue() -> dict[str, Any]:
+    if STAGING_MODE:
+        from backend_stub.runtime import review_queue
+
+        return _success(review_queue())
     queue = _phat_views().get("v_prediction_review_queue")
     if not queue:
         queue = _tuong_review_queue()
@@ -203,6 +248,10 @@ def prediction_review_queue() -> dict[str, Any]:
 
 @app.get("/api/ingestion/status")
 def ingestion_status(run_id: str | None = None) -> dict[str, Any]:
+    if STAGING_MODE:
+        from backend_stub.runtime import latest_ingestion_status
+
+        return _success(latest_ingestion_status(run_id))
     summary = _duy_summary()
     return _success({"run_id": run_id, "summary": summary})
 
@@ -226,6 +275,19 @@ def ingestion_run(payload: dict[str, Any] = Body(default_factory=dict)) -> dict[
 
 @app.post("/api/rag/query")
 def rag_query(payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+    if STAGING_MODE:
+        from backend_stub.runtime import rag_query as live_rag_query
+
+        question = str(payload.get("question") or "").strip()
+        if not question:
+            return _error("question is required")
+        return _success(
+            live_rag_query(
+                question,
+                payload.get("document_id"),
+                int(payload.get("top_k", 5)),
+            )
+        )
     fixture = _lap_rag_fixture()
     question = payload.get("question") or fixture.get("question")
     if fixture.get("retrieved_context"):
@@ -250,6 +312,10 @@ def rag_query(payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str,
 
 @app.post("/api/predict/document-type")
 def predict_document_type(payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+    if STAGING_MODE:
+        from backend_stub.runtime import predict_and_log
+
+        return _success(predict_and_log(payload))
     return _success(_prediction_result(payload))
 
 
@@ -258,9 +324,18 @@ def predict_document_type_batch(payload: Any = Body(default_factory=dict)) -> di
     if isinstance(payload, list):
         items = payload
     else:
-        items = payload.get("payloads", []) if isinstance(payload, dict) else []
-    predictions = [_prediction_result(item if isinstance(item, dict) else {}) for item in items]
-    return _success({"predictions": predictions, "count": len(predictions)})
+        items = (
+            payload.get("items", payload.get("payloads", []))
+            if isinstance(payload, dict)
+            else []
+        )
+    if STAGING_MODE:
+        from backend_stub.runtime import predict_and_log
+
+        predictions = [predict_and_log(item if isinstance(item, dict) else {}) for item in items]
+    else:
+        predictions = [_prediction_result(item if isinstance(item, dict) else {}) for item in items]
+    return _success(predictions, count=len(predictions))
 
 
 @app.post("/api/predict/feedback")
@@ -277,34 +352,107 @@ def predict_feedback(payload: dict[str, Any] = Body(default_factory=dict)) -> di
 
 @app.post("/api/suggestions/generate")
 def suggestions_generate(payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
-    return _success(
-        {
-            "suggestions": [
+    if STAGING_MODE:
+        from backend_stub.runtime import dashboard_metrics as live_dashboard_metrics
+
+        metrics = live_dashboard_metrics()
+        queue_count = metrics.get("prediction_review_queue_count", 0)
+        return _success(
+            [
                 {
-                    "title": "Backend validation pending",
-                    "priority": "medium",
-                    "source_module": "integration",
-                    "reason": "The local stub is serving contract-shaped data.",
-                    "recommended_action": "Run the shared integration stack before staging.",
+                    "title": "Review low-confidence predictions" if queue_count else "Monitor staging pipeline",
+                    "priority": "high" if queue_count else "medium",
+                    "source_module": "prediction" if queue_count else "integration",
+                    "source_view": "v_prediction_review_queue" if queue_count else "v_dashboard_overview",
+                    "evidence_type": "row_count",
+                    "evidence_value": queue_count,
+                    "generated_from": "PostgreSQL staging evidence",
+                    "reason": f"{queue_count} predictions currently require review.",
+                    "recommended_action": "Open the review queue and confirm labels." if queue_count else "Continue monitoring health checks.",
+                    "final_score": 1.0 if queue_count else 0.5,
                 }
-            ],
-            "request": payload,
-        }
+            ]
+        )
+    return _success(
+        [
+            {
+                "title": "Backend validation pending",
+                "priority": "medium",
+                "source_module": "integration",
+                "reason": "The local stub is serving contract-shaped data.",
+                "recommended_action": "Run the shared integration stack before staging.",
+                "request_context_present": bool(payload),
+            }
+        ]
     )
 
 
 @app.post("/api/reports/generate")
 def reports_generate(payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+    if STAGING_MODE:
+        from backend_stub.runtime import dashboard_metrics as live_dashboard_metrics
+
+        live_metrics = live_dashboard_metrics()
+        evidence = {
+            "dashboard": live_metrics,
+            "mode": "staging",
+        }
+        return _success(
+            {
+                "title": "DataVision Week 8 staging report",
+                "status": "staging",
+                "sections": [
+                    {"Section": "Pipeline Health", "Preview": "Live PostgreSQL-backed staging metrics."},
+                    {"Section": "Review Queue", "Preview": f"{live_metrics.get('prediction_review_queue_count', 0)} items require review."},
+                    {"Section": "RAG Activity", "Preview": f"{live_metrics.get('rag_query_count', 0)} logged RAG queries."},
+                ],
+                "evidence_table": [
+                    {
+                        "Evidence Source": "PostgreSQL staging",
+                        "Metric / Signal": "DataVision pipeline state",
+                        "Value": "healthy",
+                        "Used In Section": "Pipeline Health",
+                        "Limitation": "Hash embeddings validate retrieval plumbing, not semantic model quality.",
+                    }
+                ],
+                "evidence": evidence,
+                "request": payload,
+            }
+        )
+    evidence = {
+        "ingestion": _duy_summary(),
+        "dashboard": _phat_views(),
+        "rag": _lap_rag_fixture(),
+        "prediction": _tuong_batch(),
+    }
     return _success(
         {
             "title": "DataVision integration report",
             "status": "contract_only",
-            "evidence": {
-                "ingestion": _duy_summary(),
-                "dashboard": _phat_views(),
-                "rag": _lap_rag_fixture(),
-                "prediction": _tuong_batch(),
-            },
+            "sections": [
+                {
+                    "Section": "Executive Summary",
+                    "Preview": "Contract-stub report generated from current integration fixtures.",
+                },
+                {
+                    "Section": "Evidence Used",
+                    "Preview": "Duy ingestion, Phat views, Lap RAG and Tuong prediction fixtures.",
+                },
+                {
+                    "Section": "Next Actions",
+                    "Preview": "Replace contract fixtures with live Week 8 staging services.",
+                },
+            ],
+            "evidence_table": [
+                {
+                    "Evidence Source": "DataVision integration fixtures",
+                    "Metric / Signal": "Contract availability",
+                    "Value": "ready",
+                    "Used In Section": "Evidence Used",
+                    "Limitation": "Backend execution remains pending.",
+                }
+            ],
+            "evidence": evidence,
             "request": payload,
         }
     )

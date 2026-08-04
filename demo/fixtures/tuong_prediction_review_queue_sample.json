@@ -1,0 +1,86 @@
+{
+  "description": "Prediction review queue sample data for Phi/Hung manual review UI — shows items that need human review",
+  "generated_at": "2026-07-05T07:30:00Z",
+  "total_items": 3,
+  "queue_filter": "status IN ('needs_review')",
+  "review_items": [
+    {
+      "prediction_log_id": 1,
+      "document_external_id": "doc_dataflow_technical_report",
+      "document_db_id": null,
+      "source_name": "dataflow_technical_report_pdf",
+      "ingestion_run_id": "a58bf6df-2dec-41ca-a18b-784c68eab826",
+      "file_name": "DataFlow_Technical_Report.pdf",
+      "file_type": "pdf",
+      "predicted_document_type": "report",
+      "confidence": 0.3988,
+      "status": "needs_review",
+      "review_reason": "Prediction confidence below threshold",
+      "top_predictions": [
+        {"label": "report", "score": 0.3988},
+        {"label": "research_paper", "score": 0.2316},
+        {"label": "contract", "score": 0.2288}
+      ],
+      "model_version": "document_classifier_v1",
+      "created_at": "2026-07-05T07:30:00Z",
+      "reviewed": false,
+      "corrected_document_type": null,
+      "corrected_by": null
+    },
+    {
+      "prediction_log_id": 2,
+      "document_external_id": "doc_superstore_sales_2024",
+      "document_db_id": null,
+      "source_name": "superstore_sales_csv",
+      "ingestion_run_id": "run-csv-002",
+      "file_name": "Superstore_Sales_2024.csv",
+      "file_type": "csv",
+      "predicted_document_type": "contract",
+      "confidence": 0.4019,
+      "status": "needs_review",
+      "review_reason": "Prediction confidence below threshold",
+      "top_predictions": [
+        {"label": "contract", "score": 0.4019},
+        {"label": "invoice", "score": 0.2925},
+        {"label": "research_paper", "score": 0.119}
+      ],
+      "model_version": "document_classifier_v1",
+      "created_at": "2026-07-05T07:30:01Z",
+      "reviewed": false,
+      "corrected_document_type": null,
+      "corrected_by": null
+    },
+    {
+      "prediction_log_id": 4,
+      "document_external_id": "doc_contract_vendor_agreement_2024",
+      "document_db_id": null,
+      "source_name": "contract_vendor_pdf",
+      "ingestion_run_id": "run-pdf-006",
+      "file_name": "contract_vendor_agreement_2024.pdf",
+      "file_type": "pdf",
+      "predicted_document_type": "report",
+      "confidence": 0.4085,
+      "status": "needs_review",
+      "review_reason": "Prediction confidence below threshold",
+      "top_predictions": [
+        {"label": "report", "score": 0.4085},
+        {"label": "contract", "score": 0.3974},
+        {"label": "policy_document", "score": 0.0754}
+      ],
+      "model_version": "document_classifier_v1",
+      "created_at": "2026-07-05T07:30:02Z",
+      "reviewed": false,
+      "corrected_document_type": null,
+      "corrected_by": null
+    }
+  ],
+  "supported_document_types": [
+    "contract",
+    "financial_statement",
+    "invoice",
+    "policy_document",
+    "report",
+    "research_paper",
+    "resume"
+  ]
+}

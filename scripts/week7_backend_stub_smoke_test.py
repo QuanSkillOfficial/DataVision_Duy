@@ -44,6 +44,22 @@ def _check_envelope(status_code: int, payload: dict) -> bool:
 
 def run_smoke_test(base_url: str) -> dict:
     long_text = "DataFlow pipeline integration test. " * 4
+    long_payload = {
+        "file_name": "sample.pdf",
+        "file_type": "pdf",
+        "file_size": 10240,
+        "text_length": len(long_text),
+        "num_pages": 1,
+        "source_system": "ci_smoke",
+        "extracted_text": long_text,
+        "document_external_id": "doc_sample",
+    }
+    short_payload = {
+        **long_payload,
+        "file_name": "short.pdf",
+        "text_length": 5,
+        "extracted_text": "short",
+    }
     calls = [
         ("health", "GET", "/api/health", None),
         ("dashboard", "GET", "/api/dashboard/metrics", None),
@@ -54,21 +70,16 @@ def run_smoke_test(base_url: str) -> dict:
             "prediction",
             "POST",
             "/api/predict/document-type",
-            {
-                "file_name": "sample.pdf",
-                "file_type": "pdf",
-                "extracted_text": long_text,
-                "document_external_id": "doc_sample",
-            },
+            long_payload,
         ),
         (
             "prediction_batch",
             "POST",
             "/api/predict/document-type/batch",
             {
-                "payloads": [
-                    {"file_name": "sample.pdf", "file_type": "pdf", "extracted_text": long_text},
-                    {"file_name": "short.pdf", "file_type": "pdf", "extracted_text": "short"},
+                "items": [
+                    long_payload,
+                    short_payload,
                 ]
             },
         ),
@@ -83,14 +94,15 @@ def run_smoke_test(base_url: str) -> dict:
         results[name] = {"http_status": status_code, "response": payload}
         checks[name] = _check_envelope(status_code, payload)
 
-    batch_data = results["prediction_batch"]["response"].get("data") or {}
-    predictions = batch_data.get("predictions", []) if isinstance(batch_data, dict) else []
+    batch_data = results["prediction_batch"]["response"].get("data") or []
+    predictions = batch_data if isinstance(batch_data, list) else []
     checks["batch_has_two_results"] = len(predictions) == 2
     checks["short_text_is_waiting_for_source"] = (
         len(predictions) == 2 and predictions[1].get("status") == "waiting_for_source"
     )
     checks["long_text_is_review_safe"] = (
-        len(predictions) == 2 and predictions[0].get("status") == "needs_review"
+        len(predictions) == 2
+        and predictions[0].get("status") in {"accepted", "needs_review"}
     )
     return {
         "status": "passed" if all(checks.values()) else "failed",

@@ -1,7 +1,8 @@
 {
   "status": "ready",
-  "execution_status": "blocked",
-  "scope": "Week 7 shared-repository readiness, not proof of runtime integration",
+  "execution_status": "passed",
+  "scope": "Week 8 canonical shared-repository and staging readiness",
+  "canonical_merge": true,
   "owners": {
     "Duy": {
       "repository_present": true,
@@ -50,7 +51,9 @@
         "status": "blocked_on_lap_execution",
         "handoff_contract_passed": true,
         "live_pgvector_proof_passed": false,
-        "blocking_findings": 9
+        "blocking_findings": 9,
+        "scope": "historical_week7",
+        "superseded_by_week8_runtime_proof": true
       }
     },
     "Tuong": {
@@ -75,7 +78,9 @@
         "tuong_output_contract_passed": false,
         "prediction_ci_proof_passed": false,
         "database_insert_proof_passed": false,
-        "blocking_findings": 13
+        "blocking_findings": 13,
+        "scope": "historical_week7",
+        "superseded_by_week8_runtime_proof": true
       }
     },
     "Phi/Hung": {
@@ -127,40 +132,34 @@
         "hung_unit_tests_passed": false,
         "ui_smoke_passed": true,
         "blocking_findings": 3,
-        "proof_gates_match": true
+        "proof_gates_match": true,
+        "scope": "historical_week7",
+        "superseded_by_week8_runtime_proof": true
       }
     }
   },
-  "execution_blockers": {
-    "Lap": {
-      "status": "blocked_on_lap_execution",
-      "handoff_contract_passed": true,
-      "live_pgvector_proof_passed": false,
-      "blocking_findings": 9
+  "execution_blockers": {},
+  "week8_runtime_proof": {
+    "present": true,
+    "passed": true,
+    "checks": {
+      "backend_healthy": true,
+      "database_reachable": true,
+      "pgvector_enabled": true,
+      "duy_sources_available": true,
+      "duy_pages_available": true,
+      "lap_chunks_available": true,
+      "lap_retrieval_context": true,
+      "lap_citations": true,
+      "lap_pgvector_backend": true,
+      "tuong_prediction_executed": true,
+      "tuong_prediction_logged": true,
+      "review_queue_queryable": true,
+      "ui_healthy": true,
+      "suggestions_contract": true,
+      "report_contract": true
     },
-    "Tuong": {
-      "status": "blocked_on_tuong_refresh",
-      "handoff_contract_passed": true,
-      "tuong_output_contract_passed": false,
-      "prediction_ci_proof_passed": false,
-      "database_insert_proof_passed": false,
-      "blocking_findings": 13
-    },
-    "Phi/Hung": {
-      "status": "blocked_on_phi_hung_refresh",
-      "fixture_contract_passed": false,
-      "duy_fixture_lineage_passed": true,
-      "phat_dashboard_contract_passed": true,
-      "lap_rag_fixture_passed": true,
-      "tuong_fixture_contract_passed": false,
-      "ui_structure_passed": true,
-      "ui_code_docs_passed": true,
-      "real_lineage_passed": false,
-      "hung_unit_tests_passed": false,
-      "ui_smoke_passed": true,
-      "blocking_findings": 3,
-      "proof_gates_match": true
-    }
+    "path": "outputs/integration/week8_staging_acceptance.json"
   },
-  "next_action": "Resolve owner execution blockers, then rerun with --strict --strict-execution."
+  "next_action": "Run the clean-volume Compose gate in CI and promote the same images to staging."
 }
