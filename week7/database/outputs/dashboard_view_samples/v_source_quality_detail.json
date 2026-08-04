@@ -1,0 +1,38 @@
+[
+    {
+        "source_name": "dataflow_technical_report_pdf",
+        "source_type": "pdf",
+        "total_runs": 1,
+        "avg_data_quality_score": 100.0,
+        "total_invalid_records": 0,
+        "total_duplicates": null,
+        "last_run_at": "2026-07-17T18:35:50.760582"
+    },
+    {
+        "source_name": "dummyjson_products_api",
+        "source_type": "api",
+        "total_runs": 1,
+        "avg_data_quality_score": 99.0,
+        "total_invalid_records": 0,
+        "total_duplicates": null,
+        "last_run_at": "2026-07-17T18:35:50.760582"
+    },
+    {
+        "source_name": "superstore_sales_csv",
+        "source_type": "csv",
+        "total_runs": 1,
+        "avg_data_quality_score": 100.0,
+        "total_invalid_records": 0,
+        "total_duplicates": null,
+        "last_run_at": "2026-07-17T18:35:50.760582"
+    },
+    {
+        "source_name": "product_sales_region_excel",
+        "source_type": "excel",
+        "total_runs": 1,
+        "avg_data_quality_score": 99.51,
+        "total_invalid_records": 0,
+        "total_duplicates": null,
+        "last_run_at": "2026-07-17T18:35:50.760582"
+    }
+]

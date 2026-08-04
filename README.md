@@ -15,6 +15,7 @@ The focus is ingestion: bringing API, CSV, Excel, PDF, and document-page text in
 | Week 5 run history and manifests | Complete | `logs/runs/`, `logs/ingestion_runs.jsonl`, `logs/manifests/` |
 | Week 6 integration handoff | Complete | `docs/week6_team_integration_handoff.md`, `outputs/*_handoff/` |
 | Week 7 CI-ready ingestion pipeline | Complete for Duy: current-run DB load, Docker integration, CI smoke, and DB-enriched handoffs proven; sibling execution blockers tracked separately | `scripts/week7_*`, `outputs/*/week7_*`, `.github/workflows/ci.yml` |
+| Week 8 canonical staging MVP | Complete locally: all owner modules merged, DB-backed Docker stack healthy, 15/15 acceptance checks passed | `docker-compose.yml`, `scripts/week8_*`, `docs/week8_staging_runbook.md` |
 | Standard ingestion log schema | Complete | `week2/docs/ingestion_log_schema.md` |
 | Standard output contract | Complete | `week2/docs/standard_ingestion_output_contract.md` |
 | UI handoff contract | Complete | `week2/docs/ingestion_result_contract_for_ui.md` |
@@ -205,9 +206,9 @@ docs/week7_backend_stub_contract.md
 docs/week7_deployment_runbook.md
 ```
 
-The `module-discovery` CI job keeps external owner jobs conditional until
-their modules are merged into the shared repository. The readiness report makes
-missing owner artifacts visible:
+The owner modules are now merged into the shared repository. `module-discovery`
+still validates that every required entrypoint exists before dispatching the
+mandatory owner jobs:
 
 ```powershell
 python scripts/week7_shared_repo_readiness_check.py
@@ -303,10 +304,44 @@ python -m pip install -r backend_stub/requirements.txt
 uvicorn backend_stub.main:app --host 127.0.0.1 --port 8000
 ```
 
-The Docker database and Duy loader have real current-run execution proof. The
-backend remains a contract stub, and this Duy proof does not replace Lap's real
-pgvector retrieval, Tuong's prediction-log insertion, or Phi/Hung's UI owner
-proof.
+The historical Week 7 commands remain available for focused diagnostics. Week 8
+adds the complete DB-backed proof below.
+
+## Week 8 Canonical Staging MVP
+
+Week 8 merges Duy, Phat, Lap, Tuong, and Phi/Hung into one deployment graph:
+
+```text
+Duy ingestion -> Phat PostgreSQL/pgvector -> Lap RAG
+-> Tuong prediction/review queue -> FastAPI -> Phi/Hung Streamlit UI
+```
+
+Create a local environment file and run a clean-volume acceptance proof:
+
+```powershell
+Copy-Item .env.example .env
+python scripts/week8_staging_smoke_test.py --start --fresh --project-name datavision-week8-local
+```
+
+Successful execution starts the UI on `http://localhost:8501`, the backend on
+`http://localhost:8000`, and writes the 15-check machine-readable result to
+`outputs/integration/week8_staging_acceptance.json`.
+
+Current verified evidence:
+
+- Combined scoped suites: 300 passed, 15 skipped.
+- Phat live PostgreSQL/pgvector smoke: 10/10 passed.
+- Lap live retrieval: 293 chunks and top-5 citations from the 36-page PDF.
+- Tuong prediction: live response, DB log, and review queue verified.
+- Phi/Hung UI: 64 passed, 15 skipped; backend contract and Streamlit backend mode verified.
+- Full Docker acceptance: 15/15 passed.
+
+The staging/CI RAG path uses a deterministic 384-dimensional hash embedder to
+avoid downloading a model. It proves vector storage, search, citations, and
+service contracts; semantic model quality remains a separate production gate.
+
+See `docs/week8_staging_runbook.md`, `docs/week8_acceptance_report.md`, and
+`docs/week8_team_handoff.md` for operation, evidence, rollback, and ownership.
 
 ## Important Rules
 

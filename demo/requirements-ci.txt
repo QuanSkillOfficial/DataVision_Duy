@@ -1,0 +1,8 @@
+# UI fixture, service-client and Streamlit smoke-test environment.
+
+streamlit>=1.57,<2
+pandas>=2.2,<3
+numpy>=2,<3
+requests>=2.31,<3
+openpyxl>=3.1,<4
+pytest>=8,<9

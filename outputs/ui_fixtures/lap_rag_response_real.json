@@ -1,0 +1,91 @@
+{
+  "question": "What is the DataFlow pipeline?",
+  "answer": null,
+  "status": "retrieval_only",
+  "document_external_id": "doc_dataflow_technical_report",
+  "document_db_id": 1,
+  "file_name": "DataFlow_Technical_Report.pdf",
+  "model": "all-MiniLM-L6-v2",
+  "retrieved_context": [
+    {
+      "chunk_id": "doc_dataflow_technical_report_page_4_chunk_000",
+      "document_db_id": 1,
+      "document_external_id": "doc_dataflow_technical_report",
+      "file_name": "DataFlow_Technical_Report.pdf",
+      "page_number": 4,
+      "chunk_text": "The DataFlow pipeline consists of three main stages: ingestion, processing, and output. The ingestion stage handles raw data collection from various sources including databases, APIs, and file systems. It validates data quality and ensures consistency before passing to the processing stage. The processing stage transforms data using ETL operations, applies business rules, and performs aggregations. Finally, the output stage delivers processed data to downstream systems, generates reports, and stores results in the data warehouse.",
+      "similarity_score": 0.84
+    },
+    {
+      "chunk_id": "doc_dataflow_technical_report_page_5_chunk_001",
+      "document_db_id": 1,
+      "document_external_id": "doc_dataflow_technical_report",
+      "file_name": "DataFlow_Technical_Report.pdf",
+      "page_number": 5,
+      "chunk_text": "Ingestion is the first critical component of the DataFlow pipeline. It supports multiple data sources including relational databases, NoSQL stores, REST APIs, and flat files. The ingestion layer includes built-in connectors for common systems and a framework for custom connectors. Data validation occurs during ingestion to ensure data quality, with support for schema validation, data type checking, and business rule enforcement.",
+      "similarity_score": 0.79
+    },
+    {
+      "chunk_id": "doc_dataflow_technical_report_page_3_chunk_000",
+      "document_db_id": 1,
+      "document_external_id": "doc_dataflow_technical_report",
+      "file_name": "DataFlow_Technical_Report.pdf",
+      "page_number": 3,
+      "chunk_text": "The DataFlow architecture is designed for scalability and reliability. It uses a microservices approach where each pipeline stage can scale independently. The system includes automatic failover, load balancing, and distributed processing capabilities. Monitoring and logging are integrated throughout the pipeline to provide visibility into data flow and performance metrics.",
+      "similarity_score": 0.76
+    },
+    {
+      "chunk_id": "doc_dataflow_technical_report_page_6_chunk_000",
+      "document_db_id": 1,
+      "document_external_id": "doc_dataflow_technical_report",
+      "file_name": "DataFlow_Technical_Report.pdf",
+      "page_number": 6,
+      "chunk_text": "The processing stage handles data transformation using a flexible ETL framework. It supports SQL-based transformations, Python scripts, and visual drag-and-drop transformations. The processing engine can handle both batch and streaming data, with automatic partitioning and parallelization for large datasets. Business rules can be applied at this stage, including data enrichment, deduplication, and quality checks.",
+      "similarity_score": 0.72
+    },
+    {
+      "chunk_id": "doc_dataflow_technical_report_page_7_chunk_000",
+      "document_db_id": 1,
+      "document_external_id": "doc_dataflow_technical_report",
+      "file_name": "DataFlow_Technical_Report.pdf",
+      "page_number": 7,
+      "chunk_text": "The output stage delivers processed data to various destinations. It supports writing to databases, data warehouses, cloud storage, and messaging systems. The output layer includes retry logic, dead letter queues, and delivery confirmation to ensure data reliability. Reports can be generated automatically based on processed data, with support for scheduled and event-driven report generation.",
+      "similarity_score": 0.68
+    }
+  ],
+  "citations": [
+    {
+      "file_name": "DataFlow_Technical_Report.pdf",
+      "page_number": 4,
+      "chunk_id": "doc_dataflow_technical_report_page_4_chunk_000"
+    },
+    {
+      "file_name": "DataFlow_Technical_Report.pdf",
+      "page_number": 5,
+      "chunk_id": "doc_dataflow_technical_report_page_5_chunk_001"
+    },
+    {
+      "file_name": "DataFlow_Technical_Report.pdf",
+      "page_number": 3,
+      "chunk_id": "doc_dataflow_technical_report_page_3_chunk_000"
+    },
+    {
+      "file_name": "DataFlow_Technical_Report.pdf",
+      "page_number": 6,
+      "chunk_id": "doc_dataflow_technical_report_page_6_chunk_000"
+    },
+    {
+      "file_name": "DataFlow_Technical_Report.pdf",
+      "page_number": 7,
+      "chunk_id": "doc_dataflow_technical_report_page_7_chunk_000"
+    }
+  ],
+  "metadata": {
+    "retrieval_backend": "pgvector",
+    "embedding_dimension": 384,
+    "top_k": 5,
+    "latency_ms": 45,
+    "num_chunks_retrieved": 5,
+    "answer_confidence": 0.84
+  }
+}

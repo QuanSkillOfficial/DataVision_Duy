@@ -135,7 +135,7 @@ jobs:
           python -m pip install -r requirements-ci.txt
           python -m pip check
       - name: Check shared repository readiness
-        run: python scripts/week7_shared_repo_readiness_check.py --allow-missing-owner-modules
+        run: python scripts/week7_shared_repo_readiness_check.py --strict
 
   integration-contract-ci:
     runs-on: ubuntu-latest
@@ -189,9 +189,7 @@ jobs:
             echo "ui=false" >> "$GITHUB_OUTPUT"
           fi
 
-  # These owner jobs become active automatically after the corresponding
-  # module is merged into the shared repository. They are intentionally
-  # conditional in Duy's standalone repository.
+  # Owner jobs are mandatory after the Week 8 canonical merge.
   database-ci:
     needs: module-discovery
     if: ${{ needs.module-discovery.outputs.database == 'true' }}
@@ -215,10 +213,13 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
-          cache-dependency-path: week7/database/requirements-ci.txt
+          cache-dependency-path: |
+            requirements-ci.txt
+            week7/database/requirements-ci.txt
       - name: Install database dependencies
         run: |
           python -m pip install --upgrade pip
+          python -m pip install -r requirements-ci.txt
           python -m pip install -r week7/database/requirements-ci.txt
           python -m pip check
       - name: Run database setup
@@ -229,21 +230,10 @@ jobs:
           DB_USER: datavision
           DB_PASSWORD: datavision123
         run: |
-          if [ -f week7/database/scripts/run_database_setup.py ]; then
-            python week7/database/scripts/run_database_setup.py \
-              --host "$DB_HOST" \
-              --port "$DB_PORT" \
-              --dbname "$DB_NAME" \
-              --user "$DB_USER" \
-              --password "$DB_PASSWORD" \
-              --smoke \
-              --skip-lap
-          elif [ -f week7/database/setup_local_db.sh ]; then
-            bash week7/database/setup_local_db.sh
-          else
-            echo "Database setup entrypoint is missing" >&2
-            exit 1
-          fi
+          python scripts/week7_apply_database_schema.py
+          python scripts/week7_apply_database_schema.py \
+            --schema deployment/database/init/20_phat_schema_and_views.sql
+          python scripts/load_ingestion_outputs_to_postgres.py --write-db --smoke
       - name: Run database smoke test
         env:
           POSTGRES_HOST: localhost
@@ -278,6 +268,8 @@ jobs:
           python -m pip check
       - name: Run RAG CI smoke test
         run: python ai/rag/scripts/week7_rag_ci_smoke_test.py
+      - name: Run RAG owner tests
+        run: pytest ai/ai_tests/ -q
 
   prediction-ci:
     needs: module-discovery
@@ -298,6 +290,8 @@ jobs:
           python -m pip check
       - name: Run prediction CI smoke test
         run: python scripts/week7_prediction_ci_smoke_test.py
+      - name: Run prediction owner tests
+        run: pytest tests/ai_tests/ -q
 
   ui-ci:
     needs: module-discovery
@@ -319,6 +313,38 @@ jobs:
           python -m pip install -r demo/requirements-ci.txt
           python -m pip check
       - name: Run UI contract tests
-        run: pytest tests/ -q
+        run: pytest tests/test_*.py -q
       - name: Run UI CI smoke test
         run: python scripts/week7_ui_ci_smoke_test.py
+
+  week8-staging-compose-ci:
+    needs:
+      - data-engineering-ci
+      - backend-contract-ci
+      - database-ci
+      - rag-ci
+      - prediction-ci
+      - ui-ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate Week 8 Compose model
+        run: docker compose -f docker-compose.yml config --quiet
+      - name: Run clean-volume Week 8 staging acceptance
+        run: >-
+          python scripts/week8_staging_smoke_test.py
+          --start
+          --fresh
+          --cleanup
+          --project-name datavision-week8-ci
+      - name: Upload staging acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: week8-staging-acceptance
+          path: outputs/integration/week8_staging_acceptance.json
+          if-no-files-found: error

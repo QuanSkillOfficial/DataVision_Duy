@@ -1,0 +1,42 @@
+[
+    {
+        "run_name": "superstore_sales_csv_10ed4959-5ace-4ff7-9b30-da28321d6708",
+        "source_name": "superstore_sales_csv",
+        "ingestion_status": "success",
+        "records_read": 9994,
+        "error_message": null,
+        "started_at": null,
+        "ended_at": null,
+        "created_at": "2026-07-17T18:35:50.760582"
+    },
+    {
+        "run_name": "product_sales_region_excel_a896a888-57f0-4ea9-9083-f860c2078f7d",
+        "source_name": "product_sales_region_excel",
+        "ingestion_status": "success",
+        "records_read": 1500,
+        "error_message": null,
+        "started_at": null,
+        "ended_at": null,
+        "created_at": "2026-07-17T18:35:50.760582"
+    },
+    {
+        "run_name": "dummyjson_products_api_9cce3b5c-b83d-4873-86e1-b99de889b077",
+        "source_name": "dummyjson_products_api",
+        "ingestion_status": "success",
+        "records_read": 30,
+        "error_message": null,
+        "started_at": null,
+        "ended_at": null,
+        "created_at": "2026-07-17T18:35:50.760582"
+    },
+    {
+        "run_name": "dataflow_technical_report_pdf_8e18bd87-27e5-4aa1-9566-805ffd552fdb",
+        "source_name": "dataflow_technical_report_pdf",
+        "ingestion_status": "success",
+        "records_read": 36,
+        "error_message": null,
+        "started_at": null,
+        "ended_at": null,
+        "created_at": "2026-07-17T18:35:50.760582"
+    }
+]

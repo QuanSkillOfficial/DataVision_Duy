@@ -1,0 +1,955 @@
+{
+  "status": "passed",
+  "generated_at": "2026-08-04T08:18:31.727133+00:00",
+  "checks": {
+    "backend_healthy": true,
+    "database_reachable": true,
+    "pgvector_enabled": true,
+    "duy_sources_available": true,
+    "duy_pages_available": true,
+    "lap_chunks_available": true,
+    "lap_retrieval_context": true,
+    "lap_citations": true,
+    "lap_pgvector_backend": true,
+    "tuong_prediction_executed": true,
+    "tuong_prediction_logged": true,
+    "review_queue_queryable": true,
+    "ui_healthy": true,
+    "suggestions_contract": true,
+    "report_contract": true
+  },
+  "evidence": {
+    "health": {
+      "status": "success",
+      "data": {
+        "service": "datavision-backend",
+        "healthy": true,
+        "mode": "staging",
+        "database": "reachable",
+        "pgvector": true,
+        "embedding_mode": "hash",
+        "counts": {
+          "sources": 4,
+          "documents": 1,
+          "document_pages": 36,
+          "document_chunks": 293,
+          "prediction_logs": 20,
+          "rag_query_logs": 2
+        }
+      },
+      "metadata": {
+        "mode": "staging",
+        "generated_at": "2026-08-04T08:18:30.349471+00:00",
+        "backend_validation_pending": false
+      }
+    },
+    "dashboard": {
+      "status": "success",
+      "data": {
+        "source_count": 4,
+        "file_count": 1,
+        "link_count": 3,
+        "record_count": 11560,
+        "records_read": 11560,
+        "records_valid": 11560,
+        "records_invalid": 0,
+        "data_quality_score": 99.63,
+        "parsing_coverage": 1.0,
+        "processing_status": "ready",
+        "duplicate_risk": "low",
+        "rag_query_count": 2,
+        "prediction_count": 20,
+        "successful_ingestion_runs": 4,
+        "rag_ready_documents": 1,
+        "prediction_review_queue_count": 17,
+        "prediction_review_queue": [
+          {
+            "prediction_log_id": 176,
+            "source_id": 4,
+            "document_db_id": null,
+            "document_external_id": "doc_dataflow_technical_notes_markdown",
+            "predicted_document_type": "contract",
+            "confidence": 0.2985,
+            "status": "needs_review",
+            "review_reason": "Confidence below staging threshold",
+            "created_at": "2026-07-26T10:37:55.499642"
+          },
+          {
+            "prediction_log_id": 175,
+            "source_id": 3,
+            "document_db_id": null,
+            "document_external_id": "doc_dummyjson_inventory_sample",
+            "predicted_document_type": "contract",
+            "confidence": 0.375,
+            "status": "needs_review",
+            "review_reason": "Confidence below staging threshold",
+            "created_at": "2026-07-26T10:37:55.499642"
+          },
+          {
+            "prediction_log_id": 174,
+            "source_id": 2,
+            "document_db_id": null,
+            "document_external_id": "doc_product_sales_region_sample",
+            "predicted_document_type": "invoice",
+            "confidence": 0.5551,
+            "status": "needs_review",
+            "review_reason": "Confidence below staging threshold",
+            "created_at": "2026-07-26T10:37:55.499642"
+          },
+          {
+            "prediction_log_id": 173,
+            "source_id": 1,
+            "document_db_id": null,
+            "document_external_id": "doc_superstore_order_profitability_sample",
+            "predicted_document_type": "invoice",
+            "confidence": 0.6296,
+            "status": "needs_review",
+            "review_reason": "Confidence below staging threshold",
+            "created_at": "2026-07-26T10:37:55.499642"
+          },
+          {
+            "prediction_log_id": 172,
+            "source_id": 4,
+            "document_db_id": null,
+            "document_external_id": "doc_dataflow_agentic_rag_evaluation_pages",
+            "predicted_document_type": "contract",
+            "confidence": 0.5576,
+            "status": "needs_review",
+            "review_reason": "Confidence below staging threshold",
+            "created_at": "2026-07-26T10:37:55.499642"
+          },
+          {
+            "prediction_log_id": 171,
+            "source_id": 4,
+            "document_db_id": null,
+            "document_external_id": "doc_dataflow_agent_workflow_pages",
+            "predicted_document_type": "contract",
+            "confidence": 0.5796,
+            "status": "needs_review",
+            "review_reason": "Confidence below staging threshold",
+            "created_at": "2026-07-26T10:37:55.499642"
+          },
+          {
+            "prediction_log_id": 170,
+            "source_id": 4,
+            "document_db_id": null,
+            "document_external_id": "doc_dataflow_pipeline_api_pages",
+            "predicted_document_type": "contract",
+            "confidence": 0.5892,
+            "status": "needs_review",
+            "review_reason": "Confidence below staging threshold",
+            "created_at": "2026-07-26T10:37:55.499642"
+          },
+          {
+            "prediction_log_id": 169,
+            "source_id": 4,
+            "document_db_id": null,
+            "document_external_id": "doc_dataflow_system_operators_pages",
+            "predicted_document_type": "contract",
+            "confidence": 0.5967,
+            "status": "needs_review",
+            "review_reason": "Confidence below staging threshold",
+            "created_at": "2026-07-26T10:37:55.499642"
+          },
+          {
+            "prediction_log_id": 167,
+            "source_id": 4,
+            "document_db_id": null,
+            "document_external_id": "doc_empty_text_quality_gate",
+            "predicted_document_type": null,
+            "confidence": 0.0,
+            "status": "waiting_for_source",
+            "review_reason": "Extracted text is missing or too short for reliable prediction",
+            "created_at": "2026-07-26T10:37:55.499642"
+          },
+          {
+            "prediction_log_id": 166,
+            "source_id": 4,
+            "document_db_id": null,
+            "document_external_id": "doc_short_text_quality_gate",
+            "predicted_document_type": null,
+            "confidence": 0.0,
+            "status": "waiting_for_source",
+            "review_reason": "Extracted text is missing or too short for reliable prediction",
+            "created_at": "2026-07-26T10:37:55.499642"
+          },
+          {
+            "prediction_log_id": 165,
+            "source_id": 3,
+            "document_db_id": null,
+            "document_external_id": "doc_dummyjson_products_api_summary",
+            "predicted_document_type": "contract",
+            "confidence": 0.3839,
+            "status": "needs_review",
+            "review_reason": "Confidence below staging threshold",
+            "created_at": "2026-07-26T10:37:55.499642"
+          },
+          {
+            "prediction_log_id": 164,
+            "source_id": 2,
+            "document_db_id": null,
+            "document_external_id": "doc_product_sales_region_excel_summary",
+            "predicted_document_type": "invoice",
+            "confidence": 0.6829,
+            "status": "needs_review",
+            "review_reason": "Confidence below staging threshold",
+            "created_at": "2026-07-26T10:37:55.499642"
+          },
+          {
+            "prediction_log_id": 163,
+            "source_id": 1,
+            "document_db_id": null,
+            "document_external_id": "doc_superstore_sales_csv_summary",
+            "predicted_document_type": "invoice",
+            "confidence": 0.7101,
+            "status": "needs_review",
+            "review_reason": "Confidence below staging threshold",
+            "created_at": "2026-07-26T10:37:55.499642"
+          },
+          {
+            "prediction_log_id": 162,
+            "source_id": 4,
+            "document_db_id": null,
+            "document_external_id": "doc_dataflow_technical_report_related_work",
+            "predicted_document_type": "contract",
+            "confidence": 0.6279,
+            "status": "needs_review",
+            "review_reason": "Confidence below staging threshold",
+            "created_at": "2026-07-26T10:37:55.499642"
+          },
+          {
+            "prediction_log_id": 161,
+            "source_id": 4,
+            "document_db_id": null,
+            "document_external_id": "doc_dataflow_technical_report_architecture_page",
+            "predicted_document_type": "contract",
+            "confidence": 0.6128,
+            "status": "needs_review",
+            "review_reason": "Confidence below staging threshold",
+            "created_at": "2026-07-26T10:37:55.499642"
+          },
+          {
+            "prediction_log_id": 160,
+            "source_id": 4,
+            "document_db_id": null,
+            "document_external_id": "doc_dataflow_technical_report_intro_pages",
+            "predicted_document_type": "contract",
+            "confidence": 0.6096,
+            "status": "needs_review",
+            "review_reason": "Confidence below staging threshold",
+            "created_at": "2026-07-26T10:37:55.499642"
+          },
+          {
+            "prediction_log_id": 159,
+            "source_id": 4,
+            "document_db_id": 1,
+            "document_external_id": "doc_dataflow_technical_report",
+            "predicted_document_type": "report",
+            "confidence": 0.4184,
+            "status": "needs_review",
+            "review_reason": "Confidence below staging threshold",
+            "created_at": "2026-07-26T10:37:55.498642"
+          }
+        ],
+        "latest_document": {
+          "document_db_id": 1,
+          "document_external_id": "doc_dataflow_technical_report",
+          "file_name": "DataFlow_Technical_Report.pdf",
+          "file_type": "pdf",
+          "page_count": 36,
+          "character_count": 129028,
+          "processing_status": "extracted",
+          "created_at": "2026-08-04T07:43:27.159775"
+        },
+        "document_processing_status": {
+          "extracted": 1
+        },
+        "ingestion_runs": [
+          {
+            "run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
+            "source_name": "dataflow_technical_report_pdf",
+            "source_id": 4,
+            "status": "success",
+            "records_read": 36,
+            "records_valid": 36,
+            "records_invalid": 0,
+            "data_quality_score": 100.0,
+            "started_at": "2026-07-20T04:35:10.230399",
+            "ended_at": "2026-07-20T04:35:13.993728"
+          },
+          {
+            "run_id": "552ff71d-84ed-4c20-98c3-407916acd30c",
+            "source_name": "dummyjson_products_api",
+            "source_id": 3,
+            "status": "success",
+            "records_read": 30,
+            "records_valid": 30,
+            "records_invalid": 0,
+            "data_quality_score": 99.0,
+            "started_at": "2026-07-20T04:35:10.196475",
+            "ended_at": "2026-07-20T04:35:10.227497"
+          },
+          {
+            "run_id": "b890a3bd-7751-4980-8db3-89b2f179e129",
+            "source_name": "product_sales_region_excel",
+            "source_id": 2,
+            "status": "success",
+            "records_read": 1500,
+            "records_valid": 1500,
+            "records_invalid": 0,
+            "data_quality_score": 99.51,
+            "started_at": "2026-07-20T04:35:09.719093",
+            "ended_at": "2026-07-20T04:35:10.193435"
+          },
+          {
+            "run_id": "e81991bd-ff55-4607-987b-354e2ae83241",
+            "source_name": "superstore_sales_csv",
+            "source_id": 1,
+            "status": "success",
+            "records_read": 9994,
+            "records_valid": 9994,
+            "records_invalid": 0,
+            "data_quality_score": 100.0,
+            "started_at": "2026-07-20T04:35:09.479915",
+            "ended_at": "2026-07-20T04:35:09.715222"
+          }
+        ],
+        "recent_activity": [
+          {
+            "timestamp": "2026-08-04T08:16:50.013658",
+            "actor": "RAG Query",
+            "action": "What is the DataFlow pipeline?",
+            "status": "success"
+          },
+          {
+            "timestamp": "2026-08-04T08:16:24.443784",
+            "actor": "RAG Query",
+            "action": "What is the DataFlow pipeline?",
+            "status": "success"
+          },
+          {
+            "timestamp": "2026-08-04T07:43:27.159775",
+            "actor": "New Source Added",
+            "action": "dataflow_technical_report_pdf",
+            "status": "success"
+          },
+          {
+            "timestamp": "2026-08-04T07:43:27.143612",
+            "actor": "New Source Added",
+            "action": "dummyjson_products_api",
+            "status": "success"
+          },
+          {
+            "timestamp": "2026-08-04T07:43:27.122414",
+            "actor": "New Source Added",
+            "action": "product_sales_region_excel",
+            "status": "success"
+          },
+          {
+            "timestamp": "2026-08-04T07:43:27.058317",
+            "actor": "New Source Added",
+            "action": "superstore_sales_csv",
+            "status": "success"
+          }
+        ]
+      },
+      "metadata": {
+        "mode": "staging",
+        "generated_at": "2026-08-04T08:18:30.436363+00:00",
+        "backend_validation_pending": false,
+        "source": "PostgreSQL analytics views"
+      }
+    },
+    "rag": {
+      "status": "success",
+      "data": {
+        "question": "What is the DataFlow pipeline?",
+        "answer": null,
+        "retrieved_context": [
+          {
+            "chunk_id": "doc_dataflow_technical_report_page_15_chunk_006",
+            "document_id": 1,
+            "text": "pipeline. It represents the pipeline as a DAG and defines the initial connections so data can flow from the source to the sink. Verification The system then runs an integration test. The Pipeline Verification Agent executes the pipeline in a sandbox with a data sample to check connectivity and runtime behavior. If errors occur, it fixes them by adjusting parameters or connections. After the pipeline passes validation, the Result Reporting Agent generates a report and outputs the final executable pipeline de",
+            "chunk_text": "pipeline. It represents the pipeline as a DAG and defines the initial connections so data can flow from the source to the sink. Verification The system then runs an integration test. The Pipeline Verification Agent executes the pipeline in a sandbox with a data sample to check connectivity and runtime behavior. If errors occur, it fixes them by adjusting parameters or connections. After the pipeline passes validation, the Result Reporting Agent generates a report and outputs the final executable pipeline de",
+            "page_number": 15,
+            "metadata": {
+              "source": "DataFlow_Technical_Report.pdf",
+              "file_name": "DataFlow_Technical_Report.pdf",
+              "page_number": 15,
+              "character_count": 3729,
+              "document_external_id": "doc_dataflow_technical_report"
+            },
+            "score": 0.6751170650054776,
+            "similarity_score": 0.6751170650054776
+          },
+          {
+            "chunk_id": "doc_dataflow_technical_report_page_24_chunk_005",
+            "document_id": 1,
+            "text": "is used for model optimization. In the evaluation phase, the model’s temperature parameter is set to 0.0. For the retrieval component, E5-base-v2 [59] is chosen as the retriever, and the 2018 Wikipedia dump is used as the corpus. All corpus indexing and embedding calculations are preprocessed using FlashRAG [32]. Throughout the entire training and evaluation process, the model is allowed to independently specify the topk value for retrieval, and the default topk value is set to 5 to balance retrieval effici",
+            "chunk_text": "is used for model optimization. In the evaluation phase, the model’s temperature parameter is set to 0.0. For the retrieval component, E5-base-v2 [59] is chosen as the retriever, and the 2018 Wikipedia dump is used as the corpus. All corpus indexing and embedding calculations are preprocessed using FlashRAG [32]. Throughout the entire training and evaluation process, the model is allowed to independently specify the topk value for retrieval, and the default topk value is set to 5 to balance retrieval effici",
+            "page_number": 24,
+            "metadata": {
+              "source": "DataFlow_Technical_Report.pdf",
+              "file_name": "DataFlow_Technical_Report.pdf",
+              "page_number": 24,
+              "character_count": 4086,
+              "document_external_id": "doc_dataflow_technical_report"
+            },
+            "score": 0.6573529447702802,
+            "similarity_score": 0.6573529447702802
+          },
+          {
+            "chunk_id": "doc_dataflow_technical_report_page_2_chunk_004",
+            "document_id": 1,
+            "text": " . . . . . . . . . . . . . . . . . . 13 5 DataFlow-Agent . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14 5.1 AgentRoles . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14 5.2 Intelligent Pipeline Recommendation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15 5.3 Summary . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15 6 UseCases&Pipelines . . . . . . . .",
+            "chunk_text": " . . . . . . . . . . . . . . . . . . 13 5 DataFlow-Agent . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14 5.1 AgentRoles . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14 5.2 Intelligent Pipeline Recommendation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15 5.3 Summary . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15 6 UseCases&Pipelines . . . . . . . .",
+            "page_number": 2,
+            "metadata": {
+              "source": "DataFlow_Technical_Report.pdf",
+              "file_name": "DataFlow_Technical_Report.pdf",
+              "page_number": 2,
+              "character_count": 4920,
+              "document_external_id": "doc_dataflow_technical_report"
+            },
+            "score": 0.6573132983072651,
+            "similarity_score": 0.6573132983072651
+          },
+          {
+            "chunk_id": "doc_dataflow_technical_report_page_29_chunk_000",
+            "document_id": 1,
+            "text": "DataFlow Technical Report 29 Evaluation Metrics. To quantitatively assess orchestration quality, we employ an external LLM as an automatic judge. The evaluator compares the generated pipeline against ground truth under two distinct settings: • The predicted graph is evaluated against text specifications to verify if TextSpecificationAlignment. the pipeline structure satisfies the detailed task requirements. • The pipeline is compared with reference Python implementations to CodeImplementationConsistency. as",
+            "chunk_text": "DataFlow Technical Report 29 Evaluation Metrics. To quantitatively assess orchestration quality, we employ an external LLM as an automatic judge. The evaluator compares the generated pipeline against ground truth under two distinct settings: • The predicted graph is evaluated against text specifications to verify if TextSpecificationAlignment. the pipeline structure satisfies the detailed task requirements. • The pipeline is compared with reference Python implementations to CodeImplementationConsistency. as",
+            "page_number": 29,
+            "metadata": {
+              "source": "DataFlow_Technical_Report.pdf",
+              "file_name": "DataFlow_Technical_Report.pdf",
+              "page_number": 29,
+              "character_count": 3556,
+              "document_external_id": "doc_dataflow_technical_report"
+            },
+            "score": 0.6427248120307922,
+            "similarity_score": 0.6427248120307922
+          },
+          {
+            "chunk_id": "doc_dataflow_technical_report_page_28_chunk_003",
+            "document_id": 1,
+            "text": "ves strong general knowledge and reasoning. Across MMLU and C-Eval, DF-Gen-10K: • matches or slightly improves upon the Base models, • avoids the regressions frequently observed in Inf-10K and Inf-1M, • frequently ranks second only to the Instruct model, confirming that DataFlow-generated text data provides high-quality supervision even without human instruction tuning. Summary. Together, these results demonstrate that high-quality, domain-specialized synthetic data gener- ated via DataFlow produces the str",
+            "chunk_text": "ves strong general knowledge and reasoning. Across MMLU and C-Eval, DF-Gen-10K: • matches or slightly improves upon the Base models, • avoids the regressions frequently observed in Inf-10K and Inf-1M, • frequently ranks second only to the Instruct model, confirming that DataFlow-generated text data provides high-quality supervision even without human instruction tuning. Summary. Together, these results demonstrate that high-quality, domain-specialized synthetic data gener- ated via DataFlow produces the str",
+            "page_number": 28,
+            "metadata": {
+              "source": "DataFlow_Technical_Report.pdf",
+              "file_name": "DataFlow_Technical_Report.pdf",
+              "page_number": 28,
+              "character_count": 3498,
+              "document_external_id": "doc_dataflow_technical_report"
+            },
+            "score": 0.63406661951939,
+            "similarity_score": 0.63406661951939
+          }
+        ],
+        "citations": [
+          {
+            "file_name": "DataFlow_Technical_Report.pdf",
+            "page_number": 15,
+            "chunk_id": "doc_dataflow_technical_report_page_15_chunk_006",
+            "similarity": 0.6751170650054776,
+            "document_external_id": "doc_dataflow_technical_report",
+            "document_db_id": 1
+          },
+          {
+            "file_name": "DataFlow_Technical_Report.pdf",
+            "page_number": 24,
+            "chunk_id": "doc_dataflow_technical_report_page_24_chunk_005",
+            "similarity": 0.6573529447702802,
+            "document_external_id": "doc_dataflow_technical_report",
+            "document_db_id": 1
+          },
+          {
+            "file_name": "DataFlow_Technical_Report.pdf",
+            "page_number": 2,
+            "chunk_id": "doc_dataflow_technical_report_page_2_chunk_004",
+            "similarity": 0.6573132983072651,
+            "document_external_id": "doc_dataflow_technical_report",
+            "document_db_id": 1
+          },
+          {
+            "file_name": "DataFlow_Technical_Report.pdf",
+            "page_number": 29,
+            "chunk_id": "doc_dataflow_technical_report_page_29_chunk_000",
+            "similarity": 0.6427248120307922,
+            "document_external_id": "doc_dataflow_technical_report",
+            "document_db_id": 1
+          },
+          {
+            "file_name": "DataFlow_Technical_Report.pdf",
+            "page_number": 28,
+            "chunk_id": "doc_dataflow_technical_report_page_28_chunk_003",
+            "similarity": 0.63406661951939,
+            "document_external_id": "doc_dataflow_technical_report",
+            "document_db_id": 1
+          }
+        ],
+        "status": "retrieval_only",
+        "model": "datavision-hashing-384-v1",
+        "metadata": {
+          "latency_ms": 3.86,
+          "num_chunks_retrieved": 5,
+          "document_id": 1,
+          "document_db_id": 1
+        },
+        "retrieval_backend": "postgresql/pgvector",
+        "embedding_dimension": 384
+      },
+      "metadata": {
+        "mode": "staging",
+        "generated_at": "2026-08-04T08:18:30.474155+00:00",
+        "backend_validation_pending": false
+      }
+    },
+    "prediction": {
+      "status": "success",
+      "data": {
+        "predicted_document_type": "financial_statement",
+        "confidence": 0.5243,
+        "model_version": "document_classifier_v1",
+        "status": "needs_review",
+        "top_predictions": [
+          {
+            "label": "financial_statement",
+            "score": 0.5243
+          },
+          {
+            "label": "report",
+            "score": 0.3016
+          },
+          {
+            "label": "invoice",
+            "score": 0.1079
+          }
+        ],
+        "review_reason": "Confidence below staging threshold",
+        "manual_review_required": true,
+        "prediction_log_id": 179,
+        "document_db_id": 1,
+        "document_external_id": "doc_dataflow_technical_report"
+      },
+      "metadata": {
+        "mode": "staging",
+        "generated_at": "2026-08-04T08:18:31.603296+00:00",
+        "backend_validation_pending": false
+      }
+    },
+    "review_queue_count": 18,
+    "suggestions": {
+      "status": "success",
+      "data": [
+        {
+          "title": "Review low-confidence predictions",
+          "priority": "high",
+          "source_module": "prediction",
+          "source_view": "v_prediction_review_queue",
+          "evidence_type": "row_count",
+          "evidence_value": 18,
+          "generated_from": "PostgreSQL staging evidence",
+          "reason": "18 predictions currently require review.",
+          "recommended_action": "Open the review queue and confirm labels.",
+          "final_score": 1.0
+        }
+      ],
+      "metadata": {
+        "mode": "staging",
+        "generated_at": "2026-08-04T08:18:31.670559+00:00",
+        "backend_validation_pending": false
+      }
+    },
+    "report": {
+      "status": "success",
+      "data": {
+        "title": "DataVision Week 8 staging report",
+        "status": "staging",
+        "sections": [
+          {
+            "Section": "Pipeline Health",
+            "Preview": "Live PostgreSQL-backed staging metrics."
+          },
+          {
+            "Section": "Review Queue",
+            "Preview": "18 items require review."
+          },
+          {
+            "Section": "RAG Activity",
+            "Preview": "3 logged RAG queries."
+          }
+        ],
+        "evidence_table": [
+          {
+            "Evidence Source": "PostgreSQL staging",
+            "Metric / Signal": "DataVision pipeline state",
+            "Value": "healthy",
+            "Used In Section": "Pipeline Health",
+            "Limitation": "Hash embeddings validate retrieval plumbing, not semantic model quality."
+          }
+        ],
+        "evidence": {
+          "dashboard": {
+            "source_count": 4,
+            "file_count": 1,
+            "link_count": 3,
+            "record_count": 11560,
+            "records_read": 11560,
+            "records_valid": 11560,
+            "records_invalid": 0,
+            "data_quality_score": 99.63,
+            "parsing_coverage": 1.0,
+            "processing_status": "ready",
+            "duplicate_risk": "low",
+            "rag_query_count": 3,
+            "prediction_count": 21,
+            "successful_ingestion_runs": 4,
+            "rag_ready_documents": 1,
+            "prediction_review_queue_count": 18,
+            "prediction_review_queue": [
+              {
+                "prediction_log_id": 179,
+                "source_id": 4,
+                "document_db_id": 1,
+                "document_external_id": "doc_dataflow_technical_report",
+                "predicted_document_type": "financial_statement",
+                "confidence": 0.5243,
+                "status": "needs_review",
+                "review_reason": "Confidence below staging threshold",
+                "created_at": "2026-08-04T08:18:31.595845"
+              },
+              {
+                "prediction_log_id": 176,
+                "source_id": 4,
+                "document_db_id": null,
+                "document_external_id": "doc_dataflow_technical_notes_markdown",
+                "predicted_document_type": "contract",
+                "confidence": 0.2985,
+                "status": "needs_review",
+                "review_reason": "Confidence below staging threshold",
+                "created_at": "2026-07-26T10:37:55.499642"
+              },
+              {
+                "prediction_log_id": 175,
+                "source_id": 3,
+                "document_db_id": null,
+                "document_external_id": "doc_dummyjson_inventory_sample",
+                "predicted_document_type": "contract",
+                "confidence": 0.375,
+                "status": "needs_review",
+                "review_reason": "Confidence below staging threshold",
+                "created_at": "2026-07-26T10:37:55.499642"
+              },
+              {
+                "prediction_log_id": 174,
+                "source_id": 2,
+                "document_db_id": null,
+                "document_external_id": "doc_product_sales_region_sample",
+                "predicted_document_type": "invoice",
+                "confidence": 0.5551,
+                "status": "needs_review",
+                "review_reason": "Confidence below staging threshold",
+                "created_at": "2026-07-26T10:37:55.499642"
+              },
+              {
+                "prediction_log_id": 173,
+                "source_id": 1,
+                "document_db_id": null,
+                "document_external_id": "doc_superstore_order_profitability_sample",
+                "predicted_document_type": "invoice",
+                "confidence": 0.6296,
+                "status": "needs_review",
+                "review_reason": "Confidence below staging threshold",
+                "created_at": "2026-07-26T10:37:55.499642"
+              },
+              {
+                "prediction_log_id": 172,
+                "source_id": 4,
+                "document_db_id": null,
+                "document_external_id": "doc_dataflow_agentic_rag_evaluation_pages",
+                "predicted_document_type": "contract",
+                "confidence": 0.5576,
+                "status": "needs_review",
+                "review_reason": "Confidence below staging threshold",
+                "created_at": "2026-07-26T10:37:55.499642"
+              },
+              {
+                "prediction_log_id": 171,
+                "source_id": 4,
+                "document_db_id": null,
+                "document_external_id": "doc_dataflow_agent_workflow_pages",
+                "predicted_document_type": "contract",
+                "confidence": 0.5796,
+                "status": "needs_review",
+                "review_reason": "Confidence below staging threshold",
+                "created_at": "2026-07-26T10:37:55.499642"
+              },
+              {
+                "prediction_log_id": 170,
+                "source_id": 4,
+                "document_db_id": null,
+                "document_external_id": "doc_dataflow_pipeline_api_pages",
+                "predicted_document_type": "contract",
+                "confidence": 0.5892,
+                "status": "needs_review",
+                "review_reason": "Confidence below staging threshold",
+                "created_at": "2026-07-26T10:37:55.499642"
+              },
+              {
+                "prediction_log_id": 169,
+                "source_id": 4,
+                "document_db_id": null,
+                "document_external_id": "doc_dataflow_system_operators_pages",
+                "predicted_document_type": "contract",
+                "confidence": 0.5967,
+                "status": "needs_review",
+                "review_reason": "Confidence below staging threshold",
+                "created_at": "2026-07-26T10:37:55.499642"
+              },
+              {
+                "prediction_log_id": 167,
+                "source_id": 4,
+                "document_db_id": null,
+                "document_external_id": "doc_empty_text_quality_gate",
+                "predicted_document_type": null,
+                "confidence": 0.0,
+                "status": "waiting_for_source",
+                "review_reason": "Extracted text is missing or too short for reliable prediction",
+                "created_at": "2026-07-26T10:37:55.499642"
+              },
+              {
+                "prediction_log_id": 166,
+                "source_id": 4,
+                "document_db_id": null,
+                "document_external_id": "doc_short_text_quality_gate",
+                "predicted_document_type": null,
+                "confidence": 0.0,
+                "status": "waiting_for_source",
+                "review_reason": "Extracted text is missing or too short for reliable prediction",
+                "created_at": "2026-07-26T10:37:55.499642"
+              },
+              {
+                "prediction_log_id": 165,
+                "source_id": 3,
+                "document_db_id": null,
+                "document_external_id": "doc_dummyjson_products_api_summary",
+                "predicted_document_type": "contract",
+                "confidence": 0.3839,
+                "status": "needs_review",
+                "review_reason": "Confidence below staging threshold",
+                "created_at": "2026-07-26T10:37:55.499642"
+              },
+              {
+                "prediction_log_id": 164,
+                "source_id": 2,
+                "document_db_id": null,
+                "document_external_id": "doc_product_sales_region_excel_summary",
+                "predicted_document_type": "invoice",
+                "confidence": 0.6829,
+                "status": "needs_review",
+                "review_reason": "Confidence below staging threshold",
+                "created_at": "2026-07-26T10:37:55.499642"
+              },
+              {
+                "prediction_log_id": 163,
+                "source_id": 1,
+                "document_db_id": null,
+                "document_external_id": "doc_superstore_sales_csv_summary",
+                "predicted_document_type": "invoice",
+                "confidence": 0.7101,
+                "status": "needs_review",
+                "review_reason": "Confidence below staging threshold",
+                "created_at": "2026-07-26T10:37:55.499642"
+              },
+              {
+                "prediction_log_id": 162,
+                "source_id": 4,
+                "document_db_id": null,
+                "document_external_id": "doc_dataflow_technical_report_related_work",
+                "predicted_document_type": "contract",
+                "confidence": 0.6279,
+                "status": "needs_review",
+                "review_reason": "Confidence below staging threshold",
+                "created_at": "2026-07-26T10:37:55.499642"
+              },
+              {
+                "prediction_log_id": 161,
+                "source_id": 4,
+                "document_db_id": null,
+                "document_external_id": "doc_dataflow_technical_report_architecture_page",
+                "predicted_document_type": "contract",
+                "confidence": 0.6128,
+                "status": "needs_review",
+                "review_reason": "Confidence below staging threshold",
+                "created_at": "2026-07-26T10:37:55.499642"
+              },
+              {
+                "prediction_log_id": 160,
+                "source_id": 4,
+                "document_db_id": null,
+                "document_external_id": "doc_dataflow_technical_report_intro_pages",
+                "predicted_document_type": "contract",
+                "confidence": 0.6096,
+                "status": "needs_review",
+                "review_reason": "Confidence below staging threshold",
+                "created_at": "2026-07-26T10:37:55.499642"
+              },
+              {
+                "prediction_log_id": 159,
+                "source_id": 4,
+                "document_db_id": 1,
+                "document_external_id": "doc_dataflow_technical_report",
+                "predicted_document_type": "report",
+                "confidence": 0.4184,
+                "status": "needs_review",
+                "review_reason": "Confidence below staging threshold",
+                "created_at": "2026-07-26T10:37:55.498642"
+              }
+            ],
+            "latest_document": {
+              "document_db_id": 1,
+              "document_external_id": "doc_dataflow_technical_report",
+              "file_name": "DataFlow_Technical_Report.pdf",
+              "file_type": "pdf",
+              "page_count": 36,
+              "character_count": 129028,
+              "processing_status": "extracted",
+              "created_at": "2026-08-04T07:43:27.159775"
+            },
+            "document_processing_status": {
+              "extracted": 1
+            },
+            "ingestion_runs": [
+              {
+                "run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
+                "source_name": "dataflow_technical_report_pdf",
+                "source_id": 4,
+                "status": "success",
+                "records_read": 36,
+                "records_valid": 36,
+                "records_invalid": 0,
+                "data_quality_score": 100.0,
+                "started_at": "2026-07-20T04:35:10.230399",
+                "ended_at": "2026-07-20T04:35:13.993728"
+              },
+              {
+                "run_id": "552ff71d-84ed-4c20-98c3-407916acd30c",
+                "source_name": "dummyjson_products_api",
+                "source_id": 3,
+                "status": "success",
+                "records_read": 30,
+                "records_valid": 30,
+                "records_invalid": 0,
+                "data_quality_score": 99.0,
+                "started_at": "2026-07-20T04:35:10.196475",
+                "ended_at": "2026-07-20T04:35:10.227497"
+              },
+              {
+                "run_id": "b890a3bd-7751-4980-8db3-89b2f179e129",
+                "source_name": "product_sales_region_excel",
+                "source_id": 2,
+                "status": "success",
+                "records_read": 1500,
+                "records_valid": 1500,
+                "records_invalid": 0,
+                "data_quality_score": 99.51,
+                "started_at": "2026-07-20T04:35:09.719093",
+                "ended_at": "2026-07-20T04:35:10.193435"
+              },
+              {
+                "run_id": "e81991bd-ff55-4607-987b-354e2ae83241",
+                "source_name": "superstore_sales_csv",
+                "source_id": 1,
+                "status": "success",
+                "records_read": 9994,
+                "records_valid": 9994,
+                "records_invalid": 0,
+                "data_quality_score": 100.0,
+                "started_at": "2026-07-20T04:35:09.479915",
+                "ended_at": "2026-07-20T04:35:09.715222"
+              }
+            ],
+            "recent_activity": [
+              {
+                "timestamp": "2026-08-04T08:18:30.463211",
+                "actor": "RAG Query",
+                "action": "What is the DataFlow pipeline?",
+                "status": "success"
+              },
+              {
+                "timestamp": "2026-08-04T08:16:50.013658",
+                "actor": "RAG Query",
+                "action": "What is the DataFlow pipeline?",
+                "status": "success"
+              },
+              {
+                "timestamp": "2026-08-04T08:16:24.443784",
+                "actor": "RAG Query",
+                "action": "What is the DataFlow pipeline?",
+                "status": "success"
+              },
+              {
+                "timestamp": "2026-08-04T07:43:27.159775",
+                "actor": "New Source Added",
+                "action": "dataflow_technical_report_pdf",
+                "status": "success"
+              },
+              {
+                "timestamp": "2026-08-04T07:43:27.143612",
+                "actor": "New Source Added",
+                "action": "dummyjson_products_api",
+                "status": "success"
+              },
+              {
+                "timestamp": "2026-08-04T07:43:27.122414",
+                "actor": "New Source Added",
+                "action": "product_sales_region_excel",
+                "status": "success"
+              },
+              {
+                "timestamp": "2026-08-04T07:43:27.058317",
+                "actor": "New Source Added",
+                "action": "superstore_sales_csv",
+                "status": "success"
+              }
+            ]
+          },
+          "mode": "staging"
+        },
+        "request": {
+          "report_type": "Week 8 acceptance"
+        }
+      },
+      "metadata": {
+        "mode": "staging",
+        "generated_at": "2026-08-04T08:18:31.726015+00:00",
+        "backend_validation_pending": false
+      }
+    },
+    "ui_health": "ok",
+    "ui_backend_mode": true
+  },
+  "orchestration": {
+    "ui_mode": {
+      "command": [
+        "docker",
+        "compose",
+        "--project-name",
+        "datavision-week8-local",
+        "-f",
+        "docker-compose.yml",
+        "exec",
+        "-T",
+        "ui",
+        "python",
+        "-c",
+        "import os; print(os.getenv('QS_USE_BACKEND', 'false'))"
+      ],
+      "returncode": 0,
+      "stdout": "true\n",
+      "stderr": ""
+    }
+  }
+}
