@@ -1,7 +1,7 @@
 # Week 6 RAG Handoff Summary
 
-Owner: Nguyen Minh Duy  
-Consumer: Lap - RAG and Embeddings Owner  
+Owner: Nguyen Minh Duy
+Consumer: Lap - RAG and Embeddings Owner
 Purpose: Provide Duy's real DataFlow PDF extraction output for chunking, embedding, pgvector insertion, retrieval evaluation, and citation generation.
 
 ## Files
@@ -19,7 +19,7 @@ Purpose: Provide Duy's real DataFlow PDF extraction output for chunking, embeddi
 | `document_external_id` | `doc_dataflow_technical_report` |
 | `source_name` | `dataflow_technical_report_pdf` |
 | `file_name` | `DataFlow_Technical_Report.pdf` |
-| `ingestion_run_id` | `4c595851-c11e-48e3-8c79-69f6fa52d282` |
+| `ingestion_run_id` | `2c1e2629-2512-4d57-bd08-a9c6c01f0caf` |
 | `page_count` | `36` |
 | `non_empty_pages` | `36` |
 | `empty_pages` | `0` |

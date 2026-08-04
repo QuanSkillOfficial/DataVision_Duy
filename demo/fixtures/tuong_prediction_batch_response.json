@@ -1,0 +1,74 @@
+{
+  "description": "Batch prediction response from Tuong's prediction service — covers all 4 status types for Phi/Hung UI development",
+  "generated_at": "2026-07-05T07:30:00Z",
+  "total_items": 5,
+  "results": [
+    {
+      "document_external_id": "doc_policy_internal_2024",
+      "source_name": "policy_internal_pdf",
+      "ingestion_run_id": "b72cf4ea-1234-5678-9abc-def012345678",
+      "predicted_document_type": "policy_document",
+      "confidence": 0.91,
+      "model_version": "document_classifier_v1",
+      "status": "accepted",
+      "review_reason": null,
+      "top_predictions": [
+        {"label": "policy_document", "score": 0.91},
+        {"label": "contract", "score": 0.06},
+        {"label": "report", "score": 0.03}
+      ]
+    },
+    {
+      "document_external_id": "doc_dataflow_technical_report",
+      "source_name": "dataflow_technical_report_pdf",
+      "ingestion_run_id": "a58bf6df-2dec-41ca-a18b-784c68eab826",
+      "predicted_document_type": "report",
+      "confidence": 0.3988,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "review_reason": "Prediction confidence below threshold",
+      "top_predictions": [
+        {"label": "report", "score": 0.3988},
+        {"label": "research_paper", "score": 0.2316},
+        {"label": "contract", "score": 0.2288}
+      ]
+    },
+    {
+      "document_external_id": "doc_empty_scan",
+      "source_name": "empty_scan_pdf",
+      "ingestion_run_id": "run-pdf-005",
+      "predicted_document_type": null,
+      "confidence": 0.0,
+      "model_version": "document_classifier_v1",
+      "status": "waiting_for_source",
+      "review_reason": "Extracted text is missing or too short for reliable prediction",
+      "top_predictions": []
+    },
+    {
+      "document_external_id": "doc_broken_payload",
+      "source_name": "broken_source",
+      "ingestion_run_id": "run-err-001",
+      "predicted_document_type": null,
+      "confidence": 0.0,
+      "model_version": "document_classifier_v1",
+      "status": "failed",
+      "review_reason": "Validation error: Missing required field: 'extracted_text'",
+      "top_predictions": []
+    },
+    {
+      "document_external_id": "doc_contract_vendor_agreement_2024",
+      "source_name": "contract_vendor_pdf",
+      "ingestion_run_id": "run-pdf-006",
+      "predicted_document_type": "report",
+      "confidence": 0.4085,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "review_reason": "Prediction confidence below threshold",
+      "top_predictions": [
+        {"label": "report", "score": 0.4085},
+        {"label": "contract", "score": 0.3974},
+        {"label": "policy_document", "score": 0.0754}
+      ]
+    }
+  ]
+}

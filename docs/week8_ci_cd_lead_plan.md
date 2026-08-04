@@ -5,6 +5,16 @@
 **Delivery window:** 27-31 July 2026
 **Goal:** turn the Week 7 local integration baseline into the first reproducible staging MVP.
 
+## Final status on 4 August 2026
+
+The implementation gates in this plan are now complete in the canonical local
+staging environment. All owner modules are merged; Docker daemon access is
+available; PostgreSQL/pgvector, live RAG retrieval, prediction-log insertion,
+backend-mode UI, and the 15-check Compose acceptance have passed. The GitHub
+workflow is prepared to reproduce the same empty-volume proof after these
+changes are pushed. See `docs/week8_acceptance_report.md` for evidence and
+`docs/week8_staging_runbook.md` for operations and rollback.
+
 ## Verified baseline on 26 July
 
 | Gate | Result |

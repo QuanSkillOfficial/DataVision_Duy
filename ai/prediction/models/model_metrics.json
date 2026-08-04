@@ -1,0 +1,39 @@
+{
+  "best_model": "Logistic Regression",
+  "best_metrics": {
+    "model": "Logistic Regression",
+    "accuracy": 0.93,
+    "macro_precision": 0.934549,
+    "macro_recall": 0.930612,
+    "macro_f1": 0.930203
+  },
+  "all_results": [
+    {
+      "model": "Logistic Regression",
+      "accuracy": 0.93,
+      "macro_precision": 0.934549,
+      "macro_recall": 0.930612,
+      "macro_f1": 0.930203
+    },
+    {
+      "model": "Random Forest",
+      "accuracy": 0.85,
+      "macro_precision": 0.862943,
+      "macro_recall": 0.85034,
+      "macro_f1": 0.851631
+    }
+  ],
+  "label_mapping": {
+    "contract": 0,
+    "financial_statement": 1,
+    "invoice": 2,
+    "policy_document": 3,
+    "report": 4,
+    "research_paper": 5,
+    "resume": 6
+  },
+  "model_version": "document_classifier_v1",
+  "confidence_threshold": 0.6,
+  "train_samples": 400,
+  "test_samples": 100
+}

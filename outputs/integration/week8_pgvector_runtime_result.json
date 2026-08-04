@@ -1,0 +1,98 @@
+{
+  "status": "success",
+  "query": "What is the DataFlow pipeline?",
+  "document_external_id": "doc_dataflow_technical_report",
+  "top_k": 5,
+  "document_db_id": 1,
+  "retrieved_chunks": [
+    {
+      "rank": 1,
+      "chunk_id": "doc_dataflow_technical_report_page_15_chunk_006",
+      "document_db_id": 1,
+      "document_external_id": "doc_dataflow_technical_report",
+      "page_number": 15,
+      "chunk_text": "pipeline. It represents the pipeline as a DAG and defines the initial connections so data can flow from the source to the sink. Verification The system then runs an integration test. The Pipeline Veri...",
+      "similarity_score": 0.6751170650054776
+    },
+    {
+      "rank": 2,
+      "chunk_id": "doc_dataflow_technical_report_page_24_chunk_005",
+      "document_db_id": 1,
+      "document_external_id": "doc_dataflow_technical_report",
+      "page_number": 24,
+      "chunk_text": "is used for model optimization. In the evaluation phase, the model\u2019s temperature parameter is set to 0.0. For the retrieval component, E5-base-v2 [59] is chosen as the retriever, and the 2018 Wikipedi...",
+      "similarity_score": 0.6573529447702802
+    },
+    {
+      "rank": 3,
+      "chunk_id": "doc_dataflow_technical_report_page_2_chunk_004",
+      "document_db_id": 1,
+      "document_external_id": "doc_dataflow_technical_report",
+      "page_number": 2,
+      "chunk_text": " . . . . . . . . . . . . . . . . . . 13 5 DataFlow-Agent . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14 5.1 AgentRoles . . . . . . . . . . . . . . . . . ....",
+      "similarity_score": 0.6573132983072651
+    },
+    {
+      "rank": 4,
+      "chunk_id": "doc_dataflow_technical_report_page_29_chunk_000",
+      "document_db_id": 1,
+      "document_external_id": "doc_dataflow_technical_report",
+      "page_number": 29,
+      "chunk_text": "DataFlow Technical Report 29 Evaluation Metrics. To quantitatively assess orchestration quality, we employ an external LLM as an automatic judge. The evaluator compares the generated pipeline against ...",
+      "similarity_score": 0.6427248120307922
+    },
+    {
+      "rank": 5,
+      "chunk_id": "doc_dataflow_technical_report_page_28_chunk_003",
+      "document_db_id": 1,
+      "document_external_id": "doc_dataflow_technical_report",
+      "page_number": 28,
+      "chunk_text": "ves strong general knowledge and reasoning. Across MMLU and C-Eval, DF-Gen-10K: \u2022 matches or slightly improves upon the Base models, \u2022 avoids the regressions frequently observed in Inf-10K and Inf-1M,...",
+      "similarity_score": 0.63406661951939
+    }
+  ],
+  "citations": [
+    {
+      "file_name": "DataFlow_Technical_Report.pdf",
+      "page_number": 15,
+      "chunk_id": "doc_dataflow_technical_report_page_15_chunk_006",
+      "similarity": 0.6751170650054776,
+      "document_external_id": "doc_dataflow_technical_report",
+      "document_db_id": 1
+    },
+    {
+      "file_name": "DataFlow_Technical_Report.pdf",
+      "page_number": 24,
+      "chunk_id": "doc_dataflow_technical_report_page_24_chunk_005",
+      "similarity": 0.6573529447702802,
+      "document_external_id": "doc_dataflow_technical_report",
+      "document_db_id": 1
+    },
+    {
+      "file_name": "DataFlow_Technical_Report.pdf",
+      "page_number": 2,
+      "chunk_id": "doc_dataflow_technical_report_page_2_chunk_004",
+      "similarity": 0.6573132983072651,
+      "document_external_id": "doc_dataflow_technical_report",
+      "document_db_id": 1
+    },
+    {
+      "file_name": "DataFlow_Technical_Report.pdf",
+      "page_number": 29,
+      "chunk_id": "doc_dataflow_technical_report_page_29_chunk_000",
+      "similarity": 0.6427248120307922,
+      "document_external_id": "doc_dataflow_technical_report",
+      "document_db_id": 1
+    },
+    {
+      "file_name": "DataFlow_Technical_Report.pdf",
+      "page_number": 28,
+      "chunk_id": "doc_dataflow_technical_report_page_28_chunk_003",
+      "similarity": 0.63406661951939,
+      "document_external_id": "doc_dataflow_technical_report",
+      "document_db_id": 1
+    }
+  ],
+  "latency_ms": 75.19,
+  "errors": []
+}

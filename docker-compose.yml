@@ -1,6 +1,7 @@
 services:
   db:
     image: pgvector/pgvector:pg16
+    restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-datavision}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-datavision123}
@@ -20,6 +21,28 @@ services:
       timeout: 5s
       retries: 12
 
+  staging-seed:
+    build:
+      context: .
+      dockerfile: deployment/Dockerfile.integration
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB:-datavision_db}
+      DB_USER: ${POSTGRES_USER:-datavision}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-datavision123}
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-datavision_db}
+      POSTGRES_USER: ${POSTGRES_USER:-datavision}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-datavision123}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-datavision}:${POSTGRES_PASSWORD:-datavision123}@db:5432/${POSTGRES_DB:-datavision_db}
+      RAG_EMBEDDING_MODE: ${RAG_EMBEDDING_MODE:-hash}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
   backend:
     build:
       context: .
@@ -27,11 +50,15 @@ services:
     environment:
       BACKEND_HOST: 0.0.0.0
       BACKEND_PORT: 8000
+      DATAVISION_BACKEND_MODE: ${DATAVISION_BACKEND_MODE:-staging}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-datavision}:${POSTGRES_PASSWORD:-datavision123}@db:5432/${POSTGRES_DB:-datavision_db}
+      RAG_EMBEDDING_MODE: ${RAG_EMBEDDING_MODE:-hash}
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     depends_on:
-      db:
-        condition: service_healthy
+      staging-seed:
+        condition: service_completed_successfully
+    restart: unless-stopped
     healthcheck:
       test:
         [
@@ -50,16 +77,30 @@ services:
     command: ["python", "scripts/week7_ci_ingestion_smoke_test.py"]
 
   ui:
-    profiles: ["ui"]
-    image: ${UI_IMAGE:-datavision-ui:week7-local}
+    build:
+      context: .
+      dockerfile: demo/Dockerfile
+    image: ${UI_IMAGE:-datavision-ui:week8-staging}
     environment:
-      QS_USE_BACKEND: ${QS_USE_BACKEND:-false}
-      BACKEND_BASE_URL: ${BACKEND_BASE_URL:-http://backend:8000/api}
+      # The full staging stack must exercise the service layer. Fixture mode is
+      # still available when Streamlit is run directly outside this Compose file.
+      QS_USE_BACKEND: "true"
+      QS_BACKEND_URL: ${QS_BACKEND_URL:-http://backend:8000/api}
     ports:
       - "${UI_PORT:-8501}:8501"
     depends_on:
       backend:
         condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health', timeout=2)\"",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 18
 
 volumes:
   datavision_pgdata:

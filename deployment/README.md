@@ -1,35 +1,33 @@
-# Deployment Draft
+# DataVision Week 8 Staging Deployment
 
-This folder contains the Week 7 local deployment boundary:
+This folder contains the reproducible Week 8 deployment boundary for the
+canonical shared repository.
 
-- `Dockerfile.data` packages Duy's CI-safe ingestion smoke test.
-- `database/init/00_extensions.sql` enables pgvector in a fresh database.
-- `database/init/10_phat_schema_v4_fixed.sql` pins Phat's Week 7 writer
-  contract for standalone Duy CI; it is not the production schema authority.
-- `../docker-compose.db.yml` starts PostgreSQL + pgvector.
-- `../docker-compose.yml` starts the database and backend contract stub, with
-  optional data and UI profiles.
+The default `docker-compose.yml` starts four stages in dependency order:
 
-The production database schema remains Phat's responsibility. The production
-backend and the Streamlit image remain team-level deliverables. See
-`docs/week7_deployment_runbook.md` before starting a real load.
+```text
+PostgreSQL 16 + pgvector
+-> one-shot integration seed
+-> FastAPI staging backend
+-> Streamlit UI in backend mode
+```
 
-## Week 7 readiness outputs
+Key files:
 
-| Required output | Repository path | Current scope |
-| --- | --- | --- |
-| Shared repo structure | `docs/week7_shared_repo_structure.md` | Merge contract and owner boundaries |
-| GitHub Actions draft | `.github/workflows/ci.yml` | Duy jobs active; owner jobs activate after merge |
-| Database Compose | `docker-compose.db.yml` | PostgreSQL 16 + pgvector |
-| Module CI smoke tests | `scripts/week7_*_smoke_test.py` plus owner entrypoints | Duy and shared contract tests available |
-| Local Docker integration | `scripts/week7_duy_phat_docker_db_integration_test.py` | Current-run smoke/full DB proof with isolated automatic cleanup |
-| Full-app Compose draft | `docker-compose.yml` | DB, backend stub, ingestion profile, UI image contract |
-| Environment template | `.env.example` | Local non-secret defaults |
-| Backend API stub | `backend_stub/` | Contract test double, not production backend |
-| UI fixture mode | `outputs/ui_fixtures/` and Phi/Hung `demo/fixtures/week7/` | Duy output ready; owner refresh audit tracked |
-| Deployment runbook | `docs/week7_deployment_runbook.md` | Local, CI, DB loading, and Week 8 checklist |
+| File | Purpose |
+| --- | --- |
+| `database/init/00_extensions.sql` | Enables pgvector on an empty database |
+| `database/init/10_phat_schema_v4_fixed.sql` | Applies the pinned writer contract |
+| `database/init/20_phat_schema_and_views.sql` | Applies Phat's full schema and 12 analytics views |
+| `Dockerfile.integration` | Loads Duy data, Lap chunks, and Tuong prediction logs |
+| `../backend_stub/Dockerfile` | Runs the DB-backed FastAPI staging service |
+| `../demo/Dockerfile` | Runs Phi/Hung Streamlit UI in backend mode |
+| `../scripts/week8_staging_smoke_test.py` | Executes the 15-check acceptance test |
 
-Machine-readable readiness is written to
-`outputs/integration/week7_shared_repo_readiness.json`. Its `status` checks
-artifact availability; `execution_status` remains separate until every owner
-has supplied live runtime proof.
+Start from a clean checkout with the commands in
+`docs/week8_staging_runbook.md`. The compact machine-readable proof is written
+to `outputs/integration/week8_staging_acceptance.json`.
+
+The default Week 8 embedding mode is deterministic hashing with 384 dimensions.
+It proves the pgvector contract without downloading a model in CI. It is a
+staging plumbing implementation, not the production semantic-quality model.

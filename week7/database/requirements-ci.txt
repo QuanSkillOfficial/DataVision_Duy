@@ -1,0 +1,5 @@
+# PostgreSQL/pgvector schema and database smoke-test environment.
+
+psycopg2-binary>=2.9,<3
+python-dotenv>=1,<2
+pytest>=8,<9

@@ -1,0 +1,12 @@
+[
+    {
+        "document_external_id": "doc_dataflow_technical_report",
+        "file_name": "DataFlow_Technical_Report.pdf",
+        "source_name": "dataflow_technical_report_pdf",
+        "processing_status": "processed",
+        "page_count": 36,
+        "total_chunks": 293,
+        "created_at": "2026-07-17T18:35:50.760582",
+        "updated_at": null
+    }
+]
