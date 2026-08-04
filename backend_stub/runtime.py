@@ -62,6 +62,7 @@ def health_snapshot() -> dict[str, Any]:
         "service": "datavision-backend",
         "healthy": pgvector,
         "mode": "staging",
+        "release_sha": os.getenv("DATAVISION_RELEASE_SHA", "local"),
         "database": "reachable",
         "pgvector": pgvector,
         "embedding_mode": os.getenv("RAG_EMBEDDING_MODE", "hash"),

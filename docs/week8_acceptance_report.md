@@ -2,13 +2,15 @@
 
 **Execution date:** 4 August 2026
 **Owner:** Duy, CI/CD lead
-**Result:** PASSED
+**Result:** LOCAL/CI PASSED; CLOUD PROMOTION PENDING HOST CREDENTIALS
 
 ## Acceptance result
 
 The complete DataVision pipeline was built from the canonical repository and
-executed on a Docker Compose staging stack. All 15 end-to-end acceptance checks
-passed.
+executed on local and ephemeral-CI Docker Compose staging stacks. All 15
+end-to-end acceptance checks passed in those environments. Cloud staging is a
+separate acceptance gate and must not be reported as passed until its URL and
+exact release SHA are verified by `Deploy staging`.
 
 | Layer | Verified evidence | Result |
 | --- | --- | --- |
@@ -70,6 +72,8 @@ and disaster-recovery automation are Week 9/production-readiness work.
 
 ## Decision
 
-The Week 8 staging MVP is accepted for team demonstration and GitHub CI
-execution. Promotion beyond staging requires closing the limitations above and
-running the same acceptance suite against the target host.
+The Week 8 staging MVP is accepted for local demonstration and GitHub CI
+execution. The repository includes exact-SHA GHCR publishing, SSH deployment,
+release verification, evidence upload, and application-image rollback. Week 8
+closes fully only after those workflows run against the supplied cloud host and
+the cloud acceptance artifact reports 15/15 for the deployed SHA.

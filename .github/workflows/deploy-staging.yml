@@ -1,0 +1,164 @@
+name: Deploy staging
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_sha:
+        description: Full Git SHA whose images were published after green CI
+        required: true
+        type: string
+      backend_url:
+        description: Public API base URL, including /api
+        required: true
+        type: string
+      ui_url:
+        description: Public Streamlit URL
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  packages: read
+
+concurrency:
+  group: datavision-staging
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment:
+      name: staging
+      url: ${{ inputs.ui_url }}
+    env:
+      RELEASE_SHA: ${{ inputs.release_sha }}
+      BACKEND_URL: ${{ inputs.backend_url }}
+      UI_URL: ${{ inputs.ui_url }}
+      STAGING_HOST: ${{ secrets.STAGING_HOST }}
+      STAGING_USER: ${{ secrets.STAGING_USER }}
+      STAGING_SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
+      STAGING_KNOWN_HOSTS: ${{ secrets.STAGING_KNOWN_HOSTS }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      STAGING_SSH_PORT: ${{ vars.STAGING_SSH_PORT }}
+      STAGING_PATH: ${{ vars.STAGING_PATH }}
+      BACKEND_PUBLIC_PORT: ${{ vars.STAGING_BACKEND_PORT }}
+      UI_PUBLIC_PORT: ${{ vars.STAGING_UI_PORT }}
+      IMAGE_PREFIX: ghcr.io/${{ github.repository_owner }}/datavision
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release_sha }}
+      - name: Validate deployment inputs and Environment configuration
+        shell: bash
+        run: |
+          [[ "$RELEASE_SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "release_sha must be a full lowercase Git SHA" >&2; exit 1; }
+          [[ "$BACKEND_URL" =~ ^https?://.+/api/?$ ]] || { echo "backend_url must be an HTTP(S) URL ending in /api" >&2; exit 1; }
+          [[ "$UI_URL" =~ ^https?:// ]] || { echo "ui_url must be an HTTP(S) URL" >&2; exit 1; }
+          for name in STAGING_HOST STAGING_USER STAGING_SSH_KEY STAGING_KNOWN_HOSTS POSTGRES_PASSWORD; do
+            [ -n "${!name}" ] || { echo "$name is not configured in the staging Environment" >&2; exit 1; }
+          done
+          STAGING_SSH_PORT="${STAGING_SSH_PORT:-22}"
+          STAGING_PATH="${STAGING_PATH:-/opt/datavision}"
+          BACKEND_PUBLIC_PORT="${BACKEND_PUBLIC_PORT:-8000}"
+          UI_PUBLIC_PORT="${UI_PUBLIC_PORT:-8501}"
+          [[ "$STAGING_SSH_PORT" =~ ^[0-9]+$ ]] || exit 1
+          [[ "$BACKEND_PUBLIC_PORT" =~ ^[0-9]+$ ]] || exit 1
+          [[ "$UI_PUBLIC_PORT" =~ ^[0-9]+$ ]] || exit 1
+          [[ "$STAGING_PATH" =~ ^/[A-Za-z0-9._/-]+$ && "$STAGING_PATH" != "/" ]] || {
+            echo "STAGING_PATH must be a safe absolute non-root path" >&2; exit 1;
+          }
+          {
+            echo "STAGING_SSH_PORT=$STAGING_SSH_PORT"
+            echo "STAGING_PATH=$STAGING_PATH"
+            echo "BACKEND_PUBLIC_PORT=$BACKEND_PUBLIC_PORT"
+            echo "UI_PUBLIC_PORT=$UI_PUBLIC_PORT"
+            echo "IMAGE_PREFIX=${IMAGE_PREFIX,,}"
+          } >> "$GITHUB_ENV"
+      - name: Configure pinned SSH host identity
+        shell: bash
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$STAGING_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$STAGING_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+      - name: Verify published SHA images
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/setup-buildx-action@v3
+      - name: Inspect release images
+        shell: bash
+        run: |
+          docker buildx imagetools inspect "${IMAGE_PREFIX}-backend:${RELEASE_SHA}"
+          docker buildx imagetools inspect "${IMAGE_PREFIX}-ui:${RELEASE_SHA}"
+          docker buildx imagetools inspect "${IMAGE_PREFIX}-seed:${RELEASE_SHA}"
+      - name: Build secret-safe deployment bundle
+        shell: bash
+        run: |
+          mkdir -p staging-bundle/database
+          cp deployment/cloud/docker-compose.staging.yml staging-bundle/
+          cp -R deployment/database/init staging-bundle/database/
+          RELEASE_SHA="$RELEASE_SHA" IMAGE_PREFIX="$IMAGE_PREFIX" \
+          POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
+          BACKEND_PUBLIC_PORT="$BACKEND_PUBLIC_PORT" UI_PUBLIC_PORT="$UI_PUBLIC_PORT" \
+          python scripts/render_staging_env.py --output staging-bundle/.env.staging
+          docker compose -f staging-bundle/docker-compose.staging.yml \
+            --env-file staging-bundle/.env.staging config --quiet
+          tar -czf staging-bundle.tgz -C staging-bundle .
+      - name: Capture rollback target and upload release
+        shell: bash
+        run: |
+          SSH=(ssh -i ~/.ssh/id_ed25519 -p "$STAGING_SSH_PORT" "$STAGING_USER@$STAGING_HOST")
+          SCP=(scp -i ~/.ssh/id_ed25519 -P "$STAGING_SSH_PORT")
+          "${SSH[@]}" "mkdir -p '$STAGING_PATH/releases/$RELEASE_SHA'"
+          "${SSH[@]}" "readlink '$STAGING_PATH/current' 2>/dev/null || true" > previous-release.txt
+          "${SCP[@]}" staging-bundle.tgz "$STAGING_USER@$STAGING_HOST:$STAGING_PATH/releases/$RELEASE_SHA/bundle.tgz"
+          "${SSH[@]}" "cd '$STAGING_PATH/releases/$RELEASE_SHA' && tar -xzf bundle.tgz && rm bundle.tgz && chmod 600 .env.staging"
+      - name: Pull and start exact release
+        shell: bash
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          printf '%s' "$GHCR_TOKEN" | ssh -i ~/.ssh/id_ed25519 -p "$STAGING_SSH_PORT" \
+            "$STAGING_USER@$STAGING_HOST" "docker login ghcr.io -u '$GITHUB_ACTOR' --password-stdin"
+          ssh -i ~/.ssh/id_ed25519 -p "$STAGING_SSH_PORT" "$STAGING_USER@$STAGING_HOST" \
+            "cd '$STAGING_PATH/releases/$RELEASE_SHA' && docker compose --env-file .env.staging -f docker-compose.staging.yml pull && docker compose --env-file .env.staging -f docker-compose.staging.yml up -d"
+      - name: Run cloud acceptance 15/15 for exact SHA
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/id_ed25519 -p "$STAGING_SSH_PORT" "$STAGING_USER@$STAGING_HOST" \
+            "cd '$STAGING_PATH/releases/$RELEASE_SHA' && docker compose --env-file .env.staging -f docker-compose.staging.yml exec -T ui python -c \"import os; assert os.environ.get('QS_USE_BACKEND') == 'true'\""
+          python scripts/week8_remote_staging_smoke_test.py \
+            --backend-url "$BACKEND_URL" \
+            --ui-url "$UI_URL" \
+            --expected-release-sha "$RELEASE_SHA" \
+            --output outputs/integration/week8_cloud_staging_acceptance.json
+      - name: Promote accepted release pointer
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/id_ed25519 -p "$STAGING_SSH_PORT" "$STAGING_USER@$STAGING_HOST" \
+            "ln -sfn '$STAGING_PATH/releases/$RELEASE_SHA' '$STAGING_PATH/current'"
+      - name: Roll back application images after a failed deployment
+        if: ${{ failure() && hashFiles('previous-release.txt') != '' }}
+        shell: bash
+        run: |
+          previous="$(tr -d '\r\n' < previous-release.txt 2>/dev/null || true)"
+          if [[ "$previous" =~ ^/[A-Za-z0-9._/-]+$ ]]; then
+            ssh -i ~/.ssh/id_ed25519 -p "$STAGING_SSH_PORT" "$STAGING_USER@$STAGING_HOST" \
+              "cd '$previous' && docker compose --env-file .env.staging -f docker-compose.staging.yml up -d && ln -sfn '$previous' '$STAGING_PATH/current'"
+          else
+            echo "No previous accepted release pointer exists; keeping diagnostics for manual recovery."
+          fi
+      - name: Upload cloud acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: week8-cloud-acceptance-${{ inputs.release_sha }}
+          path: |
+            outputs/integration/week8_cloud_staging_acceptance.json
+            previous-release.txt
+          if-no-files-found: warn
