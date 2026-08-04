@@ -38,6 +38,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-datavision123}
       DATABASE_URL: postgresql://${POSTGRES_USER:-datavision}:${POSTGRES_PASSWORD:-datavision123}@db:5432/${POSTGRES_DB:-datavision_db}
       RAG_EMBEDDING_MODE: ${RAG_EMBEDDING_MODE:-hash}
+      DATAVISION_RELEASE_SHA: ${DATAVISION_RELEASE_SHA:-local}
     depends_on:
       db:
         condition: service_healthy
@@ -53,6 +54,7 @@ services:
       DATAVISION_BACKEND_MODE: ${DATAVISION_BACKEND_MODE:-staging}
       DATABASE_URL: postgresql://${POSTGRES_USER:-datavision}:${POSTGRES_PASSWORD:-datavision123}@db:5432/${POSTGRES_DB:-datavision_db}
       RAG_EMBEDDING_MODE: ${RAG_EMBEDDING_MODE:-hash}
+      DATAVISION_RELEASE_SHA: ${DATAVISION_RELEASE_SHA:-local}
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     depends_on:
@@ -86,6 +88,7 @@ services:
       # still available when Streamlit is run directly outside this Compose file.
       QS_USE_BACKEND: "true"
       QS_BACKEND_URL: ${QS_BACKEND_URL:-http://backend:8000/api}
+      DATAVISION_RELEASE_SHA: ${DATAVISION_RELEASE_SHA:-local}
     ports:
       - "${UI_PORT:-8501}:8501"
     depends_on:
