@@ -109,6 +109,31 @@ Rollback procedure:
 5. Restore the database dump only if the schema/data change cannot be rolled
    forward. Never remove a shared staging volume before verifying the backup.
 
+## Cloud promotion from GitHub
+
+Local Compose and ephemeral CI prove reproducibility; the cloud path promotes
+the same commit as versioned registry images instead of rebuilding on the
+server.
+
+1. Wait for `DataVision CI` to pass on `main`.
+2. Verify `Publish staging images` succeeded and download its
+   `week8-release-<sha>` manifest. The manifest records all three GHCR digests.
+3. Create/configure the GitHub Environment `staging` using
+   `deployment/cloud/README.md`.
+4. Run `Deploy staging` with the full green SHA, backend URL ending in `/api`,
+   and UI URL.
+5. Retain `week8-cloud-acceptance-<sha>` as the cloud evidence artifact.
+
+The deploy workflow validates pinned SSH host identity, confirms all exact-SHA
+images exist, renders secrets only inside the runner bundle, starts the remote
+stack, checks UI backend mode, and requires the health response to expose the
+requested release SHA. It promotes the server's `current` pointer only after
+15/15 acceptance succeeds. If a prior accepted pointer exists, a failed run
+re-applies it automatically without deleting the PostgreSQL volume.
+
+The actual staging URL cannot be claimed as accepted until that workflow has
+run successfully with real Environment credentials.
+
 ## Troubleshooting
 
 - Port conflict: change `DB_PORT`, `BACKEND_PORT`, or `UI_PORT` in `.env`.
