@@ -1,0 +1,27 @@
+{
+    "document_chunks": 293,
+    "rag_query_logs": 1,
+    "v_rag_daily_metrics_is_not_empty": true,
+    "v_rag_daily_metrics_data": [
+        {
+            "query_date": "2026-07-17",
+            "total_queries": "1",
+            "avg_latency_ms": "77.0000000000000000",
+            "avg_confidence": "0.9005318999448987",
+            "model_name": "all-MiniLM-L6-v2"
+        }
+    ],
+    "v_document_rag_readiness_is_not_empty": true,
+    "v_document_rag_readiness_data": [
+        {
+            "document_external_id": "doc_dataflow_technical_report",
+            "file_name": "DataFlow_Technical_Report.pdf",
+            "source_name": "dataflow_technical_report_pdf",
+            "processing_status": "processed",
+            "page_count": "36",
+            "total_chunks": "293",
+            "created_at": "2026-07-17 18:35:50.760582",
+            "updated_at": null
+        }
+    ]
+}

@@ -1,0 +1,43 @@
+{
+  "data": {
+    "question": "What does the policy say about refunds?",
+    "answer": "The policy allows refunds within 30 days of the original purchase, provided the item is unused and in its original packaging. Refund requests submitted after 30 days require manager approval.",
+    "citations": [
+      {
+        "file_name": "vendor_contract_q3.pdf",
+        "page_number": 2,
+        "chunk_id": "ext-doc-00042_page_2_chunk_003",
+        "document_external_id": "ext-doc-00042",
+        "document_db_id": 98
+      },
+      {
+        "file_name": "vendor_contract_q3.pdf",
+        "page_number": 3,
+        "chunk_id": "ext-doc-00042_page_3_chunk_000",
+        "document_external_id": "ext-doc-00042",
+        "document_db_id": 98
+      }
+    ],
+    "retrieved_context": [
+      {
+        "chunk_text": "Customers may request a full refund within 30 days of purchase, provided the item is unused and returned in its original packaging.",
+        "similarity_score": 0.89,
+        "chunk_id": "ext-doc-00042_page_2_chunk_003"
+      },
+      {
+        "chunk_text": "Refund requests submitted after the 30-day window require written approval from a department manager before processing.",
+        "similarity_score": 0.74,
+        "chunk_id": "ext-doc-00042_page_3_chunk_000"
+      }
+    ],
+    "model": "all-MiniLM-L6-v2 + gpt-4o-mini",
+    "status": "success"
+  },
+  "status": "success",
+  "metadata": {
+    "owner": "Lap",
+    "pipeline": "rag_pipeline.py",
+    "queried_at": "2026-06-28T09:18:11Z",
+    "contract_version": "rag_response_contract_v2"
+  }
+}

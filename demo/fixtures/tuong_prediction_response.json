@@ -1,0 +1,21 @@
+{
+  "data": {
+    "predicted_document_type": "contract",
+    "confidence": 0.70,
+    "model_version": "document_classifier_v1",
+    "status": "accepted",
+    "review_reason": null,
+    "top_predictions": [
+      {"label": "contract", "score": 0.70},
+      {"label": "policy_document", "score": 0.18},
+      {"label": "report", "score": 0.12}
+    ]
+  },
+  "status": "success",
+  "metadata": {
+    "owner": "Tuong",
+    "pipeline": "ai/prediction/inference.py",
+    "predicted_at": "2026-06-23T09:16:40Z",
+    "contract_version": "prediction_ui_response_contract_v1"
+  }
+}

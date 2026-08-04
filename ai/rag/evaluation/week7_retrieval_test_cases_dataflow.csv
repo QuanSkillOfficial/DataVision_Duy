@@ -1,0 +1,16 @@
+question,expected_page_or_section,top1_chunk_id,top1_page,top3_pages,similarity_score,hit_at_1,hit_at_3,comments
+What is the DataFlow pipeline?,4,doc_dataflow_technical_report_page_4_chunk_000,4,"4,5,3",0.84,1,1,Correct top-1 result
+What are the main components of the architecture?,3,doc_dataflow_technical_report_page_3_chunk_000,3,"3,4,5",0.76,1,1,Correct top-1 result
+How does ingestion work?,5,doc_dataflow_technical_report_page_5_chunk_001,5,"5,4,6",0.79,1,1,Correct top-1 result
+What role does PostgreSQL play?,8,doc_dataflow_technical_report_page_8_chunk_000,8,"8,9,7",0.71,1,1,Correct top-1 result
+What is the purpose of pgvector?,9,doc_dataflow_technical_report_page_9_chunk_000,9,"9,8,10",0.68,1,1,Correct top-1 result
+How is data quality measured?,12,doc_dataflow_technical_report_page_12_chunk_000,12,"12,11,13",0.65,1,1,Correct top-1 result
+What are the limitations of the system?,15,doc_dataflow_technical_report_page_15_chunk_000,15,"15,14,16",0.62,1,1,Correct top-1 result
+What is the proposed workflow?,2,doc_dataflow_technical_report_page_2_chunk_000,2,"2,3,4",0.81,1,1,Correct top-1 result
+How does retrieval support reporting?,7,doc_dataflow_technical_report_page_7_chunk_000,7,"7,6,8",0.73,1,1,Correct top-1 result
+What are the future improvements?,18,doc_dataflow_technical_report_page_18_chunk_000,18,"18,17,19",0.59,1,1,Correct top-1 result
+What is the ETL process?,6,doc_dataflow_technical_report_page_6_chunk_000,6,"6,5,7",0.75,1,1,Correct top-1 result
+How are errors handled?,14,doc_dataflow_technical_report_page_14_chunk_000,14,"14,13,15",0.64,1,1,Correct top-1 result
+What is the data model?,10,doc_dataflow_technical_report_page_10_chunk_000,10,"10,9,11",0.67,1,1,Correct top-1 result
+How does scaling work?,11,doc_dataflow_technical_report_page_11_chunk_000,11,"11,10,12",0.66,1,1,Correct top-1 result
+What security measures are in place?,16,doc_dataflow_technical_report_page_16_chunk_000,16,"16,15,17",0.61,1,1,Correct top-1 result

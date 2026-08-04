@@ -1,0 +1,64 @@
+{
+  "model_name": "document_classifier",
+  "model_version": "document_classifier_v1",
+  "model_type": "Logistic Regression (via sklearn Pipeline with TF-IDF + OneHotEncoder + StandardScaler)",
+  "training_dataset": "datasets/sample_document_classification.csv",
+  "training_samples": 400,
+  "test_samples": 100,
+  "train_test_split": "80/20 stratified (random_state=42)",
+  "supported_labels": [
+    "contract",
+    "financial_statement",
+    "invoice",
+    "policy_document",
+    "report",
+    "research_paper",
+    "resume"
+  ],
+  "metrics": {
+    "accuracy": 0.93,
+    "macro_precision": 0.9346,
+    "macro_recall": 0.9306,
+    "macro_f1": 0.9302
+  },
+  "confidence_threshold": 0.60,
+  "min_extracted_text_length": 50,
+  "features": {
+    "text_features": ["file_name (TF-IDF, max 2000)", "extracted_text (TF-IDF, max 5000)"],
+    "categorical_features": ["file_type (OneHotEncoder)", "source_system (OneHotEncoder)"],
+    "numeric_features": ["file_size (log1p + StandardScaler)", "text_length (log1p + StandardScaler)", "num_pages (log1p + StandardScaler)"]
+  },
+  "preprocessing": {
+    "text_cleaning": "lowercase, collapse whitespace, strip",
+    "categorical_cleaning": "lowercase, strip, fill NaN with 'unknown'",
+    "numeric_cleaning": "coerce to numeric, fill NaN with 0 (inference) or median (training)"
+  },
+  "known_limitations": [
+    "Trained on synthetic dataset (500 samples) — not real-world OCR output",
+    "May underperform on noisy OCR text or multilingual documents",
+    "Unknown file_type or source_system values are handled but reduce accuracy",
+    "Short extracted text (<50 chars) triggers quality gate and skips prediction",
+    "Does not handle image-only documents (requires OCR upstream)"
+  ],
+  "intended_use": [
+    "Classify document types from ingested file metadata and extracted text",
+    "Support document routing and organizational workflows",
+    "Provide metadata for RAG filtering by document type",
+    "Generate prediction logs for audit and analytics"
+  ],
+  "not_intended_use": [
+    "Not for classifying documents in languages other than English",
+    "Not for determining document authenticity or fraud detection",
+    "Not for sensitive or high-stakes legal classification without human review",
+    "Not for production deployment without retraining on real-world data"
+  ],
+  "status_values": {
+    "accepted": "Confidence >= threshold, prediction is reliable",
+    "needs_review": "Confidence < threshold, human review recommended",
+    "waiting_for_source": "Extracted text too short or missing",
+    "failed": "Prediction error occurred"
+  },
+  "created_at": "2026-06-23",
+  "last_updated": "2026-06-23",
+  "author": "Tuong"
+}

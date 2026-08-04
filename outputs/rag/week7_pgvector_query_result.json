@@ -1,0 +1,17 @@
+{
+  "status": "pending_db_connection",
+  "query": "What is the DataFlow pipeline?",
+  "document_external_id": "doc_dataflow_technical_report",
+  "document_db_id": null,
+  "top_k": 5,
+  "retrieved_chunks": [],
+  "citations": [],
+  "latency_ms": 0,
+  "errors": [
+    "Database connection required - set DATABASE_URL environment variable or provide connection string"
+  ],
+  "notes": [
+    "This file will be populated when week7_pgvector_smoke_test.py is run with a real database connection",
+    "Run: python ai/rag/scripts/week7_pgvector_smoke_test.py --query \"What is the DataFlow pipeline?\" --document-external-id doc_dataflow_technical_report --top-k 5 --output-result outputs/rag/week7_pgvector_query_result.json"
+  ]
+}

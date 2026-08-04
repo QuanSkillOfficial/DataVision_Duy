@@ -1,0 +1,46 @@
+[
+    {
+        "source_name": "superstore_sales_csv",
+        "run_id": "10ed4959-5ace-4ff7-9b30-da28321d6708",
+        "status": "success",
+        "records_read": 9994,
+        "records_valid": 9994,
+        "records_invalid": 0,
+        "data_quality_score": 100.0,
+        "duplicate_count": null,
+        "created_at": "2026-07-17T18:35:50.760582"
+    },
+    {
+        "source_name": "product_sales_region_excel",
+        "run_id": "a896a888-57f0-4ea9-9083-f860c2078f7d",
+        "status": "success",
+        "records_read": 1500,
+        "records_valid": 1500,
+        "records_invalid": 0,
+        "data_quality_score": 99.51,
+        "duplicate_count": null,
+        "created_at": "2026-07-17T18:35:50.760582"
+    },
+    {
+        "source_name": "dummyjson_products_api",
+        "run_id": "9cce3b5c-b83d-4873-86e1-b99de889b077",
+        "status": "success",
+        "records_read": 30,
+        "records_valid": 30,
+        "records_invalid": 0,
+        "data_quality_score": 99.0,
+        "duplicate_count": null,
+        "created_at": "2026-07-17T18:35:50.760582"
+    },
+    {
+        "source_name": "dataflow_technical_report_pdf",
+        "run_id": "8e18bd87-27e5-4aa1-9566-805ffd552fdb",
+        "status": "success",
+        "records_read": 36,
+        "records_valid": 36,
+        "records_invalid": 0,
+        "data_quality_score": 100.0,
+        "duplicate_count": null,
+        "created_at": "2026-07-17T18:35:50.760582"
+    }
+]

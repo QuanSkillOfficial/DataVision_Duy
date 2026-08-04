@@ -1,0 +1,36 @@
+{
+  "generated_at": "2026-07-26T10:37:55.499642+00:00",
+  "response": {
+    "document_external_id": "doc_dataflow_technical_report",
+    "source_name": "dataflow_technical_report_pdf",
+    "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
+    "predicted_document_type": "report",
+    "confidence": 0.4184,
+    "model_version": "document_classifier_v1",
+    "status": "needs_review",
+    "top_predictions": [
+      {
+        "label": "report",
+        "score": 0.4184
+      },
+      {
+        "label": "research_paper",
+        "score": 0.2262
+      },
+      {
+        "label": "contract",
+        "score": 0.2084
+      }
+    ],
+    "review_reason": "Confidence below staging threshold",
+    "source_id": 4,
+    "document_db_id": 1,
+    "manual_review_required": true,
+    "batch_index": 1,
+    "fixture_only": false
+  },
+  "metadata": {
+    "owner": "Tuong",
+    "source": "real_week7_duy_batch"
+  }
+}

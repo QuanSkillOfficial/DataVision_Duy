@@ -86,13 +86,23 @@ def _repo_candidates() -> dict[str, Path]:
     configured = Path(os.getenv("TEAM_REPOS_ROOT", PROJECT_ROOT.parent))
     if not configured.is_absolute():
         configured = (PROJECT_ROOT / configured).resolve()
-    return {
+    external = {
         "Duy": PROJECT_ROOT,
         "Phat": configured / "DataVision_Phat",
         "Lap": configured / "DataVision_Lap",
         "Tuong": configured / "DataVision_Tuong",
         "Phi/Hung": configured / "DataVision_Hung",
     }
+    canonical_markers = {
+        "Phat": "week7/database/scripts/ci_database_smoke_test.py",
+        "Lap": "ai/rag/vector_store.py",
+        "Tuong": "ai/prediction/prediction_service.py",
+        "Phi/Hung": "demo/streamlit_app.py",
+    }
+    for owner, marker in canonical_markers.items():
+        if (PROJECT_ROOT / marker).exists():
+            external[owner] = PROJECT_ROOT
+    return external
 
 
 def _find_existing(root: Path, candidates: Iterable[str]) -> list[str]:
@@ -101,8 +111,9 @@ def _find_existing(root: Path, candidates: Iterable[str]) -> list[str]:
 
 def build_report() -> dict:
     owners: dict[str, dict] = {}
+    repositories = _repo_candidates()
     for owner, required in OWNER_REQUIREMENTS.items():
-        root = _repo_candidates()[owner]
+        root = repositories[owner]
         present = _find_existing(root, required) if root.exists() else []
         missing = [item for item in required if item not in present]
         owners[owner] = {
@@ -201,16 +212,42 @@ def build_report() -> dict:
         for owner, value in owners.items()
         if value.get("execution_audit", {}).get("status") not in {None, "passed"}
     }
+    acceptance_path = PROJECT_ROOT / "outputs/integration/week8_staging_acceptance.json"
+    week8_acceptance = (
+        json.loads(acceptance_path.read_text(encoding="utf-8"))
+        if acceptance_path.exists()
+        else {}
+    )
+    acceptance_checks = week8_acceptance.get("checks", {})
+    runtime_proof_passed = (
+        week8_acceptance.get("status") == "passed"
+        and bool(acceptance_checks)
+        and all(acceptance_checks.values())
+    )
+    if runtime_proof_passed:
+        execution_blockers = {}
+        for owner in owners.values():
+            historical_audit = owner.get("execution_audit")
+            if historical_audit:
+                historical_audit["scope"] = "historical_week7"
+                historical_audit["superseded_by_week8_runtime_proof"] = True
     return {
         "status": "ready" if missing_owner_count == 0 else "partial",
         "execution_status": "passed" if not execution_blockers else "blocked",
-        "scope": "Week 7 shared-repository readiness, not proof of runtime integration",
+        "scope": "Week 8 canonical shared-repository and staging readiness",
+        "canonical_merge": all(path == PROJECT_ROOT for path in repositories.values()),
         "owners": owners,
         "execution_blockers": execution_blockers,
+        "week8_runtime_proof": {
+            "present": bool(week8_acceptance),
+            "passed": runtime_proof_passed,
+            "checks": acceptance_checks,
+            "path": acceptance_path.relative_to(PROJECT_ROOT).as_posix(),
+        },
         "next_action": (
             "Resolve owner execution blockers, then rerun with --strict --strict-execution."
             if execution_blockers
-            else "Run the merged shared repository in CI and proceed to the Week 8 staging checklist."
+            else "Run the clean-volume Compose gate in CI and promote the same images to staging."
         ),
     }
 

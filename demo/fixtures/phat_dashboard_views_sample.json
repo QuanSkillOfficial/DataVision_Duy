@@ -1,0 +1,318 @@
+{
+  "data": {
+    "v_dashboard_overview": [
+      {
+        "total_sources": 4,
+        "total_documents": 1,
+        "successful_ingestions": 4,
+        "failed_ingestions": 0,
+        "total_rag_queries": 0,
+        "total_predictions": 10
+      }
+    ],
+    "v_data_quality_dashboard": [
+      {
+        "source_name": "superstore_sales_csv",
+        "run_id": "10ed4959-5ace-4ff7-9b30-da28321d6708",
+        "status": "success",
+        "records_read": 9994,
+        "records_valid": 9994,
+        "records_invalid": 0,
+        "data_quality_score": 100.0,
+        "duplicate_count": 0,
+        "created_at": "2026-07-05T06:46:02.725Z"
+      },
+      {
+        "source_name": "dataflow_technical_report_pdf",
+        "run_id": "8e18bd87-27e5-4aa1-9566-805ffd552fdb",
+        "status": "success",
+        "records_read": 36,
+        "records_valid": 36,
+        "records_invalid": 0,
+        "data_quality_score": 100.0,
+        "duplicate_count": 0,
+        "created_at": "2026-07-05T06:46:02.725Z"
+      },
+      {
+        "source_name": "dummyjson_products_api",
+        "run_id": "9cce3b5c-b83d-4873-86e1-b99de889b077",
+        "status": "success",
+        "records_read": 30,
+        "records_valid": 30,
+        "records_invalid": 0,
+        "data_quality_score": 99.0,
+        "duplicate_count": 0,
+        "created_at": "2026-07-05T06:46:02.725Z"
+      },
+      {
+        "source_name": "product_sales_region_excel",
+        "run_id": "a896a888-57f0-4ea9-9083-f860c2078f7d",
+        "status": "success",
+        "records_read": 1500,
+        "records_valid": 1500,
+        "records_invalid": 0,
+        "data_quality_score": 99.51,
+        "duplicate_count": 0,
+        "created_at": "2026-07-05T06:46:02.725Z"
+      }
+    ],
+    "v_document_quality_summary": [
+      {
+        "processing_status": "extracted",
+        "file_type": "pdf",
+        "document_count": 1,
+        "avg_page_count": 36.0
+      }
+    ],
+    "v_document_rag_readiness": [
+      {
+        "document_external_id": "doc_dataflow_technical_report",
+        "file_name": "DataFlow_Technical_Report.pdf",
+        "source_name": "dataflow_technical_report_pdf",
+        "processing_status": "extracted",
+        "page_count": 36,
+        "total_chunks": 293,
+        "created_at": "2026-07-05T06:46:02.725Z",
+        "updated_at": null
+      }
+    ],
+    "v_ingestion_health": [
+      {
+        "ingestion_date": "2026-07-05",
+        "status": "success",
+        "run_count": 4,
+        "total_read": 11560,
+        "total_valid": 11560,
+        "total_invalid": 0
+      }
+    ],
+    "v_latest_ingestion_runs": [
+      {
+        "run_name": "week2_ingestion_batch_2026-07-04",
+        "source_name": "superstore_sales_csv",
+        "ingestion_status": "success",
+        "records_read": 9994,
+        "error_message": null,
+        "started_at": "2026-07-03T21:16:15.862Z",
+        "ended_at": "2026-07-03T21:16:16.143Z",
+        "created_at": "2026-07-05T06:46:02.725Z"
+      },
+      {
+        "run_name": "week2_ingestion_batch_2026-07-04",
+        "source_name": "dataflow_technical_report_pdf",
+        "ingestion_status": "success",
+        "records_read": 36,
+        "error_message": null,
+        "started_at": "2026-07-03T21:16:16.798Z",
+        "ended_at": "2026-07-03T21:16:20.920Z",
+        "created_at": "2026-07-05T06:46:02.725Z"
+      },
+      {
+        "run_name": "week2_ingestion_batch_2026-07-04",
+        "source_name": "dummyjson_products_api",
+        "ingestion_status": "success",
+        "records_read": 30,
+        "error_message": null,
+        "started_at": "2026-07-03T21:16:16.732Z",
+        "ended_at": "2026-07-03T21:16:16.784Z",
+        "created_at": "2026-07-05T06:46:02.725Z"
+      },
+      {
+        "run_name": "week2_ingestion_batch_2026-07-04",
+        "source_name": "product_sales_region_excel",
+        "ingestion_status": "success",
+        "records_read": 1500,
+        "error_message": null,
+        "started_at": "2026-07-03T21:16:16.156Z",
+        "ended_at": "2026-07-03T21:16:16.720Z",
+        "created_at": "2026-07-05T06:46:02.725Z"
+      }
+    ],
+    "v_prediction_confidence_summary": [
+      {
+        "model_name": "document_classifier",
+        "model_version": "document_classifier_v1",
+        "predicted_label": "invoice",
+        "prediction_count": 2,
+        "avg_confidence": 0.6964999999999999,
+        "min_confidence": 0.6829
+      },
+      {
+        "model_name": "document_classifier",
+        "model_version": "document_classifier_v1",
+        "predicted_label": "report",
+        "prediction_count": 1,
+        "avg_confidence": 0.4184,
+        "min_confidence": 0.4184
+      },
+      {
+        "model_name": "document_classifier",
+        "model_version": "document_classifier_v1",
+        "predicted_label": null,
+        "prediction_count": 3,
+        "avg_confidence": 0.0,
+        "min_confidence": 0.0
+      },
+      {
+        "model_name": "document_classifier",
+        "model_version": "document_classifier_v1",
+        "predicted_label": "contract",
+        "prediction_count": 4,
+        "avg_confidence": 0.55855,
+        "min_confidence": 0.3839
+      }
+    ],
+    "v_prediction_review_queue": [
+      {
+        "id": 1,
+        "document_id": 1,
+        "predicted_label": "report",
+        "confidence_score": 0.4184,
+        "status": "needs_review",
+        "review_reason": "Prediction confidence below threshold",
+        "created_at": "2026-07-05T02:13:52.917Z"
+      },
+      {
+        "id": 7,
+        "document_id": null,
+        "predicted_label": "contract",
+        "confidence_score": 0.3839,
+        "status": "needs_review",
+        "review_reason": "Prediction confidence below threshold",
+        "created_at": "2026-07-05T02:13:52.917Z"
+      },
+      {
+        "id": 8,
+        "document_id": null,
+        "predicted_label": null,
+        "confidence_score": 0.0,
+        "status": "waiting_for_source",
+        "review_reason": "Extracted text is missing or too short for reliable prediction",
+        "created_at": "2026-07-05T02:13:52.917Z"
+      },
+      {
+        "id": 9,
+        "document_id": null,
+        "predicted_label": null,
+        "confidence_score": 0.0,
+        "status": "waiting_for_source",
+        "review_reason": "Extracted text is missing or too short for reliable prediction",
+        "created_at": "2026-07-05T02:13:52.917Z"
+      },
+      {
+        "id": 10,
+        "document_id": null,
+        "predicted_label": null,
+        "confidence_score": 0.0,
+        "status": "failed",
+        "review_reason": "Validation error: Missing required field: 'file_name'",
+        "created_at": "2026-07-05T02:13:52.917Z"
+      }
+    ],
+    "v_rag_daily_metrics": [],
+    "v_recent_activity": [
+      {
+        "activity_type": "New Source Added",
+        "description": "superstore_sales_csv",
+        "created_at": "2026-07-05T06:46:02.725Z"
+      },
+      {
+        "activity_type": "New Source Added",
+        "description": "dataflow_technical_report_pdf",
+        "created_at": "2026-07-05T06:46:02.725Z"
+      },
+      {
+        "activity_type": "New Source Added",
+        "description": "dummyjson_products_api",
+        "created_at": "2026-07-05T06:46:02.725Z"
+      },
+      {
+        "activity_type": "New Source Added",
+        "description": "product_sales_region_excel",
+        "created_at": "2026-07-05T06:46:02.725Z"
+      }
+    ],
+    "v_source_quality_detail": [
+      {
+        "source_name": "product_sales_region_excel",
+        "source_type": "excel",
+        "total_runs": 1,
+        "avg_data_quality_score": 99.51,
+        "total_invalid_records": 0,
+        "total_duplicates": 0,
+        "last_run_at": "2026-07-05T06:46:02.725Z"
+      },
+      {
+        "source_name": "dummyjson_products_api",
+        "source_type": "api",
+        "total_runs": 1,
+        "avg_data_quality_score": 99.0,
+        "total_invalid_records": 0,
+        "total_duplicates": 0,
+        "last_run_at": "2026-07-05T06:46:02.725Z"
+      },
+      {
+        "source_name": "superstore_sales_csv",
+        "source_type": "csv",
+        "total_runs": 1,
+        "avg_data_quality_score": 100.0,
+        "total_invalid_records": 0,
+        "total_duplicates": 0,
+        "last_run_at": "2026-07-05T06:46:02.725Z"
+      },
+      {
+        "source_name": "dataflow_technical_report_pdf",
+        "source_type": "pdf",
+        "total_runs": 1,
+        "avg_data_quality_score": 100.0,
+        "total_invalid_records": 0,
+        "total_duplicates": 0,
+        "last_run_at": "2026-07-05T06:46:02.725Z"
+      }
+    ],
+    "v_source_quality_summary": [
+      {
+        "source_id": 1,
+        "source_name": "superstore_sales_csv",
+        "source_type": "csv",
+        "status": "active",
+        "total_documents": 0,
+        "total_structured_records": 9994,
+        "total_invalid_records": 0
+      },
+      {
+        "source_id": 2,
+        "source_name": "dataflow_technical_report_pdf",
+        "source_type": "pdf",
+        "status": "active",
+        "total_documents": 1,
+        "total_structured_records": 0,
+        "total_invalid_records": 0
+      },
+      {
+        "source_id": 3,
+        "source_name": "dummyjson_products_api",
+        "source_type": "api",
+        "status": "active",
+        "total_documents": 0,
+        "total_structured_records": 30,
+        "total_invalid_records": 0
+      },
+      {
+        "source_id": 4,
+        "source_name": "product_sales_region_excel",
+        "source_type": "excel",
+        "status": "active",
+        "total_documents": 0,
+        "total_structured_records": 1500,
+        "total_invalid_records": 0
+      }
+    ]
+  },
+  "status": "success",
+  "metadata": {
+    "owner": "Phat",
+    "contract_version": "dashboard_views_contract_v2",
+    "updated_at": "2026-07-07T13:00:00Z"
+  }
+}
