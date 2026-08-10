@@ -172,14 +172,16 @@ jobs:
             image_ref="${!variable}"
             docker pull "$image_ref"
             docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-              -v "$PWD/image-security:/evidence" aquasec/trivy:0.58.1 image \
+              -v "$PWD/image-security:/evidence" \
+              aquasec/trivy:0.70.0@sha256:be1190afcb28352bfddc4ddeb71470835d16462af68d310f9f4bca710961a41e image \
               --severity CRITICAL,HIGH --exit-code 0 \
               --format json --output "/evidence/${service}-trivy.json" "$image_ref"
             docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-              aquasec/trivy:0.58.1 image --quiet \
+              aquasec/trivy:0.70.0@sha256:be1190afcb28352bfddc4ddeb71470835d16462af68d310f9f4bca710961a41e image --quiet \
               --ignore-unfixed --severity CRITICAL --exit-code 1 "$image_ref"
             docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-              -v "$PWD/image-security:/evidence" aquasec/trivy:0.58.1 image \
+              -v "$PWD/image-security:/evidence" \
+              aquasec/trivy:0.70.0@sha256:be1190afcb28352bfddc4ddeb71470835d16462af68d310f9f4bca710961a41e image \
               --format cyclonedx --output "/evidence/${service}.cdx.json" "$image_ref"
           done
       - name: Upload exact-image security evidence
