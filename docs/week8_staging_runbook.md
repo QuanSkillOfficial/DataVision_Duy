@@ -117,16 +117,19 @@ server.
 
 1. Wait for `DataVision CI` to pass on `main`.
 2. Verify `Publish staging images` succeeded and download its
-   `week8-release-<sha>` manifest. The manifest records all three GHCR digests.
+   `week8-release-<sha>` manifest. The manifest binds the successful CI run,
+   release SHA, and all three immutable GHCR digest references.
 3. Create/configure the GitHub Environment `staging` using
    `deployment/cloud/README.md`.
 4. Run `Deploy staging` with the full green SHA, backend URL ending in `/api`,
    and UI URL.
 5. Retain `week8-cloud-acceptance-<sha>` as the cloud evidence artifact.
 
-The deploy workflow validates pinned SSH host identity, confirms all exact-SHA
-images exist, renders secrets only inside the runner bundle, starts the remote
-stack, checks UI backend mode, and requires the health response to expose the
+The deploy workflow validates pinned SSH host identity, verifies the release
+SHA against a successful CI run on `main`, validates the release manifest,
+inspects and deploys only `image@sha256` references, renders secrets only inside
+the runner bundle, and performs a fail-closed remote preflight before upload.
+It then checks UI backend mode and requires the health response to expose the
 requested release SHA. It promotes the server's `current` pointer only after
 15/15 acceptance succeeds. If a prior accepted pointer exists, a failed run
 re-applies it automatically without deleting the PostgreSQL volume.

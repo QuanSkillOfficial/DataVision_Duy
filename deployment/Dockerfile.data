@@ -5,8 +5,13 @@ WORKDIR /app
 COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r /app/requirements.txt
 
-COPY data_engineering /app/data_engineering
-COPY scripts /app/scripts
-COPY tests/fixtures /app/tests/fixtures
+RUN groupadd --gid 10001 datavision \
+    && useradd --uid 10001 --gid datavision --create-home datavision
+
+COPY --chown=datavision:datavision data_engineering /app/data_engineering
+COPY --chown=datavision:datavision scripts /app/scripts
+COPY --chown=datavision:datavision tests/fixtures /app/tests/fixtures
+
+USER datavision
 
 CMD ["python", "scripts/week7_ci_ingestion_smoke_test.py"]

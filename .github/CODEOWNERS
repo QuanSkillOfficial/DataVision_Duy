@@ -1,0 +1,26 @@
+# Default integration and release owner.
+* @minzi03
+
+# Canonical ingestion, CI/CD, release, and deployment governance.
+/data_engineering/ @minzi03
+/scripts/ @minzi03
+/.github/ @minzi03
+/deployment/cloud/ @minzi03
+/integration/ @minzi03
+
+# PostgreSQL/pgvector integration paths. Phat remains the provenance owner and
+# requested reviewer; the canonical maintainer is the enforceable Code Owner.
+/week7/database/ @minzi03
+/deployment/database/init/ @minzi03
+
+# RAG and retrieval integration paths.
+/ai/rag/ @minzi03
+/ai/ai_tests/ @minzi03
+
+# Prediction and model integration paths.
+/ai/prediction/ @minzi03
+/tests/ai_tests/ @minzi03
+
+# Streamlit UI and browser-contract owner paths.
+/demo/ @ronalhung03 @minzi03
+/tests/test_*.py @ronalhung03 @minzi03

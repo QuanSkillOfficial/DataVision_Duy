@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "canonical_repository": "https://github.com/QuanSkillOfficial/DataVision_Duy",
+  "canonical_baseline_sha": "ca19091095809047a143536186bd76d03f728449",
+  "canonical_import_commit": "f764a800932988e73eb325d65b40bde86d9cd17e",
+  "modules": [
+    {
+      "module_id": "duy-ingestion",
+      "owner_name": "Nguyen Minh Duy",
+      "owner_github": "minzi03",
+      "source_repository": "https://github.com/QuanSkillOfficial/DataVision_Duy",
+      "source_sha": "ca19091095809047a143536186bd76d03f728449",
+      "integration_mode": "canonical-native",
+      "canonical_paths": [
+        {
+          "path": "data_engineering",
+          "tree_sha": "917745fb372390b449795b8a11523f9be7f4f59e"
+        }
+      ],
+      "required_files": [
+        "data_engineering/pipelines/ingestion_engine.py",
+        "requirements-ci.txt"
+      ]
+    },
+    {
+      "module_id": "phat-database",
+      "owner_name": "Ly Tan Phat",
+      "owner_github": "TanPhat0507",
+      "source_repository": "https://github.com/QuanSkillOfficial/DataVision_Phat",
+      "source_sha": "b23cf0b1fd2312914acb4b8c870ba60122fa17e1",
+      "integration_mode": "imported-and-adapted",
+      "canonical_paths": [
+        {
+          "path": "week7/database",
+          "tree_sha": "9c3ffe862b46d4d30ca5114ea29a164c11921054"
+        },
+        {
+          "path": "deployment/database/init",
+          "tree_sha": "dea2d943a52de2e23e4675c3275287f2a1186b57"
+        }
+      ],
+      "required_files": [
+        "week7/database/scripts/ci_database_smoke_test.py",
+        "week7/database/requirements-ci.txt",
+        "deployment/database/init/10_phat_schema_v4_fixed.sql",
+        "deployment/database/init/20_phat_schema_and_views.sql"
+      ]
+    },
+    {
+      "module_id": "lap-rag",
+      "owner_name": "Nguyen The Lap",
+      "owner_github": "Nguyen-The-Lap",
+      "source_repository": "https://github.com/QuanSkillOfficial/DataVision_Lap",
+      "source_sha": "b1275fda7d3222d3c82972d9c224ddf858fc291f",
+      "integration_mode": "imported-and-adapted",
+      "canonical_paths": [
+        {
+          "path": "ai/rag",
+          "tree_sha": "de90a47db20b140ea0236ff4c91ca8c5b0f189ae"
+        },
+        {
+          "path": "ai/ai_tests",
+          "tree_sha": "7cea6c713619c61282ece095886157b816fb2d64"
+        }
+      ],
+      "required_files": [
+        "ai/rag/rag_service.py",
+        "ai/rag/scripts/week7_rag_ci_smoke_test.py",
+        "ai/rag/requirements-ci.txt",
+        "ai/ai_tests/test_rag_response_contract.py"
+      ]
+    },
+    {
+      "module_id": "tuong-prediction",
+      "owner_name": "Nguyen Tuong",
+      "owner_github": "wally205",
+      "source_repository": "https://github.com/QuanSkillOfficial/DataVision_Tuong",
+      "source_sha": "657c839b7471dcf5151c2314cfbe71b84a1a983f",
+      "integration_mode": "imported-and-adapted",
+      "canonical_paths": [
+        {
+          "path": "ai/prediction",
+          "tree_sha": "29d6f9258e4f24846e821183448a2edf084a7cb1"
+        },
+        {
+          "path": "tests/ai_tests",
+          "tree_sha": "a25b164b175fdf95ad2d7d5f97cbd19d5a8af1f6"
+        }
+      ],
+      "required_files": [
+        "ai/prediction/prediction_service.py",
+        "ai/prediction/requirements-ci.txt",
+        "scripts/week7_prediction_ci_smoke_test.py",
+        "tests/ai_tests/test_prediction_service.py"
+      ]
+    },
+    {
+      "module_id": "hung-streamlit-ui",
+      "owner_name": "Nguyen Tien Hung",
+      "owner_github": "ronalhung03",
+      "source_repository": "https://github.com/QuanSkillOfficial/DataVision_Hung",
+      "source_sha": "2578af527696b9447db20a8194132a1eec394007",
+      "integration_mode": "imported-and-adapted",
+      "canonical_paths": [
+        {
+          "path": "demo",
+          "tree_sha": "c682d2d96fb3b9617055b8548ca59d12271fd12c"
+        }
+      ],
+      "required_files": [
+        "demo/streamlit_app.py",
+        "demo/services/backend_client.py",
+        "demo/requirements-ci.txt",
+        "scripts/week7_ui_ci_smoke_test.py",
+        "tests/test_backend_contract_smoke.py"
+      ]
+    }
+  ]
+}

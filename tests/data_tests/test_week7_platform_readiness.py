@@ -33,8 +33,11 @@ def test_compose_drafts_define_database_and_backend() -> None:
     assert "ingestion-smoke:" in full_compose
 
     workflow = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
-    assert "module-discovery:" in workflow
-    assert "needs.module-discovery.outputs" in workflow
+    assert "module-parity:" in workflow
+    assert "python scripts/verify_module_provenance.py" in workflow
+    assert "needs: module-parity" in workflow
+    assert "if: ${{ needs.module-discovery" not in workflow
+    assert "needs.module-discovery.outputs" not in workflow
     assert "hashFiles(" not in workflow
 
 

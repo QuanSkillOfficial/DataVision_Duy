@@ -14,6 +14,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
   packages: write
 
 jobs:
@@ -23,6 +24,7 @@ jobs:
     outputs:
       release_sha: ${{ steps.release.outputs.release_sha }}
       image_prefix: ${{ steps.release.outputs.image_prefix }}
+      source_ci_run_id: ${{ steps.release.outputs.source_ci_run_id }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -33,6 +35,8 @@ jobs:
         env:
           REQUESTED_SHA: ${{ inputs.git_sha }}
           CI_SHA: ${{ github.event.workflow_run.head_sha }}
+          SOURCE_RUN_ID: ${{ github.event.workflow_run.id }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           release_sha="$REQUESTED_SHA"
           if [ -z "$release_sha" ]; then
@@ -45,10 +49,25 @@ jobs:
             echo "A full 40-character lowercase Git SHA is required." >&2
             exit 1
           fi
-          git cat-file -e "${release_sha}^{commit}"
+          git fetch --no-tags origin main
+          expected_run=()
+          if [ -n "$SOURCE_RUN_ID" ]; then
+            expected_run=(--expected-run-id "$SOURCE_RUN_ID")
+          fi
+          python scripts/verify_release_candidate.py \
+            --sha "$release_sha" \
+            --repository "$GITHUB_REPOSITORY" \
+            --main-ref origin/main \
+            --github-env "$GITHUB_ENV" \
+            "${expected_run[@]}"
           image_prefix="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/datavision"
-          echo "release_sha=$release_sha" >> "$GITHUB_OUTPUT"
-          echo "image_prefix=$image_prefix" >> "$GITHUB_OUTPUT"
+          source_ci_run_id="$(sed -n 's/^VERIFIED_CI_RUN_ID=//p' "$GITHUB_ENV" | tail -n 1)"
+          [ -n "$source_ci_run_id" ] || { echo "Verified CI run ID was not produced" >&2; exit 1; }
+          {
+            echo "release_sha=$release_sha"
+            echo "image_prefix=$image_prefix"
+            echo "source_ci_run_id=$source_ci_run_id"
+          } >> "$GITHUB_OUTPUT"
 
   publish:
     needs: prepare
@@ -110,6 +129,7 @@ jobs:
           BACKEND_DIGEST: ${{ steps.backend.outputs.digest }}
           UI_DIGEST: ${{ steps.ui.outputs.digest }}
           SEED_DIGEST: ${{ steps.seed.outputs.digest }}
+          SOURCE_CI_RUN_ID: ${{ needs.prepare.outputs.source_ci_run_id }}
         run: |
           python - <<'PY'
           import json, os
@@ -117,17 +137,58 @@ jobs:
           prefix = os.environ["IMAGE_PREFIX"]
           sha = os.environ["RELEASE_SHA"]
           manifest = {
+              "schema_version": 1,
               "release_sha": sha,
+              "source_ci_run_id": int(os.environ["SOURCE_CI_RUN_ID"]),
               "created_at": datetime.now(timezone.utc).isoformat(),
-              "images": {
-                  "backend": {"tag": f"{prefix}-backend:{sha}", "digest": os.environ["BACKEND_DIGEST"]},
-                  "ui": {"tag": f"{prefix}-ui:{sha}", "digest": os.environ["UI_DIGEST"]},
-                  "seed": {"tag": f"{prefix}-seed:{sha}", "digest": os.environ["SEED_DIGEST"]},
-              },
+              "images": {},
           }
+          for service, digest in {
+              "backend": os.environ["BACKEND_DIGEST"],
+              "ui": os.environ["UI_DIGEST"],
+              "seed": os.environ["SEED_DIGEST"],
+          }.items():
+              repository = f"{prefix}-{service}"
+              manifest["images"][service] = {
+                  "repository": repository,
+                  "tag": f"{repository}:{sha}",
+                  "digest": digest,
+                  "ref": f"{repository}@{digest}",
+              }
           with open("release-manifest.json", "w", encoding="utf-8") as handle:
               json.dump(manifest, handle, indent=2)
           PY
+          python scripts/validate_release_manifest.py \
+            --manifest release-manifest.json \
+            --expected-sha "$RELEASE_SHA" \
+            --image-prefix "$IMAGE_PREFIX" \
+            --github-env "$GITHUB_ENV"
+      - name: Scan exact published images and generate SBOMs
+        shell: bash
+        run: |
+          mkdir -p image-security
+          for service in backend ui seed; do
+            variable="${service^^}_IMAGE_REF"
+            image_ref="${!variable}"
+            docker pull "$image_ref"
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+              -v "$PWD/image-security:/evidence" aquasec/trivy:0.58.1 image \
+              --severity CRITICAL,HIGH --exit-code 0 \
+              --format json --output "/evidence/${service}-trivy.json" "$image_ref"
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+              aquasec/trivy:0.58.1 image --quiet \
+              --ignore-unfixed --severity CRITICAL --exit-code 1 "$image_ref"
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+              -v "$PWD/image-security:/evidence" aquasec/trivy:0.58.1 image \
+              --format cyclonedx --output "/evidence/${service}.cdx.json" "$image_ref"
+          done
+      - name: Upload exact-image security evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: week8-image-security-${{ needs.prepare.outputs.release_sha }}
+          path: image-security/
+          if-no-files-found: error
       - uses: actions/upload-artifact@v4
         with:
           name: week8-release-${{ needs.prepare.outputs.release_sha }}
