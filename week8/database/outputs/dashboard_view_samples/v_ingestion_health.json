@@ -1,0 +1,10 @@
+[
+    {
+        "ingestion_date": "2026-08-13",
+        "status": "success",
+        "run_count": 4,
+        "total_read": 11560,
+        "total_valid": 11560,
+        "total_invalid": 0
+    }
+]

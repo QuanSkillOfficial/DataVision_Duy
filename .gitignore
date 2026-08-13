@@ -30,3 +30,9 @@ outputs/integration/week7_backend_stub_smoke_result.json
 # must never be committed recursively into the shared platform repository.
 /team_repositories/
 /weekly_tasks/
+
+# Week 8 database backup dumps - keep manifest/checksum as evidence, not the raw binary
+week8/.env
+week8/database/outputs/backups/*.dump
+week8/database/outputs/backups/*.dump.sha256
+

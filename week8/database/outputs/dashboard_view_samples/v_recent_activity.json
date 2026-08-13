@@ -1,0 +1,27 @@
+[
+    {
+        "activity_type": "RAG Query",
+        "description": "What is the DataFlow pipeline?",
+        "created_at": "2026-08-13T09:17:29.186743"
+    },
+    {
+        "activity_type": "New Source Added",
+        "description": "superstore_sales_csv",
+        "created_at": "2026-08-13T09:16:45.808567"
+    },
+    {
+        "activity_type": "New Source Added",
+        "description": "product_sales_region_excel",
+        "created_at": "2026-08-13T09:16:45.808567"
+    },
+    {
+        "activity_type": "New Source Added",
+        "description": "dummyjson_products_api",
+        "created_at": "2026-08-13T09:16:45.808567"
+    },
+    {
+        "activity_type": "New Source Added",
+        "description": "dataflow_technical_report_pdf",
+        "created_at": "2026-08-13T09:16:45.808567"
+    }
+]

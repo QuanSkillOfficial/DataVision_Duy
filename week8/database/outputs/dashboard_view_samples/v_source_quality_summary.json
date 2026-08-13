@@ -1,0 +1,38 @@
+[
+    {
+        "source_id": 1,
+        "source_name": "superstore_sales_csv",
+        "source_type": "csv",
+        "status": "active",
+        "total_documents": 0,
+        "total_structured_records": 100,
+        "total_invalid_records": 0
+    },
+    {
+        "source_id": 2,
+        "source_name": "product_sales_region_excel",
+        "source_type": "excel",
+        "status": "active",
+        "total_documents": 0,
+        "total_structured_records": 100,
+        "total_invalid_records": 0
+    },
+    {
+        "source_id": 3,
+        "source_name": "dummyjson_products_api",
+        "source_type": "api",
+        "status": "active",
+        "total_documents": 0,
+        "total_structured_records": 30,
+        "total_invalid_records": 0
+    },
+    {
+        "source_id": 4,
+        "source_name": "dataflow_technical_report_pdf",
+        "source_type": "pdf",
+        "status": "active",
+        "total_documents": 1,
+        "total_structured_records": 0,
+        "total_invalid_records": 0
+    }
+]
