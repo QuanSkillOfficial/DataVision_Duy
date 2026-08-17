@@ -13,10 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
       - name: Verify canonical module provenance and required paths
@@ -27,8 +27,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
@@ -70,8 +70,8 @@ jobs:
       DB_USER: datavision
       DB_PASSWORD: datavision123
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
@@ -101,8 +101,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
@@ -135,8 +135,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
@@ -154,8 +154,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
@@ -193,8 +193,8 @@ jobs:
       DB_USER: datavision
       DB_PASSWORD: datavision123
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
@@ -247,8 +247,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
@@ -268,8 +268,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
@@ -293,8 +293,8 @@ jobs:
     env:
       QS_USE_BACKEND: "false"
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
@@ -316,7 +316,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Scan tracked source and configuration
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
@@ -340,7 +340,7 @@ jobs:
           exit-code: "0"
       - name: Upload source security evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: week8-source-security-${{ github.sha }}
           path: |
@@ -364,8 +364,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
       - name: Validate Week 8 Compose model
@@ -392,7 +392,7 @@ jobs:
           --project-name datavision-week8-ci
       - name: Upload staging acceptance evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: week8-staging-acceptance
           path: outputs/integration/week8_staging_acceptance.json
