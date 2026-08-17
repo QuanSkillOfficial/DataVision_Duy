@@ -50,6 +50,8 @@ services:
     # the stock nginx entrypoint. Invoked through `sh` so the mounted script
     # does not need an executable bit on the deployment host.
     entrypoint: ["/bin/sh", "/etc/nginx/render-allowlist.sh"]
+    # Compose clears the image CMD when entrypoint is overridden.
+    command: ["nginx", "-g", "daemon off;"]
     volumes:
       # Paths are relative to the project directory (the directory of the first
       # -f file, i.e. the repository root), not to this overlay file. Writing

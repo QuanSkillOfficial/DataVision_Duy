@@ -49,6 +49,7 @@ EVIDENCE_DIR = ROOT / "outputs" / "week8"
 EVIDENCE_PATH = EVIDENCE_DIR / "hung_browser_e2e.json"
 JUNIT_PATH = EVIDENCE_DIR / "hung_browser_e2e_junit.xml"
 SCREENSHOT_DIR = ROOT / "screenshots" / "week8_browser_e2e"
+CAPTURE_MANIFEST = EVIDENCE_DIR / "e2e_captured.txt"
 
 # Tests that cannot describe a deployed environment, and why. They are declared
 # here rather than skipped silently: the Week 8 rule is that a release gate must
@@ -83,6 +84,7 @@ def _run_suite(
 ) -> subprocess.CompletedProcess:
     env = dict(os.environ)
     env["PYTHONIOENCODING"] = "utf-8"
+    env["QS_E2E_CAPTURE_MANIFEST"] = str(CAPTURE_MANIFEST)
     if base_url:
         env["QS_E2E_BASE_URL"] = base_url
     if release_sha:
@@ -125,6 +127,21 @@ def _parse_junit(path: Path) -> dict:
     return {"totals": totals, "cases": cases}
 
 
+def _reset_capture_manifest() -> None:
+    CAPTURE_MANIFEST.parent.mkdir(parents=True, exist_ok=True)
+    CAPTURE_MANIFEST.write_text("", encoding="utf-8")
+
+
+def _captured_steps() -> set[str]:
+    if not CAPTURE_MANIFEST.exists():
+        return set()
+    return {
+        line.strip()
+        for line in CAPTURE_MANIFEST.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Week 8 browser E2E runner")
     parser.add_argument(
@@ -141,6 +158,7 @@ def main() -> int:
 
     EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
     started_at = datetime.now(timezone.utc).isoformat()
+    _reset_capture_manifest()
 
     # Against a deployed UI only the staging-capable set can run; the rest need
     # a stack this process controls.
@@ -151,10 +169,13 @@ def main() -> int:
         "cases": [],
     }
 
-    screenshots = sorted(p.name for p in SCREENSHOT_DIR.glob("*.png"))
-    missing_steps = [
-        step for step in REQUIRED_JOURNEY_STEPS if f"{step}.png" not in screenshots
-    ]
+    captured = _captured_steps()
+    present = {path.name for path in SCREENSHOT_DIR.glob("*.png")}
+    screenshots = sorted(
+        f"{step}.png" for step in captured if f"{step}.png" in present
+    )
+    stale_screenshots = sorted(present - set(screenshots))
+    missing_steps = [step for step in REQUIRED_JOURNEY_STEPS if step not in captured]
 
     failures: list[str] = []
     if report["totals"]["failures"]:
@@ -193,6 +214,7 @@ def main() -> int:
         "journey": REQUIRED_JOURNEY_STEPS,
         "results": report,
         "screenshots": screenshots,
+        "stale_screenshots": stale_screenshots,
         "screenshot_dir": "screenshots/week8_browser_e2e",
         "junit_report": str(JUNIT_PATH.relative_to(ROOT)).replace("\\", "/"),
     }

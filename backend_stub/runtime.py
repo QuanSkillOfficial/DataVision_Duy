@@ -241,8 +241,16 @@ def latest_ingestion_status(run_id: str | None = None) -> dict[str, Any]:
         SELECT il.run_id, il.run_id AS ingestion_run_id, s.name AS source_name,
                s.source_type, il.source_id, il.status, il.records_read,
                il.records_valid, il.records_invalid, il.data_quality_score,
-               il.started_at, il.ended_at, il.manifest_path
+               il.started_at, il.ended_at, il.manifest_path,
+               d.file_hash_sha256, d.file_name, d.document_external_id
         FROM ingestion_logs il LEFT JOIN sources s ON s.id = il.source_id
+        LEFT JOIN LATERAL (
+            SELECT file_hash_sha256, file_name, document_external_id
+            FROM documents
+            WHERE source_id = il.source_id
+            ORDER BY created_at DESC, id DESC
+            LIMIT 1
+        ) d ON TRUE
         {condition}
         ORDER BY il.created_at DESC, il.id DESC LIMIT 1
         """,

@@ -371,8 +371,18 @@ jobs:
       - name: Validate Week 8 Compose model
         run: |
           docker compose -f docker-compose.yml config --quiet
-          docker compose -f deployment/cloud/docker-compose.staging.yml \
-            --env-file deployment/cloud/.env.staging.example config --quiet
+          staging_bundle="$(mktemp -d)"
+          trap 'rm -rf "$staging_bundle"' EXIT
+          cp deployment/cloud/docker-compose.staging.yml "$staging_bundle/"
+          cp deployment/cloud/docker-compose.staging-proxy.yml "$staging_bundle/"
+          cp deployment/cloud/.env.staging.example "$staging_bundle/.env.staging"
+          cp deployment/staging/nginx-staging-ui.conf "$staging_bundle/"
+          cp deployment/staging/render-allowlist.sh "$staging_bundle/"
+          printf 'reviewer:$apr1$ci-only$placeholder\n' > "$staging_bundle/htpasswd"
+          docker compose \
+            -f "$staging_bundle/docker-compose.staging.yml" \
+            -f "$staging_bundle/docker-compose.staging-proxy.yml" \
+            --env-file "$staging_bundle/.env.staging" config --quiet
       - name: Run clean-volume Week 8 staging acceptance
         run: >-
           python scripts/week8_staging_smoke_test.py

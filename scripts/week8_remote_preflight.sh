@@ -13,6 +13,11 @@ fail() {
 command -v docker >/dev/null 2>&1 || fail docker_missing
 docker info >/dev/null 2>&1 || fail docker_unavailable
 docker compose version >/dev/null 2>&1 || fail compose_unavailable
+compose_version="$(docker compose version --short 2>/dev/null | sed 's/^v//')"
+minimum_compose_version="2.24.0"
+if [ "$(printf '%s\n%s\n' "$minimum_compose_version" "$compose_version" | sort -V | head -n 1)" != "$minimum_compose_version" ]; then
+  fail compose_version_below_2_24
+fi
 
 parent="$staging_path"
 while [ ! -e "$parent" ] && [ "$parent" != "/" ]; do
@@ -41,5 +46,5 @@ if command -v ss >/dev/null 2>&1; then
   done
 fi
 
-printf 'PREFLIGHT_PASS docker=ready compose=ready disk_kb=%s path_parent=%s\n' \
-  "$available_kb" "$parent"
+printf 'PREFLIGHT_PASS docker=ready compose=%s disk_kb=%s path_parent=%s\n' \
+  "$compose_version" "$available_kb" "$parent"

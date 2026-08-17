@@ -5,6 +5,13 @@
 **Reviewed:** `QuanSkillOfficial/DataVision_Duy` @ `ca19091095809047a143536186bd76d03f728449` (default branch `main`)
 **Date:** 17 August 2026
 
+> Resolution update: the canonical Week 8 integration branch now implements
+> items 1–4 from section 2. `deploy-staging.yml` bundles and applies the proxy
+> on deploy and rollback, renders a validated allowlist, generates `htpasswd`
+> from GitHub Environment credentials, injects the UI release SHA/digest, and
+> makes the staging Playwright journey a required pre-promotion gate. Execution
+> remains blocked only on independent PR approval and real TLS host credentials.
+
 ---
 
 ## 1. What changed since the completion review
@@ -92,7 +99,7 @@ ui             published=none          <- was 8501->8501
 ui-proxy       published=['8501->8080']
 ```
 
-### Changes still required in canonical (owner: Duy)
+### Canonical integration changes (owner: Duy; implemented on PR #5)
 
 1. **Bundle step** — `deploy-staging.yml`, "Build secret-safe deployment bundle":
 
@@ -233,13 +240,14 @@ regenerated fixture set will fail the UI gate.
 
 | Task | State | Remaining |
 |---|---|---|
-| DV-HUNG-04 | Ready | Verify in the deployed UI header once staging runs |
-| DV-HUNG-06 | Unblocked, not executed | Needs the canonical changes in §2 merged, then one run of `week8_run_browser_e2e.py --base-url <ui_url> --release-sha <sha>` from an allowlisted machine |
-| DV-HUNG-07 | Implemented for cloud, not deployed | Needs §2 items 1–4 merged and TLS (item 5) |
+| DV-HUNG-04 | Implemented, not deployed | Verify in the deployed UI header once staging runs |
+| DV-HUNG-06 | Automated, not executed | The deploy workflow runs the full browser journey through an authenticated SSH tunnel before promotion |
+| DV-HUNG-07 | Integrated, not deployed | Needs PR merge, Environment variables/secrets, and the real TLS endpoint |
 
 **Blocking for the whole team:** do not dispatch `deploy-staging.yml`, and do not
-share a staging URL, until §2 items 1–4 are merged. The current canonical path
-deploys an open UI.
+share a staging URL, until PR #5 is independently approved and merged, the
+Environment is configured, and TLS is live. The workflow now fails closed when
+the UI credentials or reviewer CIDRs are missing.
 
 The staging acceptance run itself is unchanged from
 `hung_week8_staging_access_and_browser_validation.md` §4–5, except that the browser

@@ -11,6 +11,7 @@ away. Centralising that here keeps the journey test readable and keeps flaky
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 from playwright.sync_api import Page, expect
@@ -158,4 +159,8 @@ def capture(page: Page, name: str) -> Path:
     SCREENSHOT_DIR.mkdir(parents=True, exist_ok=True)
     path = SCREENSHOT_DIR / f"{name}.png"
     page.screenshot(path=str(path), full_page=True)
+    manifest = os.environ.get("QS_E2E_CAPTURE_MANIFEST")
+    if manifest:
+        with open(manifest, "a", encoding="utf-8") as handle:
+            handle.write(f"{name}\n")
     return path

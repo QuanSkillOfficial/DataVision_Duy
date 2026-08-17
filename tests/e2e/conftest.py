@@ -84,10 +84,13 @@ def backend_stub(backend_port):
 
 @pytest.fixture(scope="session")
 def app_url(backend_stub, backend_port) -> str:
-    """Base URL of the UI under test."""
+    """Base URL of the UI under test, local or already deployed."""
     external = os.environ.get("QS_E2E_BASE_URL")
     if external:
-        return external.rstrip("/")
+        # This fixture is a generator because the local branch yields. Returning
+        # a value here would end it without yielding and make external mode fail.
+        yield external.rstrip("/")
+        return
 
     ui_port = free_port()
     proc = start_streamlit(

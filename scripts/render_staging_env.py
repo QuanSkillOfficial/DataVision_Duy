@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import ipaddress
 import json
 import os
 import re
@@ -24,6 +25,32 @@ def required(name: str) -> str:
 
 def compose_value(value: str) -> str:
     return json.dumps(value, ensure_ascii=True)
+
+
+def allowed_cidrs() -> str:
+    """Return a validated, fail-closed reviewer allowlist.
+
+    The two private ranges are added for traffic arriving through the SSH
+    acceptance tunnel and Docker's bridge. Basic authentication still applies
+    to those requests; the public reviewer ranges remain explicitly managed by
+    the staging Environment.
+    """
+
+    configured = required("STAGING_ALLOWED_CIDRS").split()
+    networks: list[str] = []
+    for value in configured:
+        try:
+            network = ipaddress.ip_network(value, strict=False)
+        except ValueError as exc:
+            raise ValueError(f"Invalid STAGING_ALLOWED_CIDRS entry: {value}") from exc
+        if network.prefixlen == 0:
+            raise ValueError("STAGING_ALLOWED_CIDRS must not allow the whole Internet")
+        networks.append(str(network))
+
+    for internal in ("127.0.0.1/32", "172.16.0.0/12"):
+        if internal not in networks:
+            networks.append(internal)
+    return " ".join(networks)
 
 
 def render(output: Path, manifest_path: Path) -> None:
@@ -58,6 +85,10 @@ def render(output: Path, manifest_path: Path) -> None:
         "RAG_EMBEDDING_MODE": os.getenv("RAG_EMBEDDING_MODE", "hash"),
         "BACKEND_PUBLIC_PORT": os.getenv("BACKEND_PUBLIC_PORT", "8000"),
         "UI_PUBLIC_PORT": os.getenv("UI_PUBLIC_PORT", "8501"),
+        "STAGING_ALLOWED_CIDRS": allowed_cidrs(),
+        "QS_RELEASE_SHA": release_sha,
+        "QS_ENVIRONMENT": "staging",
+        "QS_IMAGE_DIGEST": image_refs["ui"].split("@", 1)[1],
         "BACKEND_IMAGE": image_refs["backend"],
         "UI_IMAGE": image_refs["ui"],
         "SEED_IMAGE": image_refs["seed"],

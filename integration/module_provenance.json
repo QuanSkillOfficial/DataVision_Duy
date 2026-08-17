@@ -116,6 +116,10 @@
       "source_sha": "231573435586fd4923613965a9b4e15879cf0fef",
       "source_commit_url": "https://github.com/QuanSkillOfficial/DataVision_Hung/commit/231573435586fd4923613965a9b4e15879cf0fef",
       "integration_mode": "imported-and-adapted",
+      "canonical_followup_commits": [
+        "https://github.com/QuanSkillOfficial/DataVision_Duy/commit/55fb6774e90e69e95c17515e12d1625bbe49b5f8",
+        "https://github.com/QuanSkillOfficial/DataVision_Duy/commit/2ea72d0c29256621b1759d8e7cefeb4fad43906e"
+      ],
       "canonical_paths": [
         {
           "path": "demo",
