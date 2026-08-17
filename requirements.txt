@@ -1,8 +1,9 @@
-pandas
-requests
-openpyxl
-pdfplumber
-PyMuPDF
-pytest
-psycopg2-binary
-python-dotenv
+# DataVision Prediction Module — Python Dependencies
+# Install: pip install -r requirements.txt
+
+pandas==2.2.3
+numpy==1.26.4
+scikit-learn==1.7.2
+joblib==1.5.0
+pytest>=7.4.0
+

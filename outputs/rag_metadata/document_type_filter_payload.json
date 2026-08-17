@@ -1,10 +1,100 @@
 [
   {
-    "document_external_id": "doc_dataflow_technical_report",
-    "document_db_id": 1,
-    "predicted_document_type": "report",
-    "confidence": 0.3988,
+    "document_external_id": "doc_dataflow_system_operators_pages",
+    "document_db_id": null,
+    "predicted_document_type": "contract",
+    "confidence": 0.5967,
     "status": "needs_review",
+    "use_for_rag_filtering": false,
+    "filter_strength": "soft_metadata",
+    "reason": "Prediction not manually confirmed or below hard-filter threshold"
+  },
+  {
+    "document_external_id": "doc_dataflow_pipeline_api_pages",
+    "document_db_id": null,
+    "predicted_document_type": "contract",
+    "confidence": 0.5892,
+    "status": "needs_review",
+    "use_for_rag_filtering": false,
+    "filter_strength": "soft_metadata",
+    "reason": "Prediction not manually confirmed or below hard-filter threshold"
+  },
+  {
+    "document_external_id": "doc_dataflow_agent_workflow_pages",
+    "document_db_id": null,
+    "predicted_document_type": "contract",
+    "confidence": 0.5796,
+    "status": "needs_review",
+    "use_for_rag_filtering": false,
+    "filter_strength": "soft_metadata",
+    "reason": "Prediction not manually confirmed or below hard-filter threshold"
+  },
+  {
+    "document_external_id": "doc_dataflow_agentic_rag_evaluation_pages",
+    "document_db_id": null,
+    "predicted_document_type": "contract",
+    "confidence": 0.5576,
+    "status": "needs_review",
+    "use_for_rag_filtering": false,
+    "filter_strength": "soft_metadata",
+    "reason": "Prediction not manually confirmed or below hard-filter threshold"
+  },
+  {
+    "document_external_id": "doc_superstore_order_profitability_sample",
+    "document_db_id": null,
+    "predicted_document_type": "invoice",
+    "confidence": 0.6296,
+    "status": "needs_review",
+    "use_for_rag_filtering": false,
+    "filter_strength": "soft_metadata",
+    "reason": "Prediction not manually confirmed or below hard-filter threshold"
+  },
+  {
+    "document_external_id": "doc_product_sales_region_sample",
+    "document_db_id": null,
+    "predicted_document_type": "invoice",
+    "confidence": 0.5551,
+    "status": "needs_review",
+    "use_for_rag_filtering": false,
+    "filter_strength": "soft_metadata",
+    "reason": "Prediction not manually confirmed or below hard-filter threshold"
+  },
+  {
+    "document_external_id": "doc_dummyjson_inventory_sample",
+    "document_db_id": null,
+    "predicted_document_type": "contract",
+    "confidence": 0.375,
+    "status": "needs_review",
+    "use_for_rag_filtering": false,
+    "filter_strength": "soft_metadata",
+    "reason": "Prediction not manually confirmed or below hard-filter threshold"
+  },
+  {
+    "document_external_id": "doc_dataflow_technical_notes_markdown",
+    "document_db_id": null,
+    "predicted_document_type": "contract",
+    "confidence": 0.2985,
+    "status": "needs_review",
+    "use_for_rag_filtering": false,
+    "filter_strength": "soft_metadata",
+    "reason": "Prediction not manually confirmed or below hard-filter threshold"
+  },
+  {
+    "document_external_id": null,
+    "document_db_id": null,
+    "predicted_document_type": "resume",
+    "confidence": 0.3071,
+    "status": "needs_review",
+    "use_for_rag_filtering": false,
+    "filter_strength": "soft_metadata",
+    "reason": "Prediction not manually confirmed or below hard-filter threshold"
+  },
+  {
+    "document_external_id": "doc_invalid_file_size_validation",
+    "document_db_id": null,
+    "predicted_document_type": null,
+    "confidence": 0.0,
+    "status": "failed",
     "use_for_rag_filtering": false,
     "filter_strength": "soft_metadata",
     "reason": "Prediction not manually confirmed or below hard-filter threshold"

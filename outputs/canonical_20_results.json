@@ -1,0 +1,1455 @@
+{
+  "release_sha": "657c839b7471dcf5151c2314cfbe71b84a1a983f",
+  "results": [
+    {
+      "document_external_id": "doc_contract_01",
+      "source_name": "source_contracts",
+      "ingestion_run_id": "a001-uuid-1234",
+      "predicted_document_type": "contract",
+      "confidence": 0.3449,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "contract",
+          "score": 0.3449
+        },
+        {
+          "label": "invoice",
+          "score": 0.3331
+        },
+        {
+          "label": "report",
+          "score": 0.0993
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_contract_02",
+      "source_name": "source_contracts",
+      "ingestion_run_id": "a001-uuid-1234",
+      "predicted_document_type": "invoice",
+      "confidence": 0.421,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "invoice",
+          "score": 0.421
+        },
+        {
+          "label": "contract",
+          "score": 0.2099
+        },
+        {
+          "label": "policy_document",
+          "score": 0.1274
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_financial_01",
+      "source_name": "source_financials",
+      "ingestion_run_id": "a002-uuid-5678",
+      "predicted_document_type": "invoice",
+      "confidence": 0.8459,
+      "model_version": "document_classifier_v1",
+      "status": "accepted",
+      "top_predictions": [
+        {
+          "label": "invoice",
+          "score": 0.8459
+        },
+        {
+          "label": "financial_statement",
+          "score": 0.0596
+        },
+        {
+          "label": "resume",
+          "score": 0.0362
+        }
+      ],
+      "review_reason": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_financial_02",
+      "source_name": "source_financials",
+      "ingestion_run_id": "a002-uuid-5678",
+      "predicted_document_type": "contract",
+      "confidence": 0.3254,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "contract",
+          "score": 0.3254
+        },
+        {
+          "label": "invoice",
+          "score": 0.2304
+        },
+        {
+          "label": "report",
+          "score": 0.1338
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_invoice_01",
+      "source_name": "source_invoices",
+      "ingestion_run_id": "a003-uuid-9012",
+      "predicted_document_type": "invoice",
+      "confidence": 0.7236,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "invoice",
+          "score": 0.7236
+        },
+        {
+          "label": "contract",
+          "score": 0.1312
+        },
+        {
+          "label": "resume",
+          "score": 0.0746
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_invoice_02",
+      "source_name": "source_invoices",
+      "ingestion_run_id": "a003-uuid-9012",
+      "predicted_document_type": "invoice",
+      "confidence": 0.9265,
+      "model_version": "document_classifier_v1",
+      "status": "accepted",
+      "top_predictions": [
+        {
+          "label": "invoice",
+          "score": 0.9265
+        },
+        {
+          "label": "resume",
+          "score": 0.0218
+        },
+        {
+          "label": "financial_statement",
+          "score": 0.0215
+        }
+      ],
+      "review_reason": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_policy_01",
+      "source_name": "source_policies",
+      "ingestion_run_id": "a004-uuid-3456",
+      "predicted_document_type": "report",
+      "confidence": 0.3861,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "report",
+          "score": 0.3861
+        },
+        {
+          "label": "financial_statement",
+          "score": 0.3067
+        },
+        {
+          "label": "contract",
+          "score": 0.1399
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_policy_02",
+      "source_name": "source_policies",
+      "ingestion_run_id": "a004-uuid-3456",
+      "predicted_document_type": "policy_document",
+      "confidence": 0.3466,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "policy_document",
+          "score": 0.3466
+        },
+        {
+          "label": "report",
+          "score": 0.2759
+        },
+        {
+          "label": "contract",
+          "score": 0.2358
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_report_01",
+      "source_name": "source_reports",
+      "ingestion_run_id": "a005-uuid-7890",
+      "predicted_document_type": "report",
+      "confidence": 0.4827,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "report",
+          "score": 0.4827
+        },
+        {
+          "label": "contract",
+          "score": 0.2175
+        },
+        {
+          "label": "financial_statement",
+          "score": 0.1482
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_report_02",
+      "source_name": "source_reports",
+      "ingestion_run_id": "a005-uuid-7890",
+      "predicted_document_type": "invoice",
+      "confidence": 0.3567,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "invoice",
+          "score": 0.3567
+        },
+        {
+          "label": "contract",
+          "score": 0.205
+        },
+        {
+          "label": "resume",
+          "score": 0.199
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_paper_01",
+      "source_name": "source_papers",
+      "ingestion_run_id": "a006-uuid-1234",
+      "predicted_document_type": "research_paper",
+      "confidence": 0.3587,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "research_paper",
+          "score": 0.3587
+        },
+        {
+          "label": "contract",
+          "score": 0.331
+        },
+        {
+          "label": "report",
+          "score": 0.2174
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_paper_02",
+      "source_name": "source_papers",
+      "ingestion_run_id": "a006-uuid-1234",
+      "predicted_document_type": "report",
+      "confidence": 0.3102,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "report",
+          "score": 0.3102
+        },
+        {
+          "label": "research_paper",
+          "score": 0.2916
+        },
+        {
+          "label": "contract",
+          "score": 0.2792
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_resume_01",
+      "source_name": "source_resumes",
+      "ingestion_run_id": "a007-uuid-5678",
+      "predicted_document_type": "contract",
+      "confidence": 0.3576,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "contract",
+          "score": 0.3576
+        },
+        {
+          "label": "resume",
+          "score": 0.1972
+        },
+        {
+          "label": "invoice",
+          "score": 0.1654
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_resume_02",
+      "source_name": "source_resumes",
+      "ingestion_run_id": "a007-uuid-5678",
+      "predicted_document_type": "resume",
+      "confidence": 0.3969,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "resume",
+          "score": 0.3969
+        },
+        {
+          "label": "contract",
+          "score": 0.2412
+        },
+        {
+          "label": "invoice",
+          "score": 0.1665
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_edge_short_text",
+      "source_name": "source_edge",
+      "ingestion_run_id": "a008-uuid-9012",
+      "predicted_document_type": null,
+      "confidence": 0.0,
+      "model_version": "document_classifier_v1",
+      "status": "waiting_for_source",
+      "review_reason": "Extracted text is missing or too short for reliable prediction",
+      "top_predictions": [],
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_missing_db_id",
+      "source_name": "source_missing_ids",
+      "ingestion_run_id": "a009-uuid-abcd",
+      "predicted_document_type": "contract",
+      "confidence": 0.4431,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "contract",
+          "score": 0.4431
+        },
+        {
+          "label": "policy_document",
+          "score": 0.154
+        },
+        {
+          "label": "report",
+          "score": 0.1534
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_missing_source_name",
+      "source_name": null,
+      "ingestion_run_id": "a009-uuid-abcd",
+      "predicted_document_type": "contract",
+      "confidence": 0.3022,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "contract",
+          "score": 0.3022
+        },
+        {
+          "label": "report",
+          "score": 0.2581
+        },
+        {
+          "label": "financial_statement",
+          "score": 0.2225
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_unknown_types",
+      "source_name": "source_unknowns",
+      "ingestion_run_id": "a010-uuid-efgh",
+      "predicted_document_type": "invoice",
+      "confidence": 0.9938,
+      "model_version": "document_classifier_v1",
+      "status": "accepted",
+      "top_predictions": [
+        {
+          "label": "invoice",
+          "score": 0.9938
+        },
+        {
+          "label": "resume",
+          "score": 0.0061
+        },
+        {
+          "label": "contract",
+          "score": 0.0
+        }
+      ],
+      "review_reason": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_empty_extracted_text",
+      "source_name": "source_edge_empty_text",
+      "ingestion_run_id": "a011-uuid-ijkl",
+      "predicted_document_type": null,
+      "confidence": 0.0,
+      "model_version": "document_classifier_v1",
+      "status": "waiting_for_source",
+      "review_reason": "Extracted text is missing or too short for reliable prediction",
+      "top_predictions": [],
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_tricky_invoice",
+      "source_name": "source_valid_but_tricky",
+      "ingestion_run_id": "a012-uuid-mnop",
+      "predicted_document_type": "contract",
+      "confidence": 0.5721,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "contract",
+          "score": 0.5721
+        },
+        {
+          "label": "research_paper",
+          "score": 0.1729
+        },
+        {
+          "label": "report",
+          "score": 0.1211
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    }
+  ],
+  "log_payloads": [
+    {
+      "source_id": 1,
+      "document_external_id": "doc_contract_01",
+      "document_id": 101,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "source_id": 1,
+        "source_name": "source_contracts",
+        "document_external_id": "doc_contract_01",
+        "document_db_id": 101,
+        "ingestion_run_id": "a001-uuid-1234",
+        "file_name": "vendor_agreement_final.pdf",
+        "file_type": "pdf",
+        "file_size": 154000,
+        "text_length": 1500,
+        "num_pages": 3,
+        "source_system": "manual_upload",
+        "extracted_text": "This Vendor Agreement (the Agreement) is entered into as of the Effective Date by and between Party A and Party B. Under the terms of this contract, Party B agrees to provide consulting services as specified in Exhibit A. Confidentiality obligations: each party agrees to keep proprietary information confidential and not disclose to third parties. Termination: either party may terminate with 30 days written notice. Indemnification: Party B agrees to indemnify and hold harmless Party A from claims... [truncated]"
+      },
+      "prediction_result": {
+        "top_predictions": [
+          {
+            "label": "contract",
+            "score": 0.3449
+          },
+          {
+            "label": "invoice",
+            "score": 0.3331
+          },
+          {
+            "label": "report",
+            "score": 0.0993
+          }
+        ]
+      },
+      "predicted_label": "contract",
+      "confidence_score": 0.3449,
+      "status": "needs_review",
+      "review_reason": "Confidence below staging threshold",
+      "ingestion_run_id": "a001-uuid-1234",
+      "created_at": "2026-08-11T12:35:00.044023+00:00"
+    },
+    {
+      "source_id": 1,
+      "document_external_id": "doc_contract_02",
+      "document_id": 102,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "source_id": 1,
+        "source_name": "source_contracts",
+        "document_external_id": "doc_contract_02",
+        "document_db_id": 102,
+        "ingestion_run_id": "a001-uuid-1234",
+        "file_name": "non_disclosure_agreement.docx",
+        "file_type": "docx",
+        "file_size": 89000,
+        "text_length": 1200,
+        "num_pages": 2,
+        "source_system": "s3_bucket",
+        "extracted_text": "Mutual Non-Disclosure Agreement. The parties wish to explore a potential business relationship and in connection therewith may disclose proprietary and confidential information. Confidential Information includes all technical, business or financial information marked confidential. The receiving party agrees to hold all confidential information in strict trust and use it only for the purpose of the business relationship. The obligations of non-disclosure shall survive termination of this agreemen... [truncated]"
+      },
+      "prediction_result": {
+        "top_predictions": [
+          {
+            "label": "invoice",
+            "score": 0.421
+          },
+          {
+            "label": "contract",
+            "score": 0.2099
+          },
+          {
+            "label": "policy_document",
+            "score": 0.1274
+          }
+        ]
+      },
+      "predicted_label": "invoice",
+      "confidence_score": 0.421,
+      "status": "needs_review",
+      "review_reason": "Confidence below staging threshold",
+      "ingestion_run_id": "a001-uuid-1234",
+      "created_at": "2026-08-11T12:35:00.065195+00:00"
+    },
+    {
+      "source_id": 2,
+      "document_external_id": "doc_financial_01",
+      "document_id": 201,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "source_id": 2,
+        "source_name": "source_financials",
+        "document_external_id": "doc_financial_01",
+        "document_db_id": 201,
+        "ingestion_run_id": "a002-uuid-5678",
+        "file_name": "q4_balance_sheet.xlsx",
+        "file_type": "xlsx",
+        "file_size": 45000,
+        "text_length": 800,
+        "num_pages": 1,
+        "source_system": "api_sync",
+        "extracted_text": "Balance Sheet as of December 31, 2025. Total Assets: Cash and Cash Equivalents: $120,000; Accounts Receivable: $45,000; Inventory: $80,000; Total Current Assets: $245,000. Property, Plant and Equipment: $350,000. Total Assets: $595,000. Liabilities and Shareholders Equity. Current Liabilities: Accounts Payable: $30,000; Accrued Expenses: $15,000; Total Current Liabilities: $45,000. Long-term Debt: $200,000. Total Liabilities: $245,000. Shareholders Equity: Common Stock: $100,000; Retained Earnin... [truncated]"
+      },
+      "prediction_result": {
+        "top_predictions": [
+          {
+            "label": "invoice",
+            "score": 0.8459
+          },
+          {
+            "label": "financial_statement",
+            "score": 0.0596
+          },
+          {
+            "label": "resume",
+            "score": 0.0362
+          }
+        ]
+      },
+      "predicted_label": "invoice",
+      "confidence_score": 0.8459,
+      "status": "accepted",
+      "review_reason": null,
+      "ingestion_run_id": "a002-uuid-5678",
+      "created_at": "2026-08-11T12:35:00.083283+00:00"
+    },
+    {
+      "source_id": 2,
+      "document_external_id": "doc_financial_02",
+      "document_id": 202,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "source_id": 2,
+        "source_name": "source_financials",
+        "document_external_id": "doc_financial_02",
+        "document_db_id": 202,
+        "ingestion_run_id": "a002-uuid-5678",
+        "file_name": "annual_income_statement.pdf",
+        "file_type": "pdf",
+        "file_size": 210000,
+        "text_length": 1800,
+        "num_pages": 4,
+        "source_system": "manual_upload",
+        "extracted_text": "Consolidated Statement of Operations (Income Statement) for the Year Ended December 31, 2025. Revenues: Net Sales: $1,250,000; Services Revenue: $300,000; Total Revenues: $1,550,000. Cost of Goods Sold (COGS): $650,000; Gross Profit: $900,000. Operating Expenses: Research and Development: $200,000; Selling, General and Administrative (SG&A): $350,000; Total Operating Expenses: $550,000. Operating Income: $350,000. Interest Expense: $15,000. Income Before Taxes: $335,000. Income Tax Expense: $70,... [truncated]"
+      },
+      "prediction_result": {
+        "top_predictions": [
+          {
+            "label": "contract",
+            "score": 0.3254
+          },
+          {
+            "label": "invoice",
+            "score": 0.2304
+          },
+          {
+            "label": "report",
+            "score": 0.1338
+          }
+        ]
+      },
+      "predicted_label": "contract",
+      "confidence_score": 0.3254,
+      "status": "needs_review",
+      "review_reason": "Confidence below staging threshold",
+      "ingestion_run_id": "a002-uuid-5678",
+      "created_at": "2026-08-11T12:35:00.098411+00:00"
+    },
+    {
+      "source_id": 3,
+      "document_external_id": "doc_invoice_01",
+      "document_id": 301,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "source_id": 3,
+        "source_name": "source_invoices",
+        "document_external_id": "doc_invoice_01",
+        "document_db_id": 301,
+        "ingestion_run_id": "a003-uuid-9012",
+        "file_name": "inv_98765.pdf",
+        "file_type": "pdf",
+        "file_size": 65000,
+        "text_length": 950,
+        "num_pages": 1,
+        "source_system": "email_attachment",
+        "extracted_text": "INVOICE. Invoice Number: INV-98765. Invoice Date: January 15, 2026. Payment Due: Net 30 days. Bill To: Acme Corporation, 123 Enterprise Way, Tech City. Ship To: Acme Warehouse. Description: IT support services, 40 hours at $100/hr, amount: $4,000. Software licenses (annual subscription), amount: $1,200. Subtotal: $5,200. Tax (5%): $260. Total Amount Due: $5,460. Please remit payment via bank transfer to account ending in 9876."
+      },
+      "prediction_result": {
+        "top_predictions": [
+          {
+            "label": "invoice",
+            "score": 0.7236
+          },
+          {
+            "label": "contract",
+            "score": 0.1312
+          },
+          {
+            "label": "resume",
+            "score": 0.0746
+          }
+        ]
+      },
+      "predicted_label": "invoice",
+      "confidence_score": 0.7236,
+      "status": "needs_review",
+      "review_reason": "Confidence below staging threshold",
+      "ingestion_run_id": "a003-uuid-9012",
+      "created_at": "2026-08-11T12:35:00.116989+00:00"
+    },
+    {
+      "source_id": 3,
+      "document_external_id": "doc_invoice_02",
+      "document_id": 302,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "source_id": 3,
+        "source_name": "source_invoices",
+        "document_external_id": "doc_invoice_02",
+        "document_db_id": 302,
+        "ingestion_run_id": "a003-uuid-9012",
+        "file_name": "billing_statement.xlsx",
+        "file_type": "xlsx",
+        "file_size": 28000,
+        "text_length": 600,
+        "num_pages": 1,
+        "source_system": "api_sync",
+        "extracted_text": "STATEMENT OF ACCOUNT / BILLING INVOICE. Client Account: ACC-4422. Statement Date: 2026-02-01. Previous Balance: $0.00. New Charges: Office Supplies (paper reams, pens, binders), unit price: $15, quantity: 10, total: $150. Shipping: $10. Total Due: $160. Due Date: 2026-02-15. Thank you for your business."
+      },
+      "prediction_result": {
+        "top_predictions": [
+          {
+            "label": "invoice",
+            "score": 0.9265
+          },
+          {
+            "label": "resume",
+            "score": 0.0218
+          },
+          {
+            "label": "financial_statement",
+            "score": 0.0215
+          }
+        ]
+      },
+      "predicted_label": "invoice",
+      "confidence_score": 0.9265,
+      "status": "accepted",
+      "review_reason": null,
+      "ingestion_run_id": "a003-uuid-9012",
+      "created_at": "2026-08-11T12:35:00.135205+00:00"
+    },
+    {
+      "source_id": 4,
+      "document_external_id": "doc_policy_01",
+      "document_id": 401,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "source_id": 4,
+        "source_name": "source_policies",
+        "document_external_id": "doc_policy_01",
+        "document_db_id": 401,
+        "ingestion_run_id": "a004-uuid-3456",
+        "file_name": "employee_handbook_policy.pdf",
+        "file_type": "pdf",
+        "file_size": 1800000,
+        "text_length": 25000,
+        "num_pages": 45,
+        "source_system": "manual_upload",
+        "extracted_text": "Company Policy Document. Section 1: Equal Employment Opportunity. The Company is committed to providing a work environment free from discrimination and harassment. Section 2: Code of Conduct. Employees must adhere to the highest standards of professional ethics and integrity. Misuse of company property is strictly prohibited. Section 3: Information Security. All employees must use multi-factor authentication and change passwords every 90 days. Compliance with these procedures is mandatory. Acces... [truncated]"
+      },
+      "prediction_result": {
+        "top_predictions": [
+          {
+            "label": "report",
+            "score": 0.3861
+          },
+          {
+            "label": "financial_statement",
+            "score": 0.3067
+          },
+          {
+            "label": "contract",
+            "score": 0.1399
+          }
+        ]
+      },
+      "predicted_label": "report",
+      "confidence_score": 0.3861,
+      "status": "needs_review",
+      "review_reason": "Confidence below staging threshold",
+      "ingestion_run_id": "a004-uuid-3456",
+      "created_at": "2026-08-11T12:35:00.153344+00:00"
+    },
+    {
+      "source_id": 4,
+      "document_external_id": "doc_policy_02",
+      "document_id": 402,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "source_id": 4,
+        "source_name": "source_policies",
+        "document_external_id": "doc_policy_02",
+        "document_db_id": 402,
+        "ingestion_run_id": "a004-uuid-3456",
+        "file_name": "safety_compliance_guidelines.docx",
+        "file_type": "docx",
+        "file_size": 112000,
+        "text_length": 3400,
+        "num_pages": 6,
+        "source_system": "s3_bucket",
+        "extracted_text": "Workplace Safety and Compliance Guidelines. Standard Operating Procedure (SOP). All lab technicians must wear personal protective equipment (PPE) including safety goggles, gloves, and lab coats. Compliance with federal health regulations is monitored. In case of emergency, follow the evacuation routes posted on page 3. Regular audits of safety equipment are conducted by the compliance officer monthly."
+      },
+      "prediction_result": {
+        "top_predictions": [
+          {
+            "label": "policy_document",
+            "score": 0.3466
+          },
+          {
+            "label": "report",
+            "score": 0.2759
+          },
+          {
+            "label": "contract",
+            "score": 0.2358
+          }
+        ]
+      },
+      "predicted_label": "policy_document",
+      "confidence_score": 0.3466,
+      "status": "needs_review",
+      "review_reason": "Confidence below staging threshold",
+      "ingestion_run_id": "a004-uuid-3456",
+      "created_at": "2026-08-11T12:35:00.170947+00:00"
+    },
+    {
+      "source_id": 5,
+      "document_external_id": "doc_report_01",
+      "document_id": 501,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "source_id": 5,
+        "source_name": "source_reports",
+        "document_external_id": "doc_report_01",
+        "document_db_id": 501,
+        "ingestion_run_id": "a005-uuid-7890",
+        "file_name": "q3_market_analysis_report.pdf",
+        "file_type": "pdf",
+        "file_size": 420000,
+        "text_length": 6500,
+        "num_pages": 12,
+        "source_system": "manual_upload",
+        "extracted_text": "Q3 Progress Report and Market Analysis. Executive Summary. This quarterly update highlights our market performance in North America and Europe. Findings show a steady 12% increase in sales within the technology sector, driven by new product launches. We analyze competitor trends and project continued growth in the next quarter. Detailed statistical summaries of market share and consumer satisfaction metrics are provided in the appendix."
+      },
+      "prediction_result": {
+        "top_predictions": [
+          {
+            "label": "report",
+            "score": 0.4827
+          },
+          {
+            "label": "contract",
+            "score": 0.2175
+          },
+          {
+            "label": "financial_statement",
+            "score": 0.1482
+          }
+        ]
+      },
+      "predicted_label": "report",
+      "confidence_score": 0.4827,
+      "status": "needs_review",
+      "review_reason": "Confidence below staging threshold",
+      "ingestion_run_id": "a005-uuid-7890",
+      "created_at": "2026-08-11T12:35:00.189980+00:00"
+    },
+    {
+      "source_id": 5,
+      "document_external_id": "doc_report_02",
+      "document_id": 502,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "source_id": 5,
+        "source_name": "source_reports",
+        "document_external_id": "doc_report_02",
+        "document_db_id": 502,
+        "ingestion_run_id": "a005-uuid-7890",
+        "file_name": "project_milestone_update.md",
+        "file_type": "md",
+        "file_size": 12000,
+        "text_length": 2100,
+        "num_pages": 1,
+        "source_system": "local_directory",
+        "extracted_text": "# Project Milestone Report - Phase 2. This report summarizes the progress and findings from Phase 2 of the system migration. Completed milestones: DB schema updates, API route integration. Delayed milestones: Frontend deployment, pending final QA sign-off. Risk analysis: resource constraints may delay final release. Next steps include unit testing and staging environment setup."
+      },
+      "prediction_result": {
+        "top_predictions": [
+          {
+            "label": "invoice",
+            "score": 0.3567
+          },
+          {
+            "label": "contract",
+            "score": 0.205
+          },
+          {
+            "label": "resume",
+            "score": 0.199
+          }
+        ]
+      },
+      "predicted_label": "invoice",
+      "confidence_score": 0.3567,
+      "status": "needs_review",
+      "review_reason": "Confidence below staging threshold",
+      "ingestion_run_id": "a005-uuid-7890",
+      "created_at": "2026-08-11T12:35:00.208383+00:00"
+    },
+    {
+      "source_id": 6,
+      "document_external_id": "doc_paper_01",
+      "document_id": 601,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "source_id": 6,
+        "source_name": "source_papers",
+        "document_external_id": "doc_paper_01",
+        "document_db_id": 601,
+        "ingestion_run_id": "a006-uuid-1234",
+        "file_name": "arxiv_machine_learning.pdf",
+        "file_type": "pdf",
+        "file_size": 950000,
+        "text_length": 18000,
+        "num_pages": 8,
+        "source_system": "s3_bucket",
+        "extracted_text": "Abstract. In this paper, we propose a novel deep learning architecture for document classification. Introduction. Recent advances in transformer models have improved natural language understanding. Methodology. We describe our model architecture, datasets used, and training parameters. Results and Discussion. The model achieves state-of-the-art results on several benchmarks. Literature Review. We compare with prior works. Conclusions. Future work will investigate model pruning. References. [1] V... [truncated]"
+      },
+      "prediction_result": {
+        "top_predictions": [
+          {
+            "label": "research_paper",
+            "score": 0.3587
+          },
+          {
+            "label": "contract",
+            "score": 0.331
+          },
+          {
+            "label": "report",
+            "score": 0.2174
+          }
+        ]
+      },
+      "predicted_label": "research_paper",
+      "confidence_score": 0.3587,
+      "status": "needs_review",
+      "review_reason": "Confidence below staging threshold",
+      "ingestion_run_id": "a006-uuid-1234",
+      "created_at": "2026-08-11T12:35:00.227129+00:00"
+    },
+    {
+      "source_id": 6,
+      "document_external_id": "doc_paper_02",
+      "document_id": 602,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "source_id": 6,
+        "source_name": "source_papers",
+        "document_external_id": "doc_paper_02",
+        "document_db_id": 602,
+        "ingestion_run_id": "a006-uuid-1234",
+        "file_name": "computer_science_journal.pdf",
+        "file_type": "pdf",
+        "file_size": 1400000,
+        "text_length": 25000,
+        "num_pages": 14,
+        "source_system": "manual_upload",
+        "extracted_text": "Abstract: This research paper investigates the efficiency of various database querying methods. We present a comprehensive analysis. Introduction. Efficient indexing is critical for large-scale data storage. Related Work. Previous research focused on balanced tree indexes. Experiments and Methodology. We compare query execution times across PostgreSQL and MongoDB. Results show index lookups are significantly faster in indexed columns. References: [1] Codd, E.F., A relational model of data, 1970."
+      },
+      "prediction_result": {
+        "top_predictions": [
+          {
+            "label": "report",
+            "score": 0.3102
+          },
+          {
+            "label": "research_paper",
+            "score": 0.2916
+          },
+          {
+            "label": "contract",
+            "score": 0.2792
+          }
+        ]
+      },
+      "predicted_label": "report",
+      "confidence_score": 0.3102,
+      "status": "needs_review",
+      "review_reason": "Confidence below staging threshold",
+      "ingestion_run_id": "a006-uuid-1234",
+      "created_at": "2026-08-11T12:35:00.247182+00:00"
+    },
+    {
+      "source_id": 7,
+      "document_external_id": "doc_resume_01",
+      "document_id": 701,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "source_id": 7,
+        "source_name": "source_resumes",
+        "document_external_id": "doc_resume_01",
+        "document_db_id": 701,
+        "ingestion_run_id": "a007-uuid-5678",
+        "file_name": "jane_doe_cv.pdf",
+        "file_type": "pdf",
+        "file_size": 78000,
+        "text_length": 2200,
+        "num_pages": 2,
+        "source_system": "manual_upload",
+        "extracted_text": "Jane Doe. Professional Resume. Contact Info: email@example.com, Phone: 555-0199. Professional Summary: Senior Software Engineer with 8+ years of experience building scalable backend services in Python and Go. Work Experience: Lead Engineer at Tech Corp (2022-Present). Designed microservices architecture, improving throughput by 40%. Software Developer at Dev Studio (2018-2022). Education: B.S. in Computer Science from State University. Skills: Python, SQL, Git, Docker, Kubernetes, AWS."
+      },
+      "prediction_result": {
+        "top_predictions": [
+          {
+            "label": "contract",
+            "score": 0.3576
+          },
+          {
+            "label": "resume",
+            "score": 0.1972
+          },
+          {
+            "label": "invoice",
+            "score": 0.1654
+          }
+        ]
+      },
+      "predicted_label": "contract",
+      "confidence_score": 0.3576,
+      "status": "needs_review",
+      "review_reason": "Confidence below staging threshold",
+      "ingestion_run_id": "a007-uuid-5678",
+      "created_at": "2026-08-11T12:35:00.266036+00:00"
+    },
+    {
+      "source_id": 7,
+      "document_external_id": "doc_resume_02",
+      "document_id": 702,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "source_id": 7,
+        "source_name": "source_resumes",
+        "document_external_id": "doc_resume_02",
+        "document_db_id": 702,
+        "ingestion_run_id": "a007-uuid-5678",
+        "file_name": "john_smith_resume.docx",
+        "file_type": "docx",
+        "file_size": 52000,
+        "text_length": 1900,
+        "num_pages": 1,
+        "source_system": "manual_upload",
+        "extracted_text": "John Smith - Resume. Objective: Detail-oriented Data Analyst seeking to leverage machine learning skills. Education: M.S. in Data Science, GPA 3.9/4.0. Work Experience: Data Analyst Intern at Analytics Inc (2024). Created dashboard reports, reducing manual data processing. Skills: Python, R, SQL, Pandas, NumPy, Tableau, PowerBI. Projects: Classified customer sentiments using NLP classification algorithms."
+      },
+      "prediction_result": {
+        "top_predictions": [
+          {
+            "label": "resume",
+            "score": 0.3969
+          },
+          {
+            "label": "contract",
+            "score": 0.2412
+          },
+          {
+            "label": "invoice",
+            "score": 0.1665
+          }
+        ]
+      },
+      "predicted_label": "resume",
+      "confidence_score": 0.3969,
+      "status": "needs_review",
+      "review_reason": "Confidence below staging threshold",
+      "ingestion_run_id": "a007-uuid-5678",
+      "created_at": "2026-08-11T12:35:00.283810+00:00"
+    },
+    {
+      "source_id": 8,
+      "document_external_id": "doc_edge_short_text",
+      "document_id": 801,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "source_id": 8,
+        "source_name": "source_edge",
+        "document_external_id": "doc_edge_short_text",
+        "document_db_id": 801,
+        "ingestion_run_id": "a008-uuid-9012",
+        "file_name": "short_doc.txt",
+        "file_type": "txt",
+        "file_size": 25,
+        "text_length": 20,
+        "num_pages": 1,
+        "source_system": "manual_upload",
+        "extracted_text": "Very short text."
+      },
+      "prediction_result": {
+        "top_predictions": []
+      },
+      "predicted_label": null,
+      "confidence_score": 0.0,
+      "status": "waiting_for_source",
+      "review_reason": "Extracted text is missing or too short for reliable prediction",
+      "ingestion_run_id": "a008-uuid-9012",
+      "created_at": "2026-08-11T12:35:00.283810+00:00"
+    },
+    {
+      "source_id": null,
+      "document_external_id": "doc_missing_db_id",
+      "document_id": null,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "source_id": null,
+        "source_name": "source_missing_ids",
+        "document_external_id": "doc_missing_db_id",
+        "document_db_id": null,
+        "ingestion_run_id": "a009-uuid-abcd",
+        "file_name": "unlinked_contract.pdf",
+        "file_type": "pdf",
+        "file_size": 180000,
+        "text_length": 3200,
+        "num_pages": 4,
+        "source_system": "s3_bucket",
+        "extracted_text": "Contract Agreement between Client and Vendor. Party A will pay Party B for software development services. Term: one year from the effective date. Governing Law: State of New York. Arbitration: disputes resolved by binding arbitration in New York City."
+      },
+      "prediction_result": {
+        "top_predictions": [
+          {
+            "label": "contract",
+            "score": 0.4431
+          },
+          {
+            "label": "policy_document",
+            "score": 0.154
+          },
+          {
+            "label": "report",
+            "score": 0.1534
+          }
+        ]
+      },
+      "predicted_label": "contract",
+      "confidence_score": 0.4431,
+      "status": "needs_review",
+      "review_reason": "Confidence below staging threshold",
+      "ingestion_run_id": "a009-uuid-abcd",
+      "created_at": "2026-08-11T12:35:00.300971+00:00"
+    },
+    {
+      "source_id": 9,
+      "document_external_id": "doc_missing_source_name",
+      "document_id": 901,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "source_id": 9,
+        "source_name": null,
+        "document_external_id": "doc_missing_source_name",
+        "document_db_id": 901,
+        "ingestion_run_id": "a009-uuid-abcd",
+        "file_name": "financial_report.pdf",
+        "file_type": "pdf",
+        "file_size": 250000,
+        "text_length": 4500,
+        "num_pages": 8,
+        "source_system": "manual_upload",
+        "extracted_text": "Financial Summary. Net income increased by 5% year-over-year. Revenue exceeded expectations by $2M. Expenses were controlled. Cash flow from operations remains strong. Shareholders equity increased. Asset valuation completed in Q4."
+      },
+      "prediction_result": {
+        "top_predictions": [
+          {
+            "label": "contract",
+            "score": 0.3022
+          },
+          {
+            "label": "report",
+            "score": 0.2581
+          },
+          {
+            "label": "financial_statement",
+            "score": 0.2225
+          }
+        ]
+      },
+      "predicted_label": "contract",
+      "confidence_score": 0.3022,
+      "status": "needs_review",
+      "review_reason": "Confidence below staging threshold",
+      "ingestion_run_id": "a009-uuid-abcd",
+      "created_at": "2026-08-11T12:35:00.319948+00:00"
+    },
+    {
+      "source_id": 10,
+      "document_external_id": "doc_unknown_types",
+      "document_id": 1001,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "source_id": 10,
+        "source_name": "source_unknowns",
+        "document_external_id": "doc_unknown_types",
+        "document_db_id": 1001,
+        "ingestion_run_id": "a010-uuid-efgh",
+        "file_name": "random_file.unknown",
+        "file_type": "unknown",
+        "file_size": 5000,
+        "text_length": 55,
+        "num_pages": 0,
+        "source_system": "unknown",
+        "extracted_text": "Random extracted text from a completely unknown file type with unknown source."
+      },
+      "prediction_result": {
+        "top_predictions": [
+          {
+            "label": "invoice",
+            "score": 0.9938
+          },
+          {
+            "label": "resume",
+            "score": 0.0061
+          },
+          {
+            "label": "contract",
+            "score": 0.0
+          }
+        ]
+      },
+      "predicted_label": "invoice",
+      "confidence_score": 0.9938,
+      "status": "accepted",
+      "review_reason": null,
+      "ingestion_run_id": "a010-uuid-efgh",
+      "created_at": "2026-08-11T12:35:00.337273+00:00"
+    },
+    {
+      "source_id": 11,
+      "document_external_id": "doc_empty_extracted_text",
+      "document_id": 1101,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "source_id": 11,
+        "source_name": "source_edge_empty_text",
+        "document_external_id": "doc_empty_extracted_text",
+        "document_db_id": 1101,
+        "ingestion_run_id": "a011-uuid-ijkl",
+        "file_name": "blank.pdf",
+        "file_type": "pdf",
+        "file_size": 25000,
+        "text_length": 0,
+        "num_pages": 1,
+        "source_system": "manual_upload",
+        "extracted_text": ""
+      },
+      "prediction_result": {
+        "top_predictions": []
+      },
+      "predicted_label": null,
+      "confidence_score": 0.0,
+      "status": "waiting_for_source",
+      "review_reason": "Extracted text is missing or too short for reliable prediction",
+      "ingestion_run_id": "a011-uuid-ijkl",
+      "created_at": "2026-08-11T12:35:00.337273+00:00"
+    },
+    {
+      "source_id": 12,
+      "document_external_id": "doc_tricky_invoice",
+      "document_id": 1201,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "source_id": 12,
+        "source_name": "source_valid_but_tricky",
+        "document_external_id": "doc_tricky_invoice",
+        "document_db_id": 1201,
+        "ingestion_run_id": "a012-uuid-mnop",
+        "file_name": "invoice_complex_layout.pdf",
+        "file_type": "pdf",
+        "file_size": 340000,
+        "text_length": 5200,
+        "num_pages": 3,
+        "source_system": "manual_upload",
+        "extracted_text": "INVOICE AND BILLING REPORT. Invoice Number: 4501. Bill to customer John Doe at 742 Evergreen Terrace. Balance due: $300.00. Payment methods: credit card, check, PayPal. List of items: 1x Widget A ($100), 2x Widget B ($100 each). Total amount is $300. Payment terms: due immediately."
+      },
+      "prediction_result": {
+        "top_predictions": [
+          {
+            "label": "contract",
+            "score": 0.5721
+          },
+          {
+            "label": "research_paper",
+            "score": 0.1729
+          },
+          {
+            "label": "report",
+            "score": 0.1211
+          }
+        ]
+      },
+      "predicted_label": "contract",
+      "confidence_score": 0.5721,
+      "status": "needs_review",
+      "review_reason": "Confidence below staging threshold",
+      "ingestion_run_id": "a012-uuid-mnop",
+      "created_at": "2026-08-11T12:35:00.356517+00:00"
+    }
+  ]
+}

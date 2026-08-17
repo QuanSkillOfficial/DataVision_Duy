@@ -1,0 +1,207 @@
+# Week 8 — TUONG Tasks Implementation Plan
+
+**Role**: Document classification, prediction and model governance owner
+
+## Background
+
+From the Week 8 Engineering Delivery Review PDF, TUONG has 7 assigned tasks (DV-TUONG-01 through DV-TUONG-07). The current codebase has a working prediction pipeline (feature_builder → inference → prediction_service → batch_inference) with 11 existing tests. The tasks focus on **hardening the prediction module** for staging release: fixing test failures, syncing canonical evidence, pinning model artifacts, enforcing acceptance gates, exposing model metadata, adding OOD detection, and retraining on real data.
+
+---
+
+## Assigned Tasks Summary
+
+| Task ID | Task | Pri. | Due | Acceptance Criteria |
+|---|---|---|---|---|
+| DV-TUONG-01 | Fix owner repo fixture & response-contract failures, align dependencies | **P0** | 8 Aug | Owner suite passes in clean pinned environment with zero failures |
+| DV-TUONG-02 | Synchronize canonical 20-payload inputs, results, prediction logs & review queue evidence | **P0** | 8 Aug | 20 inputs → 20 results + 20 log payloads; evidence linked to release SHA |
+| DV-TUONG-03 | Pin scikit-learn and validate model artifact compatibility in training, CI, and runtime | **P0** | 9 Aug | One approved version used everywhere; incompatible artifacts fail early with clear error |
+| DV-TUONG-04 | Change acceptance so failed prediction status cannot satisfy the release gate | **P0** | 9 Aug | Only `accepted` or `needs_review` outcomes can pass the prediction acceptance check |
+| DV-TUONG-05 | Expose model version, checksum, training-data version, and threshold policy | **P1** | 10 Aug | Every response/report is traceable to exact model package and policy |
+| DV-TUONG-06 | Add out-of-distribution detection and persist reviewer corrections to PostgreSQL | **P1** | 11 Aug | Unknown inputs route to review; corrections are stored and retrievable |
+| DV-TUONG-07 | Retrain or recalibrate with labelled Duy documents and regenerate real-data evaluation | **P1** | 12 Aug | Updated report includes accuracy, macro F1, confidence calibration, review rate on real data |
+
+---
+
+## Proposed Changes
+
+### DV-TUONG-01: Fix Owner Repo Fixtures & Dependencies
+
+> [!IMPORTANT]
+> This is a prerequisite for all other tasks — must pass first.
+
+#### [MODIFY] [requirements.txt](file:///f:/Quanskill/requirements.txt)
+- Pin all dependencies to exact versions (scikit-learn is already `==1.7.2`, pin pandas, numpy, joblib too)
+- Ensures reproducible environment across CI and runtime
+
+#### [MODIFY] [test_prediction_inference.py](file:///f:/Quanskill/tests/ai_tests/test_prediction_inference.py)
+- Audit and fix any fixture/response-contract mismatches (e.g., missing fields in assertions, status value mismatches)
+
+#### [MODIFY] All test files in `tests/ai_tests/`
+- Ensure all tests align with the current response contract from `inference.py`
+- Run full suite and fix any failures
+
+**Verification**: `python -m pytest tests/ai_tests/ -v` — all tests pass with zero failures.
+
+---
+
+### DV-TUONG-02: Synchronize Canonical 20-Payload Evidence
+
+#### [NEW] [canonical_20_payloads.json](file:///f:/Quanskill/tests/ai_tests/canonical_20_payloads.json)
+- 20 diverse input payloads covering all 7 supported document types + edge cases (short text, unknown file types, missing optional fields)
+
+#### [NEW] [test_canonical_20_payload.py](file:///f:/Quanskill/tests/ai_tests/test_canonical_20_payload.py)
+- Load the 20 payloads, run through `predict_document_type()` and `build_prediction_log_payload()`
+- Assert: 20 inputs → 20 prediction results → 20 log payloads
+- Verify each result has required fields: `predicted_document_type`, `confidence`, `status`, `model_version`, `top_predictions`
+- Verify each log payload has: `model_name`, `model_version`, `predicted_label`, `confidence_score`, `status`, `created_at`
+
+#### [NEW] [canonical_20_results.json](file:///f:/Quanskill/outputs/canonical_20_results.json)
+- Generated evidence file with all 20 prediction results + 20 log payloads, linked to release SHA
+
+**Verification**: Test produces exactly 20 results and 20 log payloads, saved as evidence artifact.
+
+---
+
+### DV-TUONG-03: Pin scikit-learn & Validate Model Artifact Compatibility
+
+#### [MODIFY] [requirements.txt](file:///f:/Quanskill/requirements.txt)
+- Already has `scikit-learn==1.7.2` — confirm all environments use this
+
+#### [MODIFY] [inference.py](file:///f:/Quanskill/ai/prediction/inference.py)
+- Add sklearn version check in `_load_model()`: compare `sklearn.__version__` against version stored in model artifact
+- If mismatch, raise a clear `RuntimeError` with both versions
+
+#### [MODIFY] [train_model.py](file:///f:/Quanskill/ai/prediction/train_model.py)
+- Store `sklearn_version` in the model package when saving the `.joblib` artifact
+
+#### [NEW] [test_model_artifact_compatibility.py](file:///f:/Quanskill/tests/ai_tests/test_model_artifact_compatibility.py)
+- Test that loading with wrong sklearn version is detected
+- Test that model package contains `sklearn_version` field
+
+**Verification**: Incompatible model artifacts fail early with clear error message.
+
+---
+
+### DV-TUONG-04: Failed Status Cannot Pass Release Gate
+
+> [!IMPORTANT]
+> Critical safety change — failed predictions must not slip through acceptance.
+
+#### [MODIFY] [config.py](file:///f:/Quanskill/ai/prediction/config.py)
+- Add `RELEASE_GATE_ALLOWED_STATUSES = ["accepted", "needs_review"]`
+
+#### [NEW] [acceptance_gate.py](file:///f:/Quanskill/ai/prediction/acceptance_gate.py)
+- New module with function `check_prediction_acceptance(results: list[dict]) -> dict`
+- Returns `{"passed": bool, "total": int, "accepted": int, "needs_review": int, "failed": int, "rejected_indices": [...]}`
+- A batch passes the gate **only if** every result has status `accepted` or `needs_review`
+- Any `failed` or `waiting_for_source` status causes the batch to fail the gate
+
+#### [NEW] [test_acceptance_gate.py](file:///f:/Quanskill/tests/ai_tests/test_acceptance_gate.py)
+- Test: all-accepted batch passes
+- Test: mixed accepted + needs_review passes
+- Test: batch with any `failed` status fails the gate
+- Test: batch with `waiting_for_source` fails the gate
+
+**Verification**: Only `accepted` or `needs_review` can pass; `failed` always fails the gate.
+
+---
+
+### DV-TUONG-05: Expose Model Metadata in Every Response
+
+#### [MODIFY] [inference.py](file:///f:/Quanskill/ai/prediction/inference.py)
+- Add to the response dict: `model_checksum` (MD5 of the .joblib file), `training_data_version`, `threshold_policy` (the staging/review thresholds)
+
+#### [MODIFY] [train_model.py](file:///f:/Quanskill/ai/prediction/train_model.py)
+- Store `training_data_version` (hash of training CSV) and `training_data_path` in model package
+
+#### [NEW] [test_model_metadata_exposure.py](file:///f:/Quanskill/tests/ai_tests/test_model_metadata_exposure.py)
+- Test that every prediction response contains `model_version`, `model_checksum`, `training_data_version`, `threshold_policy`
+- Test that metadata is consistent across calls
+
+**Verification**: Every response and report is traceable to the exact model package and policy.
+
+---
+
+### DV-TUONG-06: Out-of-Distribution Detection & Reviewer Corrections
+
+#### [MODIFY] [inference.py](file:///f:/Quanskill/ai/prediction/inference.py)
+- Add OOD detection: if the top confidence is below a new `OOD_THRESHOLD` (e.g., 0.30), flag as `is_out_of_distribution: true`
+- OOD predictions automatically get `status: needs_review` with `review_reason: "Out-of-distribution input detected"`
+
+#### [MODIFY] [config.py](file:///f:/Quanskill/ai/prediction/config.py)
+- Add `OOD_THRESHOLD = 0.30`
+
+#### [NEW] [reviewer_corrections.py](file:///f:/Quanskill/ai/prediction/reviewer_corrections.py)
+- Module with functions to build correction payloads for PostgreSQL persistence:
+  - `build_correction_payload(prediction_log_id, original_label, corrected_label, reviewer_id, correction_reason) -> dict`
+- Returns a DB-ready dict matching Phat's reviewer_corrections schema
+
+#### [NEW] [test_ood_detection.py](file:///f:/Quanskill/tests/ai_tests/test_ood_detection.py)
+- Test: very ambiguous input triggers OOD flag
+- Test: clear input does NOT trigger OOD flag
+- Test: correction payload builder produces valid schema
+
+**Verification**: Unknown/ambiguous inputs route to review; corrections are structured and retrievable.
+
+---
+
+### DV-TUONG-07: Retrain/Recalibrate & Real-Data Evaluation
+
+#### [MODIFY] [evaluation.py](file:///f:/Quanskill/ai/prediction/evaluation.py)
+- Add `generate_real_data_report()` function that:
+  - Runs the 20 canonical payloads through the model
+  - Computes accuracy (if ground-truth labels available), confidence distribution, review rate
+  - Generates a markdown report with macro F1, confidence calibration histogram data, and review rate
+
+#### [NEW] [docs/week8_real_data_evaluation.md](file:///f:/Quanskill/docs/week8_real_data_evaluation.md)
+- Generated report with: accuracy, macro F1, confidence calibration, review rate on real/canonical data
+
+**Verification**: Updated report with all required metrics.
+
+---
+
+## Open Questions
+
+> [!IMPORTANT]
+> **Q1**: Do the canonical 20 payloads already exist somewhere, or should I generate them from the existing sample dataset? The PDF mentions "canonical 20-payload result set" — I'll generate 20 diverse payloads from the training data categories.
+
+> [!IMPORTANT]
+> **Q2**: For DV-TUONG-06 (reviewer corrections), since we don't have direct PostgreSQL access, should I just build the correction payload builder (matching Phat's schema) without actual DB insertion? The insertion would be Phat's responsibility.
+
+> [!IMPORTANT]
+> **Q3**: For DV-TUONG-07 (retraining), the current model is trained on synthetic data. Should I just recalibrate using the existing dataset and generate the evaluation report, or is there a new labelled dataset from Duy that should be used? I'll work with what's available.
+
+---
+
+## Execution Order
+
+```mermaid
+graph TD
+    T01["DV-TUONG-01<br/>Fix tests & deps<br/>P0, 8 Aug"] --> T02
+    T01 --> T03
+    T02["DV-TUONG-02<br/>Canonical 20 payloads<br/>P0, 8 Aug"] --> T04
+    T03["DV-TUONG-03<br/>Pin sklearn<br/>P0, 9 Aug"] --> T05
+    T04["DV-TUONG-04<br/>Acceptance gate<br/>P0, 9 Aug"] --> T05
+    T05["DV-TUONG-05<br/>Model metadata<br/>P1, 10 Aug"] --> T06
+    T06["DV-TUONG-06<br/>OOD detection<br/>P1, 11 Aug"] --> T07
+    T07["DV-TUONG-07<br/>Real-data eval<br/>P1, 12 Aug"]
+```
+
+## Verification Plan
+
+### Automated Tests
+```bash
+# Run full test suite after each task
+python -m pytest tests/ai_tests/ -v
+
+# Run canonical 20-payload test specifically
+python -m pytest tests/ai_tests/test_canonical_20_payload.py -v
+
+# Run acceptance gate tests
+python -m pytest tests/ai_tests/test_acceptance_gate.py -v
+```
+
+### Manual Verification
+- Review generated `canonical_20_results.json` for correctness
+- Inspect `week8_real_data_evaluation.md` for completeness
+- Verify model metadata fields appear in prediction responses
