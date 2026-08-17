@@ -62,7 +62,119 @@ Các cổng sau đang chặn việc đóng task của tất cả owner:
 
 ---
 
-## 3. Duy — CI/CD Lead and Data Ingestion / Trưởng nhóm CI/CD và Data Ingestion
+## 3. Branch and Pull Request workflow / Quy trình Branch và Pull Request
+
+### English
+
+The code for all owner modules is already integrated into PR #5. Team members
+must not recreate the same work, copy an entire owner repository into the
+canonical repository, or push directly to `main`.
+
+The required workflow is:
+
+1. Complete the independent review and merge of PR #5 first.
+2. After the merge, fetch the latest protected `main` from
+   `QuanSkillOfficial/DataVision_Duy`.
+3. Create a new branch from that exact `main` only when new code, tests,
+   validation tooling, or versioned evidence must be committed.
+4. Keep the branch limited to one owner and one closeout scope. Recommended
+   branch names are:
+   - Phat: `feat/phat-db-cloud-validation`
+   - Lap: `feat/lap-rag-cloud-validation`
+   - Tuong: `feat/tuong-prediction-cloud-validation`
+   - Hung: `feat/hung-ui-cloud-e2e`
+   - Duy: `feat/duy-staging-release`
+5. Include only changes that are not already present in PR #5. Do not replay or
+   merge an old conflicting branch into the new `main`.
+6. Push the branch to the canonical repository and open a pull request targeting
+   `main`.
+7. Every pull request must identify:
+   - task ID and owner;
+   - source repository and source commit, when applicable;
+   - changed files and scope boundaries;
+   - test commands and CI results;
+   - evidence JSON, logs, screenshots, or Actions artifacts;
+   - dependencies and blockers;
+   - release SHA and image digest for cloud evidence.
+8. Obtain CODEOWNERS and independent reviewer approval before merge. Direct
+   pushes to `main`, force pushes, and protection bypasses are not allowed.
+
+Owner repositories remain useful for module development, but the accepted
+release is defined only by the reviewed canonical `main`. An unmerged owner
+branch is not the released implementation.
+
+If cloud validation produces evidence without changing versioned source files,
+an additional owner pull request is not mandatory. The owner may provide the
+Actions artifact, query output, or screenshots to Duy, and Duy may consolidate
+the approved evidence in the final release-acceptance pull request. Secrets,
+private keys, passwords, tokens, and unrestricted infrastructure details must
+never be committed as evidence.
+
+### Tiếng Việt
+
+Code của tất cả owner module đã được tích hợp trong PR #5. Các thành viên không
+được làm lại cùng phần việc, copy toàn bộ owner repository vào canonical
+repository hoặc push trực tiếp vào `main`.
+
+Quy trình bắt buộc như sau:
+
+1. Hoàn tất review độc lập và merge PR #5 trước.
+2. Sau khi merge, lấy protected `main` mới nhất từ
+   `QuanSkillOfficial/DataVision_Duy`.
+3. Chỉ tạo branch mới từ đúng `main` đó khi cần commit code, test, validation
+   tooling hoặc versioned evidence mới.
+4. Mỗi branch chỉ giới hạn cho một owner và một phạm vi closeout. Tên branch đề
+   xuất:
+   - Phát: `feat/phat-db-cloud-validation`
+   - Lập: `feat/lap-rag-cloud-validation`
+   - Tường: `feat/tuong-prediction-cloud-validation`
+   - Hưng: `feat/hung-ui-cloud-e2e`
+   - Duy: `feat/duy-staging-release`
+5. Chỉ đưa vào branch những thay đổi chưa có trong PR #5. Không replay hoặc
+   merge branch cũ đang conflict vào `main` mới.
+6. Push branch lên canonical repository và mở Pull Request vào `main`.
+7. Mỗi Pull Request phải ghi rõ:
+   - task ID và owner;
+   - source repository và source commit nếu có;
+   - các file thay đổi và giới hạn phạm vi;
+   - lệnh test và kết quả CI;
+   - evidence JSON, logs, screenshots hoặc Actions artifacts;
+   - dependencies và blockers;
+   - release SHA và image digest đối với cloud evidence.
+8. Phải có CODEOWNERS và reviewer độc lập approve trước khi merge. Không được
+   push trực tiếp vào `main`, force push hoặc vượt protection rules.
+
+Owner repository vẫn được dùng để phát triển module, nhưng release được chấp
+nhận chỉ được xác định bởi canonical `main` đã review. Branch trong owner repo
+chưa merge không phải là bản release.
+
+Nếu cloud validation chỉ tạo evidence và không thay đổi source file cần quản lý
+phiên bản, owner không bắt buộc mở thêm Pull Request riêng. Owner có thể gửi
+Actions artifact, query output hoặc screenshots cho Duy; Duy sẽ tổng hợp
+evidence đã được duyệt trong final release-acceptance Pull Request. Tuyệt đối
+không commit secrets, private keys, passwords, tokens hoặc thông tin hạ tầng
+không được giới hạn vào evidence.
+
+### Current repository decision / Quyết định cho repository hiện tại
+
+- PR #5 remains the only canonical Week 8 release candidate and must be reviewed
+  and merged before closeout branches are created. / PR #5 vẫn là release
+  candidate Week 8 duy nhất và phải được review, merge trước khi tạo các branch
+  closeout.
+- Phat must not reuse the old conflicting database branch. / Phát không được tái
+  sử dụng database branch cũ đang conflict.
+- Lap and Tuong must not submit duplicate pull requests for code already included
+  in PR #5. / Lập và Tường không mở Pull Request trùng lặp cho code đã nằm trong
+  PR #5.
+- Hung must not merge the complete owner `week8-hung-ui` branch directly into
+  canonical `main`; only post-PR #5 fixes or evidence should be submitted from a
+  clean branch. / Hưng không merge trực tiếp toàn bộ owner branch
+  `week8-hung-ui` vào canonical `main`; chỉ gửi các sửa đổi hoặc evidence phát
+  sinh sau PR #5 từ một branch sạch.
+
+---
+
+## 4. Duy — CI/CD Lead and Data Ingestion / Trưởng nhóm CI/CD và Data Ingestion
 
 ### English
 
@@ -114,7 +226,7 @@ Các cổng sau đang chặn việc đóng task của tất cả owner:
 
 ---
 
-## 4. Phat — PostgreSQL and pgvector Safety / An toàn PostgreSQL và pgvector
+## 5. Phat — PostgreSQL and pgvector Safety / An toàn PostgreSQL và pgvector
 
 ### English
 
@@ -154,7 +266,7 @@ Các cổng sau đang chặn việc đóng task của tất cả owner:
 
 ---
 
-## 5. Lap — RAG and pgvector Retrieval / RAG và truy xuất pgvector
+## 6. Lap — RAG and pgvector Retrieval / RAG và truy xuất pgvector
 
 ### English
 
@@ -194,7 +306,7 @@ Các cổng sau đang chặn việc đóng task của tất cả owner:
 
 ---
 
-## 6. Tuong — Prediction and Review Workflow / Dự đoán và quy trình review
+## 7. Tuong — Prediction and Review Workflow / Dự đoán và quy trình review
 
 ### English
 
@@ -234,7 +346,7 @@ Các cổng sau đang chặn việc đóng task của tất cả owner:
 
 ---
 
-## 7. Hung — Streamlit UI and Browser E2E / Streamlit UI và Browser E2E
+## 8. Hung — Streamlit UI and Browser E2E / Streamlit UI và Browser E2E
 
 ### English
 
@@ -282,7 +394,7 @@ Các cổng sau đang chặn việc đóng task của tất cả owner:
 
 ---
 
-## 8. Phi / Team allocation note / Ghi chú phân công Phi
+## 9. Phi / Team allocation note / Ghi chú phân công Phi
 
 ### English
 
@@ -294,7 +406,7 @@ Phi không được giao thêm phần triển khai P0 trong kế hoạch đóng 
 
 ---
 
-## 9. Required execution order / Thứ tự thực hiện bắt buộc
+## 10. Required execution order / Thứ tự thực hiện bắt buộc
 
 ### English
 
@@ -324,7 +436,7 @@ Phi không được giao thêm phần triển khai P0 trong kế hoạch đóng 
 
 ---
 
-## 10. Final closure statement / Tuyên bố đóng release
+## 11. Final closure statement / Tuyên bố đóng release
 
 ### English
 
