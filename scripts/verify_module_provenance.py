@@ -21,6 +21,59 @@ class ProvenanceError(ValueError):
     """Raised when provenance or canonical module parity is invalid."""
 
 
+def _load_codeowners(project_root: Path) -> dict[str, set[str]]:
+    path = project_root / ".github" / "CODEOWNERS"
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError as exc:
+        raise ProvenanceError(f"Cannot read CODEOWNERS: {exc}") from exc
+    rules: dict[str, set[str]] = {}
+    for raw_line in lines:
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        parts = line.split()
+        if len(parts) < 2 or not all(owner.startswith("@") for owner in parts[1:]):
+            raise ProvenanceError(f"Invalid CODEOWNERS rule: {raw_line}")
+        rules[parts[0]] = set(parts[1:])
+    return rules
+
+
+def _verify_codeowners(
+    project_root: Path,
+    modules: list[dict[str, Any]],
+) -> None:
+    rules = _load_codeowners(project_root)
+    integrator = next(
+        (f"@{module['owner_github']}" for module in modules if module["module_id"] == "duy-ingestion"),
+        None,
+    )
+    if integrator is None:
+        raise ProvenanceError("duy-ingestion module owner is required")
+    governance_owners = rules.get("/.github/", set())
+    if integrator not in governance_owners or len(governance_owners) < 2:
+        raise ProvenanceError(
+            "Governance paths require Duy and at least one independent Code Owner"
+        )
+
+    expected_module_owners = {f"@{module['owner_github']}" for module in modules}
+    provenance_owners = rules.get("/integration/module_provenance.json", set())
+    if not expected_module_owners.issubset(provenance_owners):
+        missing = sorted(expected_module_owners - provenance_owners)
+        raise ProvenanceError(
+            f"module provenance must request every owner; missing: {', '.join(missing)}"
+        )
+
+    for module in modules:
+        owner = f"@{module['owner_github']}"
+        for path_entry in module["canonical_paths"]:
+            pattern = f"/{path_entry['path'].rstrip('/')}/"
+            if owner not in rules.get(pattern, set()):
+                raise ProvenanceError(
+                    f"{module['module_id']}: {owner} is not a Code Owner for {pattern}"
+                )
+
+
 def _git(project_root: Path, *args: str) -> str:
     completed = subprocess.run(
         ["git", *args],
@@ -82,10 +135,16 @@ def verify_manifest(project_root: Path, manifest_path: Path) -> dict[str, Any]:
             module.get("source_repository"), f"{prefix}.source_repository"
         )
         source_sha = _require_string(module.get("source_sha"), f"{prefix}.source_sha")
+        source_commit_url = _require_string(
+            module.get("source_commit_url"), f"{prefix}.source_commit_url"
+        )
         if not HTTPS_GITHUB_REPOSITORY.fullmatch(source_repository):
             raise ProvenanceError(f"{module_id}: invalid source_repository")
         if not FULL_SHA.fullmatch(source_sha):
             raise ProvenanceError(f"{module_id}: source_sha must be a full lowercase Git SHA")
+        expected_commit_url = f"{source_repository.removesuffix('.git')}/commit/{source_sha}"
+        if source_commit_url != expected_commit_url:
+            raise ProvenanceError(f"{module_id}: source_commit_url does not match repository and SHA")
 
         canonical_paths = module.get("canonical_paths")
         if not isinstance(canonical_paths, list) or not canonical_paths:
@@ -123,6 +182,8 @@ def verify_manifest(project_root: Path, manifest_path: Path) -> dict[str, Any]:
                 raise ProvenanceError(f"{module_id}: required file is missing: {relative_file}")
             if not _git(project_root, "ls-files", "--error-unmatch", relative_file):
                 raise ProvenanceError(f"{module_id}: required file is not tracked: {relative_file}")
+
+    _verify_codeowners(project_root, modules)
 
     return {
         "status": "passed",

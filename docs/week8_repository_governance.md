@@ -3,8 +3,8 @@
 ## Canonical ownership and provenance
 
 `integration/module_provenance.json` records five owner modules using an exact
-source repository, imported source commit, canonical path, and canonical Git
-tree. `scripts/verify_module_provenance.py` runs as the first CI gate. A missing
+source repository, imported source commit and commit URL, canonical path, and
+canonical Git tree. `scripts/verify_module_provenance.py` runs as the first CI gate. A missing
 module, untracked required file, nested repository, or unrecorded tree change
 fails CI; owner jobs are never silently skipped.
 
@@ -22,11 +22,13 @@ as current owner-repository parity until the owner reviews the pull request.
 
 ## Main-branch controls
 
-`CODEOWNERS` assigns every module and all release/deployment paths to canonical
-maintainers with write permission. Phat, Lap, and Tuong are still recorded as
-provenance owners and should be requested as module reviewers; their current
-read-only repository permission cannot be misrepresented as enforceable GitHub
-Code Owner status. The intended `main` protection contract is:
+`CODEOWNERS` assigns every module path to its owner and Duy as canonical
+integrator. The provenance registry itself requests all five module owners.
+Governance and deployment paths include an independent release reviewer so a
+Duy-authored pull request cannot deadlock on self-approval. GitHub only enforces
+Code Owners who retain repository write access, so collaborator access must be
+audited whenever team membership changes. The intended `main` protection
+contract is:
 
 - pull requests only, with one approval and Code Owner review;
 - required conversation resolution;

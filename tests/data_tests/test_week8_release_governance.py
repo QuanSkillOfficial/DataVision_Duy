@@ -12,6 +12,7 @@ sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 
 from validate_release_manifest import load_and_validate  # noqa: E402
 from verify_release_candidate import select_green_run  # noqa: E402
+from verify_module_provenance import ProvenanceError, _verify_codeowners  # noqa: E402
 
 
 SHA = "a" * 40
@@ -128,3 +129,48 @@ def test_green_run_selection_rejects_failed_or_different_run() -> None:
             workflow_name="DataVision CI",
             expected_run_id=42,
         )
+
+
+def test_codeowners_requires_each_module_owner_and_independent_governance_reviewer(
+    tmp_path: Path,
+) -> None:
+    codeowners = tmp_path / ".github" / "CODEOWNERS"
+    codeowners.parent.mkdir()
+    codeowners.write_text(
+        "\n".join(
+            [
+                "* @duy @reviewer",
+                "/.github/ @duy @reviewer",
+                "/integration/module_provenance.json @duy @phat @lap @tuong @hung",
+                "/data_engineering/ @duy",
+                "/week7/database/ @phat @duy",
+                "/ai/rag/ @lap @duy",
+                "/ai/prediction/ @tuong @duy",
+                "/demo/ @hung @duy",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    modules = [
+        {
+            "module_id": module_id,
+            "owner_github": owner,
+            "canonical_paths": [{"path": path}],
+        }
+        for module_id, owner, path in (
+            ("duy-ingestion", "duy", "data_engineering"),
+            ("phat-database", "phat", "week7/database"),
+            ("lap-rag", "lap", "ai/rag"),
+            ("tuong-prediction", "tuong", "ai/prediction"),
+            ("hung-ui", "hung", "demo"),
+        )
+    ]
+
+    _verify_codeowners(tmp_path, modules)
+
+    codeowners.write_text(
+        codeowners.read_text(encoding="utf-8").replace("/.github/ @duy @reviewer", "/.github/ @duy"),
+        encoding="utf-8",
+    )
+    with pytest.raises(ProvenanceError, match="independent Code Owner"):
+        _verify_codeowners(tmp_path, modules)

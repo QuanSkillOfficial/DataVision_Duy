@@ -10,6 +10,7 @@
       "owner_github": "minzi03",
       "source_repository": "https://github.com/QuanSkillOfficial/DataVision_Duy",
       "source_sha": "ca19091095809047a143536186bd76d03f728449",
+      "source_commit_url": "https://github.com/QuanSkillOfficial/DataVision_Duy/commit/ca19091095809047a143536186bd76d03f728449",
       "integration_mode": "canonical-native",
       "canonical_paths": [
         {
@@ -28,6 +29,7 @@
       "owner_github": "TanPhat0507",
       "source_repository": "https://github.com/QuanSkillOfficial/DataVision_Phat",
       "source_sha": "b23cf0b1fd2312914acb4b8c870ba60122fa17e1",
+      "source_commit_url": "https://github.com/QuanSkillOfficial/DataVision_Phat/commit/b23cf0b1fd2312914acb4b8c870ba60122fa17e1",
       "integration_mode": "imported-and-adapted",
       "canonical_paths": [
         {
@@ -52,6 +54,7 @@
       "owner_github": "Nguyen-The-Lap",
       "source_repository": "https://github.com/QuanSkillOfficial/DataVision_Lap",
       "source_sha": "b1275fda7d3222d3c82972d9c224ddf858fc291f",
+      "source_commit_url": "https://github.com/QuanSkillOfficial/DataVision_Lap/commit/b1275fda7d3222d3c82972d9c224ddf858fc291f",
       "integration_mode": "imported-and-adapted",
       "canonical_paths": [
         {
@@ -76,6 +79,7 @@
       "owner_github": "wally205",
       "source_repository": "https://github.com/QuanSkillOfficial/DataVision_Tuong",
       "source_sha": "657c839b7471dcf5151c2314cfbe71b84a1a983f",
+      "source_commit_url": "https://github.com/QuanSkillOfficial/DataVision_Tuong/commit/657c839b7471dcf5151c2314cfbe71b84a1a983f",
       "integration_mode": "imported-and-adapted",
       "canonical_paths": [
         {
@@ -100,6 +104,7 @@
       "owner_github": "ronalhung03",
       "source_repository": "https://github.com/QuanSkillOfficial/DataVision_Hung",
       "source_sha": "2578af527696b9447db20a8194132a1eec394007",
+      "source_commit_url": "https://github.com/QuanSkillOfficial/DataVision_Hung/commit/2578af527696b9447db20a8194132a1eec394007",
       "integration_mode": "imported-and-adapted",
       "canonical_paths": [
         {
