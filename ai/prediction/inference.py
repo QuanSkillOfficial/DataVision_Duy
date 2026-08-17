@@ -44,6 +44,7 @@ from ai.prediction.config import (
     STAGING_ACCEPTANCE_THRESHOLD,
     REVIEW_THRESHOLD,
     MIN_EXTRACTED_TEXT_LENGTH,
+    OOD_THRESHOLD,
 )
 
 # ---------------------------------------------------------------------------
@@ -66,7 +67,27 @@ def _load_model(model_path: str = MODEL_PATH) -> dict:
                 f"Model file not found: {model_path}. "
                 "Run train_model.py first."
             )
-        _model_cache = joblib.load(model_path)
+        pkg = joblib.load(model_path)
+
+        # Enforce scikit-learn version check
+        import sklearn
+        current_version = sklearn.__version__
+        pkg_version = pkg.get("sklearn_version")
+
+        if pkg_version and pkg_version != current_version:
+            raise RuntimeError(
+                f"Incompatible model artifact: trained with scikit-learn {pkg_version}, "
+                f"but current environment is running scikit-learn {current_version}."
+            )
+
+        import hashlib
+        hasher = hashlib.md5()
+        with open(model_path, 'rb') as f:
+            buf = f.read()
+            hasher.update(buf)
+        pkg["model_checksum"] = hasher.hexdigest()
+
+        _model_cache = pkg
     return _model_cache
 
 
@@ -122,23 +143,33 @@ def predict_document_type(
             "message": "; ".join(errors),
         }
 
-    # 2. Input quality gate — check extracted_text length -------------------
+    # 2. Load model package -------------------------------------------------
+    pkg = _load_model(model_path)
+    model = pkg["model"]
+    label_encoder = pkg["label_encoder"]
+    model_version = pkg.get("model_version", "unknown")
+    model_checksum = pkg.get("model_checksum", "unknown-checksum")
+    training_data_version = pkg.get("training_data_version", "fallback-data-hash")
+
+    # 3. Input quality gate — check extracted_text length -------------------
     extracted_text = str(input_payload.get("extracted_text", "")).strip()
     if len(extracted_text) < MIN_EXTRACTED_TEXT_LENGTH:
         return {
             "predicted_document_type": None,
             "confidence": 0.0,
-            "model_version": "document_classifier_v1",
+            "model_version": model_version,
             "status": STATUS_WAITING_FOR_SOURCE,
             "review_reason": "Extracted text is missing or too short for reliable prediction",
             "top_predictions": [],
+            "model_checksum": model_checksum,
+            "training_data_version": training_data_version,
+            "is_out_of_distribution": False,
+            "threshold_policy": {
+                "staging_acceptance_threshold": STAGING_ACCEPTANCE_THRESHOLD,
+                "review_threshold": REVIEW_THRESHOLD,
+                "min_extracted_text_length": MIN_EXTRACTED_TEXT_LENGTH
+            }
         }
-
-    # 3. Load model package -------------------------------------------------
-    pkg = _load_model(model_path)
-    model = pkg["model"]
-    label_encoder = pkg["label_encoder"]
-    model_version = pkg.get("model_version", "unknown")
 
     # 4. Convert payload → DataFrame ---------------------------------------
     df = payload_to_dataframe(input_payload)
@@ -159,13 +190,16 @@ def predict_document_type(
         for i in top_indices
     ]
 
-    # 8. Status -------------------------------------------------------------
+    # 8. Out-of-Distribution Detection -------------------------------------
+    is_ood = confidence < OOD_THRESHOLD
+
+    # 9. Status -------------------------------------------------------------
     review_reason = None
-    if confidence >= STAGING_ACCEPTANCE_THRESHOLD:
-        status = STATUS_ACCEPTED
-    elif confidence >= REVIEW_THRESHOLD:
+    if is_ood:
         status = STATUS_NEEDS_REVIEW
-        review_reason = "Confidence below staging threshold"
+        review_reason = "Out-of-distribution input detected"
+    elif confidence >= STAGING_ACCEPTANCE_THRESHOLD:
+        status = STATUS_ACCEPTED
     else:
         status = STATUS_NEEDS_REVIEW
         review_reason = "Confidence below staging threshold"
@@ -177,6 +211,14 @@ def predict_document_type(
         "status": status,
         "top_predictions": top_predictions,
         "review_reason": review_reason,
+        "model_checksum": model_checksum,
+        "training_data_version": training_data_version,
+        "is_out_of_distribution": is_ood,
+        "threshold_policy": {
+            "staging_acceptance_threshold": STAGING_ACCEPTANCE_THRESHOLD,
+            "review_threshold": REVIEW_THRESHOLD,
+            "min_extracted_text_length": MIN_EXTRACTED_TEXT_LENGTH
+        }
     }
 
     return result

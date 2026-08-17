@@ -172,6 +172,20 @@ jobs:
           "${SSH[@]}" "readlink '$STAGING_PATH/current' 2>/dev/null || true" > previous-release.txt
           "${SCP[@]}" staging-bundle.tgz "$STAGING_USER@$STAGING_HOST:$STAGING_PATH/releases/$RELEASE_SHA/bundle.tgz"
           "${SSH[@]}" "cd '$STAGING_PATH/releases/$RELEASE_SHA' && tar -xzf bundle.tgz && rm bundle.tgz && chmod 600 .env.staging"
+      - name: Back up the current PostgreSQL database before deployment
+        shell: bash
+        run: |
+          previous="$(tr -d '\r\n' < previous-release.txt 2>/dev/null || true)"
+          if [[ "$previous" =~ ^/[A-Za-z0-9._/-]+$ ]]; then
+            backup_path="$STAGING_PATH/backups/pre-${RELEASE_SHA}.dump"
+            ssh -i ~/.ssh/id_ed25519 -p "$STAGING_SSH_PORT" "$STAGING_USER@$STAGING_HOST" \
+              "set -e; mkdir -p '$STAGING_PATH/backups'; cd '$previous'; set -a; . ./.env.staging; set +a; docker compose --env-file .env.staging -f docker-compose.staging.yml exec -T db pg_dump -U \"\$POSTGRES_USER\" -d \"\$POSTGRES_DB\" -F c > '$backup_path'; test -s '$backup_path'; docker compose --env-file .env.staging -f docker-compose.staging.yml exec -T db pg_restore --list < '$backup_path' >/dev/null"
+            printf 'status=verified\npath=%s\nrelease_sha=%s\n' \
+              "$backup_path" "$RELEASE_SHA" > pre-deploy-backup.txt
+          else
+            printf 'status=not_applicable\nreason=first_deployment\nrelease_sha=%s\n' \
+              "$RELEASE_SHA" > pre-deploy-backup.txt
+          fi
       - name: Pull and start exact release
         shell: bash
         env:
@@ -223,6 +237,7 @@ jobs:
           path: |
             outputs/integration/week8_cloud_staging_acceptance.json
             previous-release.txt
+            pre-deploy-backup.txt
             remote-preflight.txt
             remote-failure-diagnostics.txt
             release-artifact/release-manifest.json

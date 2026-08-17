@@ -192,9 +192,12 @@ Answer:"""
         if not retrieved_chunks:
             return 0.0
 
-        # Factors affecting confidence
-        avg_similarity = sum(c.get("score", 0) for c in retrieved_chunks) / len(retrieved_chunks)
-        top_similarity = max((c.get("score", 0) for c in retrieved_chunks), default=0)
+        scores = [
+            c.get("similarity_score", c.get("score", 0.0))
+            for c in retrieved_chunks
+        ]
+        avg_similarity = sum(scores) / len(scores) if scores else 0.0
+        top_similarity = max(scores, default=0.0)
 
         # Check if answer contains "I do not know"
         has_no_answer_phrase = "i do not know" in answer.lower() or "not provided" in answer.lower()
@@ -222,6 +225,9 @@ Answer:"""
         """
         Format a complete RAG response (Week 5 fix).
 
+        Always returns a non-empty answer field. Citations include optional
+        document_external_id / document_db_id for downstream consumers.
+
         Args:
             question: User question
             answer: Generated answer (or None)
@@ -231,31 +237,60 @@ Answer:"""
         Returns:
             Formatted response dict matching RAG response contract
         """
-        # Extract unique citations (Week 5 fix)
         citations = []
         seen_sources = set()
 
         for chunk in retrieved_chunks:
-            # Fix chunk_id fallback (Week 5)
             chunk_id = chunk.get("chunk_id", chunk.get("id", ""))
-            file_name = chunk.get("metadata", {}).get("source", chunk.get("file_name", "Unknown"))
-            # Fix page_number fallback (Week 5)
+            metadata = chunk.get("metadata", {}) or {}
+            file_name = (
+                chunk.get("file_name")
+                or metadata.get("file_name")
+                or metadata.get("source")
+                or "Unknown"
+            )
             page_number = (
                 chunk.get("page_number")
-                or chunk.get("metadata", {}).get("page_number")
+                or metadata.get("page_number")
             )
+            document_external_id = (
+                chunk.get("document_external_id")
+                or metadata.get("document_external_id")
+            )
+            document_db_id = chunk.get("document_db_id") or chunk.get("document_id_fk")
 
-            # Make citations unique by file_name, page_number, chunk_id (Week 5)
             key = (file_name, page_number, chunk_id)
-            if key not in seen_sources:
-                citations.append({
+            if key not in seen_sources and chunk_id:
+                seen_sources.add(key)
+                citation = {
                     "file_name": file_name,
                     "page_number": page_number,
-                    "chunk_id": chunk_id
-                })
-                seen_sources.add(key)
+                    "chunk_id": chunk_id,
+                }
+                if document_external_id is not None:
+                    citation["document_external_id"] = document_external_id
+                if document_db_id is not None:
+                    citation["document_db_id"] = document_db_id
+                citations.append(citation)
 
-        return {
+        if not answer:
+            if not retrieved_chunks:
+                answer = "I do not know based on the provided documents."
+            else:
+                top_text = (
+                    retrieved_chunks[0].get("chunk_text")
+                    or retrieved_chunks[0].get("text")
+                    or ""
+                ).strip()
+                first_sentence = top_text.split(". ")[0].strip()
+                if first_sentence:
+                    if not first_sentence.endswith("."):
+                        first_sentence += "."
+                    answer = first_sentence
+                else:
+                    answer = "I do not know based on the provided documents."
+
+        response = {
             "question": question,
             "answer": answer,
             "retrieved_context": retrieved_chunks,
@@ -264,9 +299,31 @@ Answer:"""
             "model": "all-MiniLM-L6-v2",
             "metadata": {
                 "num_chunks_retrieved": len(retrieved_chunks),
-                "llm_model": self.llm_model
-            }
+                "llm_model": self.llm_model,
+            },
         }
+
+        if retrieved_chunks:
+            first = retrieved_chunks[0]
+            first_meta = first.get("metadata", {}) or {}
+            doc_ext_id = (
+                first.get("document_external_id")
+                or first_meta.get("document_external_id")
+            )
+            doc_db_id = first.get("document_db_id") or first.get("document_id_fk")
+            fname = (
+                first.get("file_name")
+                or first_meta.get("file_name")
+                or first_meta.get("source")
+            )
+            if doc_ext_id is not None:
+                response["document_external_id"] = doc_ext_id
+            if doc_db_id is not None:
+                response["document_db_id"] = doc_db_id
+            if fname is not None:
+                response["file_name"] = fname
+
+        return response
 
 
 def build_rag_prompt(

@@ -43,15 +43,6 @@ def run_step(name: str, command: list[str]) -> dict[str, Any]:
     return result
 
 
-def reset_downstream_evidence() -> None:
-    from backend_stub.runtime import connect
-
-    with connect() as conn, conn.cursor() as cursor:
-        cursor.execute("DELETE FROM rag_query_logs")
-        cursor.execute("DELETE FROM prediction_logs")
-        cursor.execute("DELETE FROM document_chunks")
-
-
 def database_counts() -> dict[str, int]:
     from backend_stub.runtime import connect
 
@@ -93,6 +84,12 @@ def main() -> int:
         )
         steps.append(
             run_step(
+                "apply_versioned_migrations",
+                [sys.executable, "week8/database/migrations/run_migrations.py"],
+            )
+        )
+        steps.append(
+            run_step(
                 "load_duy_smoke_data",
                 [
                     sys.executable,
@@ -109,8 +106,6 @@ def main() -> int:
         ):
             steps.append(run_step(name, [sys.executable, script]))
 
-        reset_downstream_evidence()
-
         from ai.rag.load_document_pages_to_pgvector import load_and_ingest
         from backend_stub.runtime import database_url, rag_query
 
@@ -123,6 +118,14 @@ def main() -> int:
         )
         if rag_load.get("status") != "success" or rag_load.get("chunks_inserted", 0) <= 0:
             raise RuntimeError(f"RAG chunk load did not insert chunks: {rag_load}")
+        rag_reindex = load_and_ingest(
+            str(document_pages),
+            DOCUMENT_EXTERNAL_ID,
+            connection_string=database_url(),
+            output_result_path=str(PROJECT_ROOT / "outputs/integration/week8_chunk_reindex_result.json"),
+        )
+        if rag_reindex.get("status") != "success":
+            raise RuntimeError(f"Repeated RAG indexing failed: {rag_reindex}")
 
         prediction_path = PROJECT_ROOT / "outputs/db_integration/week7_prediction_log_payloads.json"
         from scripts.insert_prediction_logs_to_postgres import (
@@ -152,11 +155,15 @@ def main() -> int:
             "duy_pages_loaded": counts["document_pages"] == 36,
             "duy_structured_smoke_loaded": counts["structured_records"] == 100,
             "lap_chunks_loaded": counts["document_chunks"] > 0,
+            "lap_reindex_is_idempotent": (
+                rag_reindex.get("chunks_inserted") == 0
+                and rag_reindex.get("rows_before") == rag_reindex.get("rows_after")
+            ),
             "lap_retrieval_returned_context": len(rag_response.get("retrieved_context", [])) > 0,
             "lap_citations_returned": len(rag_response.get("citations", [])) > 0,
-            "tuong_prediction_logs_loaded": counts["prediction_logs"] == len(prediction_payloads),
+            "tuong_prediction_logs_loaded": counts["prediction_logs"] >= len(prediction_payloads),
             "tuong_prediction_ids_returned": len(prediction_ids) == len(prediction_payloads),
-            "rag_query_logged": counts["rag_query_logs"] == 1,
+            "rag_query_logged": counts["rag_query_logs"] >= 1,
         }
         result.update(
             {
@@ -164,6 +171,7 @@ def main() -> int:
                 "checks": checks,
                 "counts": counts,
                 "rag_load": rag_load,
+                "rag_reindex": rag_reindex,
                 "rag_response": rag_response,
                 "prediction_log_ids": prediction_ids,
             }

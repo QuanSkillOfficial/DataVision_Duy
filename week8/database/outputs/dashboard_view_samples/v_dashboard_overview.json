@@ -1,0 +1,10 @@
+[
+    {
+        "total_sources": 4,
+        "total_documents": 1,
+        "successful_ingestions": 4,
+        "failed_ingestions": 0,
+        "total_rag_queries": 1,
+        "total_predictions": 10
+    }
+]

@@ -1,0 +1,40 @@
+{
+  "pass": true,
+  "tables": {
+    "sources": {
+      "run1": 4,
+      "run2": 4,
+      "match": true
+    },
+    "documents": {
+      "run1": 1,
+      "run2": 1,
+      "match": true
+    },
+    "document_pages": {
+      "run1": 36,
+      "run2": 36,
+      "match": true
+    },
+    "document_chunks": {
+      "run1": 293,
+      "run2": 293,
+      "match": true
+    },
+    "structured_records": {
+      "run1": 230,
+      "run2": 230,
+      "match": true
+    },
+    "ingestion_logs": {
+      "run1": 4,
+      "run2": 4,
+      "match": true
+    },
+    "prediction_logs": {
+      "run1": 10,
+      "run2": 10,
+      "match": true
+    }
+  }
+}

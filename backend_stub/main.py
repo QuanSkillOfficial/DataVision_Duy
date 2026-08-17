@@ -44,6 +44,34 @@ def _metadata() -> dict[str, Any]:
     }
 
 
+def _release_identity() -> dict[str, Any]:
+    """Return the stable identity contract consumed by the Week 8 UI."""
+    return {
+        "ok": True,
+        "healthy": True,
+        "service": "datavision-backend",
+        "release_sha": os.getenv("DATAVISION_RELEASE_SHA")
+        or os.getenv("GITHUB_SHA")
+        or "local",
+        "environment": os.getenv("DATAVISION_ENVIRONMENT")
+        or os.getenv("QS_ENVIRONMENT")
+        or BACKEND_MODE,
+    }
+
+
+def _normalise_rag_status(response: dict[str, Any]) -> dict[str, Any]:
+    """Map internal retrieval stages to the public UI response contract."""
+    normalised = dict(response)
+    internal_status = str(normalised.get("status") or "").strip().lower()
+    metadata = dict(normalised.get("metadata") or {})
+    if internal_status not in {"success", "no_match", "error"}:
+        metadata["pipeline_status"] = internal_status or "unknown"
+        has_answer = bool(str(normalised.get("answer") or "").strip())
+        normalised["status"] = "success" if has_answer else "no_match"
+    normalised["metadata"] = metadata
+    return normalised
+
+
 def _success(data: Any, **extra: Any) -> dict[str, Any]:
     metadata = _metadata()
     metadata.update(extra)
@@ -191,7 +219,7 @@ def health() -> dict[str, Any]:
         if not snapshot.get("healthy"):
             raise HTTPException(status_code=503, detail=snapshot)
         return _success(snapshot)
-    return _success({"service": "backend_stub", "healthy": True})
+    return _success(_release_identity())
 
 
 @app.get("/api/dashboard/metrics")
@@ -282,11 +310,11 @@ def rag_query(payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str,
         if not question:
             return _error("question is required")
         return _success(
-            live_rag_query(
+            _normalise_rag_status(live_rag_query(
                 question,
                 payload.get("document_id"),
                 int(payload.get("top_k", 5)),
-            )
+            ))
         )
     fixture = _lap_rag_fixture()
     question = payload.get("question") or fixture.get("question")
@@ -299,7 +327,7 @@ def rag_query(payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str,
             "answer": None,
             "retrieved_context": [],
             "citations": [],
-            "status": "retrieval_only",
+            "status": "no_match",
             "model": "contract_stub",
             "metadata": {
                 "retrieval_backend": "stub",
@@ -307,7 +335,7 @@ def rag_query(payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str,
                 "top_k": payload.get("top_k", 5),
             },
         }
-    return _success(data)
+    return _success(_normalise_rag_status(data))
 
 
 @app.post("/api/predict/document-type")
@@ -340,6 +368,13 @@ def predict_document_type_batch(payload: Any = Body(default_factory=dict)) -> di
 
 @app.post("/api/predict/feedback")
 def predict_feedback(payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+    if STAGING_MODE:
+        from backend_stub.runtime import save_prediction_feedback
+
+        try:
+            return _success(save_prediction_feedback(payload))
+        except ValueError as exc:
+            return _error("Feedback validation failed", str(exc))
     return _success(
         {
             "saved": False,

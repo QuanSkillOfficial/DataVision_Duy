@@ -87,6 +87,7 @@ class FakeVectorStore:
     Fake vector store for CI-safe testing.
 
     Provides in-memory vector storage without requiring database connection.
+    Supports chunk-id deduplication (upsert) on repeated add_chunks calls.
     """
 
     def __init__(self, use_pgvector: bool = False):
@@ -97,22 +98,49 @@ class FakeVectorStore:
             use_pgvector: Ignored, always uses in-memory storage
         """
         self.use_pgvector = False
-        self.chunks = []
-        self.embeddings = []
+        self.connection = None
+        self._chunk_by_id = {}
+        self._chunk_index = []
 
-    def add_chunks(self, chunks: List[dict], embeddings: np.ndarray):
+    @property
+    def in_memory_store(self):
+        """Dict-like interface compatible with real VectorStore.in_memory_store."""
+        return self._chunk_by_id
+
+    @property
+    def chunks(self):
+        return [self._chunk_by_id[cid]["chunk"] for cid in self._chunk_index]
+
+    @property
+    def embeddings(self):
+        if not self._chunk_index:
+            return np.zeros((0, 384))
+        return np.vstack([self._chunk_by_id[cid]["embedding"] for cid in self._chunk_index])
+
+    def add_chunks(self, chunks: List[dict], embeddings: np.ndarray) -> List[str]:
         """
-        Add chunks and embeddings to the store.
+        Add chunks and embeddings to the store (upsert on chunk_id).
 
         Args:
             chunks: List of chunk dictionaries
             embeddings: NumPy array of embeddings
+
+        Returns:
+            List of chunk IDs stored
         """
-        self.chunks.extend(chunks)
-        if len(self.embeddings) == 0:
-            self.embeddings = embeddings
-        else:
-            self.embeddings = np.vstack([self.embeddings, embeddings])
+        if len(chunks) != len(embeddings):
+            raise ValueError("chunks and embeddings length mismatch")
+        stored_ids = []
+        for i, chunk in enumerate(chunks):
+            cid = chunk.get("chunk_id") or f"fake_chunk_{len(self._chunk_index) + i}"
+            if cid not in self._chunk_by_id:
+                self._chunk_index.append(cid)
+            self._chunk_by_id[cid] = {
+                "chunk": chunk,
+                "embedding": np.asarray(embeddings[i]).reshape(-1),
+            }
+            stored_ids.append(cid)
+        return stored_ids
 
     def search(self, query_embedding: np.ndarray, top_k: int = 5,
                filter_metadata: dict = None) -> List[dict]:
@@ -122,25 +150,21 @@ class FakeVectorStore:
         Args:
             query_embedding: Query embedding vector
             top_k: Number of results to return
-            filter_metadata: Optional metadata filters (e.g., {"document_id": "doc1", "page_number": 1})
+            filter_metadata: Optional metadata filters
 
         Returns:
-            List of chunk dictionaries with similarity scores
+            List of chunk dictionaries with similarity scores and contract fields.
         """
-        if len(self.embeddings) == 0:
+        if not self._chunk_index:
             return []
 
-        # Calculate cosine similarity with NumPy so the CI fake stays small and
-        # does not pull the prediction module's scikit-learn dependency.
-        query_vector = np.asarray(query_embedding, dtype=float).reshape(-1)
-        embedding_matrix = np.asarray(self.embeddings, dtype=float)
-        denominator = np.linalg.norm(embedding_matrix, axis=1) * np.linalg.norm(query_vector)
-        denominator = np.where(denominator == 0, 1.0, denominator)
-        similarities = embedding_matrix @ query_vector / denominator
+        from sklearn.metrics.pairwise import cosine_similarity
+        emb_matrix = np.vstack([self._chunk_by_id[cid]["embedding"] for cid in self._chunk_index])
+        similarities = cosine_similarity([query_embedding], emb_matrix)[0]
 
-        # Apply filters
         filtered_indices = []
-        for i, chunk in enumerate(self.chunks):
+        for i, cid in enumerate(self._chunk_index):
+            chunk = self._chunk_by_id[cid]["chunk"]
             matches = True
             if filter_metadata:
                 for key, value in filter_metadata.items():
@@ -149,7 +173,8 @@ class FakeVectorStore:
                             matches = False
                             break
                     elif key == "page_number":
-                        if chunk.get("metadata", {}).get("page_number") != value:
+                        page = chunk.get("page_number") or chunk.get("metadata", {}).get("page_number")
+                        if page != value:
                             matches = False
                             break
                     else:
@@ -163,18 +188,44 @@ class FakeVectorStore:
             return []
 
         filtered_similarities = similarities[filtered_indices]
-        filtered_chunks = [self.chunks[i] for i in filtered_indices]
-
-        # Sort by similarity and take top_k
         sorted_indices = np.argsort(filtered_similarities)[::-1][:top_k]
 
         results = []
         for idx in sorted_indices:
-            chunk = filtered_chunks[idx].copy()
-            chunk["score"] = float(filtered_similarities[idx])
-            chunk["similarity_score"] = float(filtered_similarities[idx])
-            # Add page_number as top-level field like real VectorStore
-            chunk["page_number"] = chunk.get("metadata", {}).get("page_number")
+            original_idx = filtered_indices[idx]
+            cid = self._chunk_index[original_idx]
+            chunk = self._chunk_by_id[cid]["chunk"].copy()
+            metadata = chunk.get("metadata", {}) or {}
+            score = float(filtered_similarities[idx])
+            normalized_score = max(0.0, min(1.0, (score + 1.0) / 2.0))
+
+            page_number = (
+                chunk.get("page_number")
+                or metadata.get("page_number")
+            )
+            file_name = (
+                chunk.get("file_name")
+                or metadata.get("file_name")
+                or metadata.get("source")
+            )
+            document_external_id = (
+                chunk.get("document_external_id")
+                or metadata.get("document_external_id")
+            )
+            document_db_id = chunk.get("document_db_id") or chunk.get("document_id_fk")
+
+            chunk["score"] = normalized_score
+            chunk["similarity_score"] = normalized_score
+            chunk["page_number"] = page_number
+            chunk["file_name"] = file_name
+            chunk["text"] = chunk.get("chunk_text") or chunk.get("text", "")
+            chunk["chunk_text"] = chunk.get("chunk_text") or chunk.get("text", "")
+            if document_external_id is not None:
+                chunk["document_external_id"] = document_external_id
+            if document_db_id is not None:
+                chunk["document_db_id"] = document_db_id
+            if "id" not in chunk:
+                chunk["id"] = cid
             results.append(chunk)
 
         return results

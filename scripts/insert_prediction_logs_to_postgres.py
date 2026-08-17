@@ -47,6 +47,17 @@ INSERT INTO prediction_logs (
     %(ingestion_run_id)s,
     %(created_at)s
 )
+ON CONFLICT (document_external_id, ingestion_run_id, model_name)
+DO UPDATE SET
+    source_id = EXCLUDED.source_id,
+    document_id = EXCLUDED.document_id,
+    model_version = EXCLUDED.model_version,
+    input_payload = EXCLUDED.input_payload,
+    prediction_result = EXCLUDED.prediction_result,
+    predicted_label = EXCLUDED.predicted_label,
+    confidence_score = EXCLUDED.confidence_score,
+    status = EXCLUDED.status,
+    review_reason = EXCLUDED.review_reason
 RETURNING id;
 """
 

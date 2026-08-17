@@ -200,8 +200,128 @@ def _build_markdown_report(report: dict) -> str:
     return "\n".join(lines)
 
 
+def generate_real_data_report(
+    payloads_path: str = None,
+    output_report_path: str = None,
+) -> None:
+    """Generate real-data evaluation report from canonical 20 payloads."""
+    import json
+    from ai.prediction.inference import predict_document_type
+
+    if payloads_path is None:
+        payloads_path = os.path.join(_PROJECT_ROOT, "tests", "ai_tests", "canonical_20_payloads.json")
+    if output_report_path is None:
+        output_report_path = os.path.join(_PROJECT_ROOT, "docs", "week8_real_data_evaluation.md")
+
+    if not os.path.exists(payloads_path):
+        print(f"Payloads file not found: {payloads_path}")
+        return
+
+    with open(payloads_path, "r", encoding="utf-8") as f:
+        payloads = json.load(f)
+
+    # Ground truth mapping
+    ground_truth = {
+        "doc_contract_01": "contract",
+        "doc_contract_02": "contract",
+        "doc_financial_01": "financial_statement",
+        "doc_financial_02": "financial_statement",
+        "doc_invoice_01": "invoice",
+        "doc_invoice_02": "invoice",
+        "doc_policy_01": "policy_document",
+        "doc_policy_02": "policy_document",
+        "doc_report_01": "report",
+        "doc_report_02": "report",
+        "doc_paper_01": "research_paper",
+        "doc_paper_02": "research_paper",
+        "doc_resume_01": "resume",
+        "doc_resume_02": "resume",
+        "doc_edge_short_text": None,
+        "doc_missing_db_id": "contract",
+        "doc_missing_source_name": "report",
+        "doc_unknown_types": "report",
+        "doc_empty_extracted_text": None,
+        "doc_tricky_invoice": "invoice"
+    }
+
+    y_true = []
+    y_pred = []
+    confidences = []
+    statuses = []
+
+    for payload in payloads:
+        doc_id = payload.get("document_external_id")
+        gt = ground_truth.get(doc_id)
+
+        result = predict_document_type(payload)
+        pred = result.get("predicted_document_type")
+        confidence = result.get("confidence", 0.0)
+        status = result.get("status")
+
+        confidences.append(confidence)
+        statuses.append(status)
+
+        if gt is not None and pred is not None:
+            y_true.append(gt)
+            y_pred.append(pred)
+
+    # Calculate metrics
+    accuracy = accuracy_score(y_true, y_pred) if y_true else 0.0
+    precision, recall, f1, _ = precision_recall_fscore_support(
+        y_true, y_pred, average="macro", zero_division=0
+    ) if y_true else (0.0, 0.0, 0.0, None)
+
+    review_count = sum(1 for s in statuses if s == "needs_review")
+    total_count = len(payloads)
+    review_rate = review_count / total_count if total_count else 0.0
+
+    bins = [0.0, 0.3, 0.5, 0.8, 1.0]
+    hist, _ = np.histogram(confidences, bins=bins)
+
+    lines = []
+    lines.append("# Week 8 Real Data Prediction Evaluation\n")
+    lines.append(f"**Evaluated at**: {datetime.now(timezone.utc).isoformat()}  ")
+    lines.append(f"**Total Payloads**: {total_count}  ")
+    lines.append(f"**Evaluated Samples (excluding edge cases)**: {len(y_true)}\n")
+
+    lines.append("## Overall Performance Metrics\n")
+    lines.append("| Metric | Value | Description |")
+    lines.append("|---|---|---|")
+    lines.append(f"| Accuracy | {accuracy:.2%} | Percentage of correct classifications |")
+    lines.append(f"| Macro Precision | {precision:.4f} | Macro-averaged precision |")
+    lines.append(f"| Macro Recall | {recall:.4f} | Macro-averaged recall |")
+    lines.append(f"| Macro F1 | {f1:.4f} | Macro-averaged F1 score |")
+    lines.append(f"| Review Rate | {review_rate:.2%} | Percentage of items routed to human review |")
+    lines.append("")
+
+    lines.append("## Confidence Calibration Distribution\n")
+    lines.append("| Confidence Range | Count | Percentage |")
+    lines.append("|---|---|---|")
+    lines.append(f"| [0.0 - 0.3) | {hist[0]} | {hist[0]/total_count:.2%} |")
+    lines.append(f"| [0.3 - 0.5) | {hist[1]} | {hist[1]/total_count:.2%} |")
+    lines.append(f"| [0.5 - 0.8) | {hist[2]} | {hist[2]/total_count:.2%} |")
+    lines.append(f"| [0.8 - 1.0] | {hist[3]} | {hist[3]/total_count:.2%} |")
+    lines.append("")
+
+    lines.append("## Status Breakdown\n")
+    status_counts = {}
+    for s in statuses:
+        status_counts[s] = status_counts.get(s, 0) + 1
+    lines.append("| Status | Count | Percentage |")
+    lines.append("|---|---|---|")
+    for s, c in status_counts.items():
+        lines.append(f"| `{s}` | {c} | {c/total_count:.2%} |")
+    lines.append("")
+
+    os.makedirs(os.path.dirname(output_report_path), exist_ok=True)
+    with open(output_report_path, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines))
+    print(f"Generated Week 8 Real Data Evaluation Report -> {output_report_path}")
+
+
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
     report = evaluate()
     save_evaluation_report(report)
+    generate_real_data_report()
     print("\n[OK] Evaluation complete!")

@@ -109,7 +109,7 @@ class Retriever:
         """
         Extract source citations from retrieved results (Week 5 fix).
 
-        Citations are made unique by: file_name, page_number, chunk_id
+        Citations are made unique by: file_name, page_number, chunk_id.
 
         Args:
             results: List of retrieved chunks
@@ -121,35 +121,91 @@ class Retriever:
         seen_sources = set()
 
         for result in results:
-            # Fix chunk_id fallback (Week 5)
             chunk_id = result.get("chunk_id", result.get("id", ""))
             metadata = result.get("metadata", {}) or {}
             file_name = (
-                metadata.get("file_name")
+                result.get("file_name")
+                or metadata.get("file_name")
                 or metadata.get("source")
-                or result.get("file_name")
                 or "Unknown"
             )
-            # Fix page_number fallback (Week 5)
             page_number = (
                 result.get("page_number")
                 or metadata.get("page_number")
             )
             similarity = result.get("similarity_score", result.get("score", 0))
+            document_external_id = (
+                result.get("document_external_id")
+                or metadata.get("document_external_id")
+            )
+            document_db_id = result.get("document_db_id") or result.get("document_id")
 
-            # Make citations unique by file_name, page_number, chunk_id (Week 5)
             key = (file_name, page_number, chunk_id)
-            if key not in seen_sources:
+            if key not in seen_sources and chunk_id:
                 seen_sources.add(key)
-                document_external_id = metadata.get("document_external_id") or result.get("document_external_id")
-                document_db_id = result.get("document_id")
-                citations.append({
+                citation = {
                     "file_name": file_name,
                     "page_number": page_number,
                     "chunk_id": chunk_id,
                     "similarity": similarity,
-                    "document_external_id": document_external_id,
-                    "document_db_id": document_db_id
-                })
+                }
+                if document_external_id is not None:
+                    citation["document_external_id"] = document_external_id
+                if document_db_id is not None:
+                    citation["document_db_id"] = document_db_id
+                citations.append(citation)
 
         return citations
+
+    def validate_citations(self, citations: List[Dict], retrieved_chunks: List[Dict]) -> Dict:
+        """
+        Validate that citations correspond one-to-one with retrieved chunks.
+
+        Ensures:
+        1. Every citation references a chunk_id that exists in retrieved_chunks.
+        2. Every chunk in retrieved_chunks has a matching citation (by chunk_id).
+        3. No duplicate citation chunk_ids.
+        4. All required citation fields are present.
+
+        Args:
+            citations: List of citation dicts from get_source_citations()
+            retrieved_chunks: List of retrieved chunk dicts
+
+        Returns:
+            Dict with 'is_valid' bool and 'errors'/'warnings' lists
+        """
+        result = {"is_valid": True, "errors": [], "warnings": []}
+
+        required_citation_fields = ["file_name", "page_number", "chunk_id"]
+
+        retrieved_chunk_ids = set()
+        for chunk in retrieved_chunks:
+            cid = chunk.get("chunk_id", chunk.get("id"))
+            if cid:
+                retrieved_chunk_ids.add(cid)
+
+        citation_chunk_ids = set()
+        for i, citation in enumerate(citations):
+            for field in required_citation_fields:
+                if field not in citation:
+                    result["is_valid"] = False
+                    result["errors"].append(f"Citation #{i} missing required field: {field}")
+
+            cid = citation.get("chunk_id")
+            if cid:
+                if cid in citation_chunk_ids:
+                    result["warnings"].append(f"Duplicate citation chunk_id: {cid}")
+                citation_chunk_ids.add(cid)
+                if cid not in retrieved_chunk_ids:
+                    result["is_valid"] = False
+                    result["errors"].append(
+                        f"Citation chunk_id {cid!r} not found in retrieved_chunks"
+                    )
+
+        for cid in retrieved_chunk_ids:
+            if cid not in citation_chunk_ids:
+                result["warnings"].append(
+                    f"Retrieved chunk {cid!r} does not have a matching citation"
+                )
+
+        return result

@@ -28,13 +28,17 @@
       "owner_name": "Ly Tan Phat",
       "owner_github": "TanPhat0507",
       "source_repository": "https://github.com/QuanSkillOfficial/DataVision_Phat",
-      "source_sha": "b23cf0b1fd2312914acb4b8c870ba60122fa17e1",
-      "source_commit_url": "https://github.com/QuanSkillOfficial/DataVision_Phat/commit/b23cf0b1fd2312914acb4b8c870ba60122fa17e1",
+      "source_sha": "ad803cc556d960070d0c99e7401d22ad0d9df133",
+      "source_commit_url": "https://github.com/QuanSkillOfficial/DataVision_Phat/commit/ad803cc556d960070d0c99e7401d22ad0d9df133",
       "integration_mode": "imported-and-adapted",
       "canonical_paths": [
         {
           "path": "week7/database",
           "tree_sha": "9c3ffe862b46d4d30ca5114ea29a164c11921054"
+        },
+        {
+          "path": "week8/database",
+          "tree_sha": "db1cc78eb6c1d56ea4594b6660a3aa75b089692c"
         },
         {
           "path": "deployment/database/init",
@@ -44,6 +48,8 @@
       "required_files": [
         "week7/database/scripts/ci_database_smoke_test.py",
         "week7/database/requirements-ci.txt",
+        "week8/database/migrations/0004_prediction_reviewer_corrections.sql",
+        "week8/database/tests/integration/test_backup_restore_gates.py",
         "deployment/database/init/10_phat_schema_v4_fixed.sql",
         "deployment/database/init/20_phat_schema_and_views.sql"
       ]
@@ -53,23 +59,24 @@
       "owner_name": "Nguyen The Lap",
       "owner_github": "Nguyen-The-Lap",
       "source_repository": "https://github.com/QuanSkillOfficial/DataVision_Lap",
-      "source_sha": "b1275fda7d3222d3c82972d9c224ddf858fc291f",
-      "source_commit_url": "https://github.com/QuanSkillOfficial/DataVision_Lap/commit/b1275fda7d3222d3c82972d9c224ddf858fc291f",
+      "source_sha": "25381241ffda53e7481d15af6f260204592066c9",
+      "source_commit_url": "https://github.com/QuanSkillOfficial/DataVision_Lap/commit/25381241ffda53e7481d15af6f260204592066c9",
       "integration_mode": "imported-and-adapted",
       "canonical_paths": [
         {
           "path": "ai/rag",
-          "tree_sha": "de90a47db20b140ea0236ff4c91ca8c5b0f189ae"
+          "tree_sha": "69f7e8ddafbf8ce767bb7078b0bdee13fcc444df"
         },
         {
           "path": "ai/ai_tests",
-          "tree_sha": "7cea6c713619c61282ece095886157b816fb2d64"
+          "tree_sha": "30ea2a8eaa6f13c32f5acaf7ce0c5c18dfbdc673"
         }
       ],
       "required_files": [
         "ai/rag/rag_service.py",
         "ai/rag/scripts/week7_rag_ci_smoke_test.py",
         "ai/rag/requirements-ci.txt",
+        "ai/ai_tests/test_rag_reindex_idempotency.py",
         "ai/ai_tests/test_rag_response_contract.py"
       ]
     },
@@ -78,22 +85,25 @@
       "owner_name": "Nguyen Tuong",
       "owner_github": "wally205",
       "source_repository": "https://github.com/QuanSkillOfficial/DataVision_Tuong",
-      "source_sha": "657c839b7471dcf5151c2314cfbe71b84a1a983f",
-      "source_commit_url": "https://github.com/QuanSkillOfficial/DataVision_Tuong/commit/657c839b7471dcf5151c2314cfbe71b84a1a983f",
+      "source_sha": "51a29c4f5a3db43d3661678494b75455853ec73c",
+      "source_commit_url": "https://github.com/QuanSkillOfficial/DataVision_Tuong/commit/51a29c4f5a3db43d3661678494b75455853ec73c",
       "integration_mode": "imported-and-adapted",
       "canonical_paths": [
         {
           "path": "ai/prediction",
-          "tree_sha": "29d6f9258e4f24846e821183448a2edf084a7cb1"
+          "tree_sha": "33b85d9772c81d156b9f13ea844d37c117749912"
         },
         {
           "path": "tests/ai_tests",
-          "tree_sha": "a25b164b175fdf95ad2d7d5f97cbd19d5a8af1f6"
+          "tree_sha": "fd0a2a69005f756718e7a31a8ea2ca5da6924c57"
         }
       ],
       "required_files": [
         "ai/prediction/prediction_service.py",
         "ai/prediction/requirements-ci.txt",
+        "ai/prediction/acceptance_gate.py",
+        "ai/prediction/evaluation/duy_week7_labels.json",
+        "ai/prediction/reviewer_corrections.py",
         "scripts/week7_prediction_ci_smoke_test.py",
         "tests/ai_tests/test_prediction_service.py"
       ]
@@ -103,19 +113,30 @@
       "owner_name": "Nguyen Tien Hung",
       "owner_github": "ronalhung03",
       "source_repository": "https://github.com/QuanSkillOfficial/DataVision_Hung",
-      "source_sha": "2578af527696b9447db20a8194132a1eec394007",
-      "source_commit_url": "https://github.com/QuanSkillOfficial/DataVision_Hung/commit/2578af527696b9447db20a8194132a1eec394007",
+      "source_sha": "231573435586fd4923613965a9b4e15879cf0fef",
+      "source_commit_url": "https://github.com/QuanSkillOfficial/DataVision_Hung/commit/231573435586fd4923613965a9b4e15879cf0fef",
       "integration_mode": "imported-and-adapted",
       "canonical_paths": [
         {
           "path": "demo",
-          "tree_sha": "a14d8af2d51d67e23328eb3485444fb8ca3ac511"
+          "tree_sha": "ecc6acdb4510c69c2f30d53aeb21bb3f43e9e88c"
+        },
+        {
+          "path": "tests/e2e",
+          "tree_sha": "2c9ed74d2ed0e12d0024cb3fcf99829971789586"
+        },
+        {
+          "path": "deployment/staging",
+          "tree_sha": "645211f385fed92ea9065cc8bf9df4564fc62966"
         }
       ],
       "required_files": [
         "demo/streamlit_app.py",
         "demo/services/backend_client.py",
         "demo/requirements-ci.txt",
+        "scripts/week8_backend_mode_gate.py",
+        "scripts/week8_run_browser_e2e.py",
+        "deployment/cloud/docker-compose.staging-proxy.yml",
         "scripts/week7_ui_ci_smoke_test.py",
         "tests/test_backend_contract_smoke.py"
       ]

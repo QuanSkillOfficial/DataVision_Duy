@@ -218,6 +218,9 @@ class VectorStore:
             cursor = self.connection.cursor()
             chunk_ids = []
 
+            cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'document_chunks'")
+            available_columns = {row[0] for row in cursor.fetchall()}
+
             for chunk, embedding in zip(chunks, embeddings):
                 chunk_id = chunk["chunk_id"]
                 document_id = chunk.get("document_id_fk")
@@ -231,21 +234,16 @@ class VectorStore:
                     except (TypeError, ValueError):
                         document_id = None
                 chunk_text = chunk["chunk_text"]
-                # Use chunk_metadata instead of metadata (Phat's schema)
                 chunk_metadata = json.dumps(chunk.get("metadata", {}))
                 page_number = chunk.get("metadata", {}).get("page_number")
                 start_char = chunk.get("start_char")
                 end_char = chunk.get("end_char")
 
-                # Convert embedding to pgvector format
                 embedding_array = np.asarray(embedding).reshape(-1)
                 embedding_str = str(embedding_array.tolist())
 
-                cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'document_chunks'")
-                available_columns = {row[0] for row in cursor.fetchall()}
                 insert_columns = ["chunk_id", "document_id", "chunk_text", "embedding"]
                 insert_values = [chunk_id, document_id, chunk_text, embedding_str]
-                insert_sql = "INSERT INTO document_chunks ({columns}) VALUES ({placeholders})"
 
                 if "page_number" in available_columns:
                     insert_columns.append("page_number")
@@ -263,14 +261,17 @@ class VectorStore:
                     insert_columns.append("end_char")
                     insert_values.append(end_char)
 
-                insert_sql = insert_sql.format(
+                insert_sql = "INSERT INTO document_chunks ({columns}) VALUES ({placeholders})".format(
                     columns=", ".join(insert_columns),
                     placeholders=", ".join(["%s"] * len(insert_columns)),
                 )
-                upsert_sql = insert_sql.replace("INSERT INTO document_chunks", "INSERT INTO document_chunks")
-                on_conflict_clause = " ON CONFLICT (chunk_id) DO UPDATE SET embedding = EXCLUDED.embedding"
+                on_conflict_clause = " ON CONFLICT (chunk_id) DO UPDATE SET embedding = EXCLUDED.embedding, chunk_text = EXCLUDED.chunk_text"
                 if "chunk_metadata" in available_columns:
                     on_conflict_clause += ", chunk_metadata = EXCLUDED.chunk_metadata"
+                if "page_number" in available_columns:
+                    on_conflict_clause += ", page_number = EXCLUDED.page_number"
+                if "chunk_index" in available_columns:
+                    on_conflict_clause += ", chunk_index = EXCLUDED.chunk_index"
                 cursor.execute(insert_sql + on_conflict_clause, insert_values)
 
                 chunk_ids.append(chunk_id)
@@ -285,21 +286,34 @@ class VectorStore:
             raise
 
     def _add_chunks_in_memory(self, chunks: List[Dict], embeddings: np.ndarray) -> List[str]:
-        """Add chunks to in-memory store while preserving chunk IDs."""
+        """Add chunks to in-memory store while preserving chunk IDs, upserting duplicates."""
         chunk_ids = []
 
         for chunk, embedding in zip(chunks, embeddings):
             chunk_id = chunk["chunk_id"]
+            document_external_id = (
+                chunk.get("document_external_id")
+                or chunk.get("metadata", {}).get("document_external_id")
+            )
+            document_db_id = chunk.get("document_id_fk") or chunk.get("document_db_id")
+            file_name = (
+                chunk.get("file_name")
+                or chunk.get("metadata", {}).get("file_name")
+                or chunk.get("metadata", {}).get("source")
+            )
 
             self.in_memory_store[chunk_id] = {
                 "chunk_id": chunk["chunk_id"],
                 "document_id": chunk["document_id"],
+                "document_db_id": document_db_id,
+                "document_external_id": document_external_id,
+                "file_name": file_name,
                 "chunk_text": chunk["chunk_text"],
                 "embedding": embedding,
                 "metadata": chunk.get("metadata", {}),
                 "start_char": chunk.get("start_char"),
                 "end_char": chunk.get("end_char"),
-                "chunk_index": chunk.get("chunk_index", 0)
+                "chunk_index": chunk.get("chunk_index", 0),
             }
 
             chunk_ids.append(chunk_id)
@@ -363,7 +377,6 @@ class VectorStore:
             cursor = self.connection.cursor()
             embedding_str = str(query_embedding.tolist())
 
-            # Build WHERE clause for filtering
             where_clause = "WHERE 1=1"
             params = [embedding_str]
 
@@ -395,15 +408,25 @@ class VectorStore:
                 import json
                 similarity = float(row[5])
                 normalized_similarity = max(0.0, min(1.0, (similarity + 1.0) / 2.0))
+                metadata = json.loads(row[4]) if isinstance(row[4], str) else (row[4] or {})
+                file_name = (
+                    metadata.get("file_name")
+                    or metadata.get("source")
+                )
+                document_external_id = metadata.get("document_external_id")
+                document_db_id = row[1]
                 results.append({
                     "chunk_id": row[0],
                     "document_id": row[1],
+                    "document_db_id": document_db_id,
+                    "document_external_id": document_external_id,
+                    "file_name": file_name,
                     "text": row[3],
                     "chunk_text": row[3],
                     "page_number": row[2],
-                    "metadata": json.loads(row[4]) if isinstance(row[4], str) else row[4],
+                    "metadata": metadata,
                     "score": normalized_similarity,
-                    "similarity_score": normalized_similarity
+                    "similarity_score": normalized_similarity,
                 })
 
             return results
@@ -419,12 +442,12 @@ class VectorStore:
         filter_metadata: Optional[Dict]
     ) -> List[Dict]:
         """Search in-memory store with cosine similarity."""
+        from sklearn.metrics.pairwise import cosine_similarity
+
         results = []
-        query_vector = np.asarray(query_embedding, dtype=float).reshape(-1)
-        query_norm = np.linalg.norm(query_vector)
+        query_embedding = query_embedding.reshape(1, -1)
 
         for chunk_id, chunk_data in self.in_memory_store.items():
-            # Apply metadata filtering
             if filter_metadata:
                 if "document_id" in filter_metadata:
                     if chunk_data.get("document_id") != filter_metadata["document_id"]:
@@ -436,22 +459,38 @@ class VectorStore:
                 if not self._metadata_matches_filter(chunk_data, filter_metadata):
                     continue
 
-            embedding = np.asarray(chunk_data["embedding"], dtype=float).reshape(-1)
-            denominator = query_norm * np.linalg.norm(embedding)
-            similarity = float(np.dot(query_vector, embedding) / denominator) if denominator else 0.0
+            embedding = chunk_data["embedding"].reshape(1, -1)
+            similarity = cosine_similarity(query_embedding, embedding)[0][0]
             normalized_similarity = max(0.0, min(1.0, (float(similarity) + 1.0) / 2.0))
 
-            page_number = chunk_data.get("metadata", {}).get("page_number")
+            metadata = chunk_data.get("metadata", {}) or {}
+            page_number = (
+                chunk_data.get("page_number")
+                or metadata.get("page_number")
+            )
+            file_name = (
+                chunk_data.get("file_name")
+                or metadata.get("file_name")
+                or metadata.get("source")
+            )
+            document_external_id = (
+                chunk_data.get("document_external_id")
+                or metadata.get("document_external_id")
+            )
+            document_db_id = chunk_data.get("document_db_id")
             results.append({
                 "chunk_id": chunk_data["chunk_id"],
                 "document_id": chunk_data["document_id"],
+                "document_db_id": document_db_id,
+                "document_external_id": document_external_id,
+                "file_name": file_name,
                 "id": chunk_id,
                 "text": chunk_data["chunk_text"],
                 "chunk_text": chunk_data["chunk_text"],
                 "page_number": page_number,
-                "metadata": chunk_data.get("metadata", {}),
+                "metadata": metadata,
                 "score": normalized_similarity,
-                "similarity_score": normalized_similarity
+                "similarity_score": normalized_similarity,
             })
 
         results.sort(key=lambda x: x["score"], reverse=True)
@@ -459,10 +498,50 @@ class VectorStore:
 
     def delete(self, chunk_ids: List[str]) -> bool:
         """Remove chunks by their IDs."""
+        if self.use_pgvector and self.connection:
+            return self._delete_chunks_pgvector(chunk_ids)
+
         for chunk_id in chunk_ids:
             if chunk_id in self.in_memory_store:
                 del self.in_memory_store[chunk_id]
         return True
+
+    def _delete_chunks_pgvector(self, chunk_ids: List[str]) -> bool:
+        """Delete chunks from the pgvector-backed table by their chunk_ids."""
+        if not self.connection:
+            raise RuntimeError("Not connected to pgvector")
+
+        if not chunk_ids:
+            return True
+
+        try:
+            cursor = self.connection.cursor()
+            # Build placeholder list safely
+            placeholders = ", ".join(["%s"] * len(chunk_ids))
+            sql = f"DELETE FROM document_chunks WHERE chunk_id IN ({placeholders})"
+            cursor.execute(sql, chunk_ids)
+            self.connection.commit()
+            return True
+        except Exception as e:
+            print(f"Error deleting chunks from pgvector: {e}")
+            self.connection.rollback()
+            return False
+
+    def get_chunk_ids_for_document(self, document_db_id: int) -> List[str]:
+        """Return a list of chunk_ids currently stored for a given document id."""
+        if self.use_pgvector and self.connection:
+            try:
+                cursor = self.connection.cursor()
+                cursor.execute("SELECT chunk_id FROM document_chunks WHERE document_id = %s", (document_db_id,))
+                ids = [row[0] for row in cursor.fetchall()]
+                cursor.close()
+                return ids
+            except Exception as e:
+                print(f"Error fetching chunk ids for document {document_db_id}: {e}")
+                return []
+
+        # In-memory store fallback
+        return [c["chunk_id"] for c in self.in_memory_store.values() if c.get("document_id") == document_db_id]
 
     def clear(self) -> bool:
         """Wipe all embeddings from the store."""

@@ -1,0 +1,34 @@
+[
+    {
+        "model_name": "document_classifier",
+        "model_version": "document_classifier_v1",
+        "predicted_label": "invoice",
+        "prediction_count": 2,
+        "avg_confidence": 0.6964999999999999,
+        "min_confidence": 0.6829
+    },
+    {
+        "model_name": "document_classifier",
+        "model_version": "document_classifier_v1",
+        "predicted_label": "report",
+        "prediction_count": 1,
+        "avg_confidence": 0.4184,
+        "min_confidence": 0.4184
+    },
+    {
+        "model_name": "document_classifier",
+        "model_version": "document_classifier_v1",
+        "predicted_label": null,
+        "prediction_count": 3,
+        "avg_confidence": 0.0,
+        "min_confidence": 0.0
+    },
+    {
+        "model_name": "document_classifier",
+        "model_version": "document_classifier_v1",
+        "predicted_label": "contract",
+        "prediction_count": 4,
+        "avg_confidence": 0.55855,
+        "min_confidence": 0.3839
+    }
+]

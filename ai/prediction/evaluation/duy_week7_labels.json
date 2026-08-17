@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "label_basis": "Week 8 task-contract review of Duy handoff document identities",
+  "payload_source_sha": "ca19091095809047a143536186bd76d03f728449",
+  "prediction_source_sha": "51a29c4f5a3db43d3661678494b75455853ec73c",
+  "labels_by_file": {
+    "01_doc_dataflow_technical_report.json": "report",
+    "02_doc_dataflow_technical_report_intro_pages.json": "report",
+    "03_doc_dataflow_technical_report_architecture_page.json": "report",
+    "04_doc_dataflow_technical_report_related_work.json": "report",
+    "05_doc_superstore_sales_csv_summary.json": "report",
+    "06_doc_product_sales_region_excel_summary.json": "report",
+    "07_doc_dummyjson_products_api_summary.json": "report",
+    "08_doc_short_text_quality_gate.json": null,
+    "09_doc_empty_text_quality_gate.json": null,
+    "10_doc_missing_file_name_validation.json": null,
+    "11_doc_dataflow_system_operators_pages.json": "report",
+    "12_doc_dataflow_pipeline_api_pages.json": "report",
+    "13_doc_dataflow_agent_workflow_pages.json": "report",
+    "14_doc_dataflow_agentic_rag_evaluation_pages.json": "report",
+    "15_doc_superstore_order_profitability_sample.json": "report",
+    "16_doc_product_sales_region_sample.json": "report",
+    "17_doc_dummyjson_inventory_sample.json": "report",
+    "18_doc_dataflow_technical_notes_markdown.json": "report",
+    "19_missing_document_external_id.json": null,
+    "20_doc_invalid_file_size_validation.json": null
+  }
+}

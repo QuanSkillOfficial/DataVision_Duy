@@ -1,0 +1,13 @@
+{
+  "label": "after_run2",
+  "timestamp": "2026-08-13T08:26:14.304978",
+  "counts": {
+    "sources": 4,
+    "documents": 1,
+    "document_pages": 36,
+    "document_chunks": 293,
+    "structured_records": 230,
+    "ingestion_logs": 4,
+    "prediction_logs": 10
+  }
+}

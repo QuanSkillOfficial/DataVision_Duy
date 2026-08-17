@@ -50,7 +50,7 @@ jobs:
   data-db-loading-ci:
     needs: module-parity
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     services:
       postgres:
         image: pgvector/pgvector:pg16
@@ -173,7 +173,7 @@ jobs:
   database-ci:
     needs: module-parity
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     services:
       postgres:
         image: pgvector/pgvector:pg16
@@ -186,6 +186,12 @@ jobs:
         options: >-
           --health-cmd "pg_isready -U datavision -d datavision_db"
           --health-interval 5s --health-timeout 5s --health-retries 12
+    env:
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_NAME: datavision_db
+      DB_USER: datavision
+      DB_PASSWORD: datavision123
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -201,6 +207,14 @@ jobs:
           python -m pip install -r requirements-ci.txt
           python -m pip install -r week7/database/requirements-ci.txt
           python -m pip check
+      - name: Install PostgreSQL backup and restore clients
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+      - name: Run Phat Week 8 migration, lifecycle, backup and restore gates
+        run: |
+          python -m pytest week8/database/tests/unit week8/database/tests/integration -q
+          python week8/database/scripts/scan_for_secrets.py
       - name: Run database setup
         env:
           DB_HOST: localhost
@@ -269,6 +283,8 @@ jobs:
         run: python scripts/week7_prediction_ci_smoke_test.py
       - name: Run prediction owner tests
         run: pytest tests/ai_tests/ -q
+      - name: Verify labelled Duy payload evaluation
+        run: python scripts/week8_evaluate_duy_prediction.py --check
 
   ui-ci:
     needs: module-parity

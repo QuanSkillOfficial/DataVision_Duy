@@ -18,6 +18,7 @@ COPY --chown=datavision:datavision ai /app/ai
 COPY --chown=datavision:datavision backend_stub /app/backend_stub
 COPY --chown=datavision:datavision scripts /app/scripts
 COPY --chown=datavision:datavision week7 /app/week7
+COPY --chown=datavision:datavision week8 /app/week8
 COPY --chown=datavision:datavision deployment /app/deployment
 COPY --chown=datavision:datavision logs/runs /app/logs/runs
 COPY --chown=datavision:datavision outputs /app/outputs
