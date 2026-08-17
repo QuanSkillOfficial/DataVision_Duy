@@ -325,7 +325,47 @@ uses. Owner: Duy / Phat.
 
 ---
 
-## 9. UI-side changes delivered in this repository
+## 9. Shared pipeline: what `DataVision CI` reported
+
+`ui-week8.yml`, the UI module's own gates, passed on Linux CI on both pushed
+commits. The shared `DataVision CI` workflow, which passes on `main`, failed on
+this branch at `backend-contract-ci`. That failure was real, was reproduced
+locally, and is fixed here.
+
+That job starts the integrated backend with uvicorn and no database, so it runs in
+fixture mode, then runs `tests/test_backend_contract_smoke.py` against it. On
+`main` it ran an older, weaker copy of that file. This branch brings the Week 8
+version, and two of its expectations did not match the integrated backend.
+
+**`/api/health` was required to expose `ok`.** Nothing consumes it: the UI reads
+`service`, `release_sha` and `environment`, and the integrated backend spells
+liveness `healthy`, so requiring both names tested nothing. `ok` is no longer
+required - liveness is already covered by the envelope status. Instead the release
+SHA is required of any backend that does not declare fixture mode, which is the
+risk DV-HUNG-04 actually guards: a backend presenting itself as a deployment while
+hiding which build it is. In fixture mode the backend says so
+(`metadata.mode: "fixture"`, `backend_validation_pending: true`) and the UI
+correctly renders `release_match` as "unknown" rather than claiming a match.
+
+**`ask_rag` status `retrieval_only` was rejected.** The integrated RAG service
+returns it - chunks retrieved, no answer generated - so it is a real state of the
+contract and the UI has to render it rather than treat it as unknown. Whether such
+an answer may be *accepted* for a release is a separate gate: the review requires
+staging acceptance to reject fallback-only answers (DV-LAP-03).
+
+Verified after the change: 17 passed / 1 skipped against the integrated backend in
+fixture mode, and the same against it in staging mode with a live database and a
+real release SHA. The one skip is the deliberate guard that runs only under
+`QS_REQUIRE_BACKEND_TESTS=true`; the UI module's own gate sets it and runs all 18
+with none skipped.
+
+One consequence, also fixed: the gate now labels the stub it starts, defaulting
+`QS_RELEASE_SHA` to `local-gate-run`. An unlabelled stub would fail the tightened
+health contract, and would produce evidence naming no build.
+
+---
+
+## 10. UI-side changes delivered in this repository
 
 | Change | Task | Why |
 |---|---|---|
@@ -339,7 +379,7 @@ uses. Owner: Duy / Phat.
 
 ---
 
-## 10. Status after this change
+## 11. Status after this change
 
 | Task | State | Remaining |
 |---|---|---|

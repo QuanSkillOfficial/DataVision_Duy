@@ -105,6 +105,13 @@ def _start_stub(port: int) -> subprocess.Popen:
     env = dict(os.environ)
     env["BACKEND_HOST"] = "127.0.0.1"
     env["BACKEND_PORT"] = str(port)
+    # The stub has to name a build. The health contract requires any backend not
+    # declaring fixture mode to report its release SHA, so an unlabelled stub
+    # would fail that check - and an unlabelled run would produce evidence that
+    # names no build, which is what the review rejects. CI passes the real SHA;
+    # a local run is labelled as local so it cannot be mistaken for one.
+    env.setdefault("QS_RELEASE_SHA", "local-gate-run")
+    env.setdefault("QS_ENVIRONMENT", "local")
     return subprocess.Popen(
         [sys.executable, str(contract_stub_path())],
         env=env,
