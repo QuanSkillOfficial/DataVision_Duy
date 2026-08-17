@@ -1,8 +1,8 @@
 # Week 3 Retrieval Evaluation Results
 
-**Test Date**: Week 3 (Monday Demo)
-**Embedding Model**: all-MiniLM-L6-v2 (384-dimensional)
-**Vector Store**: In-Memory + pgvector (prepared)
+**Test Date**: Week 3 (Monday Demo)  
+**Embedding Model**: all-MiniLM-L6-v2 (384-dimensional)  
+**Vector Store**: In-Memory + pgvector (prepared)  
 **Test Queries**: 10 manual evaluation + 3 automated checks
 
 ## Executive Summary
@@ -27,7 +27,7 @@
 **Document 1**: company_policy.pdf (3 pages)
 
 - **Page 1**: Refund Policy - 400 characters
-- **Page 2**: Returns Process - 380 characters
+- **Page 2**: Returns Process - 380 characters  
 - **Page 3**: Warranty and Guarantees - 420 characters
 
 **Total**: 3 pages, 1200 characters, ~20 chunks after splitting (chunk_size=150, overlap=20)
@@ -47,7 +47,7 @@ doc_001_page_2_chunk_000: "Returns Process For online purchases: Print..."
 
 ### Test 1: Refund Policy Query
 
-**Query**: "What is the refund policy?"
+**Query**: "What is the refund policy?"  
 **Expected**: Page 1 (Refund Policy)
 
 | Rank | Chunk ID | Page | Similarity | Content Match |
@@ -62,7 +62,7 @@ doc_001_page_2_chunk_000: "Returns Process For online purchases: Print..."
 
 ### Test 2: Returns Process Query
 
-**Query**: "How do I return items?"
+**Query**: "How do I return items?"  
 **Expected**: Page 2 (Returns Process)
 
 | Rank | Chunk ID | Page | Similarity | Content Match |
@@ -77,7 +77,7 @@ doc_001_page_2_chunk_000: "Returns Process For online purchases: Print..."
 
 ### Test 3: Warranty Query
 
-**Query**: "What is the warranty coverage?"
+**Query**: "What is the warranty coverage?"  
 **Expected**: Page 3 (Warranty and Guarantees)
 
 | Rank | Chunk ID | Page | Similarity | Content Match |
@@ -92,7 +92,7 @@ doc_001_page_2_chunk_000: "Returns Process For online purchases: Print..."
 
 ### Test 4: Refund Timeline Query
 
-**Query**: "How long do refunds take?"
+**Query**: "How long do refunds take?"  
 **Expected**: Page 1 (mentions 5-7 business days)
 
 | Rank | Chunk ID | Page | Similarity | Content Match |
@@ -107,7 +107,7 @@ doc_001_page_2_chunk_000: "Returns Process For online purchases: Print..."
 
 ### Test 5: Warranty Duration Query
 
-**Query**: "What is the warranty duration?"
+**Query**: "What is the warranty duration?"  
 **Expected**: Page 3 (1-year warranty)
 
 | Rank | Chunk ID | Page | Similarity | Content Match |
@@ -122,7 +122,7 @@ doc_001_page_2_chunk_000: "Returns Process For online purchases: Print..."
 
 ### Test 6: Return Shipping Query
 
-**Query**: "Is return shipping free?"
+**Query**: "Is return shipping free?"  
 **Expected**: Page 2 (mentions free shipping for items over $50)
 
 | Rank | Chunk ID | Page | Similarity | Content Match |
@@ -183,7 +183,7 @@ After chunking:
 ```
 Model: all-MiniLM-L6-v2
 Expected dimension: 384
-Actual: 384
+Actual: 384 
 ```
 
 **Result**:  PASS
@@ -215,7 +215,7 @@ Actual: 384
 MRR = (1/6) × Σ(1/rank_of_relevant_result)
     = (1/6) × (1/1 + 1/1 + 1/1 + 1/1 + 1/1 + 1/1)
     = (1/6) × 6
-    = 1.0 → Perfect ranking
+    = 1.0 → Perfect ranking 
 ```
 
 ---
@@ -271,12 +271,12 @@ Citations generated:
 Scenario 1: Filter by page_number
 Query: "What is the warranty?"
 Without filter: 3 results from all pages
-With filter (page_number=3): 2 results from page 3 only
+With filter (page_number=3): 2 results from page 3 only 
 
-Scenario 2: Filter by document_id
+Scenario 2: Filter by document_id  
 Query: "What is the refund policy?"
 Without filter: 3 results
-With filter (document_id="doc_001"): 3 results
+With filter (document_id="doc_001"): 3 results 
 ```
 
 **Result**:  PASS - Filtering works correctly
@@ -316,7 +316,7 @@ With filter (document_id="doc_001"): 3 results
 
 ## Week 3 Retrieval Evaluation Summary
 
-### Passed Criteria
+### Passed Criteria 
 
 - [x] Hit@1 > 70% (achieved 100%)
 - [x] Chunk ID preservation (100%)
@@ -328,7 +328,7 @@ With filter (document_id="doc_001"): 3 results
 - [x] MRR > 0.85 (achieved 1.0)
 - [x] Avg similarity > 0.70 (achieved 0.85)
 
-### Status: READY FOR PRODUCTION
+### Status: READY FOR PRODUCTION 
 
 The RAG retrieval system is ready for:
 - Integration with pgvector backend (Week 4)
@@ -363,6 +363,6 @@ Query | Expected Pages | Retrieved Chunk IDs | Similarity Scores | Hit@1 | Hit@3
 
 ---
 
-**Evaluation by**: Lap (RAG Team)
-**Review Date**: Week 3 Monday
+**Evaluation by**: Lap (RAG Team)  
+**Review Date**: Week 3 Monday  
 **Sign-off**: Ready for demo + production roadmap

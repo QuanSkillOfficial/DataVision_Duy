@@ -1,7 +1,7 @@
 # RAG Query Logging Contract
 
-**Purpose**: Track RAG system performance and user queries for analytics
-**Consumer**: Phi's Dashboard, analytics pipeline
+**Purpose**: Track RAG system performance and user queries for analytics  
+**Consumer**: Phi's Dashboard, analytics pipeline  
 **Database**: `rag_query_logs` table (managed by Phi)
 
 ## Log Entry Schema
@@ -101,39 +101,39 @@ Each query to the RAG system should be logged with this structure:
 ```sql
 CREATE TABLE rag_query_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-
+    
     -- Query Info
     question TEXT NOT NULL,
     user_id VARCHAR(255),
     session_id VARCHAR(255),
-
+    
     -- Retrieval
     document_id VARCHAR(255),
     retrieved_chunk_ids TEXT[] NOT NULL,
     retrieval_scores NUMERIC[] NOT NULL,
     num_chunks_retrieved INTEGER NOT NULL,
-
+    
     -- Answer
     generated_response TEXT,
     answer_confidence NUMERIC,
-
+    
     -- Performance
     retrieval_latency_ms INTEGER NOT NULL,
     llm_latency_ms INTEGER,
     total_latency_ms INTEGER NOT NULL,
-
+    
     -- Models
     model_name VARCHAR(255) NOT NULL,
     llm_model_name VARCHAR(255),
-
+    
     -- Status
     status VARCHAR(50) NOT NULL,
-
+    
     -- Metadata
     source VARCHAR(100),
     query_language VARCHAR(10),
     filter_applied JSONB,
-
+    
     -- Timestamps
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -204,7 +204,7 @@ async def log_rag_query(
 ) -> str:
     """
     Log a RAG query to the database.
-
+    
     Args:
         question: The user's question
         document_id: Filtered document (if any)
@@ -221,7 +221,7 @@ async def log_rag_query(
         session_id: Chat session identifier
         source: Origin of query (chatbot_ui, api, dashboard, etc.)
         status: success, partial_success, error, no_results
-
+    
     Returns:
         ID of the created log entry
     """
@@ -233,7 +233,7 @@ async def log_rag_query(
 ### Query Volume
 
 ```sql
-SELECT
+SELECT 
     DATE(created_at) as date,
     COUNT(*) as query_count,
     COUNT(DISTINCT user_id) as unique_users
@@ -246,7 +246,7 @@ ORDER BY date;
 ### Average Retrieval Performance
 
 ```sql
-SELECT
+SELECT 
     AVG(retrieval_latency_ms) as avg_retrieval_ms,
     MAX(retrieval_latency_ms) as max_retrieval_ms,
     PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY retrieval_latency_ms) as p95_retrieval_ms
@@ -257,7 +257,7 @@ WHERE status = 'success';
 ### Answer Confidence Distribution
 
 ```sql
-SELECT
+SELECT 
     ROUND(answer_confidence::numeric, 1) as confidence_bin,
     COUNT(*) as count
 FROM rag_query_logs
@@ -269,7 +269,7 @@ ORDER BY confidence_bin DESC;
 ### Most Retrieved Chunks
 
 ```sql
-SELECT
+SELECT 
     chunk_id,
     COUNT(*) as frequency,
     AVG(r.score) as avg_score
@@ -284,7 +284,7 @@ LIMIT 10;
 ### Success Rate by Source
 
 ```sql
-SELECT
+SELECT 
     source,
     COUNT(*) as total_queries,
     COUNT(*) FILTER (WHERE status = 'success') as successful,

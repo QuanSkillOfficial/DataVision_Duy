@@ -283,3 +283,7 @@ python test_week2.py
 # Open notebook for visual demo
 jupyter notebook notebooks/ai_team/chunking_embedding_search_demo.ipynb
 ```
+
+
+
+
