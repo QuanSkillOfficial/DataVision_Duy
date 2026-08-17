@@ -118,8 +118,11 @@ URL, backend release SHA and health latency, sourced from `QS_RELEASE_SHA`,
 and backend report different SHAs, the UI warns that the session covers two
 different builds.
 
-The backend contract gained `GET /api/health` returning `ok`, `service`,
-`release_sha` and `environment`.
+The backend contract requires `GET /api/health` to return `service` plus the
+release identity. A backend that serves only repository fixtures declares that
+(`mode: fixture`) and is not asked for a SHA; any other backend must report the
+release it is serving, so it cannot present itself as a deployment while hiding
+which build it is.
 
 ### 3.4 DV-HUNG-05 — Failure handling
 
@@ -230,7 +233,7 @@ Browser E2E:    4 passed, 10 screenshots
 ```
 
 The same gates on the canonical integration branch (`Intern6-Hung`, based on
-`main` at `ca19091`): backend-mode 115 tests / 0 skipped, browser journey 4
+`main` at `ca19091`): backend-mode 113 tests / 0 skipped, browser journey 4
 passed / 10 screenshots, and `tests/ai_tests` unchanged at 18 passed.
 
 Evidence artifacts:
