@@ -1,33 +1,27 @@
 #!/usr/bin/env python3
-import os, json, sys, datetime
-import psycopg2
-from dotenv import load_dotenv
-load_dotenv()
-TABLES = ["sources", "documents", "document_pages", "document_chunks",
-          "structured_records", "ingestion_logs", "prediction_logs"]
+import os
+import json
+import sys
+import datetime
+sys.path.insert(0, "week8/database/scripts")
+from db_connection import get_db_connection  # noqa: E402
+from db_schema_constants import CORE_TABLES  # noqa: E402
 
-def get_conn():
-    password = os.environ.get("DB_PASSWORD")
-    if not password:
-        raise RuntimeError("DB_PASSWORD environment variable is required")
-    return psycopg2.connect(
-        host=os.environ.get("DB_HOST", "localhost"),
-        port=os.environ.get("DB_PORT", "5432"),
-        dbname=os.environ.get("DB_NAME", "datavision_db"),
-        user=os.environ.get("DB_USER", "datavision"),
-        password=password,
-    )
 
 def snapshot(label):
-    conn = get_conn()
+    conn = get_db_connection()
     cur = conn.cursor()
     counts = {}
-    for t in TABLES:
+    for t in CORE_TABLES:
         cur.execute(f"SELECT COUNT(*) FROM {t};")
         counts[t] = cur.fetchone()[0]
     conn.close()
-    return {"label": label, "timestamp": datetime.datetime.utcnow().isoformat(),
-            "counts": counts}
+    return {
+        "label": label,
+        "timestamp": datetime.datetime.utcnow().isoformat(),
+        "counts": counts,
+    }
+
 
 if __name__ == "__main__":
     label = sys.argv[1] if len(sys.argv) > 1 else "snapshot"

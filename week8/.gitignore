@@ -1,0 +1,28 @@
+# Credentials / environment files
+.env
+.env.*
+!.env.example
+week8/.env
+
+# Database dumps and backup artifacts (never commit raw dumps)
+*.dump
+*.dump.sha256
+week8/database/outputs/backups/*.dump
+week8/database/outputs/backups/*.dump.sha256
+
+# Python bytecode / caches
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Runtime / generated outputs
+week8/database/outputs/db_validation/*.json
+week8/scripts/*.jsonl
+week8/scripts/*_manifest.json
+week8/scripts/*_clean.csv
+
+# Editors / OS
+.DS_Store
+.vscode/
+.idea/

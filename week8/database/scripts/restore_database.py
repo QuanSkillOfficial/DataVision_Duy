@@ -6,6 +6,9 @@ import sys
 import time
 from pathlib import Path
 from dotenv import load_dotenv
+from db_schema_constants import CORE_TABLES, CORE_VIEWS
+import re
+
 load_dotenv()
 DEFAULT_DB = {
     "host": os.environ.get("DB_HOST", "localhost"),
@@ -13,34 +16,6 @@ DEFAULT_DB = {
     "user": os.environ.get("DB_USER", "datavision"),
     "dbname": os.environ.get("DB_NAME", "datavision_db"),
 }
-
-CORE_TABLES = [
-    "sources",
-    "documents",
-    "document_pages",
-    "document_chunks",
-    "structured_records",
-    "ingestion_logs",
-    "pipeline_runs",
-    "analytics_events",
-    "rag_query_logs",
-    "prediction_logs",
-]
-
-CORE_VIEWS = [
-    "v_dashboard_overview",
-    "v_ingestion_health",
-    "v_source_quality_summary",
-    "v_document_quality_summary",
-    "v_rag_daily_metrics",
-    "v_prediction_confidence_summary",
-    "v_recent_activity",
-    "v_latest_ingestion_runs",
-    "v_data_quality_dashboard",
-    "v_source_quality_detail",
-    "v_document_rag_readiness",
-    "v_prediction_review_queue",
-]
 
 
 class RestoreFailed(Exception):
@@ -86,7 +61,7 @@ def get_pg_cmd(cmd_name, pg_bin_dir=""):
 def verify_dump_file(dump_file: Path, env, pg_bin_dir=""):
     if not dump_file.exists() or dump_file.stat().st_size == 0:
         raise RestoreFailed(f"Dump file missing or empty: {dump_file}")
-    
+
     cmd = get_pg_cmd("pg_restore", pg_bin_dir)
     run_cmd(
         [cmd, "--list", str(dump_file)],
@@ -102,7 +77,7 @@ def drop_database(db, env, force: bool, pg_bin_dir=""):
             "This looks like the live database name; pass a *_restore_test "
             "name for a rehearsal, or --force for a deliberate real restore."
         )
-        
+
     cmd = get_pg_cmd("dropdb", pg_bin_dir)
     run_cmd(
         [cmd, "-h", db["host"], "-p", db["port"], "-U", db["user"],
@@ -122,15 +97,42 @@ def create_database(db, env, pg_bin_dir=""):
     )
 
 
+# No blanket-ignore patterns. Any pg_restore error must be added here
+# explicitly, by exact identified pattern, after review — never a generic
+# catch-all — or the restore is treated as FAILED (DV-PHAT-03).
+ALLOWED_RESTORE_ERROR_PATTERNS: list[str] = []
+
+
 def pg_restore(db, dump_file: Path, env, pg_bin_dir=""):
     cmd = get_pg_cmd("pg_restore", pg_bin_dir)
-    run_cmd(
+    result = subprocess.run(
         [cmd, "-h", db["host"], "-p", db["port"], "-U", db["user"],
          "-d", db["dbname"], "--no-owner", "--no-privileges", str(dump_file)],
-        f"pg_restore into {db['dbname']}",
-        env=env,
-        check=False
+        env=env, capture_output=True, text=True,
     )
+    log(f"--- pg_restore into {db['dbname']} ---")
+    if result.stdout.strip():
+        log(result.stdout.strip())
+
+    if result.returncode != 0:
+        stderr_lines = [l for l in result.stderr.strip().splitlines() if l.strip()]
+        unallowed = [
+            line for line in stderr_lines
+            if not any(re.search(p, line) for p in ALLOWED_RESTORE_ERROR_PATTERNS)
+        ]
+        if unallowed:
+            raise RestoreFailed(
+                f"pg_restore failed (exit {result.returncode}) with unreviewed "
+                f"errors:\n" + "\n".join(unallowed)
+            )
+        # Even if every line matched a reviewed pattern, a non-zero exit
+        # from pg_restore is never silently downgraded to PASS.
+        raise RestoreFailed(
+            f"pg_restore exited {result.returncode}. All stderr lines matched "
+            f"reviewed patterns, but DV-PHAT-03 requires exit code 0, not a "
+            f"whitelisted warning:\n" + "\n".join(stderr_lines)
+        )
+    log("pg_restore completed with exit code 0.")
 
 
 def get_row_counts(db, env):
@@ -202,14 +204,13 @@ def main():
         default="week8/database/outputs/db_validation/restore_result.json",
         help="Where to write the restore/verification report",
     )
-    # Thêm cấu hình tham số --pg-bin-dir mới
     parser.add_argument(
         "--pg-bin-dir",
         default=os.environ.get("PG_BIN_DIR", ""),
         help="Path to PostgreSQL binaries (e.g. D:\\Postgresql16\\pgsql\\bin). "
              "If omitted, relies on system PATH.",
     )
-    
+
     args = parser.parse_args()
 
     db = {"host": args.host, "port": args.port, "user": args.user, "dbname": args.dbname}
@@ -257,13 +258,13 @@ def main():
             if args.reference_counts:
                 ref_path = Path(args.reference_counts)
                 manifest_data = json.loads(ref_path.read_text())
-                
+
                 if "counts" in manifest_data:
                     reference = manifest_data["counts"]
                 else:
                     metadata_keys = ["timestamp", "path", "checksum", "size", "format"]
                     reference = {k: v for k, v in manifest_data.items() if k not in metadata_keys}
-                
+
                 mismatches = compare_counts(counts, reference)
                 report["reference_counts_file"] = str(ref_path)
                 report["mismatches"] = mismatches

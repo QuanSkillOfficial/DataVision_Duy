@@ -1,0 +1,709 @@
+{
+  "evaluation_timestamp": "2026-07-05T09:13:52.805979+00:00",
+  "total_payloads": 10,
+  "status_summary": {
+    "accepted": 5,
+    "needs_review": 2,
+    "waiting_for_source": 2,
+    "failed": 1
+  },
+  "results": [
+    {
+      "document_external_id": "doc_dataflow_technical_report",
+      "source_name": "dataflow_technical_report_pdf",
+      "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+      "predicted_document_type": "report",
+      "confidence": 0.4184,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "report",
+          "score": 0.4184
+        },
+        {
+          "label": "research_paper",
+          "score": 0.2262
+        },
+        {
+          "label": "contract",
+          "score": 0.2084
+        }
+      ],
+      "review_reason": "Prediction confidence below threshold"
+    },
+    {
+      "document_external_id": "doc_dataflow_technical_report_intro_pages",
+      "source_name": "dataflow_technical_report_pdf",
+      "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+      "predicted_document_type": "contract",
+      "confidence": 0.6096,
+      "model_version": "document_classifier_v1",
+      "status": "accepted",
+      "top_predictions": [
+        {
+          "label": "contract",
+          "score": 0.6096
+        },
+        {
+          "label": "research_paper",
+          "score": 0.2146
+        },
+        {
+          "label": "report",
+          "score": 0.1138
+        }
+      ],
+      "review_reason": null
+    },
+    {
+      "document_external_id": "doc_dataflow_technical_report_architecture_page",
+      "source_name": "dataflow_technical_report_pdf",
+      "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+      "predicted_document_type": "contract",
+      "confidence": 0.6128,
+      "model_version": "document_classifier_v1",
+      "status": "accepted",
+      "top_predictions": [
+        {
+          "label": "contract",
+          "score": 0.6128
+        },
+        {
+          "label": "research_paper",
+          "score": 0.1539
+        },
+        {
+          "label": "report",
+          "score": 0.0855
+        }
+      ],
+      "review_reason": null
+    },
+    {
+      "document_external_id": "doc_dataflow_technical_report_related_work",
+      "source_name": "dataflow_technical_report_pdf",
+      "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+      "predicted_document_type": "contract",
+      "confidence": 0.6279,
+      "model_version": "document_classifier_v1",
+      "status": "accepted",
+      "top_predictions": [
+        {
+          "label": "contract",
+          "score": 0.6279
+        },
+        {
+          "label": "research_paper",
+          "score": 0.1779
+        },
+        {
+          "label": "report",
+          "score": 0.1215
+        }
+      ],
+      "review_reason": null
+    },
+    {
+      "document_external_id": "doc_superstore_sales_csv_summary",
+      "source_name": "superstore_sales_csv",
+      "ingestion_run_id": "13b921ad-4e4c-4399-b1ae-6087d7b86bf0",
+      "predicted_document_type": "invoice",
+      "confidence": 0.7101,
+      "model_version": "document_classifier_v1",
+      "status": "accepted",
+      "top_predictions": [
+        {
+          "label": "invoice",
+          "score": 0.7101
+        },
+        {
+          "label": "contract",
+          "score": 0.1571
+        },
+        {
+          "label": "resume",
+          "score": 0.052
+        }
+      ],
+      "review_reason": null
+    },
+    {
+      "document_external_id": "doc_product_sales_region_excel_summary",
+      "source_name": "product_sales_region_excel",
+      "ingestion_run_id": "d670414e-4147-4cda-a87d-06e8b7c52d19",
+      "predicted_document_type": "invoice",
+      "confidence": 0.6829,
+      "model_version": "document_classifier_v1",
+      "status": "accepted",
+      "top_predictions": [
+        {
+          "label": "invoice",
+          "score": 0.6829
+        },
+        {
+          "label": "resume",
+          "score": 0.119
+        },
+        {
+          "label": "contract",
+          "score": 0.0706
+        }
+      ],
+      "review_reason": null
+    },
+    {
+      "document_external_id": "doc_dummyjson_products_api_summary",
+      "source_name": "dummyjson_products_api",
+      "ingestion_run_id": "83a3c30c-98f1-42f7-aba7-4fed188daed9",
+      "predicted_document_type": "contract",
+      "confidence": 0.3839,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "contract",
+          "score": 0.3839
+        },
+        {
+          "label": "research_paper",
+          "score": 0.2891
+        },
+        {
+          "label": "resume",
+          "score": 0.1658
+        }
+      ],
+      "review_reason": "Prediction confidence below threshold"
+    },
+    {
+      "document_external_id": "doc_short_text_quality_gate",
+      "source_name": "dataflow_technical_report_pdf",
+      "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+      "predicted_document_type": null,
+      "confidence": 0.0,
+      "model_version": "document_classifier_v1",
+      "status": "waiting_for_source",
+      "review_reason": "Extracted text is missing or too short for reliable prediction",
+      "top_predictions": []
+    },
+    {
+      "document_external_id": "doc_empty_text_quality_gate",
+      "source_name": "dataflow_technical_report_pdf",
+      "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+      "predicted_document_type": null,
+      "confidence": 0.0,
+      "model_version": "document_classifier_v1",
+      "status": "waiting_for_source",
+      "review_reason": "Extracted text is missing or too short for reliable prediction",
+      "top_predictions": []
+    },
+    {
+      "document_external_id": "doc_missing_file_name_validation",
+      "source_name": "dataflow_technical_report_pdf",
+      "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+      "predicted_document_type": null,
+      "confidence": 0.0,
+      "model_version": "document_classifier_v1",
+      "status": "failed",
+      "review_reason": "Validation error: Missing required field: 'file_name'",
+      "top_predictions": []
+    }
+  ],
+  "prediction_log_payloads": [
+    {
+      "source_id": null,
+      "document_external_id": "doc_dataflow_technical_report",
+      "document_db_id": null,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "document_id": "doc_dataflow_technical_report",
+        "document_external_id": "doc_dataflow_technical_report",
+        "document_db_id": null,
+        "source_id": null,
+        "source_name": "dataflow_technical_report_pdf",
+        "file_name": "DataFlow_Technical_Report.pdf",
+        "file_type": "pdf",
+        "file_size": 2857707,
+        "text_length": 129028,
+        "num_pages": 36,
+        "source_system": "manual_upload",
+        "extracted_text": "--- Page 1 ---\nDecember19,2025 DataFlow: An LLM-Driven Framework for Unified Data Preparation and Workflow Automation in the Era of Data-Centric AI Hao Liang\u2217,\u2020, Xiaochen Ma\u2217,\u2020, Zhou Liu\u2217,\u2020, Zhen Hao Wong\u2217, Zhengyang Zhao\u2217, Zimo Meng\u2217, Runming He\u2217, Chengyu Shen\u2217, Qifeng Cai\u2217, Zhaoyang Han\u2217, Meiyi Qiang\u2217, Yalin Feng\u2217, Tianyi Bai\u2217, Zewei Pan, Ziyi Guo, Yizhen Jiang, Jingwen Deng, Qijie You, Peichao Lai, Tianyu Guo, Chi Hsu Tsai, Hengyi Feng, Rui Hu, Wenkai Yu, Junbo Niu, Bohan Zeng, Ruichuan An, L... [truncated]",
+        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+        "raw_output_path": "week2/data/raw/pdf/dataflow_technical_report_raw.pdf",
+        "staging_output_path": "week2/data/staging/pdf/dataflow_pdf_text.txt",
+        "staging_csv_output_path": "week2/data/staging/pdf/dataflow_pdf_pages_staging.csv",
+        "document_pages_output_path": "week2/data/staging/pdf/document_pages.jsonl",
+        "clean_output_path": "week2/data/clean/pdf/dataflow_pdf_pages_clean.csv",
+        "records_read": 36,
+        "records_valid": 36,
+        "records_invalid": 0,
+        "empty_pages": [],
+        "empty_page_count": 0,
+        "parsing_status": "ready",
+        "test_case": "full_pdf_document",
+        "expected_status_hint": "accepted_or_needs_review"
+      },
+      "prediction_result": {
+        "top_predictions": [
+          {
+            "label": "report",
+            "score": 0.4184
+          },
+          {
+            "label": "research_paper",
+            "score": 0.2262
+          },
+          {
+            "label": "contract",
+            "score": 0.2084
+          }
+        ]
+      },
+      "predicted_label": "report",
+      "confidence_score": 0.4184,
+      "status": "needs_review",
+      "review_reason": "Prediction confidence below threshold",
+      "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+      "created_at": "2026-07-05T09:13:52.917432+00:00"
+    },
+    {
+      "source_id": null,
+      "document_external_id": "doc_dataflow_technical_report_intro_pages",
+      "document_db_id": null,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "document_id": "doc_dataflow_technical_report_intro_pages",
+        "document_external_id": "doc_dataflow_technical_report_intro_pages",
+        "document_db_id": null,
+        "source_id": null,
+        "source_name": "dataflow_technical_report_pdf",
+        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+        "file_name": "DataFlow_Technical_Report_intro_pages.pdf",
+        "file_type": "pdf",
+        "file_size": 2857707,
+        "text_length": 9377,
+        "num_pages": 2,
+        "source_system": "manual_upload",
+        "extracted_text": "DataFlow Technical Report 4 1 Introduction Large language models (LLMs) have rapidly evolved from research prototypes to foundational infrastructure across natural language processing and beyond. Since OpenAI introduced the GPT [1] family through large-scalehumanannotationandignitedtheeraoflargelanguagemodels(LLMs), scaling-lawstudies[26,55] have consistently demonstrated that data quality and quantity are central to model performance. As model scales continue to grow and downstream tasks become... [truncated]",
+        "parsing_status": "ready",
+        "raw_output_path": "week2/data/raw/pdf/dataflow_technical_report_raw.pdf",
+        "staging_output_path": "week2/data/staging/pdf/dataflow_pdf_text.txt",
+        "clean_output_path": "week2/data/clean/pdf/dataflow_pdf_pages_clean.csv",
+        "records_read": 2,
+        "records_valid": 2,
+        "records_invalid": 0,
+        "test_case": "pdf_intro_section",
+        "expected_status_hint": "accepted_or_needs_review"
+      },
+      "prediction_result": {
+        "top_predictions": [
+          {
+            "label": "contract",
+            "score": 0.6096
+          },
+          {
+            "label": "research_paper",
+            "score": 0.2146
+          },
+          {
+            "label": "report",
+            "score": 0.1138
+          }
+        ]
+      },
+      "predicted_label": "contract",
+      "confidence_score": 0.6096,
+      "status": "accepted",
+      "review_reason": null,
+      "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+      "created_at": "2026-07-05T09:13:52.917432+00:00"
+    },
+    {
+      "source_id": null,
+      "document_external_id": "doc_dataflow_technical_report_architecture_page",
+      "document_db_id": null,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "document_id": "doc_dataflow_technical_report_architecture_page",
+        "document_external_id": "doc_dataflow_technical_report_architecture_page",
+        "document_db_id": null,
+        "source_id": null,
+        "source_name": "dataflow_technical_report_pdf",
+        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+        "file_name": "DataFlow_Technical_Report_architecture_page.pdf",
+        "file_type": "pdf",
+        "file_size": 2857707,
+        "text_length": 4521,
+        "num_pages": 1,
+        "source_system": "manual_upload",
+        "extracted_text": "DataFlow Technical Report 8 \ud83d\udccaData \ud83d\udef0 DataFlow-System \ud83d\udcd6DataFlow-Core Pipeline Zoo \ud83c\udfafDownstream Remote API Local Engine Python Package Applications LLM Gemini \ud83d\ude85 LiteLLM vLLM Serving ChatGPT \ud83d\ude80 LightRAG SGLang Operator Extension Text Storage Operator Zoo Prompt Template Extension Rule-OP Math Reasoning LLM-OP Model-OP Code Pipeline Extension Text2SQL Prompt Template Zoo Agentic-RAG SQLite General ... Text2SQL Reasoning Knowledge Extraction MySQL Math noitazidradnatS troppuS \ud83e\udde9DataFlow-Extensions Pipeli... [truncated]",
+        "parsing_status": "ready",
+        "raw_output_path": "week2/data/raw/pdf/dataflow_technical_report_raw.pdf",
+        "staging_output_path": "week2/data/staging/pdf/dataflow_pdf_text.txt",
+        "clean_output_path": "week2/data/clean/pdf/dataflow_pdf_pages_clean.csv",
+        "records_read": 1,
+        "records_valid": 1,
+        "records_invalid": 0,
+        "test_case": "pdf_architecture_page",
+        "expected_status_hint": "accepted_or_needs_review"
+      },
+      "prediction_result": {
+        "top_predictions": [
+          {
+            "label": "contract",
+            "score": 0.6128
+          },
+          {
+            "label": "research_paper",
+            "score": 0.1539
+          },
+          {
+            "label": "report",
+            "score": 0.0855
+          }
+        ]
+      },
+      "predicted_label": "contract",
+      "confidence_score": 0.6128,
+      "status": "accepted",
+      "review_reason": null,
+      "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+      "created_at": "2026-07-05T09:13:52.917432+00:00"
+    },
+    {
+      "source_id": null,
+      "document_external_id": "doc_dataflow_technical_report_related_work",
+      "document_db_id": null,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "document_id": "doc_dataflow_technical_report_related_work",
+        "document_external_id": "doc_dataflow_technical_report_related_work",
+        "document_db_id": null,
+        "source_id": null,
+        "source_name": "dataflow_technical_report_pdf",
+        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+        "file_name": "DataFlow_Technical_Report_related_work.pdf",
+        "file_type": "pdf",
+        "file_size": 2857707,
+        "text_length": 7594,
+        "num_pages": 2,
+        "source_system": "manual_upload",
+        "extracted_text": "DataFlow Technical Report 6 2 Background and Related Works 2.1 Data in LLM Development The development of LLMs involves several key stages, among which training is particularly crucial, as the model learns fundamental linguistic patterns from large-scale corpora. During this stage, the model is exposed to vast amounts of text data from various domains, enabling it to acquire a broad understanding of language. Consequently, the quality and diversity of training data directly impact the model\u2019s ab... [truncated]",
+        "parsing_status": "ready",
+        "raw_output_path": "week2/data/raw/pdf/dataflow_technical_report_raw.pdf",
+        "staging_output_path": "week2/data/staging/pdf/dataflow_pdf_text.txt",
+        "clean_output_path": "week2/data/clean/pdf/dataflow_pdf_pages_clean.csv",
+        "records_read": 2,
+        "records_valid": 2,
+        "records_invalid": 0,
+        "test_case": "pdf_related_work_section",
+        "expected_status_hint": "accepted_or_needs_review"
+      },
+      "prediction_result": {
+        "top_predictions": [
+          {
+            "label": "contract",
+            "score": 0.6279
+          },
+          {
+            "label": "research_paper",
+            "score": 0.1779
+          },
+          {
+            "label": "report",
+            "score": 0.1215
+          }
+        ]
+      },
+      "predicted_label": "contract",
+      "confidence_score": 0.6279,
+      "status": "accepted",
+      "review_reason": null,
+      "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+      "created_at": "2026-07-05T09:13:52.917432+00:00"
+    },
+    {
+      "source_id": null,
+      "document_external_id": "doc_superstore_sales_csv_summary",
+      "document_db_id": null,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "document_id": "doc_superstore_sales_csv_summary",
+        "document_external_id": "doc_superstore_sales_csv_summary",
+        "document_db_id": null,
+        "source_id": null,
+        "source_name": "superstore_sales_csv",
+        "ingestion_run_id": "13b921ad-4e4c-4399-b1ae-6087d7b86bf0",
+        "file_name": "superstore_clean.csv",
+        "file_type": "csv",
+        "file_size": 2304545,
+        "text_length": 2516,
+        "num_pages": 0,
+        "source_system": "csv_upload",
+        "extracted_text": "Superstore sales CSV with orders, customers, products, sales, profit, and discount fields.\nExtracted tabular preview:\nRow 1: row_id: 1, order_id: CA-2013-152156, order_date: 09-11-2013, ship_date: 12-11-2013, ship_mode: Second Class, customer_id: CG-12520, customer_name: Claire Gute, segment: Consumer, country: United States, city: Henderson, state: Kentucky, postal_code: 42420, region: South, product_id: FUR-BO-10001798, category: Furniture, sub_category: Bookcases, product_name: Bush Somerset ... [truncated]",
+        "parsing_status": "ready",
+        "raw_output_path": "week2/data/raw/csv/superstore_raw.csv",
+        "staging_output_path": "week2/data/staging/csv/superstore_staging.csv",
+        "clean_output_path": "week2/data/clean/csv/superstore_clean.csv",
+        "records_read": 9994,
+        "records_valid": 9994,
+        "records_invalid": 0,
+        "test_case": "csv_structured_summary",
+        "expected_status_hint": "accepted_or_needs_review"
+      },
+      "prediction_result": {
+        "top_predictions": [
+          {
+            "label": "invoice",
+            "score": 0.7101
+          },
+          {
+            "label": "contract",
+            "score": 0.1571
+          },
+          {
+            "label": "resume",
+            "score": 0.052
+          }
+        ]
+      },
+      "predicted_label": "invoice",
+      "confidence_score": 0.7101,
+      "status": "accepted",
+      "review_reason": null,
+      "ingestion_run_id": "13b921ad-4e4c-4399-b1ae-6087d7b86bf0",
+      "created_at": "2026-07-05T09:13:52.917432+00:00"
+    },
+    {
+      "source_id": null,
+      "document_external_id": "doc_product_sales_region_excel_summary",
+      "document_db_id": null,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "document_id": "doc_product_sales_region_excel_summary",
+        "document_external_id": "doc_product_sales_region_excel_summary",
+        "document_db_id": null,
+        "source_id": null,
+        "source_name": "product_sales_region_excel",
+        "ingestion_run_id": "d670414e-4147-4cda-a87d-06e8b7c52d19",
+        "file_name": "product_sales_region_clean.csv",
+        "file_type": "xlsx",
+        "file_size": 149740,
+        "text_length": 2051,
+        "num_pages": 0,
+        "source_system": "excel_upload",
+        "extracted_text": "Product sales region Excel with product, region, salesperson, shipping, payment, and return fields.\nExtracted tabular preview:\nRow 1: date: 2023-02-23, region: East, product: Laptop, quantity: 14, unitprice: 163.6, storelocation: Store B, customertype: Wholesale, discount: 0.0, salesperson: Eva, totalprice: 2290.4, paymentmethod: Online, promotion: FREESHIP, returned: 0, orderid: REG100000, customername: Cust 6583, shippingcost: 43.34, orderdate: 2023-02-23, deliverydate: 2023-02-27, regionmanag... [truncated]",
+        "parsing_status": "ready",
+        "raw_output_path": "week2/data/raw/excel/product_sales_region_raw.xlsx",
+        "staging_output_path": "week2/data/staging/excel/product_sales_region_staging.csv",
+        "clean_output_path": "week2/data/clean/excel/product_sales_region_clean.csv",
+        "records_read": 1500,
+        "records_valid": 1500,
+        "records_invalid": 0,
+        "test_case": "excel_structured_summary",
+        "expected_status_hint": "accepted_or_needs_review"
+      },
+      "prediction_result": {
+        "top_predictions": [
+          {
+            "label": "invoice",
+            "score": 0.6829
+          },
+          {
+            "label": "resume",
+            "score": 0.119
+          },
+          {
+            "label": "contract",
+            "score": 0.0706
+          }
+        ]
+      },
+      "predicted_label": "invoice",
+      "confidence_score": 0.6829,
+      "status": "accepted",
+      "review_reason": null,
+      "ingestion_run_id": "d670414e-4147-4cda-a87d-06e8b7c52d19",
+      "created_at": "2026-07-05T09:13:52.917432+00:00"
+    },
+    {
+      "source_id": null,
+      "document_external_id": "doc_dummyjson_products_api_summary",
+      "document_db_id": null,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "document_id": "doc_dummyjson_products_api_summary",
+        "document_external_id": "doc_dummyjson_products_api_summary",
+        "document_db_id": null,
+        "source_id": null,
+        "source_name": "dummyjson_products_api",
+        "ingestion_run_id": "83a3c30c-98f1-42f7-aba7-4fed188daed9",
+        "file_name": "dummyjson_products_clean.csv",
+        "file_type": "json",
+        "file_size": 75899,
+        "text_length": 7679,
+        "num_pages": 0,
+        "source_system": "api",
+        "extracted_text": "DummyJSON products API response with product catalog, price, stock, rating, dimensions, and shipping fields.\nExtracted tabular preview:\nRow 1: id: 1, title: Essence Mascara Lash Princess, description: The Essence Mascara Lash Princess is a popular mascara known for its volumizing and lengthening effects. Achieve dramatic lashes with this long-lasting and cruelty-free formula., category: beauty, price: 9.99, discountpercentage: 10.48, rating: 2.56, stock: 99, tags: [\"beauty\", \"mascara\"], brand: E... [truncated]",
+        "parsing_status": "ready",
+        "raw_output_path": "week2/data/raw/api/dummyjson_products_raw.json",
+        "staging_output_path": "week2/data/staging/api/dummyjson_products_staging.csv",
+        "clean_output_path": "week2/data/clean/api/dummyjson_products_clean.csv",
+        "records_read": 30,
+        "records_valid": 30,
+        "records_invalid": 0,
+        "test_case": "api_structured_summary",
+        "expected_status_hint": "accepted_or_needs_review"
+      },
+      "prediction_result": {
+        "top_predictions": [
+          {
+            "label": "contract",
+            "score": 0.3839
+          },
+          {
+            "label": "research_paper",
+            "score": 0.2891
+          },
+          {
+            "label": "resume",
+            "score": 0.1658
+          }
+        ]
+      },
+      "predicted_label": "contract",
+      "confidence_score": 0.3839,
+      "status": "needs_review",
+      "review_reason": "Prediction confidence below threshold",
+      "ingestion_run_id": "83a3c30c-98f1-42f7-aba7-4fed188daed9",
+      "created_at": "2026-07-05T09:13:52.917432+00:00"
+    },
+    {
+      "source_id": null,
+      "document_external_id": "doc_short_text_quality_gate",
+      "document_db_id": null,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "document_id": "doc_short_text_quality_gate",
+        "document_external_id": "doc_short_text_quality_gate",
+        "document_db_id": null,
+        "source_id": null,
+        "source_name": "dataflow_technical_report_pdf",
+        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+        "file_name": "short_text_sample.pdf",
+        "file_type": "pdf",
+        "file_size": 128,
+        "text_length": 11,
+        "num_pages": 1,
+        "source_system": "manual_upload",
+        "extracted_text": "Short text.",
+        "parsing_status": "partial_success",
+        "raw_output_path": null,
+        "staging_output_path": null,
+        "clean_output_path": null,
+        "records_read": 0,
+        "records_valid": 0,
+        "records_invalid": 0,
+        "test_case": "short_extracted_text_quality_gate",
+        "expected_status_hint": "waiting_for_source_or_needs_review"
+      },
+      "prediction_result": {
+        "top_predictions": []
+      },
+      "predicted_label": null,
+      "confidence_score": 0.0,
+      "status": "waiting_for_source",
+      "review_reason": "Extracted text is missing or too short for reliable prediction",
+      "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+      "created_at": "2026-07-05T09:13:52.917432+00:00"
+    },
+    {
+      "source_id": null,
+      "document_external_id": "doc_empty_text_quality_gate",
+      "document_db_id": null,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "document_id": "doc_empty_text_quality_gate",
+        "document_external_id": "doc_empty_text_quality_gate",
+        "document_db_id": null,
+        "source_id": null,
+        "source_name": "dataflow_technical_report_pdf",
+        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+        "file_name": "empty_text_sample.pdf",
+        "file_type": "pdf",
+        "file_size": 0,
+        "text_length": 0,
+        "num_pages": 1,
+        "source_system": "manual_upload",
+        "extracted_text": "",
+        "parsing_status": "failed",
+        "raw_output_path": null,
+        "staging_output_path": null,
+        "clean_output_path": null,
+        "records_read": 1,
+        "records_valid": 0,
+        "records_invalid": 1,
+        "test_case": "empty_extracted_text_quality_gate",
+        "expected_status_hint": "waiting_for_source"
+      },
+      "prediction_result": {
+        "top_predictions": []
+      },
+      "predicted_label": null,
+      "confidence_score": 0.0,
+      "status": "waiting_for_source",
+      "review_reason": "Extracted text is missing or too short for reliable prediction",
+      "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+      "created_at": "2026-07-05T09:13:52.917432+00:00"
+    },
+    {
+      "source_id": null,
+      "document_external_id": "doc_missing_file_name_validation",
+      "document_db_id": null,
+      "model_name": "document_classifier",
+      "model_version": "document_classifier_v1",
+      "input_payload": {
+        "document_id": "doc_missing_file_name_validation",
+        "document_external_id": "doc_missing_file_name_validation",
+        "document_db_id": null,
+        "source_id": null,
+        "source_name": "dataflow_technical_report_pdf",
+        "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+        "file_type": "pdf",
+        "file_size": 256,
+        "text_length": 90,
+        "num_pages": 1,
+        "source_system": "manual_upload",
+        "extracted_text": "This payload intentionally omits file_name so Tuong can test normalized validation errors.",
+        "parsing_status": "ready",
+        "raw_output_path": null,
+        "staging_output_path": null,
+        "clean_output_path": null,
+        "records_read": 0,
+        "records_valid": 0,
+        "records_invalid": 0,
+        "test_case": "missing_required_file_name",
+        "expected_status_hint": "failed"
+      },
+      "prediction_result": {
+        "top_predictions": []
+      },
+      "predicted_label": null,
+      "confidence_score": 0.0,
+      "status": "failed",
+      "review_reason": "Validation error: Missing required field: 'file_name'",
+      "ingestion_run_id": "1abee790-3e55-4855-b6b6-fa64ee1dbd54",
+      "created_at": "2026-07-05T09:13:52.917432+00:00"
+    }
+  ]
+}

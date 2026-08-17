@@ -1,0 +1,147 @@
+{
+    "run_id": "a896a888-57f0-4ea9-9083-f860c2078f7d",
+    "source_name": "product_sales_region_excel",
+    "source_type": "excel",
+    "input_path_or_url": "week2/data/sample_inputs/Product-Sales-Region.xlsx",
+    "start_time": "2026-07-04T04:16:16.156814+00:00",
+    "end_time": "2026-07-04T04:16:16.720431+00:00",
+    "status": "success",
+    "records_read": 1500,
+    "records_valid": 1500,
+    "records_invalid": 0,
+    "error_message": null,
+    "raw_output_path": "week2/data/raw/excel/product_sales_region_raw.xlsx",
+    "staging_output_path": "week2/data/staging/excel/product_sales_region_staging.csv",
+    "clean_output_path": "week2/data/clean/excel/product_sales_region_clean.csv",
+    "owner": "Nguyen Minh Duy",
+    "sheet_names": [
+        "Sheet1"
+    ],
+    "selected_sheet": "Sheet1",
+    "duplicate_rows_removed": 0,
+    "required_missing_values_removed": 0,
+    "missing_required_columns": [],
+    "required_fields": [
+        "date",
+        "region",
+        "product",
+        "quantity",
+        "unitprice",
+        "storelocation",
+        "customertype",
+        "discount",
+        "salesperson",
+        "totalprice",
+        "paymentmethod",
+        "returned",
+        "orderid",
+        "customername",
+        "shippingcost",
+        "orderdate",
+        "deliverydate",
+        "regionmanager"
+    ],
+    "optional_fields": [
+        "promotion"
+    ],
+    "data_quality": {
+        "data_quality_score": 99.51,
+        "required_missing_count": 0,
+        "optional_missing_count": 370,
+        "duplicate_count": 0,
+        "missing_values": {
+            "date": 0,
+            "region": 0,
+            "product": 0,
+            "quantity": 0,
+            "unitprice": 0,
+            "storelocation": 0,
+            "customertype": 0,
+            "discount": 0,
+            "salesperson": 0,
+            "totalprice": 0,
+            "paymentmethod": 0,
+            "promotion": 370,
+            "returned": 0,
+            "orderid": 0,
+            "customername": 0,
+            "shippingcost": 0,
+            "orderdate": 0,
+            "deliverydate": 0,
+            "regionmanager": 0
+        },
+        "required_missing_values": {
+            "date": 0,
+            "region": 0,
+            "product": 0,
+            "quantity": 0,
+            "unitprice": 0,
+            "storelocation": 0,
+            "customertype": 0,
+            "discount": 0,
+            "salesperson": 0,
+            "totalprice": 0,
+            "paymentmethod": 0,
+            "returned": 0,
+            "orderid": 0,
+            "customername": 0,
+            "shippingcost": 0,
+            "orderdate": 0,
+            "deliverydate": 0,
+            "regionmanager": 0
+        },
+        "optional_missing_values": {
+            "promotion": 370
+        },
+        "numeric_validation": {
+            "quantity": {
+                "exists": true,
+                "invalid_count": 0
+            },
+            "unitprice": {
+                "exists": true,
+                "invalid_count": 0
+            },
+            "discount": {
+                "exists": true,
+                "invalid_count": 0
+            },
+            "totalprice": {
+                "exists": true,
+                "invalid_count": 0
+            },
+            "shippingcost": {
+                "exists": true,
+                "invalid_count": 0
+            }
+        },
+        "date_validation": {
+            "date": {
+                "exists": true,
+                "invalid_count": 0
+            },
+            "orderdate": {
+                "exists": true,
+                "invalid_count": 0
+            },
+            "deliverydate": {
+                "exists": true,
+                "invalid_count": 0
+            }
+        },
+        "is_empty_file": false,
+        "status": "passed"
+    },
+    "data_quality_score": 99.51,
+    "file_manifest": {
+        "run_id": "a896a888-57f0-4ea9-9083-f860c2078f7d",
+        "source_name": "product_sales_region_excel",
+        "source_type": "excel",
+        "input_path": "week2/data/sample_inputs/Product-Sales-Region.xlsx",
+        "raw_output_path": "week2/data/raw/excel/product_sales_region_raw.xlsx",
+        "ingested_at": "2026-07-04T04:16:16.156814+00:00",
+        "file_name": "product_sales_region_raw.xlsx",
+        "file_size_bytes": 149740,
+        "file_hash_sha256": "9411ffd6ca8f6135f8d1c8409015a750df3fc6931480b24d50826bb349a6b9ba"
+    }
+}

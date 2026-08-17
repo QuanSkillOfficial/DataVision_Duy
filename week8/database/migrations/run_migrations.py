@@ -3,7 +3,10 @@ import glob
 import sys
 import psycopg2
 from dotenv import load_dotenv
+
 load_dotenv()
+
+
 def get_db_connection():
     password = os.environ.get("DB_PASSWORD")
     if not password:
@@ -20,6 +23,7 @@ def get_db_connection():
         password=password,
     )
 
+
 def ensure_migration_table_exists(conn):
     with conn.cursor() as cur:
         cur.execute("""
@@ -30,8 +34,10 @@ def ensure_migration_table_exists(conn):
         """)
     conn.commit()
 
-def run_migrations(allow_destructive=False):
-    migration_dir = os.path.join(os.path.dirname(__file__))
+
+def run_migrations(allow_destructive=False, migration_dir=None):
+    if migration_dir is None:
+        migration_dir = os.path.dirname(__file__)
     migration_files = sorted(glob.glob(os.path.join(migration_dir, "*.sql")))
 
     if not migration_files:
@@ -82,6 +88,7 @@ def run_migrations(allow_destructive=False):
                     raise
     finally:
         conn.close()
+
 
 if __name__ == "__main__":
     print("--- Starting Database Migrations ---")

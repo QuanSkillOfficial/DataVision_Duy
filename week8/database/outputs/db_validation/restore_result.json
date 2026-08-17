@@ -1,7 +1,7 @@
 {
-  "dump_file": "D:\\Quansolution\\Week\\week8\\database\\outputs\\backups\\datavision_db_20260813_125022.dump",
+  "dump_file": "D:\\Quansolution\\Week\\week8\\database\\outputs\\backups\\datavision_db_20260816_114810.dump",
   "target_db": "datavision_db_restore_test",
-  "started_at": "2026-08-13T13:12:48",
+  "started_at": "2026-08-16T11:53:28",
   "restore_status": "success",
   "counts": {
     "pgvector_extension_present": true,
@@ -9,7 +9,7 @@
     "documents": 1,
     "document_pages": 36,
     "document_chunks": 293,
-    "structured_records": 11524,
+    "structured_records": 230,
     "ingestion_logs": 4,
     "pipeline_runs": 4,
     "analytics_events": 0,
@@ -31,5 +31,5 @@
   "reference_counts_file": "week8\\database\\outputs\\backups\\backup_manifest.json",
   "mismatches": [],
   "overall_result": "PASS",
-  "finished_at": "2026-08-13T13:12:49"
+  "finished_at": "2026-08-16T11:53:30"
 }

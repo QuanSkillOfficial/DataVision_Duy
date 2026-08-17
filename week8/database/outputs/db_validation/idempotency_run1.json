@@ -1,0 +1,16 @@
+{
+  "label": "run1",
+  "timestamp": "2026-08-16T15:34:54.678879",
+  "counts": {
+    "sources": 8,
+    "documents": 2,
+    "document_pages": 36,
+    "document_chunks": 293,
+    "structured_records": 230,
+    "ingestion_logs": 4,
+    "pipeline_runs": 4,
+    "analytics_events": 0,
+    "rag_query_logs": 1,
+    "prediction_logs": 10
+  }
+}

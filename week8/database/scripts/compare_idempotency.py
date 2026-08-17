@@ -1,4 +1,5 @@
-import json, sys
+import json
+import sys
 
 d1 = json.load(open(sys.argv[1]))["counts"]
 d2 = json.load(open(sys.argv[2]))["counts"]
@@ -11,3 +12,6 @@ for t in d1:
         result["pass"] = False
 
 print(json.dumps(result, indent=2))
+
+if not result["pass"]:
+    sys.exit(1)
