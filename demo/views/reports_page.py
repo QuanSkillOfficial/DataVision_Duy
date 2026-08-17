@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 
 from demo.config import get_mode_label
+from demo.helpers.ui_status import guard_response
 from demo.services.service_client import generate_report
 from domain_config import DEFAULT_DOMAIN_KEY, get_domain_config, get_domain_names
 
@@ -87,8 +88,18 @@ def main():
     st.session_state["report_evidence_context"] = evidence_context
 
     response = generate_report(evidence_context)
-    report_payload = response["data"]
-    st.session_state.last_report_preview = pd.DataFrame(report_payload["sections"])
+    report_payload = guard_response(
+        response,
+        "Report service",
+        what_is_missing=(
+            "No report draft or evidence table can be produced. A report is "
+            "only valid when every evidence row comes from a live module."
+        ),
+    )
+    if report_payload is None:
+        return
+
+    st.session_state.last_report_preview = pd.DataFrame(report_payload.get("sections", []))
     st.session_state.last_report_evidence_table = report_payload.get("evidence_table", [])
 
     st.markdown("---")

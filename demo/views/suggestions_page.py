@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 
 from demo.config import get_mode_label
+from demo.helpers.ui_status import guard_response
 from demo.services.service_client import generate_suggestions
 from domain_config import DEFAULT_DOMAIN_KEY, get_domain_names
 
@@ -47,8 +48,17 @@ def main():
             "prediction_result": prediction_result,
             "rag_context": rag_context,
         })
-        st.session_state["suggestions"] = response.get("data", [])
-        st.rerun()
+        refreshed = guard_response(
+            response,
+            "Suggestion service",
+            what_is_missing=(
+                "Suggestions were not refreshed. Any list shown below is from "
+                "an earlier run, not from this refresh."
+            ),
+        )
+        if refreshed is not None:
+            st.session_state["suggestions"] = refreshed
+            st.rerun()
 
     suggestions = st.session_state.get("suggestions", [])
     if not suggestions:

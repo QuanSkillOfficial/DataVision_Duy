@@ -18,19 +18,59 @@ each test checks:
   - The `data` field is non-None.
 """
 
+import os
+
 import pytest
 
 from demo.config import USE_BACKEND
 from demo.services import backend_client
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Skip entire module when running in Mock Fixture Mode.
+# Skip policy (DV-HUNG-01)
+# ──────────────────────────────────────────────────────────────────────────────
+# By default this module skips in Mock Fixture Mode, so day-to-day UI work does
+# not require a running backend.
+#
+# The release workflow sets QS_REQUIRE_BACKEND_TESTS=true. In that mode the
+# module must never skip: a missing backend has to fail the release candidate
+# instead of quietly producing a green run with no integration evidence.
 # ──────────────────────────────────────────────────────────────────────────────
 
+REQUIRE_BACKEND_TESTS = (
+    os.environ.get("QS_REQUIRE_BACKEND_TESTS", "false").lower() == "true"
+)
+
 _BACKEND_REQUIRED = pytest.mark.skipif(
-    not USE_BACKEND,
+    not USE_BACKEND and not REQUIRE_BACKEND_TESTS,
     reason="Backend smoke tests only run when USE_BACKEND=True (QS_USE_BACKEND=true).",
 )
+
+
+def test_backend_mode_is_enabled_when_required():
+    """Fail closed when the release workflow demands backend-mode evidence.
+
+    This test is never skipped, so a release candidate cannot be accepted on a
+    run where the UI-to-backend contract was silently not exercised.
+    """
+    if not REQUIRE_BACKEND_TESTS:
+        pytest.skip(
+            "Set QS_REQUIRE_BACKEND_TESTS=true to enforce backend-mode evidence."
+        )
+    assert USE_BACKEND, (
+        "QS_REQUIRE_BACKEND_TESTS=true but QS_USE_BACKEND is not true. "
+        "The release candidate workflow requires real UI-to-backend contract "
+        "tests, not fixture-mode substitution."
+    )
+
+
+@pytest.fixture(autouse=True)
+def _fail_closed_without_backend_mode():
+    """Prevent required backend tests from running against fixtures."""
+    if REQUIRE_BACKEND_TESTS and not USE_BACKEND:
+        pytest.fail(
+            "Backend-mode evidence was required but the UI is in fixture mode. "
+            "Set QS_USE_BACKEND=true and point QS_BACKEND_URL at the release backend."
+        )
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -46,6 +86,27 @@ def _assert_valid_envelope(response: dict, label: str) -> None:
     assert response["status"] != "error", (
         f"{label}: status is 'error' — backend returned: {response}"
     )
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# HEALTH AND RELEASE IDENTITY (DV-HUNG-04)
+# ──────────────────────────────────────────────────────────────────────────────
+
+@_BACKEND_REQUIRED
+def test_backend_health_returns_envelope():
+    """GET /api/health returns a valid response envelope."""
+    response = backend_client.get_backend_health()
+    _assert_valid_envelope(response, "get_backend_health")
+
+
+@_BACKEND_REQUIRED
+def test_backend_health_exposes_release_identity_fields():
+    """Health must carry the identity fields the UI header renders."""
+    response = backend_client.get_backend_health()
+    _assert_valid_envelope(response, "get_backend_health (identity)")
+    data = response["data"]
+    for field in ["ok", "service", "release_sha", "environment"]:
+        assert field in data, f"get_backend_health: missing field '{field}'"
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -174,7 +235,7 @@ def test_backend_ask_rag_has_required_fields():
 def test_backend_ask_rag_status_is_valid():
     """ask_rag status must be one of the 3 canonical values."""
     response = backend_client.ask_rag("What is the refund policy?")
-    valid_statuses = {"success", "retrieval_only", "no_match", "error"}
+    valid_statuses = {"success", "no_match", "error"}
     status_value = response["data"].get("status")
     assert status_value in valid_statuses, (
         f"ask_rag: status '{status_value}' not in {valid_statuses}"

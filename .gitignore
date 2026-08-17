@@ -30,3 +30,10 @@ outputs/integration/week7_backend_stub_smoke_result.json
 # must never be committed recursively into the shared platform repository.
 /team_repositories/
 /weekly_tasks/
+
+# DV-HUNG-07: staging reviewer credentials must never be committed.
+deployment/staging/htpasswd
+
+# DV-HUNG-01/02/03: Week 8 UI evidence is produced by CI and uploaded as a
+# build artifact, not committed.
+outputs/week8/

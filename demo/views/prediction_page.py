@@ -2,7 +2,9 @@ import pandas as pd
 import streamlit as st
 
 from demo.config import PREDICTION_CONFIDENCE_THRESHOLD, get_mode_label
+from demo.helpers.ui_status import render_service_error
 from demo.services.service_client import classify_document, submit_prediction_correction
+from demo.services.service_errors import is_error
 from domain_config import DEFAULT_DOMAIN_KEY, get_domain_names
 
 
@@ -192,23 +194,23 @@ def _render_prediction_result(result: dict, selected_use_case: str, selected_mod
         st.markdown("---")
         st.subheader("Manual Review / Correction")
         st.info("This is a model suggestion. Confirm or correct the document type before using it as final truth.")
-
+        
         with st.form("prediction_correction_form"):
             options = [lbl for lbl in DOCUMENT_TYPE_LABELS.keys() if lbl != "record"]
             default_idx = options.index(predicted_type) if predicted_type in options else 0
-
+            
             corrected_type = st.selectbox(
                 "Correct Document Type",
                 options=options,
                 index=default_idx,
                 format_func=lambda x: DOCUMENT_TYPE_LABELS.get(x, x)
             )
-
+            
             reason = st.text_area(
                 "Correction Reason / Notes",
                 placeholder="Explain why this document type is selected (e.g. 'Manual review confirmed this is a contract')"
             )
-
+            
             submitted = st.form_submit_button("Submit Correction", use_container_width=True)
             if submitted:
                 if not reason.strip():
@@ -228,7 +230,16 @@ def _render_prediction_result(result: dict, selected_use_case: str, selected_mod
                     }
                     resp = submit_prediction_correction(feedback_payload)
 
-                    if resp.get("status") == "success":
+                    if is_error(resp):
+                        render_service_error(
+                            resp,
+                            "Prediction feedback service",
+                            what_is_missing=(
+                                "The correction was not saved. The reviewer "
+                                "decision is not recorded anywhere yet."
+                            ),
+                        )
+                    elif resp.get("status") == "success":
                         st.success("Correction submitted successfully!")
                         # Dynamically update view state
                         result["status"] = "accepted"
@@ -379,15 +390,32 @@ def main():
     if st.button("🚀 Run Classification", use_container_width=True):
         response = classify_document(payload)
         st.session_state["last_prediction_response"] = response
-        if response.get("status") == "error":
-            st.error("Prediction service returned an error.")
-        st.session_state["prediction_result"] = response.get("data", {})
+        if is_error(response):
+            # Clear any earlier result so a stale prediction card cannot be
+            # mistaken for the outcome of this run (DV-HUNG-05).
+            st.session_state["prediction_result"] = {}
+            st.session_state["prediction_error_response"] = response
+        else:
+            st.session_state["prediction_error_response"] = None
+            st.session_state["prediction_result"] = response.get("data", {})
+
+    prediction_error = st.session_state.get("prediction_error_response")
+    if prediction_error:
+        st.markdown("---")
+        render_service_error(
+            prediction_error,
+            "Prediction service",
+            what_is_missing=(
+                "No classification, confidence or review status is available "
+                "for this document."
+            ),
+        )
 
     result = st.session_state.get("prediction_result")
     if result:
         st.markdown("---")
         _render_prediction_result(result, selected_use_case, selected_model)
-    else:
+    elif not prediction_error:
         st.info("Run a classification to see the prediction result card.")
 
 

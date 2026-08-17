@@ -1,0 +1,12 @@
+# Week 8 browser end-to-end suite (DV-HUNG-02, DV-HUNG-03).
+#
+# Kept out of requirements.txt so the Streamlit runtime image does not ship a
+# browser automation stack. Install alongside requirements.txt, then fetch the
+# browser binary once:
+#
+#     pip install -r requirements-e2e.txt
+#     python -m playwright install chromium
+#
+# Pinned to a minor line because a Playwright upgrade also changes the browser
+# build, and browser evidence must be reproducible for a given release.
+playwright>=1.62,<1.63

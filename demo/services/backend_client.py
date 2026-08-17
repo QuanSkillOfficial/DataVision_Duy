@@ -17,100 +17,185 @@ USE_BACKEND = False in demo/config.py to use mock_client.py instead.
 
 from __future__ import annotations
 
+import time
 from typing import List, Optional
 
 import requests
 
-from demo.config import BACKEND_BASE_URL, BACKEND_TIMEOUT_SECONDS
+from demo.config import (
+    BACKEND_BASE_URL,
+    BACKEND_CONNECT_TIMEOUT_SECONDS,
+    BACKEND_READ_TIMEOUT_SECONDS,
+)
+from demo.services.service_errors import (
+    ERROR_HTTP,
+    ERROR_INVALID_PAYLOAD,
+    ERROR_TIMEOUT,
+    ERROR_UNAVAILABLE,
+    ERROR_UNKNOWN,
+)
 
 
-def _error_response(message: str, detail: str, status_code: Optional[int] = None) -> dict:
-    metadata = {"error": detail}
+_TIMEOUT = (BACKEND_CONNECT_TIMEOUT_SECONDS, BACKEND_READ_TIMEOUT_SECONDS)
+
+
+def _error_response(
+    message: str,
+    detail: str,
+    status_code: Optional[int] = None,
+    kind: str = ERROR_UNKNOWN,
+    endpoint: Optional[str] = None,
+    elapsed_ms: Optional[int] = None,
+) -> dict:
+    metadata = {"error": detail, "error_kind": kind}
     if status_code is not None:
         metadata["status_code"] = status_code
+    if endpoint is not None:
+        metadata["endpoint"] = endpoint
+    if elapsed_ms is not None:
+        metadata["elapsed_ms"] = elapsed_ms
     return {
         "data": None,
         "status": "error",
         "error": {
             "message": message,
             "detail": detail,
+            "kind": kind,
         },
         "metadata": metadata,
     }
 
 
-def _normalize_response(resp: requests.Response) -> dict:
+def _normalize_response(
+    resp: requests.Response,
+    endpoint: Optional[str] = None,
+    elapsed_ms: Optional[int] = None,
+) -> dict:
+    def fail(message: str, detail: str, kind: str) -> dict:
+        return _error_response(
+            message,
+            detail,
+            resp.status_code,
+            kind=kind,
+            endpoint=endpoint,
+            elapsed_ms=elapsed_ms,
+        )
+
     try:
         payload = resp.json()
     except ValueError as exc:
-        return _error_response(
-            "Backend returned invalid JSON",
-            str(exc),
-            resp.status_code,
-        )
+        return fail("Backend returned invalid JSON", str(exc), ERROR_INVALID_PAYLOAD)
 
     if resp.status_code >= 400:
-        return _error_response(
-            "Backend returned an error response",
-            str(payload),
-            resp.status_code,
-        )
+        return fail("Backend returned an error response", str(payload), ERROR_HTTP)
 
     if not isinstance(payload, dict):
-        return _error_response(
+        return fail(
             "Backend response envelope is invalid",
             "Response JSON must be an object.",
-            resp.status_code,
+            ERROR_INVALID_PAYLOAD,
         )
 
     if "data" not in payload or "status" not in payload:
-        return _error_response(
+        return fail(
             "Backend response envelope is missing required fields",
             "Expected top-level keys: data, status, metadata.",
-            resp.status_code,
+            ERROR_INVALID_PAYLOAD,
         )
 
     if payload.get("status") == "error":
-        return _error_response(
+        return fail(
             "Backend returned an error response",
             str(payload.get("error") or payload.get("metadata") or payload),
-            resp.status_code,
+            ERROR_HTTP,
         )
 
-    payload.setdefault("metadata", {})
+    metadata = payload.setdefault("metadata", {})
+    if isinstance(metadata, dict):
+        metadata.setdefault("endpoint", endpoint)
+        if elapsed_ms is not None:
+            metadata.setdefault("elapsed_ms", elapsed_ms)
     return payload
 
 
-def _get(path: str, params: Optional[dict] = None) -> dict:
+def _request(method: str, path: str, **kwargs) -> dict:
+    """Single entry point so every backend call is classified the same way."""
+    started = time.perf_counter()
+
+    def elapsed_ms() -> int:
+        return int((time.perf_counter() - started) * 1000)
+
     try:
-        resp = requests.get(
+        resp = requests.request(
+            method,
             f"{BACKEND_BASE_URL}{path}",
-            params=params,
-            timeout=BACKEND_TIMEOUT_SECONDS,
+            timeout=_TIMEOUT,
+            **kwargs,
         )
-        return _normalize_response(resp)
+        return _normalize_response(resp, endpoint=path, elapsed_ms=elapsed_ms())
     except requests.Timeout as exc:
-        return _error_response("Backend request timed out", str(exc))
+        return _error_response(
+            "Backend request timed out",
+            str(exc),
+            kind=ERROR_TIMEOUT,
+            endpoint=path,
+            elapsed_ms=elapsed_ms(),
+        )
     except requests.ConnectionError as exc:
-        return _error_response("Backend unavailable", str(exc))
+        return _error_response(
+            "Backend unavailable",
+            str(exc),
+            kind=ERROR_UNAVAILABLE,
+            endpoint=path,
+            elapsed_ms=elapsed_ms(),
+        )
     except requests.RequestException as exc:
-        return _error_response("Backend request failed", str(exc))
+        return _error_response(
+            "Backend request failed",
+            str(exc),
+            kind=ERROR_UNKNOWN,
+            endpoint=path,
+            elapsed_ms=elapsed_ms(),
+        )
+
+
+_JSON_PRIMITIVES = (str, int, float, bool, type(None))
+
+
+def _json_safe(value):
+    """Make a UI payload safe to serialise.
+
+    Session state carries objects the JSON encoder cannot handle - most
+    importantly the raw bytes of an uploaded file, which `source_context`
+    stores under "content". Those bytes are never part of a metadata call, so
+    they are replaced by their size rather than being sent or crashing the page.
+    """
+    if isinstance(value, _JSON_PRIMITIVES):
+        return value
+    if isinstance(value, (bytes, bytearray)):
+        return {"omitted": "binary", "byte_length": len(value)}
+    if isinstance(value, dict):
+        return {str(key): _json_safe(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple, set)):
+        return [_json_safe(item) for item in value]
+    return str(value)
+
+
+def _get(path: str, params: Optional[dict] = None) -> dict:
+    return _request("GET", path, params=params)
 
 
 def _post(path: str, payload: Optional[dict] = None) -> dict:
-    try:
-        resp = requests.post(
-            f"{BACKEND_BASE_URL}{path}",
-            json=payload or {},
-            timeout=BACKEND_TIMEOUT_SECONDS,
-        )
-        return _normalize_response(resp)
-    except requests.Timeout as exc:
-        return _error_response("Backend request timed out", str(exc))
-    except requests.ConnectionError as exc:
-        return _error_response("Backend unavailable", str(exc))
-    except requests.RequestException as exc:
-        return _error_response("Backend request failed", str(exc))
+    return _request("POST", path, json=_json_safe(payload or {}))
+
+
+# ─────────────────────────────────────────────
+# HEALTH / RELEASE IDENTITY (DV-HUNG-04)
+# ─────────────────────────────────────────────
+
+def get_backend_health() -> dict:
+    """Returns backend liveness plus whatever release identity it reports."""
+    return _get("/health")
 
 
 # ─────────────────────────────────────────────

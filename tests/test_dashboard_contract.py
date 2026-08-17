@@ -4,12 +4,50 @@ tests/test_dashboard_contract.py
 Verifies dashboard data flows correctly: mock dashboard returns
 correct shape; empty source context still returns a valid envelope
 (waiting state, not a crash); suggestions are sorted by final_score.
+
+Week 8 note (DV-HUNG-01): this module imports the fixture implementation
+directly instead of `service_client`. These tests pin the reference UI
+contract - the shape and business rules the UI requires from any backend - so
+they must produce the same result in fixture mode and in backend mode. Live
+UI-to-backend integration is covered separately by
+tests/test_backend_contract_smoke.py, which runs in backend mode only.
 """
 
-from demo.services.service_client import (
+from demo.services.mock_client import (
     get_dashboard_metrics,
     generate_suggestions,
+    get_ingestion_status,
 )
+
+
+def test_dashboard_exposes_every_field_the_ui_renders():
+    """Each field here is read by demo/views/dashboard_page.py."""
+    data = get_dashboard_metrics()["data"]
+    required = [
+        "source_count", "file_count", "link_count", "record_count",
+        "data_quality_score", "processing_status", "duplicate_risk",
+        "parsing_coverage",
+    ]
+    for field in required:
+        assert field in data, f"Missing field: {field}"
+
+
+def test_dashboard_counts_the_supplied_source_context():
+    sources = [{"filename": "a.csv"}, {"filename": "b.pdf"}]
+    assert get_dashboard_metrics(sources)["data"]["source_count"] == 2
+
+
+def test_ingestion_status_exposes_traceability_fields():
+    """Run and document identity are what make a dashboard number auditable."""
+    data = get_ingestion_status()["data"]
+    for field in [
+        "run_id", "source_name", "source_type",
+        "status",                    # Duy uses 'status', not 'processing_status'
+        "ingestion_run_id",
+        "document_external_id",
+        "data_quality_score",
+    ]:
+        assert field in data, f"Missing field: {field}"
 
 
 def test_mock_dashboard_returns_correct_shape():
