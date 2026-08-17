@@ -65,7 +65,7 @@
       "canonical_paths": [
         {
           "path": "ai/rag",
-          "tree_sha": "69f7e8ddafbf8ce767bb7078b0bdee13fcc444df"
+          "tree_sha": "0439c464de11595615e8a2810db85382ae51f430"
         },
         {
           "path": "ai/ai_tests",
