@@ -108,10 +108,15 @@ def _validate_prediction_item(item: dict) -> None:
             "status",
             "confidence",
             "top_predictions",
-            "document_external_id",
             "manual_review_required",
         ],
     )
+    if item["status"] != "failed":
+        _require_paths(item, ["document_external_id"])
+    elif item["manual_review_required"]:
+        raise FixtureValidationError(
+            "failed predictions must not enter the manual review queue"
+        )
     _get_path(item, "review_reason")
     _get_path(item, "document_db_id")
 
@@ -131,7 +136,11 @@ def validate_tuong_review_queue(payload: dict) -> dict:
         raise FixtureValidationError("review_items must be a list")
     for item in review_items:
         _validate_prediction_item(item)
-        _get_path(item, "prediction_log_id")
+        _require_paths(item, ["prediction_log_id"])
+        if item["status"] != "needs_review":
+            raise FixtureValidationError(
+                "review queue items must have needs_review status"
+            )
     return payload
 
 

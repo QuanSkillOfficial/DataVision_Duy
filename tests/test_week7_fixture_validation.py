@@ -71,7 +71,7 @@ def test_tuong_batch_fixture_has_manual_review_flags():
     payload = validate_tuong_prediction_batch(
         load_week7_fixture("tuong_prediction_batch_response")
     )
-    assert payload["results"]
+    assert len(payload["results"]) == 20
     assert any(item["manual_review_required"] for item in payload["results"])
 
 
@@ -79,7 +79,7 @@ def test_tuong_review_queue_fixture_has_feedback_ids():
     payload = validate_tuong_review_queue(
         load_week7_fixture("tuong_prediction_review_queue_sample")
     )
-    assert payload["review_items"]
+    assert len(payload["review_items"]) == 15
     for item in payload["review_items"]:
         assert item["prediction_log_id"] is not None
         assert item["manual_review_required"] is True
