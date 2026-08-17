@@ -158,9 +158,17 @@ class FakeVectorStore:
         if not self._chunk_index:
             return []
 
-        from sklearn.metrics.pairwise import cosine_similarity
         emb_matrix = np.vstack([self._chunk_by_id[cid]["embedding"] for cid in self._chunk_index])
-        similarities = cosine_similarity([query_embedding], emb_matrix)[0]
+        query = np.asarray(query_embedding, dtype=float).reshape(-1)
+        query_norm = np.linalg.norm(query)
+        row_norms = np.linalg.norm(emb_matrix, axis=1)
+        denominators = row_norms * query_norm
+        similarities = np.divide(
+            emb_matrix @ query,
+            denominators,
+            out=np.zeros(len(emb_matrix), dtype=float),
+            where=denominators != 0,
+        )
 
         filtered_indices = []
         for i, cid in enumerate(self._chunk_index):
