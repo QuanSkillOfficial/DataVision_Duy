@@ -49,7 +49,13 @@ services:
     # Renders the IP allowlist from STAGING_ALLOWED_CIDRS, then hands over to
     # the stock nginx entrypoint. Invoked through `sh` so the mounted script
     # does not need an executable bit on the deployment host.
+    #
+    # `command` is required: overriding `entrypoint` in Compose also clears the
+    # image's CMD, so without it the script would exec the stock entrypoint with
+    # no arguments, that entrypoint would not see "nginx", and the container
+    # would exit 0 in a restart loop with the port bound but unanswered.
     entrypoint: ["/bin/sh", "/etc/nginx/render-allowlist.sh"]
+    command: ["nginx", "-g", "daemon off;"]
     volumes:
       # Paths are relative to the project directory (the directory of the first
       # -f file, i.e. the repository root), not to this overlay file. Writing

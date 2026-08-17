@@ -1,0 +1,8 @@
+# The staging access-control files are executed inside a Linux container: the
+# nginx image runs render-allowlist.sh through /bin/sh, and the deployment host
+# runs generate_htpasswd.sh. A CRLF checkout - the default on Windows - makes
+# `sh` fail on the carriage returns, so their line endings are pinned here
+# regardless of the platform the release bundle is assembled on.
+deployment/staging/*.sh text eol=lf
+deployment/staging/*.conf text eol=lf
+deployment/cloud/*.yml text eol=lf

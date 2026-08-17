@@ -88,10 +88,17 @@ def backend_stub(backend_port):
 
 @pytest.fixture(scope="session")
 def app_url(backend_stub, backend_port) -> str:
-    """Base URL of the UI under test."""
+    """Base URL of the UI under test.
+
+    The external branch must `yield`, not `return`. This function is a generator
+    fixture, so a bare `return value` ends the generator without producing
+    anything and pytest fails with "app_url did not yield a value" - which meant
+    the deployed-UI mode never actually ran, however well documented it was.
+    """
     external = os.environ.get("QS_E2E_BASE_URL")
     if external:
-        return external.rstrip("/")
+        yield external.rstrip("/")
+        return
 
     ui_port = free_port()
     proc = start_streamlit(

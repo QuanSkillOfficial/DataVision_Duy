@@ -50,7 +50,14 @@ services:
       - "${UI_PUBLIC_PORT:-8501}:8080"
     # Renders the IP allowlist from STAGING_ALLOWED_CIDRS, then hands over to
     # the stock nginx entrypoint.
+    #
+    # `command` is required, not decorative: overriding `entrypoint` in Compose
+    # also clears the image's CMD, so without it render-allowlist.sh would exec
+    # the stock entrypoint with no arguments, that entrypoint would not see
+    # "nginx", and the container would exit 0 in a restart loop while the port
+    # stayed bound and unanswered.
     entrypoint: ["/bin/sh", "/etc/nginx/render-allowlist.sh"]
+    command: ["nginx", "-g", "daemon off;"]
     volumes:
       - ./nginx-staging-ui.conf:/etc/nginx/conf.d/default.conf:ro
       - ./render-allowlist.sh:/etc/nginx/render-allowlist.sh:ro
