@@ -119,7 +119,7 @@
       "canonical_paths": [
         {
           "path": "demo",
-          "tree_sha": "ecc6acdb4510c69c2f30d53aeb21bb3f43e9e88c"
+          "tree_sha": "ef5fb6f699d6a59a85601c7d4176ce04b6482a7d"
         },
         {
           "path": "tests/e2e",
