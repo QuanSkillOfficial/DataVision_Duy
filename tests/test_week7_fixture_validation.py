@@ -80,13 +80,9 @@ def test_tuong_review_queue_fixture_has_feedback_ids():
         load_week7_fixture("tuong_prediction_review_queue_sample")
     )
     assert payload["review_items"]
-    insert_status = payload.get("metadata", {}).get("database_insert_status")
-    if insert_status == "completed":
-        assert all(item["prediction_log_id"] is not None for item in payload["review_items"])
-    else:
-        assert insert_status == "pending_database_connection"
-        assert all("prediction_log_id" in item for item in payload["review_items"])
-    assert all(item["manual_review_required"] is True for item in payload["review_items"])
+    for item in payload["review_items"]:
+        assert item["prediction_log_id"] is not None
+        assert item["manual_review_required"] is True
 
 
 def test_validator_reports_missing_required_field():

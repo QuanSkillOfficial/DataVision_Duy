@@ -3,12 +3,19 @@ tests/test_prediction_ui_contract.py
 ======================================
 Verifies classify_document() honors the prediction_ui_contract:
 required fields, 4 status values, confidence threshold, top-3 shape.
+
+Week 8 note (DV-HUNG-01): this module imports the fixture implementation
+directly instead of `service_client`. These tests pin the reference UI
+contract - the shape and business rules the UI requires from any backend - so
+they must produce the same result in fixture mode and in backend mode. Live
+UI-to-backend integration is covered separately by
+tests/test_backend_contract_smoke.py, which runs in backend mode only.
 """
 
 import pytest
 
 from demo.config import PREDICTION_CONFIDENCE_THRESHOLD
-from demo.services.service_client import classify_document, classify_documents
+from demo.services.mock_client import classify_document, classify_documents
 
 
 VALID_PAYLOAD = {
@@ -113,7 +120,7 @@ def test_model_version_always_present():
 
 
 def test_submit_prediction_correction_success():
-    from demo.services.service_client import submit_prediction_correction
+    from demo.services.mock_client import submit_prediction_correction
     valid_feedback = {
         "prediction_log_id": 12,
         "document_db_id": 1,
@@ -130,7 +137,7 @@ def test_submit_prediction_correction_success():
 
 
 def test_submit_prediction_correction_missing_fields_fails():
-    from demo.services.service_client import submit_prediction_correction
+    from demo.services.mock_client import submit_prediction_correction
     invalid_feedback = {
         "prediction_log_id": 12,
         "corrected_document_type": "contract"

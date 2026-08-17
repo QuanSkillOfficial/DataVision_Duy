@@ -1,0 +1,67 @@
+# DV-HUNG-07 for the canonical cloud staging deployment.
+#
+# WHY THIS FILE EXISTS
+#
+# deployment/cloud/docker-compose.staging.yml in the canonical repository
+# publishes the Streamlit UI directly on the host:
+#
+#     ui:
+#       ports:
+#         - "${UI_PUBLIC_PORT:-8501}:8501"
+#
+# Streamlit has no authentication of its own, so anyone who reaches that
+# host:port can read every uploaded document and its extracted text, run
+# predictions, see the review queue, ask RAG questions over indexed content and
+# download generated reports. `deploy-staging.yml` even records that address as
+# the "Public Streamlit URL" of the staging Environment.
+#
+# DV-HUNG-07 acceptance requires the absence of an unauthenticated public
+# Streamlit endpoint, so the canonical deployment cannot be accepted as it
+# stands. This overlay closes that gap without changing any release identity,
+# image digest or URL: the proxy takes over the same published port, so
+# `ui_url` and the cloud acceptance check keep working unchanged.
+#
+# USAGE (on the staging host, from the release bundle)
+#
+#     docker compose --env-file .env.staging \
+#       -f docker-compose.staging.yml \
+#       -f docker-compose.staging-proxy.yml up -d
+#
+# The bundle must be flat: nginx-staging-ui.conf, render-allowlist.sh and
+# htpasswd sit next to this file. See docs/W8/hung_week8_canonical_staging_gap.md
+# for the exact `deploy-staging.yml` bundle step this requires.
+
+services:
+  ui:
+    # The UI is reachable only through the proxy from here on.
+    ports: !reset []
+    expose:
+      - "8501"
+
+  ui-proxy:
+    image: nginx:1.27-alpine
+    pull_policy: always
+    depends_on:
+      ui:
+        condition: service_healthy
+    # Deliberately the same published port the UI used, so the deployed
+    # staging URL does not change when the controls are added.
+    ports:
+      - "${UI_PUBLIC_PORT:-8501}:8080"
+    # Renders the IP allowlist from STAGING_ALLOWED_CIDRS, then hands over to
+    # the stock nginx entrypoint.
+    entrypoint: ["/bin/sh", "/etc/nginx/render-allowlist.sh"]
+    volumes:
+      - ./nginx-staging-ui.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./render-allowlist.sh:/etc/nginx/render-allowlist.sh:ro
+      - ./htpasswd:/etc/nginx/htpasswd:ro
+    environment:
+      # Space-separated CIDRs of the approved reviewer networks. The proxy
+      # refuses to start without it, so staging cannot come up unprotected.
+      STAGING_ALLOWED_CIDRS: ${STAGING_ALLOWED_CIDRS:?Set STAGING_ALLOWED_CIDRS before deploying staging}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8080/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6

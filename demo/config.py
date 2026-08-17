@@ -26,11 +26,44 @@ USE_BACKEND: bool = os.environ.get("QS_USE_BACKEND", "false").lower() == "true"
 # BACKEND SETTINGS (used only when USE_BACKEND = True)
 # ─────────────────────────────────────────────
 
+# BACKEND_BASE_URL is the name the compose files use for the same value, so it
+# is honoured as a fallback: the canonical stack and this repository's
+# docker-compose.yml both set it.
 BACKEND_BASE_URL: str = os.environ.get(
     "QS_BACKEND_URL",
     os.environ.get("BACKEND_BASE_URL", "http://localhost:8000/api"),
 )
-BACKEND_TIMEOUT_SECONDS: float = 10.0
+BACKEND_TIMEOUT_SECONDS: float = float(os.environ.get("QS_BACKEND_TIMEOUT", "10"))
+
+# Split timeouts so a dead host fails fast while a slow model call still gets
+# time to answer. requests accepts a (connect, read) tuple.
+BACKEND_CONNECT_TIMEOUT_SECONDS: float = float(
+    os.environ.get("QS_BACKEND_CONNECT_TIMEOUT", "3")
+)
+BACKEND_READ_TIMEOUT_SECONDS: float = float(
+    os.environ.get("QS_BACKEND_READ_TIMEOUT", str(BACKEND_TIMEOUT_SECONDS))
+)
+
+# ─────────────────────────────────────────────
+# RELEASE IDENTITY (DV-HUNG-04)
+# ─────────────────────────────────────────────
+# Injected by the deployment workflow so a reviewer can confirm exactly which
+# release and environment the UI in front of them is running.
+#
+# The canonical cloud staging pipeline (deployment/cloud/docker-compose.staging.yml
+# in DataVision_Duy) injects DATAVISION_RELEASE_SHA into every service, not
+# QS_RELEASE_SHA. Without the fallback below, a UI deployed by that pipeline
+# reports release_sha "unknown" and release_match "unknown", so DV-HUNG-04 could
+# not be verified on the very environment it exists to describe. QS_* still wins
+# when both are set, so a deployment can override the platform-wide value.
+
+RELEASE_SHA: str = (
+    os.environ.get("QS_RELEASE_SHA")
+    or os.environ.get("DATAVISION_RELEASE_SHA", "")
+)
+IMAGE_DIGEST: str = os.environ.get("QS_IMAGE_DIGEST", "")
+ENVIRONMENT: str = os.environ.get("QS_ENVIRONMENT", "local")
+BUILD_TIMESTAMP: str = os.environ.get("QS_BUILD_TIMESTAMP", "")
 
 # ─────────────────────────────────────────────
 # FIXTURE SETTINGS (used only when USE_BACKEND = False)

@@ -108,16 +108,12 @@ def _validate_prediction_item(item: dict) -> None:
             "status",
             "confidence",
             "top_predictions",
+            "document_external_id",
             "manual_review_required",
         ],
     )
     _get_path(item, "review_reason")
-    document_external_id = _get_path(item, "document_external_id")
     _get_path(item, "document_db_id")
-    if item["status"] != "failed" and document_external_id is None:
-        raise FixtureValidationError(
-            "document_external_id may be null only for a preserved failed validation record"
-        )
 
 
 def validate_tuong_prediction_batch(payload: dict) -> dict:

@@ -178,8 +178,12 @@ def render_sidebar():
             st.caption(f"{label}: {status}")
         st.markdown("---")
 
-        st.subheader("System Info")
-        st.info(f"**Status**: Online ✓\n\n**Version**: 2.1.0\n\n**Users Online**: 12")
+        # DV-HUNG-04: real release/backend identity replaces the previous
+        # hardcoded "Online / v2.1.0 / 12 users" placeholder, which could not
+        # be used as release evidence.
+        from demo.helpers.ui_status import render_release_identity
+
+        render_release_identity()
 
         return st.session_state.page
 
@@ -388,7 +392,7 @@ def render_connection_status(service_name: str, mode: str = "mock") -> None:
         actual_mode = mode
 
     label = "Mock Demo" if actual_mode == "mock" else ("Backend Connected" if actual_mode == "backend" else actual_mode)
-
+    
     try:
         st.caption(f"{service_name} - {label}")
     except Exception:
@@ -427,3 +431,6 @@ def get_source_name(source: dict) -> str:
 def get_source_type(source: dict) -> str:
     """Extract standard source type/kind from a source dictionary."""
     return source.get("source_type") or source.get("type", "unknown")
+
+
+
