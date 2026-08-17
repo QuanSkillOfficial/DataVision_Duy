@@ -30,7 +30,9 @@ interface.** Access always goes through an authenticating proxy.
 | `deployment/staging/nginx-staging-ui.conf` | IP allowlist plus HTTP basic auth, with the websocket and timeout settings Streamlit needs. |
 | `deployment/staging/render-allowlist.sh` | Renders the allowlist from `STAGING_ALLOWED_CIDRS` at container start and refuses to start when it is unset. |
 | `deployment/staging/generate_htpasswd.sh` | Generates reviewer credentials; the resulting `htpasswd` file is git-ignored. |
-| `scripts/week8_run_browser_e2e.py` | Runs the full browser journey against any URL, including the staging URL. |
+| `scripts/week8_run_browser_e2e.py` | Runs the browser journey against any URL, including the staging URL. |
+| `scripts/week8_staging_acceptance.py` | One command for the whole DV-HUNG-06/07 record: access-control checks plus the journey, into one evidence file. |
+| `deployment/cloud/docker-compose.staging-proxy.yml` | Applies these controls to the canonical cloud staging stack, which publishes the UI unauthenticated. |
 
 Two independent controls are used so that a single misconfiguration does not
 expose the UI: the network allowlist and the reviewer credentials.
@@ -70,30 +72,44 @@ proxy start-up log; check it there before sharing the URL.
 
 ## 4. Access control verification (DV-HUNG-07 acceptance)
 
-Run all four checks and keep the output as evidence. The task is not complete
-until every one produces the expected result.
+One step that cannot be automated has to happen first, because it must come from
+somewhere the allowlist rejects. Run this from a machine **outside**
+`STAGING_ALLOWED_CIDRS` and confirm the result:
 
 ```bash
-# 4.1 The UI port must NOT be reachable from outside the host.
-curl -sS --max-time 5 http://<staging-host>:8501/ ; echo "exit=$?"
-# Expected: connection refused or timeout (non-zero exit).
-
-# 4.2 The proxy must reject an unauthenticated request.
-curl -sS -o /dev/null -w '%{http_code}\n' https://<staging-host>/
-# Expected: 401
-
-# 4.3 The proxy must reject a request from outside the allowlist.
-#     Run from a machine that is not in STAGING_ALLOWED_CIDRS.
 curl -sS -o /dev/null -w '%{http_code}\n' https://<staging-host>/
 # Expected: 403
-
-# 4.4 An approved reviewer with credentials must get through.
-curl -sS -o /dev/null -w '%{http_code}\n' -u reviewer:<password> https://<staging-host>/
-# Expected: 200
 ```
 
-Record the results in `outputs/week8/hung_staging_access_check.md` together with
-the date, the host, and the release SHA that was deployed.
+Everything else is one command, run from a machine **inside** the allowlist. It
+performs the remaining three access-control checks, then the browser journey, and
+writes a single evidence file bound to one release SHA:
+
+```bash
+export QS_E2E_HTTP_USER=reviewer
+export QS_E2E_HTTP_PASSWORD=...        # never pass this on the command line
+
+python scripts/week8_staging_acceptance.py \
+  --ui-url https://<staging-host> \
+  --release-sha <exact release sha> \
+  --allowlist-denied-verified          # only after the 403 above was confirmed
+```
+
+| Check | Expected |
+|---|---|
+| `direct_ui_port_unreachable` | TCP connect to the raw Streamlit port fails |
+| `proxy_requires_authentication` | 401 without credentials |
+| `authorised_reviewer_allowed` | 200 with reviewer credentials |
+| `allowlist_denies_outside_networks` | 403, attested via `--allowlist-denied-verified` |
+| `browser_journey_against_deployed_ui` | the journey passes with every required screenshot |
+
+Two properties matter for review. The allowlist check **fails closed**: without
+the attestation flag the run fails rather than reporting an unverified control as
+green. And the browser journey runs only once the access controls hold, because a
+green journey against an unprotected UI would be evidence of the wrong thing.
+
+Result: `outputs/week8/hung_staging_acceptance.json`, generated rather than
+transcribed, naming the exact release SHA, the URL and the reviewer account.
 
 ---
 
@@ -103,14 +119,29 @@ The same browser journey that runs in CI is pointed at the staging URL. No
 separate staging-only test exists, so a pass means the same assertions held
 against the deployed release.
 
+`week8_staging_acceptance.py` above already runs this step; the command below is
+the same journey on its own, for a re-run without repeating the access checks.
+
 ```bash
 pip install -r requirements-e2e.txt
 python -m playwright install chromium
 
+export QS_E2E_HTTP_USER=reviewer
+export QS_E2E_HTTP_PASSWORD=...
+
 python scripts/week8_run_browser_e2e.py \
-  --base-url https://reviewer:<password>@<staging-host> \
+  --base-url https://<staging-host> \
   --release-sha <exact release sha>
 ```
+
+Credentials go in the environment, not in the URL: Chromium does not attach
+credentials embedded in a URL to Streamlit's websocket and XHR requests, so the
+first page would load and every rerun after it would 401.
+
+Against a deployed URL only the staging-capable tests run. The three that need a
+UI they control - a dead backend, or the stub's fault-injection route - are
+recorded in the evidence file under `selection.excluded` with the reason, rather
+than skipped silently.
 
 Outputs:
 

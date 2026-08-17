@@ -49,6 +49,10 @@ EVIDENCE_DIR = ROOT / "outputs" / "week8"
 EVIDENCE_PATH = EVIDENCE_DIR / "hung_browser_e2e.json"
 JUNIT_PATH = EVIDENCE_DIR / "hung_browser_e2e_junit.xml"
 SCREENSHOT_DIR = ROOT / "screenshots" / "week8_browser_e2e"
+# Written by tests.e2e.ui.capture(), one step name per line. This, not a file
+# timestamp, is what proves a screenshot belongs to this run: a checkout
+# rewrites every committed screenshot with a current mtime.
+CAPTURE_MANIFEST = EVIDENCE_DIR / "e2e_captured.txt"
 
 # Tests that cannot describe a deployed environment, and why. They are declared
 # here rather than skipped silently: the Week 8 rule is that a release gate must
@@ -83,6 +87,7 @@ def _run_suite(
 ) -> subprocess.CompletedProcess:
     env = dict(os.environ)
     env["PYTHONIOENCODING"] = "utf-8"
+    env["QS_E2E_CAPTURE_MANIFEST"] = str(CAPTURE_MANIFEST)
     if base_url:
         env["QS_E2E_BASE_URL"] = base_url
     if release_sha:
@@ -101,6 +106,22 @@ def _run_suite(
     ]
     print(f"$ {' '.join(command)}")
     return subprocess.run(command, env=env, cwd=str(ROOT), text=True)
+
+
+def _reset_capture_manifest() -> None:
+    """Start the run with an empty manifest so nothing carries over."""
+    CAPTURE_MANIFEST.parent.mkdir(parents=True, exist_ok=True)
+    CAPTURE_MANIFEST.write_text("", encoding="utf-8")
+
+
+def _read_capture_manifest() -> set[str]:
+    if not CAPTURE_MANIFEST.exists():
+        return set()
+    return {
+        line.strip()
+        for line in CAPTURE_MANIFEST.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    }
 
 
 def _parse_junit(path: Path) -> dict:
@@ -141,6 +162,7 @@ def main() -> int:
 
     EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
     started_at = datetime.now(timezone.utc).isoformat()
+    _reset_capture_manifest()
 
     # Against a deployed UI only the staging-capable set can run; the rest need
     # a stack this process controls.
@@ -151,10 +173,16 @@ def main() -> int:
         "cases": [],
     }
 
-    screenshots = sorted(p.name for p in SCREENSHOT_DIR.glob("*.png"))
-    missing_steps = [
-        step for step in REQUIRED_JOURNEY_STEPS if f"{step}.png" not in screenshots
-    ]
+    # Only steps this run captured count as its evidence. The suite no longer
+    # empties the folder up front, because that destroyed committed evidence
+    # whenever a run failed part-way.
+    captured = _read_capture_manifest()
+    present = {path.name for path in SCREENSHOT_DIR.glob("*.png")}
+    produced = sorted(
+        f"{step}.png" for step in captured if f"{step}.png" in present
+    )
+    stale = sorted(present - set(produced))
+    missing_steps = [step for step in REQUIRED_JOURNEY_STEPS if step not in captured]
 
     failures: list[str] = []
     if report["totals"]["failures"]:
@@ -164,7 +192,10 @@ def main() -> int:
     if not report["totals"]["tests"]:
         failures.append("No browser tests were collected")
     if missing_steps:
-        failures.append("Missing journey evidence for: " + ", ".join(missing_steps))
+        failures.append(
+            "Missing journey evidence written by this run for: "
+            + ", ".join(missing_steps)
+        )
     if result.returncode != 0 and not failures:
         failures.append(f"pytest exited with code {result.returncode}")
 
@@ -192,7 +223,9 @@ def main() -> int:
         "environment": os.environ.get("QS_ENVIRONMENT", "e2e"),
         "journey": REQUIRED_JOURNEY_STEPS,
         "results": report,
-        "screenshots": screenshots,
+        "screenshots": produced,
+        # In the folder but not captured by this run, so not evidence.
+        "stale_screenshots": stale,
         "screenshot_dir": "screenshots/week8_browser_e2e",
         "junit_report": str(JUNIT_PATH.relative_to(ROOT)).replace("\\", "/"),
     }
@@ -207,7 +240,7 @@ def main() -> int:
 
     print(
         f"\nBROWSER E2E GATE PASSED: {report['totals']['tests']} tests, "
-        f"{len(screenshots)} screenshots captured."
+        f"{len(produced)} screenshots captured."
     )
     return 0
 

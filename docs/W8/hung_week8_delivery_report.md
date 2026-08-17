@@ -39,8 +39,29 @@ executed** until a private staging host exists (see section 6).
 | DV-HUNG-03 | Upload/ingestion, dashboard refresh, review queue and error handling against real services | Complete | Same journey plus `tests/e2e/test_error_handling.py`, screenshots `10`–`12` |
 | DV-HUNG-04 | Reviewers can confirm which backend/release the UI is using | Complete | `demo/helpers/release_identity.py`, `tests/test_release_identity.py`, screenshot `00` |
 | DV-HUNG-05 | Actionable timeout / partial-service / unavailable handling; no stale fixture success | Complete | `demo/services/service_errors.py`, `tests/test_service_error_contract.py`, screenshots `10`–`12` |
-| DV-HUNG-06 | Browser test passes on the real private staging URL | **Blocked** | Runner supports `--base-url`; no staging host exists yet |
-| DV-HUNG-07 | Authenticated proxy / VPN / IP allowlist before public sharing | **Implemented, not deployed** | `deployment/staging/`, runbook in `hung_week8_staging_access_and_browser_validation.md` |
+| DV-HUNG-06 | Browser test passes on the real private staging URL | **Ready, not executed** | `scripts/week8_staging_acceptance.py` is one command against a deployed URL; waiting on the staging URL, see §6 |
+| DV-HUNG-07 | Authenticated proxy / VPN / IP allowlist before public sharing | **Implemented, not deployed** | `deployment/staging/`, `deployment/cloud/docker-compose.staging-proxy.yml`, runbook in `hung_week8_staging_access_and_browser_validation.md` |
+
+### Correction to the status above
+
+DV-HUNG-01 was reported Complete on the strength of a local run. It was not: the
+gate collected `tests/e2e`, whose conftest imported Playwright from a
+`pytest_configure` hook, so in the CI job that installs `requirements.txt` only,
+collection aborted and **zero** of the 18 required contract tests ran. It passed
+locally purely because Playwright happened to be installed. Fixed — the e2e setup
+is a fixture that runs only when a browser test executes, and the gate selects the
+UI test modules directly. The same hook also deleted the committed
+`screenshots/week8_browser_e2e/` on any pytest run that touched `tests/e2e`.
+
+DV-HUNG-04 was reported Complete but could not have been verified on a real
+deployment: the canonical staging stack injects `DATAVISION_RELEASE_SHA`, the UI
+read only `QS_RELEASE_SHA`, so a deployed UI would have reported an unknown
+release. Fixed by a fallback in `demo/config.py`.
+
+DV-HUNG-06 is no longer blocked on a host that does not exist. Canonical `main`
+carries a cloud staging pipeline; it is blocked on the changes in
+`hung_week8_canonical_staging_gap.md` §2, chiefly that the canonical stack
+publishes Streamlit with no authentication at all.
 
 ---
 
@@ -162,9 +183,11 @@ fixed by patching the UI.
 
 | Blocker | Owner | Effect |
 |---|---|---|
-| No private staging host or URL | Duy (DV-DUY-08) | DV-HUNG-06 cannot run against a real deployment. Only the local stack has been validated. |
+| Canonical staging publishes Streamlit with no authentication | Duy | Staging must not be dispatched or shared until the proxy overlay and the `deploy-staging.yml` changes in `hung_week8_canonical_staging_gap.md` §2 land. |
+| No staging URL has been issued | Duy (DV-DUY-08) | DV-HUNG-06 has nothing to run against. The pipeline exists; the deployment has not been performed. |
 | No TLS termination for a staging hostname | Duy | Basic-auth credentials would cross the network in clear text, so the proxy must not be exposed yet. |
 | Approved reviewer CIDR list undecided | Team | `STAGING_ALLOWED_CIDRS` has no real value to be set to. |
+| Null `document_external_id` / `prediction_log_id` in generated fixtures | Tường | `scripts/week7_refresh_fixtures.py` reintroduces values the UI contract rejects, which fails the UI gate. |
 
 No local screenshot should be presented as cloud staging evidence. Local runs
 are deliberately labelled `environment: e2e` with release `e2e-local-run` so
@@ -185,20 +208,30 @@ python scripts/week8_backend_mode_gate.py
 pip install -r requirements-e2e.txt
 python -m playwright install chromium
 python scripts/week8_run_browser_e2e.py
+
+# DV-HUNG-06/07: the whole staging acceptance record, once a URL exists
+python scripts/week8_staging_acceptance.py --ui-url <url> --release-sha <sha> `
+  --allowlist-denied-verified
 ```
 
 ### Recorded results
 
 ```text
-Fixture mode:   93 passed, 18 skipped, 4 deselected
-                (18 skips are backend-only tests; 4 deselected are browser tests)
+Fixture mode:   95 passed, 18 skipped
+                (18 skips are backend-only tests, run by the gate below)
 
-Backend mode:   111 passed, 0 failed, 0 skipped
+Backend mode:   113 passed, 0 failed, 0 skipped, 18 contract tests
                 BACKEND-MODE GATE PASSED: no required backend test was skipped
 
-Browser E2E:    4 passed
-                BROWSER E2E GATE PASSED: 10 screenshots captured
+Browser E2E:    4 passed, 10 screenshots
+                BROWSER E2E GATE PASSED
+                1/4 selected against a deployed URL; the other 3 are recorded
+                in selection.excluded with their reason
 ```
+
+The same gates on the canonical integration branch (`Intern6-Hung`, based on
+`main` at `ca19091`): backend-mode 115 tests / 0 skipped, browser journey 4
+passed / 10 screenshots, and `tests/ai_tests` unchanged at 18 passed.
 
 Evidence artifacts:
 
@@ -259,10 +292,27 @@ tests/*                           contract tests pinned to the reference impl
 
 ## 9. Next actions
 
-1. Open the owner PR into the canonical repository with the exact commit SHA and
-   the two evidence JSON files attached.
-2. Raise the three contract issues in section 5 with Tường and Lập.
-3. Once Duy delivers the private staging URL, run
-   `python scripts/week8_run_browser_e2e.py --base-url <url> --release-sha <sha>`
-   and complete the four access-control checks in the staging runbook, then
-   close DV-HUNG-06 and DV-HUNG-07 with that evidence.
+1. Open the owner PR from branch `Intern6-Hung` in the canonical repository. The
+   branch is based on `main` at `ca19091` and touches no other owner's files;
+   evidence is produced by the `ui-week8.yml` workflow and uploaded per commit
+   SHA, so nothing has to be attached by hand.
+2. Get the canonical changes in `hung_week8_canonical_staging_gap.md` §2 reviewed.
+   Until they land, `deploy-staging.yml` must not be dispatched: it deploys an
+   unauthenticated UI.
+3. Raise the contract issues in section 5, plus the null
+   `document_external_id` / `prediction_log_id` in the generated fixtures, with
+   Tường and Lập.
+4. Once a staging URL exists, one command closes both remaining tasks:
+   `python scripts/week8_staging_acceptance.py --ui-url <url> --release-sha <sha>
+   --allowlist-denied-verified`, run from inside `STAGING_ALLOWED_CIDRS` after
+   confirming the 403 from outside it.
+
+### Still unverified
+
+The nginx proxy has not been started as a container. Its shell syntax, the
+allowlist rendering, the fail-closed path and the merged `docker compose config`
+against the real canonical stack are all verified; the container start-up path
+itself is not, because no Docker daemon was available. Run
+`docker compose --env-file .env.staging -f docker-compose.staging.yml
+-f docker-compose.staging-proxy.yml up -d` on a host with Docker and confirm the
+allowlist the proxy prints at start-up before relying on it.

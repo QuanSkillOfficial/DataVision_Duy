@@ -16,7 +16,6 @@ Environment overrides:
 from __future__ import annotations
 
 import os
-import shutil
 from pathlib import Path
 
 import pytest
@@ -47,6 +46,13 @@ def e2e_session():
         ``screenshots/week8_browser_e2e/`` on any unrelated test run.
 
     As a fixture the setup runs only when an e2e test is actually executed.
+
+    Nothing is deleted here either. Emptying the folder up front was meant to
+    stop a previous run's screenshots being counted as this run's evidence, but
+    it also destroyed the committed evidence whenever a run failed part-way.
+    ``scripts/week8_run_browser_e2e.py`` enforces the same guarantee by requiring
+    each required screenshot to have been written after the run started, which
+    additionally catches a step that silently failed to re-capture.
     """
     from playwright.sync_api import expect
 
@@ -54,8 +60,6 @@ def e2e_session():
     # budget is too tight for a real page transition.
     expect.set_options(timeout=DEFAULT_TIMEOUT_MS)
 
-    if SCREENSHOT_DIR.exists() and os.environ.get("QS_E2E_KEEP_SCREENSHOTS") != "1":
-        shutil.rmtree(SCREENSHOT_DIR)
     SCREENSHOT_DIR.mkdir(parents=True, exist_ok=True)
     LOG_DIR.mkdir(parents=True, exist_ok=True)
 

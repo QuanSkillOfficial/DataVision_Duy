@@ -11,6 +11,7 @@ away. Centralising that here keeps the journey test readable and keeps flaky
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 from playwright.sync_api import Page, expect
@@ -154,8 +155,20 @@ def page_text(page: Page) -> str:
 
 
 def capture(page: Page, name: str) -> Path:
-    """Save a full-page screenshot as release evidence."""
+    """Save a full-page screenshot as release evidence.
+
+    The step name is also appended to the capture manifest, which is how
+    ``scripts/week8_run_browser_e2e.py`` knows which screenshots this run
+    actually produced. File timestamps cannot answer that: a checkout writes
+    every committed screenshot with a current mtime, so in CI a stale file would
+    look freshly captured and a step that never ran could pass the gate.
+    """
     SCREENSHOT_DIR.mkdir(parents=True, exist_ok=True)
     path = SCREENSHOT_DIR / f"{name}.png"
     page.screenshot(path=str(path), full_page=True)
+
+    manifest = os.environ.get("QS_E2E_CAPTURE_MANIFEST")
+    if manifest:
+        with open(manifest, "a", encoding="utf-8") as handle:
+            handle.write(f"{name}\n")
     return path
