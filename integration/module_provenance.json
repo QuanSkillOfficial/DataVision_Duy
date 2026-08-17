@@ -127,11 +127,11 @@
         },
         {
           "path": "tests/e2e",
-          "tree_sha": "2c9ed74d2ed0e12d0024cb3fcf99829971789586"
+          "tree_sha": "894e2c7e764d3b85d4c8a8c759e0c51b6524709b"
         },
         {
           "path": "deployment/staging",
-          "tree_sha": "645211f385fed92ea9065cc8bf9df4564fc62966"
+          "tree_sha": "fc74e3fb4af0bc001d386b3e0b1bff071cab2dc5"
         }
       ],
       "required_files": [
