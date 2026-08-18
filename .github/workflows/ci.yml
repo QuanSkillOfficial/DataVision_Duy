@@ -155,6 +155,117 @@ jobs:
       - name: Run local integration contract smoke test
         run: python scripts/week7_shared_integration_smoke_test.py
 
+  module-parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify core module structure parity
+        shell: bash
+        run: |
+          set -e
+          echo "=== Module parity check ==="
+          ERRORS=0
+
+          # Prediction module
+          for f in ai/prediction/__init__.py ai/prediction/inference.py ai/prediction/config.py ai/prediction/requirements-ci.txt; do
+            if [ ! -f "$f" ]; then
+              echo "MISSING: $f"
+              ERRORS=$((ERRORS + 1))
+            else
+              echo "OK: $f"
+            fi
+          done
+
+          # Data engineering
+          for f in data_engineering/__init__.py; do
+            if [ -d data_engineering ] && [ ! -f "$f" ]; then
+              echo "MISSING: $f"
+              ERRORS=$((ERRORS + 1))
+            else
+              echo "OK or skipped: $f"
+            fi
+          done
+
+          # RAG module
+          for f in ai/rag/__init__.py; do
+            if [ -d ai/rag ] && [ ! -f "$f" ]; then
+              echo "MISSING: $f"
+              ERRORS=$((ERRORS + 1))
+            else
+              echo "OK or skipped: $f"
+            fi
+          done
+
+          # Shared requirements
+          if [ ! -f requirements-ci.txt ]; then
+            echo "MISSING: requirements-ci.txt"
+            ERRORS=$((ERRORS + 1))
+          else
+            echo "OK: requirements-ci.txt"
+          fi
+
+          if [ "$ERRORS" -gt 0 ]; then
+            echo "Module parity check failed with $ERRORS errors"
+            exit 1
+          fi
+          echo "All module parity checks passed"
+
+  security-source-ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scan for hardcoded secrets and unsafe patterns
+        shell: bash
+        run: |
+          set -e
+          echo "=== Security source scan ==="
+          ERRORS=0
+
+          # Check for hardcoded passwords/tokens in Python files
+          if grep -rn --include="*.py" -E "(password|secret|token|api_key)\s*=\s*['\"][^'\"]{8,}" . \
+             | grep -v -E "(example|test|mock|fake|dummy|placeholder|__pycache__|\.env\.example)" \
+             | grep -v "requirements"; then
+            echo "WARNING: Possible hardcoded secrets found (review above)"
+          else
+            echo "OK: No hardcoded secrets detected in Python source"
+          fi
+
+          # Check for unsafe eval/exec usage
+          if grep -rn --include="*.py" -E "^\s*(eval|exec)\s*\(" . \
+             | grep -v -E "(__pycache__|test_|\.pyc)"; then
+            echo "FAIL: Unsafe eval/exec usage found"
+            ERRORS=$((ERRORS + 1))
+          else
+            echo "OK: No unsafe eval/exec usage"
+          fi
+
+          # Check for private keys committed
+          if find . -name "*.pem" -o -name "*.key" -o -name "id_rsa" | grep -v ".git/" | head -1 | grep .; then
+            echo "FAIL: Private key files found in repo"
+            ERRORS=$((ERRORS + 1))
+          else
+            echo "OK: No private key files"
+          fi
+
+          # Check .env files not committed (except examples)
+          if find . -name ".env" -not -name ".env.example" -not -name ".env.staging.example" | grep -v ".git/" | head -1 | grep .; then
+            echo "FAIL: .env file committed to repo"
+            ERRORS=$((ERRORS + 1))
+          else
+            echo "OK: No .env files committed"
+          fi
+
+          if [ "$ERRORS" -gt 0 ]; then
+            echo "Security scan failed with $ERRORS issues"
+            exit 1
+          fi
+          echo "All security checks passed"
+
   module-discovery:
     runs-on: ubuntu-latest
     outputs:
