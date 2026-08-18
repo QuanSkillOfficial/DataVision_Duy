@@ -1,0 +1,9 @@
+✓ test_rag_response_contract_fields passed
+✓ test_rag_service_response_contract passed
+✓ test_retrieval_only_status passed
+✓ test_no_answer_found_status_empty_store passed
+✓ test_citations_in_response passed
+✓ test_unsupported_query_low_confidence passed
+✓ test_response_metadata passed
+
+✓ All RAG response contract tests passed!

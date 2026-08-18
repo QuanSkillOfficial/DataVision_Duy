@@ -1,0 +1,9 @@
+# Lightweight CI dependencies for the RAG package.
+# Keep this intentionally small: only the packages needed to run the core
+# pytest suite without downloading heavy ML stacks during CI.
+
+numpy>=1.24.0
+scikit-learn>=1.2.0
+psycopg2-binary>=2.9.0
+python-dotenv>=1.0.0
+pytest>=7.4.0

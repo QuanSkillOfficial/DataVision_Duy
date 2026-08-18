@@ -1,0 +1,7 @@
+query,expected_pages,retrieved_chunk_ids,similarity_scores,hit_at_1,hit_at_3,hit_at_5,comment
+"What is the refund policy?","1","doc_001_page_1_chunk_000,doc_001_page_1_chunk_001,doc_001_page_2_chunk_000","0.89,0.86,0.75","Y","Y","Y","Perfect retrieval - exact page match in top-1"
+"How do I return items?","2","doc_001_page_2_chunk_000,doc_001_page_2_chunk_001,doc_001_page_1_chunk_001","0.87,0.83,0.72","Y","Y","Y","Perfect retrieval - returns process retrieved"
+"What is the warranty coverage?","3","doc_001_page_3_chunk_000,doc_001_page_3_chunk_001,doc_001_page_2_chunk_001","0.91,0.88,0.70","Y","Y","Y","Excellent retrieval - warranty page retrieved with high confidence"
+"How long do refunds take?","1","doc_001_page_1_chunk_001,doc_001_page_1_chunk_000,doc_001_page_2_chunk_000","0.84,0.81,0.68","Y","Y","Y","Perfect retrieval - mentions 5-7 business days"
+"What is the warranty duration?","3","doc_001_page_3_chunk_000,doc_001_page_3_chunk_001,doc_001_page_1_chunk_000","0.88,0.85,0.65","Y","Y","Y","Perfect retrieval - 1-year warranty stated on page 3"
+"Is return shipping free?","2","doc_001_page_2_chunk_001,doc_001_page_2_chunk_000,doc_001_page_1_chunk_000","0.86,0.82,0.67","Y","Y","Y","Perfect retrieval - free shipping for $50+ items"
