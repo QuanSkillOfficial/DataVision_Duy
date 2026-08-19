@@ -1,0 +1,31 @@
+{
+    "timestamp": "20260816_233312",
+    "path": "week8\\database\\outputs\\backups\\datavision_db_20260816_233312.dump",
+    "checksum": "1f48de99fb21881dd6596b56d8910930ca855cc3a8638de6fd2389f5dab409cf",
+    "size": 758920,
+    "counts": {
+        "pgvector_extension_present": true,
+        "sources": 8,
+        "documents": 2,
+        "document_pages": 36,
+        "document_chunks": 293,
+        "structured_records": 230,
+        "ingestion_logs": 4,
+        "pipeline_runs": 4,
+        "analytics_events": 0,
+        "rag_query_logs": 1,
+        "prediction_logs": 10,
+        "view:v_dashboard_overview": 1,
+        "view:v_ingestion_health": 1,
+        "view:v_source_quality_summary": 8,
+        "view:v_document_quality_summary": 2,
+        "view:v_rag_daily_metrics": 1,
+        "view:v_prediction_confidence_summary": 4,
+        "view:v_recent_activity": 9,
+        "view:v_latest_ingestion_runs": 4,
+        "view:v_data_quality_dashboard": 4,
+        "view:v_source_quality_detail": 8,
+        "view:v_document_rag_readiness": 2,
+        "view:v_prediction_review_queue": 5
+    }
+}
