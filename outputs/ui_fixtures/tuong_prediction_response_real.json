@@ -1,25 +1,29 @@
 {
   "response": {
     "predicted_document_type": "report",
-    "confidence": 0.72,
+    "confidence": 0.4184,
     "status": "needs_review",
     "top_predictions": [
       {
         "label": "report",
-        "score": 0.72
+        "score": 0.4184
       },
       {
-        "label": "manual",
-        "score": 0.2
+        "label": "research_paper",
+        "score": 0.2262
+      },
+      {
+        "label": "contract",
+        "score": 0.2084
       }
     ],
     "review_reason": "Confidence below staging threshold",
     "manual_review_required": true,
-    "document_external_id": "doc_001",
-    "document_db_id": 1,
-    "source_id": 100,
+    "document_external_id": "doc_dataflow_technical_report",
+    "document_db_id": null,
+    "source_id": null,
     "source_name": "dataflow_technical_report_pdf",
-    "ingestion_run_id": "uuid-1234",
+    "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
     "model_version": "document_classifier_v1"
   }
 }

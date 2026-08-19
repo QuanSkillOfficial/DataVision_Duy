@@ -110,3 +110,89 @@ def test_canonical_20_payload_flow():
         json.dump(evidence, f, indent=2, default=str)
 
     print(f"Successfully wrote 20 results and log payloads to {CANONICAL_RESULTS_FILE}")
+
+
+# ---------------------------------------------------------------------------
+# Real Duy ID verification
+# ---------------------------------------------------------------------------
+
+# IDs that come from real Duy ingestion outputs — NOT synthetic test data.
+REAL_DUY_DOCUMENT_IDS = {
+    "doc_dataflow_technical_report",
+    "doc_dataflow_technical_report_intro_pages",
+    "doc_dataflow_technical_report_architecture_page",
+    "doc_dataflow_technical_report_related_work",
+    "doc_superstore_sales_csv_summary",
+    "doc_product_sales_region_excel_summary",
+    "doc_dummyjson_products_api_summary",
+    "doc_short_text_quality_gate",
+    "doc_empty_text_quality_gate",
+    "doc_missing_file_name_validation",
+    "doc_dataflow_system_operators_pages",
+    "doc_dataflow_pipeline_api_pages",
+    "doc_dataflow_agent_workflow_pages",
+    "doc_dataflow_agentic_rag_evaluation_pages",
+    "doc_superstore_order_profitability_sample",
+    "doc_product_sales_region_sample",
+    "doc_dummyjson_inventory_sample",
+    "doc_dataflow_technical_notes_markdown",
+    "doc_invalid_file_size_validation",
+    # payload 19 has document_external_id = None (missing ID edge case)
+}
+
+SYNTHETIC_ID_PREFIXES = [
+    "doc_contract_", "doc_financial_", "doc_invoice_",
+    "doc_policy_", "doc_report_0", "doc_paper_",
+    "doc_resume_", "doc_edge_", "doc_tricky_",
+]
+
+
+def test_canonical_payloads_use_real_duy_ids():
+    """Canonical payloads must use real Duy document IDs, not synthetic ones."""
+    with open(CANONICAL_PAYLOADS_FILE, "r", encoding="utf-8") as f:
+        payloads = json.load(f)
+
+    for i, payload in enumerate(payloads):
+        doc_id = payload.get("document_external_id")
+        if doc_id is not None:
+            for prefix in SYNTHETIC_ID_PREFIXES:
+                assert not doc_id.startswith(prefix), (
+                    f"Payload {i} uses synthetic ID '{doc_id}' — "
+                    f"must use real Duy document IDs"
+                )
+
+
+def test_canonical_payloads_contain_known_duy_ids():
+    """At least the core Duy document IDs must appear in canonical payloads."""
+    with open(CANONICAL_PAYLOADS_FILE, "r", encoding="utf-8") as f:
+        payloads = json.load(f)
+
+    payload_ids = {p.get("document_external_id") for p in payloads}
+    # At least 15 of the 19 known IDs should be present (allows for minor changes)
+    overlap = REAL_DUY_DOCUMENT_IDS & payload_ids
+    assert len(overlap) >= 15, (
+        f"Expected at least 15 known Duy IDs in canonical payloads, "
+        f"found {len(overlap)}: {overlap}"
+    )
+
+
+def test_canonical_results_file_has_current_structure():
+    """Pre-existing canonical results file must have expected structure."""
+    if not os.path.exists(CANONICAL_RESULTS_FILE):
+        pytest.skip("canonical_20_results.json not yet generated")
+
+    with open(CANONICAL_RESULTS_FILE, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert "release_sha" in data, "Missing release_sha"
+    assert "results" in data, "Missing results"
+    assert len(data["results"]) == 20, f"Expected 20 results, got {len(data['results'])}"
+
+    # Verify no synthetic IDs in results
+    for r in data["results"]:
+        doc_id = r.get("document_external_id")
+        if doc_id:
+            for prefix in SYNTHETIC_ID_PREFIXES:
+                assert not doc_id.startswith(prefix), (
+                    f"Result uses synthetic ID '{doc_id}'"
+                )
