@@ -46,22 +46,22 @@ def test_load_document_pages_jsonl():
             "is_empty": True
         }
     ]
-
+    
     with tempfile.NamedTemporaryFile(mode='w', suffix='.jsonl', delete=False) as f:
         for page in sample_pages:
             f.write(json.dumps(page) + '\n')
         temp_path = f.name
-
+    
     try:
         # Load pages
         pages = DocumentLoader.load_document_pages_jsonl(temp_path)
-
+        
         # Assertions
         assert len(pages) == 3, f"Expected 3 pages, got {len(pages)}"
         assert pages[0]["document_id"] == "doc_001"
         assert pages[0]["page_number"] == 1
         assert pages[2]["is_empty"] == True
-
+        
         print("✓ test_load_document_pages_jsonl passed")
     finally:
         os.unlink(temp_path)
@@ -95,15 +95,15 @@ def test_empty_pages_skipped():
             "is_empty": False
         }
     ]
-
+    
     chunks = DocumentLoader.pages_to_chunks(pages, chunk_size=100, overlap=10)
-
+    
     # Empty page (page 2) should be skipped
     page_numbers_in_chunks = [c["metadata"]["page_number"] for c in chunks]
     assert 2 not in page_numbers_in_chunks, "Empty page should be skipped"
     assert 1 in page_numbers_in_chunks
     assert 3 in page_numbers_in_chunks
-
+    
     print("✓ test_empty_pages_skipped passed")
 
 
@@ -127,15 +127,15 @@ def test_validate_pages():
             "is_empty": True
         }
     ]
-
+    
     stats = DocumentLoader.validate_pages(pages)
-
+    
     assert stats["total_pages"] == 2
     assert stats["empty_pages"] == 1
     assert stats["non_empty_pages"] == 1
     assert stats["total_characters"] == 7
     assert stats["is_valid"] == True
-
+    
     print("✓ test_validate_pages passed")
 
 
@@ -151,14 +151,14 @@ def test_chunk_id_preserves_page_number():
             "is_empty": False
         }
     ]
-
+    
     chunks = DocumentLoader.pages_to_chunks(pages, chunk_size=30, overlap=5)
-
+    
     # All chunks should have page_number in their ID
     for chunk in chunks:
         assert "_page_5_" in chunk["chunk_id"], f"Chunk ID {chunk['chunk_id']} should contain '_page_5_'"
         assert chunk["metadata"]["page_number"] == 5
-
+    
     print("✓ test_chunk_id_preserves_page_number passed")
 
 
@@ -213,11 +213,11 @@ def test_document_loader_total_characters():
             "is_empty": False
         }
     ]
-
+    
     stats = DocumentLoader.validate_pages(pages)
-
+    
     assert stats["total_characters"] == 10
-
+    
     print("✓ test_document_loader_total_characters passed")
 
 
@@ -241,13 +241,13 @@ def test_document_loader_all_empty_pages():
             "is_empty": True
         }
     ]
-
+    
     stats = DocumentLoader.validate_pages(pages)
-
+    
     assert stats["total_pages"] == 2
     assert stats["empty_pages"] == 2
     assert stats["non_empty_pages"] == 0
-
+    
     print("✓ test_document_loader_all_empty_pages passed")
 
 
@@ -263,12 +263,12 @@ def test_document_loader_chunk_count():
             "is_empty": False
         }
     ]
-
+    
     chunks = DocumentLoader.pages_to_chunks(pages, chunk_size=50, overlap=10)
-
+    
     # With 200 chars, chunk_size=50, overlap=10, should get multiple chunks
     assert len(chunks) > 1, "Should create multiple chunks from long text"
-
+    
     print("✓ test_document_loader_chunk_count passed")
 
 

@@ -11,37 +11,37 @@ import uuid
 
 class Chunker:
     """Handles document chunking for the RAG pipeline."""
-
+    
     def __init__(self, chunk_size: int = 512, overlap: int = 50):
         """
         Initialize the chunker.
-
+        
         Args:
             chunk_size: Maximum characters per chunk
             overlap: Number of overlapping characters between chunks
         """
         self.chunk_size = chunk_size
         self.overlap = overlap
-
-    def chunk_text(self, text: str, document_id: Optional[str] = None,
+    
+    def chunk_text(self, text: str, document_id: Optional[str] = None, 
                    metadata: Optional[Dict] = None) -> List[Dict]:
         """
         Split text into chunks with metadata.
-
+        
         Args:
             text: The document text to chunk
             document_id: Optional document identifier (auto-generated if None)
             metadata: Optional metadata dict (source, page_number, etc.)
-
+        
         Returns:
             List of chunk dictionaries with all necessary info
         """
         if document_id is None:
             document_id = f"doc_{uuid.uuid4().hex[:8]}"
-
+        
         if metadata is None:
             metadata = {}
-
+        
         if not text:
             return []
 
@@ -75,13 +75,13 @@ class Chunker:
         chunks = []
         start = 0
         chunk_num = 0
-
+        
         while start < len(text):
             end = min(start + self.chunk_size, len(text))
             chunk_text = text[start:end]
-
+            
             chunk_id = f"{document_id}_chunk_{chunk_num:03d}"
-
+            
             chunk_dict = {
                 "document_id": document_id,
                 "chunk_id": chunk_id,
@@ -91,9 +91,9 @@ class Chunker:
                 "end_char": end,
                 "metadata": metadata.copy()
             }
-
+            
             chunks.append(chunk_dict)
-
+            
             if end >= len(text):
                 break
 
@@ -104,7 +104,7 @@ class Chunker:
                 break
             start = next_start
             chunk_num += 1
-
+        
         return chunks
 
 
@@ -112,12 +112,12 @@ class Chunker:
 def fixed_size_chunk(text: str, chunk_size: int = 512, overlap: int = 50) -> List[str]:
     """
     Simple functional interface to chunk text into fixed-size pieces.
-
+    
     Args:
         text: Text to chunk
         chunk_size: Maximum characters per chunk
         overlap: Overlap between chunks
-
+    
     Returns:
         List of chunk text strings
     """
@@ -135,14 +135,14 @@ def create_chunks(
 ) -> List[Dict]:
     """
     Create chunks with full metadata and IDs (recommended API).
-
+    
     Args:
         document_id: Document identifier for tracking
         text: Document text to chunk
         metadata: Optional metadata dict (source, page_number, etc.)
         chunk_size: Maximum characters per chunk
         overlap: Overlap between chunks
-
+    
     Returns:
         List of chunk dictionaries with all metadata
     """
@@ -157,18 +157,18 @@ def create_chunks(
 if __name__ == "__main__":
     # Test the chunking functions
     test_text = """Machine learning is a field of artificial intelligence that uses statistical techniques to give computer systems the ability to learn from data. It is seen as a subset of artificial intelligence. Machine learning algorithms build a mathematical model based on sample data, known as training data, in order to make predictions or decisions without being explicitly programmed to perform the task.
-
+    
     Deep learning is part of a broader family of machine learning methods based on artificial neural networks with representation learning. Learning can be supervised, semi-supervised or unsupervised. Deep learning architectures such as deep neural networks, deep belief networks, recurrent neural networks and convolutional neural networks have been applied to fields including computer vision, speech recognition, natural language processing, audio recognition, social network filtering, machine translation, bioinformatics and drug design.
-
+    
     Natural language processing (NLP) is a subfield of linguistics, computer science, and artificial intelligence concerned with the interactions between computers and human language. It focuses on how to program computers to process and analyze large amounts of natural language data."""
-
+    
     # Test fixed_size_chunk
     print("=== Testing fixed_size_chunk ===")
     chunks = fixed_size_chunk(test_text, chunk_size=200, overlap=30)
     print(f"Generated {len(chunks)} chunks")
     for i, chunk in enumerate(chunks[:3]):
         print(f"\nChunk {i+1} ({len(chunk)} chars): {chunk[:100]}...")
-
+    
     # Test create_chunks
     print("\n\n=== Testing create_chunks ===")
     formatted_chunks = create_chunks(

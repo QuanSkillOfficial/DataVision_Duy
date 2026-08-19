@@ -187,7 +187,7 @@ results = store.search(
 The pgvector queries use the `<=>` operator (cosine distance):
 
 ```sql
-SELECT
+SELECT 
     chunk_id,
     document_id,
     chunk_text,
@@ -253,10 +253,10 @@ SELECT schemaname, tablename, indexname, idx_scan FROM pg_stat_user_indexes WHER
 
 ```sql
 -- Find chunks with low similarity scores
-SELECT chunk_id, COUNT(*) as low_score_matches
+SELECT chunk_id, COUNT(*) as low_score_matches 
 FROM document_chunks d1
 CROSS JOIN document_chunks d2
-WHERE d1.id < d2.id
+WHERE d1.id < d2.id 
   AND (d1.embedding <=> d2.embedding) > 0.9
 GROUP BY d1.chunk_id;
 ```

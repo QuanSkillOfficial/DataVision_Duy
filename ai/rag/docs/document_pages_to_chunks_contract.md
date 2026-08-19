@@ -163,6 +163,6 @@ VALUES ('doc_001_page_1_chunk_000', 'doc_001', '...', [embeddings], 1, {...})
 
 This enables Phi's dashboard to:
 - Query by document_id
-- Filter by page_number
+- Filter by page_number  
 - Show source and page in retrieval results
 - Track which PDF page a fact came from

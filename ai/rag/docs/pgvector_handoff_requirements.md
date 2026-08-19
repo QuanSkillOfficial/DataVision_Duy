@@ -56,7 +56,7 @@ CREATE INDEX ON document_chunks USING gin (metadata);
 The AI team expects to run the following query to retrieve top-k similar chunks:
 
 ```sql
-SELECT
+SELECT 
     chunk_id,
     document_id,
     chunk_text,
@@ -78,7 +78,7 @@ LIMIT 5;
 If using cosine similarity directly:
 
 ```sql
-SELECT
+SELECT 
     chunk_id,
     document_id,
     chunk_text,
@@ -94,7 +94,7 @@ LIMIT 5;
 Query with document filtering:
 
 ```sql
-SELECT
+SELECT 
     chunk_id,
     document_id,
     chunk_text,
@@ -136,7 +136,7 @@ For efficiency, the AI team may use batch inserts:
 
 ```sql
 INSERT INTO document_chunks (chunk_id, document_id, chunk_text, embedding, metadata)
-VALUES
+VALUES 
     ('doc_001_chunk_001', 'doc_001', 'text1', '[...]', '{"source": "file.pdf"}'::jsonb),
     ('doc_001_chunk_002', 'doc_001', 'text2', '[...]', '{"source": "file.pdf"}'::jsonb),
     ('doc_001_chunk_003', 'doc_001', 'text3', '[...]', '{"source": "file.pdf"}'::jsonb);

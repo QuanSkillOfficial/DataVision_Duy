@@ -1,7 +1,7 @@
 # RAG Response Contract
 
-**API Version**: 1.0
-**Last Updated**: Week 3
+**API Version**: 1.0  
+**Last Updated**: Week 3  
 **Consumers**: Backend (Phi), Chatbot UI (Hung), Dashboard (Phi)
 
 ## Overview
