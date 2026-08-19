@@ -31,6 +31,9 @@
       "source_sha": "ad803cc556d960070d0c99e7401d22ad0d9df133",
       "source_commit_url": "https://github.com/QuanSkillOfficial/DataVision_Phat/commit/ad803cc556d960070d0c99e7401d22ad0d9df133",
       "integration_mode": "imported-and-adapted",
+      "canonical_followup_commits": [
+        "https://github.com/QuanSkillOfficial/DataVision_Duy/commit/acb1b0e75615862d6bbedb1e5950164d4faa142d"
+      ],
       "canonical_paths": [
         {
           "path": "week7/database",
@@ -38,7 +41,7 @@
         },
         {
           "path": "week8/database",
-          "tree_sha": "db1cc78eb6c1d56ea4594b6660a3aa75b089692c"
+          "tree_sha": "54729409036eb091f46dceebf3b07d2345ef4b55"
         },
         {
           "path": "deployment/database/init",
@@ -49,6 +52,7 @@
         "week7/database/scripts/ci_database_smoke_test.py",
         "week7/database/requirements-ci.txt",
         "week8/database/migrations/0004_prediction_reviewer_corrections.sql",
+        "week8/database/outputs/backups/backup_manifest.json",
         "week8/database/tests/integration/test_backup_restore_gates.py",
         "deployment/database/init/10_phat_schema_v4_fixed.sql",
         "deployment/database/init/20_phat_schema_and_views.sql"
