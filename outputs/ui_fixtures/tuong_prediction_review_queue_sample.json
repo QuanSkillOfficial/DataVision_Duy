@@ -1,5 +1,6 @@
 {
-  "generated_at": "2026-07-26T10:37:55.499642+00:00",
+  "generated_at": "2026-08-20T10:31:42.947354+00:00",
+  "release_sha": "f38790b80b934ad6fb086db8320012b4b93b6296",
   "total_review_items": 15,
   "review_items": [
     {
@@ -25,10 +26,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 4,
-      "document_db_id": 1,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 1,
       "fixture_only": false,
       "prediction_log_id": null,
       "reviewed": false,
@@ -58,10 +64,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 4,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 2,
       "fixture_only": false,
       "prediction_log_id": null,
       "reviewed": false,
@@ -91,10 +102,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 4,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 3,
       "fixture_only": false,
       "prediction_log_id": null,
       "reviewed": false,
@@ -124,10 +140,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 4,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 4,
       "fixture_only": false,
       "prediction_log_id": null,
       "reviewed": false,
@@ -157,10 +178,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 1,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 5,
       "fixture_only": false,
       "prediction_log_id": null,
       "reviewed": false,
@@ -190,10 +216,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 2,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 6,
       "fixture_only": false,
       "prediction_log_id": null,
       "reviewed": false,
@@ -223,10 +254,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 3,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 7,
       "fixture_only": false,
       "prediction_log_id": null,
       "reviewed": false,
@@ -256,10 +292,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 4,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 11,
       "fixture_only": false,
       "prediction_log_id": null,
       "reviewed": false,
@@ -289,10 +330,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 4,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 12,
       "fixture_only": false,
       "prediction_log_id": null,
       "reviewed": false,
@@ -322,10 +368,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 4,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 13,
       "fixture_only": false,
       "prediction_log_id": null,
       "reviewed": false,
@@ -355,10 +406,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 4,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 14,
       "fixture_only": false,
       "prediction_log_id": null,
       "reviewed": false,
@@ -388,10 +444,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 1,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 15,
       "fixture_only": false,
       "prediction_log_id": null,
       "reviewed": false,
@@ -421,10 +482,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 2,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 16,
       "fixture_only": false,
       "prediction_log_id": null,
       "reviewed": false,
@@ -454,10 +520,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 3,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 17,
       "fixture_only": false,
       "prediction_log_id": null,
       "reviewed": false,
@@ -486,11 +557,16 @@
           "score": 0.1845
         }
       ],
-      "review_reason": "Confidence below staging threshold",
-      "source_id": 4,
-      "document_db_id": null,
+      "review_reason": "Out-of-distribution input detected",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": true,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 18,
       "fixture_only": false,
       "prediction_log_id": null,
       "reviewed": false,

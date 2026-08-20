@@ -89,27 +89,34 @@
       "owner_name": "Nguyen Tuong",
       "owner_github": "wally205",
       "source_repository": "https://github.com/QuanSkillOfficial/DataVision_Tuong",
-      "source_sha": "51a29c4f5a3db43d3661678494b75455853ec73c",
-      "source_commit_url": "https://github.com/QuanSkillOfficial/DataVision_Tuong/commit/51a29c4f5a3db43d3661678494b75455853ec73c",
+      "source_sha": "3c8e04ca90f3a6d3aeee46aed28a67db0b7adc52",
+      "source_commit_url": "https://github.com/QuanSkillOfficial/DataVision_Tuong/commit/3c8e04ca90f3a6d3aeee46aed28a67db0b7adc52",
       "integration_mode": "imported-and-adapted",
+      "canonical_followup_commits": [
+        "https://github.com/QuanSkillOfficial/DataVision_Duy/commit/f38790b80b934ad6fb086db8320012b4b93b6296"
+      ],
       "canonical_paths": [
         {
           "path": "ai/prediction",
-          "tree_sha": "33b85d9772c81d156b9f13ea844d37c117749912"
+          "tree_sha": "8a7b6858c2965702f554c067b9c5b9caf6910839"
         },
         {
           "path": "tests/ai_tests",
-          "tree_sha": "fd0a2a69005f756718e7a31a8ea2ca5da6924c57"
+          "tree_sha": "6fcb20fd4f885ade9996f12efbc67504132d8bfd"
         }
       ],
       "required_files": [
+        "ai/prediction/batch_inference.py",
         "ai/prediction/prediction_service.py",
         "ai/prediction/requirements-ci.txt",
         "ai/prediction/acceptance_gate.py",
         "ai/prediction/evaluation/duy_week7_labels.json",
         "ai/prediction/reviewer_corrections.py",
+        "scripts/sync_all_fixtures.py",
         "scripts/week7_prediction_ci_smoke_test.py",
-        "tests/ai_tests/test_prediction_service.py"
+        "tests/ai_tests/test_prediction_service.py",
+        "tests/ai_tests/test_canonical_20_payload.py",
+        "tests/ai_tests/test_ui_fixtures.py"
       ]
     },
     {
