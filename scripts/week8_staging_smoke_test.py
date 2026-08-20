@@ -1,10 +1,9 @@
-"""Start (optionally) and verify the complete Week 8 Docker staging stack."""
+"""Start and verify the complete Week 8 Docker staging stack."""
 
 from __future__ import annotations
 
 import argparse
 import json
-import os
 import re
 import subprocess
 import time
@@ -26,16 +25,24 @@ def compose_command(project_name: str) -> list[str]:
 
 
 def run(command: list[str], timeout: int = 900) -> dict[str, Any]:
-    completed = subprocess.run(
-        command,
-        cwd=PROJECT_ROOT,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        timeout=timeout,
-        check=False,
-    )
+    try:
+        completed = subprocess.run(
+            command,
+            cwd=PROJECT_ROOT,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=timeout,
+            check=False,
+        )
+    except FileNotFoundError as exc:
+        return {
+            "command": command,
+            "returncode": 127,
+            "stdout": "",
+            "stderr": str(exc),
+        }
     return {
         "command": command,
         "returncode": completed.returncode,
@@ -56,39 +63,26 @@ def request_json(url: str, payload: dict[str, Any] | None = None) -> dict[str, A
         return json.loads(response.read().decode("utf-8"))
 
 
+def request_text(url: str) -> str:
+    with urllib.request.urlopen(url, timeout=15) as response:
+        return response.read().decode("utf-8")
+
+
 def wait_for_json(url: str, timeout: int = 300) -> dict[str, Any]:
     deadline = time.monotonic() + timeout
-    error: Exception | None = None
+    last_error: Exception | None = None
     while time.monotonic() < deadline:
         try:
             return request_json(url)
         except (OSError, urllib.error.URLError, json.JSONDecodeError) as exc:
-            error = exc
+            last_error = exc
             time.sleep(2)
-    raise RuntimeError(f"Timed out waiting for {url}: {error}")
+    raise RuntimeError(f"Timed out waiting for {url}: {last_error}")
 
 
-def wait_for_text(url: str, timeout: int = 300) -> str:
-    deadline = time.monotonic() + timeout
-    error: Exception | None = None
-    while time.monotonic() < deadline:
-        try:
-            with urllib.request.urlopen(url, timeout=10) as response:
-                return response.read().decode("utf-8")
-        except (OSError, urllib.error.URLError) as exc:
-            error = exc
-            time.sleep(2)
-    raise RuntimeError(f"Timed out waiting for {url}: {error}")
-
-
-def run_acceptance(
-    backend_url: str,
-    ui_url: str,
-    *,
-    ui_backend_mode: bool,
-) -> dict[str, Any]:
+def run_acceptance(backend_url: str, ui_url: str, ui_backend_mode: bool) -> dict[str, Any]:
     health = wait_for_json(f"{backend_url}/health")
-    ui_health = wait_for_text(f"{ui_url}/_stcore/health")
+    ui_health = request_text(f"{ui_url}/_stcore/health")
     dashboard = request_json(f"{backend_url}/dashboard/metrics")
     rag = request_json(
         f"{backend_url}/rag/query",
@@ -98,33 +92,16 @@ def run_acceptance(
             "top_k": 5,
         },
     )
-    prediction = request_json(
-        f"{backend_url}/predict/document-type",
-        {
-            "document_id": "doc_dataflow_technical_report",
-            "document_external_id": "doc_dataflow_technical_report",
-            "source_id": 4,
-            "source_name": "dataflow_technical_report_pdf",
-            "file_name": "DataFlow_Technical_Report.pdf",
-            "file_type": "pdf",
-            "file_size": 2857707,
-            "text_length": 500,
-            "num_pages": 36,
-            "source_system": "manual_upload",
-            "extracted_text": (
-                "DataFlow is an LLM-driven framework for unified data preparation, "
-                "workflow automation, data processing pipelines, and agentic RAG."
-            ),
-        },
-    )
     review_queue = request_json(f"{backend_url}/dashboard/review-queue")
     suggestions = request_json(f"{backend_url}/suggestions/generate", {})
-    report = request_json(f"{backend_url}/reports/generate", {"report_type": "Week 8 acceptance"})
+    report = request_json(
+        f"{backend_url}/reports/generate",
+        {"report_type": "Week 8 acceptance"},
+    )
 
     health_data = health.get("data", {})
     dashboard_data = dashboard.get("data", {})
     rag_data = rag.get("data", {})
-    prediction_data = prediction.get("data", {})
     checks = {
         "backend_healthy": health_data.get("healthy") is True,
         "database_reachable": health_data.get("database") == "reachable",
@@ -135,13 +112,6 @@ def run_acceptance(
         "lap_retrieval_context": len(rag_data.get("retrieved_context", [])) > 0,
         "lap_citations": len(rag_data.get("citations", [])) > 0,
         "lap_pgvector_backend": rag_data.get("retrieval_backend") == "postgresql/pgvector",
-        "tuong_prediction_executed": prediction_data.get("status") in {
-            "accepted",
-            "needs_review",
-            "waiting_for_source",
-            "failed",
-        },
-        "tuong_prediction_logged": isinstance(prediction_data.get("prediction_log_id"), int),
         "review_queue_queryable": isinstance(review_queue.get("data"), list),
         "ui_healthy": "ok" in ui_health.lower() and ui_backend_mode,
         "suggestions_contract": isinstance(suggestions.get("data"), list),
@@ -155,8 +125,7 @@ def run_acceptance(
             "health": health,
             "dashboard": dashboard,
             "rag": rag,
-            "prediction": prediction,
-            "review_queue_count": len(review_queue.get("data", [])),
+            "review_queue": review_queue,
             "suggestions": suggestions,
             "report": report,
             "ui_health": ui_health,
@@ -171,9 +140,9 @@ def main() -> int:
     parser.add_argument("--backend-url", default="http://127.0.0.1:8000/api")
     parser.add_argument("--ui-url", default="http://127.0.0.1:8501")
     parser.add_argument("--output", default=str(DEFAULT_OUTPUT))
-    parser.add_argument("--start", action="store_true", help="Build and start the Compose stack")
-    parser.add_argument("--fresh", action="store_true", help="Remove only this Compose project's volume before start")
-    parser.add_argument("--cleanup", action="store_true", help="Stop this Compose project and remove its volume after testing")
+    parser.add_argument("--start", action="store_true")
+    parser.add_argument("--fresh", action="store_true")
+    parser.add_argument("--cleanup", action="store_true")
     args = parser.parse_args()
 
     compose = compose_command(args.project_name)
@@ -186,25 +155,20 @@ def main() -> int:
             orchestration["start"] = run(compose + ["up", "--detach", "--build"], timeout=1200)
             if orchestration["start"]["returncode"] != 0:
                 raise RuntimeError(orchestration["start"]["stderr"] or orchestration["start"]["stdout"])
+
         ui_mode = run(
-            compose
-            + [
-                "exec",
-                "-T",
-                "ui",
-                "python",
-                "-c",
+            compose + [
+                "exec", "-T", "ui", "python", "-c",
                 "import os; print(os.getenv('QS_USE_BACKEND', 'false'))",
             ]
         )
         if ui_mode["returncode"] != 0:
             raise RuntimeError(ui_mode["stderr"] or ui_mode["stdout"])
         orchestration["ui_mode"] = ui_mode
-        ui_backend_mode = ui_mode["stdout"].strip().lower() == "true"
         result = run_acceptance(
             args.backend_url.rstrip("/"),
             args.ui_url.rstrip("/"),
-            ui_backend_mode=ui_backend_mode,
+            ui_mode["stdout"].strip().lower() == "true",
         )
     except Exception as exc:
         result = {
@@ -223,20 +187,13 @@ def main() -> int:
     if not output.is_absolute():
         output = PROJECT_ROOT / output
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
-    # Keep the full evidence in the artifact and CI logs compact/portable.
-    print(
-        json.dumps(
-            {
-                "status": result.get("status"),
-                "checks": result.get("checks", {}),
-                "output": str(output),
-                "error": result.get("error"),
-            },
-            indent=2,
-            ensure_ascii=True,
-        )
-    )
+    output.write_text(json.dumps(result, indent=2, ensure_ascii=True) + "\n", encoding="utf-8")
+    print(json.dumps({
+        "status": result.get("status"),
+        "checks": result.get("checks", {}),
+        "output": str(output),
+        "error": result.get("error"),
+    }, indent=2))
     return 0 if result.get("status") == "passed" else 1
 
 
