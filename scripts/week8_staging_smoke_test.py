@@ -134,6 +134,29 @@ def run_acceptance(backend_url: str, ui_url: str, ui_backend_mode: bool) -> dict
     }
 
 
+def collect_failure_evidence(compose: list[str], project_root: Path) -> dict[str, Any]:
+    """Capture the failed one-shot seed container's output before cleanup."""
+    evidence = {
+        "compose_ps": run(compose + ["ps", "-a"]),
+        "staging_seed_logs": run(compose + ["logs", "--no-color", "--tail", "300", "staging-seed"]),
+    }
+    seed_result_path = project_root / "outputs/integration/week8_seed_result.json"
+    seed_result_path.parent.mkdir(parents=True, exist_ok=True)
+    evidence["seed_result_copy"] = run(
+        compose + [
+            "cp",
+            "staging-seed:/app/outputs/integration/week8_seed_result.json",
+            str(seed_result_path),
+        ]
+    )
+    if seed_result_path.exists():
+        try:
+            evidence["seed_result"] = json.loads(seed_result_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            evidence["seed_result_error"] = str(exc)
+    return evidence
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--project-name", default="datavision-week8-local")
@@ -171,13 +194,19 @@ def main() -> int:
             ui_mode["stdout"].strip().lower() == "true",
         )
     except Exception as exc:
+        failure_evidence = collect_failure_evidence(compose, PROJECT_ROOT)
+        seed_logs = failure_evidence["staging_seed_logs"]
         result = {
             "status": "failed",
             "generated_at": datetime.now(timezone.utc).isoformat(),
             "checks": {},
-            "error": str(exc),
+            "error": (
+                f"{exc}\n"
+                f"staging-seed stderr/stdout:\n"
+                f"{seed_logs.get('stderr', '')}\n{seed_logs.get('stdout', '')}"
+            )[-12000:],
         }
-        orchestration["logs"] = run(compose + ["logs", "--no-color", "--tail", "200"])
+        orchestration["failure_evidence"] = failure_evidence
     finally:
         if args.cleanup:
             orchestration["clean_after"] = run(compose + ["down", "--volumes", "--remove-orphans"])
