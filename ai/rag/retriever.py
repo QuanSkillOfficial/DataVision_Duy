@@ -138,7 +138,10 @@ class Retriever:
                 result.get("document_external_id")
                 or metadata.get("document_external_id")
             )
-            document_db_id = result.get("document_db_id") or result.get("document_id")
+            document_db_id = (
+                result.get("document_db_id")
+                or result.get("document_id_fk")
+            )
 
             key = (file_name, page_number, chunk_id)
             if key not in seen_sources and chunk_id:

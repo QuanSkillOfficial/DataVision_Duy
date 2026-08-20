@@ -111,7 +111,10 @@ class RAGService:
                 or chunk_meta.get("file_name")
                 or chunk_meta.get("source")
             )
-            document_db_id = first_chunk.get("document_db_id") or first_chunk.get("document_id")
+            document_db_id = (
+                first_chunk.get("document_db_id")
+                or first_chunk.get("document_id_fk")
+            )
         else:
             document_external_id = None
             file_name = None

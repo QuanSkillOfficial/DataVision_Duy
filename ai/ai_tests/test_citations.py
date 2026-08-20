@@ -132,6 +132,32 @@ def test_citations_unique_by_key():
     print("✓ test_citations_unique_by_key passed")
 
 
+def test_citation_keeps_external_and_database_ids_distinct():
+    """An external document identifier must never be reported as a DB primary key."""
+    embedder = FakeEmbedder()
+    vector_store = FakeVectorStore()
+    retriever = Retriever(embedder=embedder, vector_store=vector_store, top_k=5)
+
+    chunks = [
+        {
+            "chunk_id": "doc_dataflow_chunk_000",
+            "document_id": "doc_dataflow_technical_report",
+            "document_external_id": "doc_dataflow_technical_report",
+            "document_db_id": 42,
+            "chunk_text": "The DataFlow pipeline has ingestion, processing, and output stages.",
+            "metadata": {"source": "DataFlow_Technical_Report.pdf", "page_number": 4},
+        }
+    ]
+    embeddings = embedder.embed([chunks[0]["chunk_text"]])
+    vector_store.add_chunks(chunks, embeddings)
+
+    citations = retriever.get_source_citations(retriever.retrieve("DataFlow stages"))
+
+    assert citations[0]["document_external_id"] == "doc_dataflow_technical_report"
+    assert citations[0]["document_db_id"] == 42
+    assert citations[0]["document_db_id"] != citations[0]["document_external_id"]
+
+
 def test_answer_generator_citations():
     """Test that AnswerGenerator.format_response includes proper citations."""
     generator = AnswerGenerator()
