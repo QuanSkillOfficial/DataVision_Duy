@@ -8,14 +8,13 @@ from pathlib import Path
 from typing import List, Dict, Optional
 import os
 
-try:
-    from .document_loader import DocumentLoader
-    from .embedder import Embedder
-    from .vector_store import VectorStore, resolve_document_db_id
-except ImportError:  # pragma: no cover - direct script execution fallback
-    from document_loader import DocumentLoader
-    from embedder import Embedder
-    from vector_store import VectorStore, resolve_document_db_id
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from ai.rag.document_loader import DocumentLoader
+from ai.rag.embedder import create_embedder
+from ai.rag.vector_store import VectorStore, resolve_document_db_id
 
 
 def load_and_ingest(
@@ -58,6 +57,7 @@ def load_and_ingest(
         "duplicate_chunks_skipped": 0,
         "embeddings_generated": 0,
         "embedding_dimension": 384,
+        "embedding_model": None,
         "insertion_time_ms": 0,
         "total_time_ms": 0,
         "errors": []
@@ -91,12 +91,17 @@ def load_and_ingest(
         
         # Step 4: Generate embeddings
         print("Generating embeddings...")
-        embedder = Embedder()
+        embedding_mode = os.getenv("RAG_EMBEDDING_MODE", "semantic")
+        embedder = create_embedder(embedding_mode)
         texts = [chunk["chunk_text"] for chunk in chunks]
         embeddings = embedder.embed(texts)
         result["embeddings_generated"] = len(embeddings)
         result["embedding_dimension"] = embedder.get_embedding_dimension()
-        print(f"Generated {len(embeddings)} embeddings (dimension: {result['embedding_dimension']})")
+        result["embedding_model"] = getattr(embedder, "model_name", None)
+        print(
+            f"Generated {len(embeddings)} embeddings "
+            f"(model: {result['embedding_model']}, dimension: {result['embedding_dimension']})"
+        )
         
         # Step 5: Connect to database
         print("Connecting to pgvector database...")
