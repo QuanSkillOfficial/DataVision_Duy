@@ -31,6 +31,29 @@ def _deterministic_vector_for_text(text: str, dim: int = 384) -> np.ndarray:
     return vec
 
 
+class HashEmbedder:
+    """Dependency-free deterministic embedder for staging and CI."""
+
+    model_name = "datavision-hashing-384-v1"
+
+    def __init__(self, embedding_dimension: int = 384):
+        self.embedding_dimension = embedding_dimension
+
+    def embed(self, texts: Union[str, List[str]]) -> np.ndarray:
+        if isinstance(texts, str):
+            texts = [texts]
+        return np.stack(
+            [_deterministic_vector_for_text(text, self.embedding_dimension) for text in texts],
+            axis=0,
+        )
+
+    def embed_query(self, query: str) -> np.ndarray:
+        return _deterministic_vector_for_text(query, self.embedding_dimension)
+
+    def get_embedding_dimension(self) -> int:
+        return self.embedding_dimension
+
+
 class Embedder:
     """Manages embedding generation using sentence-transformers."""
     
@@ -127,6 +150,13 @@ def load_embedding_model(model_name: str = "sentence-transformers/all-MiniLM-L6-
         Embedder instance ready to use
     """
     return Embedder(model_name=model_name)
+
+
+def create_embedder(mode: str = "semantic"):
+    """Create the configured embedder without downloading a staging model."""
+    if mode.lower() in {"staging", "ci", "deterministic", "hash"}:
+        return HashEmbedder()
+    return Embedder()
 
 
 def embed_texts(texts: List[str], model: Embedder) -> np.ndarray:
