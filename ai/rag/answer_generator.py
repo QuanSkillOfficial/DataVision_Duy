@@ -11,11 +11,11 @@ import json
 
 class AnswerGenerator:
     """Generates answers from RAG retrieved context."""
-
+    
     def __init__(self, llm_model: Optional[str] = None, api_key: Optional[str] = None):
         """
         Initialize the answer generator.
-
+        
         Args:
             llm_model: LLM model name (e.g., "gpt-3.5-turbo")
             api_key: API key for LLM service (e.g., OpenAI API key)
@@ -23,10 +23,10 @@ class AnswerGenerator:
         self.llm_model = llm_model
         self.api_key = api_key
         self.llm_client = None
-
+        
         if llm_model and api_key:
             self._initialize_llm()
-
+    
     def _initialize_llm(self):
         """Initialize LLM client (Week 5 - updated for newer OpenAI API)."""
         try:
@@ -39,7 +39,7 @@ class AnswerGenerator:
         except Exception as e:
             print(f"Note: Failed to initialize LLM: {e}")
             self.llm_client = None
-
+    
     def build_rag_prompt(
         self,
         question: str,
@@ -48,26 +48,26 @@ class AnswerGenerator:
     ) -> str:
         """
         Build a prompt for the LLM using retrieved context.
-
+        
         Args:
             question: User question
             retrieved_chunks: List of retrieved chunks with metadata
             include_sources: Whether to include source references
-
+        
         Returns:
             Formatted prompt string
         """
         # Extract and format context
         context_parts = []
         sources_used = set()
-
+        
         for i, chunk in enumerate(retrieved_chunks, 1):
             chunk_text = chunk.get("chunk_text", chunk.get("text", ""))
             chunk_id = chunk.get("chunk_id", "unknown")
             page_number = chunk.get("page_number")
             file_name = chunk.get("metadata", {}).get("source", chunk.get("file_name", "unknown"))
             similarity = chunk.get("score", 0)
-
+            
             # Format chunk with source
             if include_sources:
                 source_info = f"[Source {i}: {file_name}"
@@ -75,17 +75,17 @@ class AnswerGenerator:
                     source_info += f", page {page_number}"
                 source_info += f", similarity: {similarity:.2f}]"
                 context_parts.append(f"{source_info}\n{chunk_text}")
-
+                
                 sources_used.add((file_name, page_number, chunk_id))
             else:
                 context_parts.append(chunk_text)
-
+        
         # Build the prompt
         context = "\n\n".join(context_parts)
-
+        
         if not context:
             context = "No relevant context provided."
-
+        
         prompt = f"""Answer the question using ONLY the provided context.
 
 If the answer is not present in the context, respond with:
@@ -100,9 +100,9 @@ Question:
 {question}
 
 Answer:"""
-
+        
         return prompt
-
+    
     def generate_answer(
         self,
         question: str,
@@ -112,13 +112,13 @@ Answer:"""
     ) -> Dict:
         """
         Generate an answer using LLM (Week 4+).
-
+        
         Args:
             question: User question
             retrieved_chunks: Retrieved context chunks
             temperature: LLM creativity (0.0-1.0)
             max_tokens: Max response length
-
+        
         Returns:
             Dictionary with answer and confidence
         """
@@ -132,11 +132,11 @@ Answer:"""
                 "status": "no_llm",
                 "model": None
             }
-
+        
         try:
             # Call LLM (Week 5 - updated for newer OpenAI API)
             prompt = self.build_rag_prompt(question, retrieved_chunks)
-
+            
             response = self.llm_client.chat.completions.create(
                 model=self.llm_model,
                 messages=[
@@ -146,16 +146,16 @@ Answer:"""
                 temperature=temperature,
                 max_tokens=max_tokens
             )
-
+            
             answer = response.choices[0].message.content.strip()
-
+            
             # Estimate confidence based on factors
             confidence = self._estimate_confidence(
                 question=question,
                 answer=answer,
                 retrieved_chunks=retrieved_chunks
             )
-
+            
             return {
                 "answer": answer,
                 "confidence": confidence,
@@ -163,7 +163,7 @@ Answer:"""
                 "model": self.llm_model,
                 "tokens_used": response.usage.total_tokens
             }
-
+            
         except Exception as e:
             return {
                 "answer": None,
@@ -171,7 +171,7 @@ Answer:"""
                 "status": "error",
                 "model": self.llm_model
             }
-
+    
     def _estimate_confidence(
         self,
         question: str,
@@ -192,26 +192,29 @@ Answer:"""
         if not retrieved_chunks:
             return 0.0
 
-        # Factors affecting confidence
-        avg_similarity = sum(c.get("score", 0) for c in retrieved_chunks) / len(retrieved_chunks)
-        top_similarity = max((c.get("score", 0) for c in retrieved_chunks), default=0)
-
+        scores = [
+            c.get("similarity_score", c.get("score", 0.0))
+            for c in retrieved_chunks
+        ]
+        avg_similarity = sum(scores) / len(scores) if scores else 0.0
+        top_similarity = max(scores, default=0.0)
+        
         # Check if answer contains "I do not know"
         has_no_answer_phrase = "i do not know" in answer.lower() or "not provided" in answer.lower()
-
+        
         # Combine factors
         base_confidence = avg_similarity
-
+        
         # Reduce confidence if no relevant context was found
         if top_similarity < 0.5:
             base_confidence *= 0.5
-
+        
         # Reduce confidence if LLM indicated it doesn't know
         if has_no_answer_phrase:
             base_confidence *= 0.3
-
+        
         return min(1.0, max(0.0, base_confidence))
-
+    
     def format_response(
         self,
         question: str,
@@ -222,6 +225,9 @@ Answer:"""
         """
         Format a complete RAG response (Week 5 fix).
 
+        Always returns a non-empty answer field. Citations include optional
+        document_external_id / document_db_id for downstream consumers.
+
         Args:
             question: User question
             answer: Generated answer (or None)
@@ -231,31 +237,60 @@ Answer:"""
         Returns:
             Formatted response dict matching RAG response contract
         """
-        # Extract unique citations (Week 5 fix)
         citations = []
         seen_sources = set()
 
         for chunk in retrieved_chunks:
-            # Fix chunk_id fallback (Week 5)
             chunk_id = chunk.get("chunk_id", chunk.get("id", ""))
-            file_name = chunk.get("metadata", {}).get("source", chunk.get("file_name", "Unknown"))
-            # Fix page_number fallback (Week 5)
+            metadata = chunk.get("metadata", {}) or {}
+            file_name = (
+                chunk.get("file_name")
+                or metadata.get("file_name")
+                or metadata.get("source")
+                or "Unknown"
+            )
             page_number = (
                 chunk.get("page_number")
-                or chunk.get("metadata", {}).get("page_number")
+                or metadata.get("page_number")
             )
+            document_external_id = (
+                chunk.get("document_external_id")
+                or metadata.get("document_external_id")
+            )
+            document_db_id = chunk.get("document_db_id") or chunk.get("document_id_fk")
 
-            # Make citations unique by file_name, page_number, chunk_id (Week 5)
             key = (file_name, page_number, chunk_id)
-            if key not in seen_sources:
-                citations.append({
+            if key not in seen_sources and chunk_id:
+                seen_sources.add(key)
+                citation = {
                     "file_name": file_name,
                     "page_number": page_number,
-                    "chunk_id": chunk_id
-                })
-                seen_sources.add(key)
+                    "chunk_id": chunk_id,
+                }
+                if document_external_id is not None:
+                    citation["document_external_id"] = document_external_id
+                if document_db_id is not None:
+                    citation["document_db_id"] = document_db_id
+                citations.append(citation)
 
-        return {
+        if not answer:
+            if not retrieved_chunks:
+                answer = "I do not know based on the provided documents."
+            else:
+                top_text = (
+                    retrieved_chunks[0].get("chunk_text")
+                    or retrieved_chunks[0].get("text")
+                    or ""
+                ).strip()
+                first_sentence = top_text.split(". ")[0].strip()
+                if first_sentence:
+                    if not first_sentence.endswith("."):
+                        first_sentence += "."
+                    answer = first_sentence
+                else:
+                    answer = "I do not know based on the provided documents."
+
+        response = {
             "question": question,
             "answer": answer,
             "retrieved_context": retrieved_chunks,
@@ -264,9 +299,31 @@ Answer:"""
             "model": "all-MiniLM-L6-v2",
             "metadata": {
                 "num_chunks_retrieved": len(retrieved_chunks),
-                "llm_model": self.llm_model
-            }
+                "llm_model": self.llm_model,
+            },
         }
+
+        if retrieved_chunks:
+            first = retrieved_chunks[0]
+            first_meta = first.get("metadata", {}) or {}
+            doc_ext_id = (
+                first.get("document_external_id")
+                or first_meta.get("document_external_id")
+            )
+            doc_db_id = first.get("document_db_id") or first.get("document_id_fk")
+            fname = (
+                first.get("file_name")
+                or first_meta.get("file_name")
+                or first_meta.get("source")
+            )
+            if doc_ext_id is not None:
+                response["document_external_id"] = doc_ext_id
+            if doc_db_id is not None:
+                response["document_db_id"] = doc_db_id
+            if fname is not None:
+                response["file_name"] = fname
+
+        return response
 
 
 def build_rag_prompt(
@@ -275,11 +332,11 @@ def build_rag_prompt(
 ) -> str:
     """
     Functional interface to build a prompt from context.
-
+    
     Args:
         question: User question
         retrieved_chunks: Retrieved context chunks
-
+    
     Returns:
         Formatted prompt string
     """
@@ -293,35 +350,35 @@ def generate_simple_answer(
 ) -> str:
     """
     Generate a simple answer from context without LLM.
-
+    
     Args:
         question: User question
         retrieved_chunks: Retrieved context chunks
-
+    
     Returns:
         Simple answer based on first chunk
     """
     if not retrieved_chunks:
         return "I do not know based on the provided documents."
-
+    
     # Extract answer-like summary from top chunk
     top_chunk = retrieved_chunks[0]
     chunk_text = top_chunk.get("chunk_text", top_chunk.get("text", ""))
-
+    
     # Try to extract first sentence as answer
     sentences = chunk_text.split(". ")
     if sentences:
         return sentences[0] + "."
-
+    
     return chunk_text[:200] + "..."
 
 
 if __name__ == "__main__":
     print("=== Testing AnswerGenerator ===\n")
-
+    
     # Test prompt building
     print("Building RAG prompt...")
-
+    
     sample_chunks = [
         {
             "chunk_id": "doc_001_page_1_chunk_000",
@@ -340,17 +397,17 @@ if __name__ == "__main__":
             "metadata": {"source": "guide.pdf"}
         }
     ]
-
+    
     generator = AnswerGenerator()
-
+    
     prompt = generator.build_rag_prompt("What is machine learning?", sample_chunks)
     print(f"Generated prompt:\n{prompt}\n")
-
+    
     # Test simple answer generation
     print("Generating simple answer...")
     simple_answer = generate_simple_answer("What is machine learning?", sample_chunks)
     print(f"Simple answer: {simple_answer}\n")
-
+    
     # Test response formatting
     print("Formatting response...")
     response = generator.format_response(
