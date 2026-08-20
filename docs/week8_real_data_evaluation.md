@@ -1,8 +1,25 @@
 # Week 8 Real Data Prediction Evaluation
 
 **Evaluated at**: 2026-08-08T03:59:49.778553+00:00
+
 **Total Payloads**: 20
+
 **Evaluated Samples (excluding edge cases)**: 18
+
+## Canonical Release Decision
+
+The release-quality metric is the labelled operational evaluation in
+`outputs/prediction_evaluation/duy_week7_labeled_evaluation.json`: **1 of 15
+comparable predictions correct (6.67% accuracy)**. This is the metric used by
+the Week 8 release gate. The model is therefore suitable only for a
+human-review-assisted staging demonstration; automatic acceptance remains
+disabled.
+
+## Owner Heuristic Evaluation (Legacy Comparison)
+
+The figures below come from an earlier 18-sample owner heuristic evaluation.
+They are retained for traceability, but **44.44% is not the canonical release
+accuracy** and must not be used as the production-quality claim.
 
 ## Overall Performance Metrics
 
@@ -28,5 +45,13 @@
 | Status | Count | Percentage |
 |---|---|---|
 | `needs_review` | 15 | 75.00% |
-| `accepted` | 3 | 15.00% |
+| `failed` | 3 | 15.00% |
 | `waiting_for_source` | 2 | 10.00% |
+| `accepted` | 0 | 0.00% |
+
+## Model Governance & Staging Safety
+
+- **Canonical Accuracy**: The labelled Duy operational evaluation is 6.67% (1/15), so predictions are advisory rather than authoritative.
+- **Mandatory Human Review**: Under the conservative staging acceptance threshold (`STAGING_ACCEPTANCE_THRESHOLD = 0.80`), 100% of non-failed/waiting documents (15/20) are routed to the manual review queue (`needs_review`).
+- **Safety Gate**: Direct automatic acceptance into downstream production without reviewer confirmation is disabled until further training iterations.
+- **Lineage Protection**: Any payload missing mandatory platform lineage (`document_external_id`) is strictly rejected as `failed` rather than entering the review queue without a valid identifier.
