@@ -26,6 +26,7 @@ class RAGService:
         self.vector_store = vector_store
         self.retriever = retriever
         self.answer_generator = answer_generator
+        self.model_name = getattr(embedder, "model_name", "all-MiniLM-L6-v2")
     
     def retrieve_context(
         self,
@@ -69,7 +70,7 @@ class RAGService:
                 "retrieved_context": [],
                 "citations": [],
                 "status": "error",
-                "model": "all-MiniLM-L6-v2",
+                "model": self.model_name,
                 "error": str(e),
                 "metadata": {
                     "latency_ms": round((time.time() - start_time) * 1000, 2),
@@ -131,7 +132,7 @@ class RAGService:
             "retrieved_context": retrieved_chunks,
             "citations": citations,
             "status": status,
-            "model": "all-MiniLM-L6-v2",
+            "model": self.model_name,
             "metadata": {
                 "latency_ms": round(latency_ms, 2),
                 "num_chunks_retrieved": len(retrieved_chunks),
