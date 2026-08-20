@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-07-26T10:37:55.499642+00:00",
-  "source_payload_path": "F:\\data\\new\\quanskill\\DataVision_Duy\\outputs\\prediction_payloads\\tuong_week7_prediction_payloads.json",
+  "generated_at": "2026-08-20T07:34:49.063988+00:00",
+  "release_sha": "8769667ee6d8464a5d20f37f460c84288189ef1c",
   "total_results": 20,
   "status_counts": {
     "needs_review": 15,
@@ -31,10 +31,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 4,
-      "document_db_id": 1,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 1,
       "fixture_only": false
     },
     {
@@ -60,10 +65,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 4,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 2,
       "fixture_only": false
     },
     {
@@ -89,10 +99,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 4,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 3,
       "fixture_only": false
     },
     {
@@ -118,10 +133,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 4,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 4,
       "fixture_only": false
     },
     {
@@ -147,10 +167,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 1,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 5,
       "fixture_only": false
     },
     {
@@ -176,10 +201,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 2,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 6,
       "fixture_only": false
     },
     {
@@ -205,10 +235,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 3,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 7,
       "fixture_only": false
     },
     {
@@ -221,10 +256,15 @@
       "status": "waiting_for_source",
       "review_reason": "Extracted text is missing or too short for reliable prediction",
       "top_predictions": [],
-      "source_id": 4,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": false,
-      "batch_index": 8,
       "fixture_only": false
     },
     {
@@ -237,10 +277,15 @@
       "status": "waiting_for_source",
       "review_reason": "Extracted text is missing or too short for reliable prediction",
       "top_predictions": [],
-      "source_id": 4,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": false,
-      "batch_index": 9,
       "fixture_only": false
     },
     {
@@ -253,10 +298,7 @@
       "status": "failed",
       "review_reason": "Validation error: Missing required field: 'file_name'",
       "top_predictions": [],
-      "source_id": 4,
-      "document_db_id": null,
       "manual_review_required": false,
-      "batch_index": 10,
       "fixture_only": false
     },
     {
@@ -282,10 +324,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 4,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 11,
       "fixture_only": false
     },
     {
@@ -311,10 +358,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 4,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 12,
       "fixture_only": false
     },
     {
@@ -340,10 +392,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 4,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 13,
       "fixture_only": false
     },
     {
@@ -369,10 +426,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 4,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 14,
       "fixture_only": false
     },
     {
@@ -398,10 +460,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 1,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 15,
       "fixture_only": false
     },
     {
@@ -427,10 +494,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 2,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 16,
       "fixture_only": false
     },
     {
@@ -456,10 +528,15 @@
         }
       ],
       "review_reason": "Confidence below staging threshold",
-      "source_id": 3,
-      "document_db_id": null,
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 17,
       "fixture_only": false
     },
     {
@@ -484,11 +561,16 @@
           "score": 0.1845
         }
       ],
-      "review_reason": "Confidence below staging threshold",
-      "source_id": 4,
-      "document_db_id": null,
+      "review_reason": "Out-of-distribution input detected",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": true,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 18,
       "fixture_only": false
     },
     {
@@ -499,12 +581,17 @@
       "confidence": 0.0,
       "model_version": "document_classifier_v1",
       "status": "failed",
-      "top_predictions": [],
       "review_reason": "Missing required platform lineage: document_external_id",
-      "source_id": 4,
-      "document_db_id": null,
+      "top_predictions": [],
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": false,
-      "batch_index": 19,
       "fixture_only": false
     },
     {
@@ -517,10 +604,7 @@
       "status": "failed",
       "review_reason": "Validation error: Field 'file_size' must be a number, got str",
       "top_predictions": [],
-      "source_id": 4,
-      "document_db_id": null,
       "manual_review_required": false,
-      "batch_index": 20,
       "fixture_only": false
     }
   ],
@@ -544,15 +628,15 @@
         }
       ],
       "model_version": "document_classifier_v1",
-      "document_external_id": "doc_dataflow_technical_report_accepted_ui_example",
+      "document_external_id": "doc_example_accepted",
       "document_db_id": 1,
-      "source_id": 4,
-      "source_name": "dataflow_technical_report_pdf",
-      "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
+      "source_id": 1,
+      "source_name": "example_source",
+      "ingestion_run_id": "example-run-id",
       "review_reason": null,
       "manual_review_required": false,
       "fixture_only": true,
-      "fixture_reason": "UI contract coverage only; the current real 20-payload batch did not produce status=accepted."
+      "fixture_reason": "UI contract coverage only; current real 20-payload batch did not produce status=accepted."
     },
     {
       "document_external_id": "doc_dataflow_technical_notes_markdown",
@@ -576,27 +660,16 @@
           "score": 0.1845
         }
       ],
-      "review_reason": "Confidence below staging threshold",
-      "source_id": 4,
-      "document_db_id": null,
+      "review_reason": "Out-of-distribution input detected",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": true,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
       "manual_review_required": true,
-      "batch_index": 18,
-      "fixture_only": false
-    },
-    {
-      "document_external_id": "doc_empty_text_quality_gate",
-      "source_name": "dataflow_technical_report_pdf",
-      "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "predicted_document_type": null,
-      "confidence": 0.0,
-      "model_version": "document_classifier_v1",
-      "status": "waiting_for_source",
-      "review_reason": "Extracted text is missing or too short for reliable prediction",
-      "top_predictions": [],
-      "source_id": 4,
-      "document_db_id": null,
-      "manual_review_required": false,
-      "batch_index": 9,
       "fixture_only": false
     },
     {
@@ -609,10 +682,28 @@
       "status": "failed",
       "review_reason": "Validation error: Field 'file_size' must be a number, got str",
       "top_predictions": [],
-      "source_id": 4,
-      "document_db_id": null,
       "manual_review_required": false,
-      "batch_index": 20,
+      "fixture_only": false
+    },
+    {
+      "document_external_id": "doc_empty_text_quality_gate",
+      "source_name": "dataflow_technical_report_pdf",
+      "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
+      "predicted_document_type": null,
+      "confidence": 0.0,
+      "model_version": "document_classifier_v1",
+      "status": "waiting_for_source",
+      "review_reason": "Extracted text is missing or too short for reliable prediction",
+      "top_predictions": [],
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      },
+      "manual_review_required": false,
       "fixture_only": false
     }
   ],

@@ -1,8 +1,572 @@
 {
-  "generated_at": "2026-08-20T07:34:49.063988+00:00",
   "release_sha": "8769667ee6d8464a5d20f37f460c84288189ef1c",
-  "total_payloads": 20,
-  "prediction_log_payloads": [
+  "status_counts": {
+    "needs_review": 15,
+    "waiting_for_source": 2,
+    "failed": 3
+  },
+  "results": [
+    {
+      "document_external_id": "doc_dataflow_technical_report",
+      "source_name": "dataflow_technical_report_pdf",
+      "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
+      "predicted_document_type": "report",
+      "confidence": 0.4184,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "report",
+          "score": 0.4184
+        },
+        {
+          "label": "research_paper",
+          "score": 0.2262
+        },
+        {
+          "label": "contract",
+          "score": 0.2084
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_dataflow_technical_report_intro_pages",
+      "source_name": "dataflow_technical_report_pdf",
+      "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
+      "predicted_document_type": "contract",
+      "confidence": 0.6096,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "contract",
+          "score": 0.6096
+        },
+        {
+          "label": "research_paper",
+          "score": 0.2146
+        },
+        {
+          "label": "report",
+          "score": 0.1138
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_dataflow_technical_report_architecture_page",
+      "source_name": "dataflow_technical_report_pdf",
+      "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
+      "predicted_document_type": "contract",
+      "confidence": 0.6128,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "contract",
+          "score": 0.6128
+        },
+        {
+          "label": "research_paper",
+          "score": 0.1539
+        },
+        {
+          "label": "report",
+          "score": 0.0855
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_dataflow_technical_report_related_work",
+      "source_name": "dataflow_technical_report_pdf",
+      "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
+      "predicted_document_type": "contract",
+      "confidence": 0.6279,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "contract",
+          "score": 0.6279
+        },
+        {
+          "label": "research_paper",
+          "score": 0.1779
+        },
+        {
+          "label": "report",
+          "score": 0.1215
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_superstore_sales_csv_summary",
+      "source_name": "superstore_sales_csv",
+      "ingestion_run_id": "e81991bd-ff55-4607-987b-354e2ae83241",
+      "predicted_document_type": "invoice",
+      "confidence": 0.7101,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "invoice",
+          "score": 0.7101
+        },
+        {
+          "label": "contract",
+          "score": 0.1571
+        },
+        {
+          "label": "resume",
+          "score": 0.052
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_product_sales_region_excel_summary",
+      "source_name": "product_sales_region_excel",
+      "ingestion_run_id": "b890a3bd-7751-4980-8db3-89b2f179e129",
+      "predicted_document_type": "invoice",
+      "confidence": 0.6829,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "invoice",
+          "score": 0.6829
+        },
+        {
+          "label": "resume",
+          "score": 0.119
+        },
+        {
+          "label": "contract",
+          "score": 0.0706
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_dummyjson_products_api_summary",
+      "source_name": "dummyjson_products_api",
+      "ingestion_run_id": "552ff71d-84ed-4c20-98c3-407916acd30c",
+      "predicted_document_type": "contract",
+      "confidence": 0.3839,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "contract",
+          "score": 0.3839
+        },
+        {
+          "label": "research_paper",
+          "score": 0.2891
+        },
+        {
+          "label": "resume",
+          "score": 0.1658
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_short_text_quality_gate",
+      "source_name": "dataflow_technical_report_pdf",
+      "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
+      "predicted_document_type": null,
+      "confidence": 0.0,
+      "model_version": "document_classifier_v1",
+      "status": "waiting_for_source",
+      "review_reason": "Extracted text is missing or too short for reliable prediction",
+      "top_predictions": [],
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_empty_text_quality_gate",
+      "source_name": "dataflow_technical_report_pdf",
+      "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
+      "predicted_document_type": null,
+      "confidence": 0.0,
+      "model_version": "document_classifier_v1",
+      "status": "waiting_for_source",
+      "review_reason": "Extracted text is missing or too short for reliable prediction",
+      "top_predictions": [],
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_missing_file_name_validation",
+      "source_name": "dataflow_technical_report_pdf",
+      "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
+      "predicted_document_type": null,
+      "confidence": 0.0,
+      "model_version": "document_classifier_v1",
+      "status": "failed",
+      "review_reason": "Validation error: Missing required field: 'file_name'",
+      "top_predictions": []
+    },
+    {
+      "document_external_id": "doc_dataflow_system_operators_pages",
+      "source_name": "dataflow_technical_report_pdf",
+      "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
+      "predicted_document_type": "contract",
+      "confidence": 0.5967,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "contract",
+          "score": 0.5967
+        },
+        {
+          "label": "research_paper",
+          "score": 0.1852
+        },
+        {
+          "label": "report",
+          "score": 0.1397
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_dataflow_pipeline_api_pages",
+      "source_name": "dataflow_technical_report_pdf",
+      "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
+      "predicted_document_type": "contract",
+      "confidence": 0.5892,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "contract",
+          "score": 0.5892
+        },
+        {
+          "label": "research_paper",
+          "score": 0.2146
+        },
+        {
+          "label": "report",
+          "score": 0.1228
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_dataflow_agent_workflow_pages",
+      "source_name": "dataflow_technical_report_pdf",
+      "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
+      "predicted_document_type": "contract",
+      "confidence": 0.5796,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "contract",
+          "score": 0.5796
+        },
+        {
+          "label": "research_paper",
+          "score": 0.1968
+        },
+        {
+          "label": "report",
+          "score": 0.1446
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_dataflow_agentic_rag_evaluation_pages",
+      "source_name": "dataflow_technical_report_pdf",
+      "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
+      "predicted_document_type": "contract",
+      "confidence": 0.5576,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "contract",
+          "score": 0.5576
+        },
+        {
+          "label": "research_paper",
+          "score": 0.2229
+        },
+        {
+          "label": "report",
+          "score": 0.1376
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_superstore_order_profitability_sample",
+      "source_name": "superstore_sales_csv",
+      "ingestion_run_id": "e81991bd-ff55-4607-987b-354e2ae83241",
+      "predicted_document_type": "invoice",
+      "confidence": 0.6296,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "invoice",
+          "score": 0.6296
+        },
+        {
+          "label": "contract",
+          "score": 0.2041
+        },
+        {
+          "label": "resume",
+          "score": 0.0563
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_product_sales_region_sample",
+      "source_name": "product_sales_region_excel",
+      "ingestion_run_id": "b890a3bd-7751-4980-8db3-89b2f179e129",
+      "predicted_document_type": "invoice",
+      "confidence": 0.5551,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "invoice",
+          "score": 0.5551
+        },
+        {
+          "label": "resume",
+          "score": 0.1543
+        },
+        {
+          "label": "contract",
+          "score": 0.0897
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_dummyjson_inventory_sample",
+      "source_name": "dummyjson_products_api",
+      "ingestion_run_id": "552ff71d-84ed-4c20-98c3-407916acd30c",
+      "predicted_document_type": "contract",
+      "confidence": 0.375,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "contract",
+          "score": 0.375
+        },
+        {
+          "label": "research_paper",
+          "score": 0.3673
+        },
+        {
+          "label": "resume",
+          "score": 0.1417
+        }
+      ],
+      "review_reason": "Confidence below staging threshold",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_dataflow_technical_notes_markdown",
+      "source_name": "dataflow_technical_report_pdf",
+      "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
+      "predicted_document_type": "contract",
+      "confidence": 0.2985,
+      "model_version": "document_classifier_v1",
+      "status": "needs_review",
+      "top_predictions": [
+        {
+          "label": "contract",
+          "score": 0.2985
+        },
+        {
+          "label": "research_paper",
+          "score": 0.255
+        },
+        {
+          "label": "resume",
+          "score": 0.1845
+        }
+      ],
+      "review_reason": "Out-of-distribution input detected",
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": true,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": null,
+      "source_name": "dataflow_technical_report_pdf",
+      "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
+      "predicted_document_type": null,
+      "confidence": 0.0,
+      "model_version": "document_classifier_v1",
+      "status": "failed",
+      "review_reason": "Missing required platform lineage: document_external_id",
+      "top_predictions": [],
+      "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+      "training_data_version": "fallback-data-hash",
+      "is_out_of_distribution": false,
+      "threshold_policy": {
+        "staging_acceptance_threshold": 0.8,
+        "review_threshold": 0.5,
+        "min_extracted_text_length": 50
+      }
+    },
+    {
+      "document_external_id": "doc_invalid_file_size_validation",
+      "source_name": "dataflow_technical_report_pdf",
+      "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
+      "predicted_document_type": null,
+      "confidence": 0.0,
+      "model_version": "document_classifier_v1",
+      "status": "failed",
+      "review_reason": "Validation error: Field 'file_size' must be a number, got str",
+      "top_predictions": []
+    }
+  ],
+  "log_payloads": [
     {
       "source_id": 4,
       "document_external_id": "doc_dataflow_technical_report",
@@ -65,7 +629,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-20T07:34:48.850255+00:00"
+      "created_at": "2026-08-20T07:42:27.819489+00:00"
     },
     {
       "source_id": 4,
@@ -125,7 +689,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-20T07:34:48.864087+00:00"
+      "created_at": "2026-08-20T07:42:27.833997+00:00"
     },
     {
       "source_id": 4,
@@ -185,7 +749,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-20T07:34:48.874919+00:00"
+      "created_at": "2026-08-20T07:42:27.844448+00:00"
     },
     {
       "source_id": 4,
@@ -245,7 +809,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-20T07:34:48.887483+00:00"
+      "created_at": "2026-08-20T07:42:27.857173+00:00"
     },
     {
       "source_id": 1,
@@ -305,7 +869,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "e81991bd-ff55-4607-987b-354e2ae83241",
-      "created_at": "2026-08-20T07:34:48.899595+00:00"
+      "created_at": "2026-08-20T07:42:27.867546+00:00"
     },
     {
       "source_id": 2,
@@ -365,7 +929,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "b890a3bd-7751-4980-8db3-89b2f179e129",
-      "created_at": "2026-08-20T07:34:48.907511+00:00"
+      "created_at": "2026-08-20T07:42:27.874023+00:00"
     },
     {
       "source_id": 3,
@@ -425,7 +989,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "552ff71d-84ed-4c20-98c3-407916acd30c",
-      "created_at": "2026-08-20T07:34:48.916558+00:00"
+      "created_at": "2026-08-20T07:42:27.884478+00:00"
     },
     {
       "source_id": 4,
@@ -472,7 +1036,7 @@
       "status": "waiting_for_source",
       "review_reason": "Extracted text is missing or too short for reliable prediction",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-20T07:34:48.916558+00:00"
+      "created_at": "2026-08-20T07:42:27.884478+00:00"
     },
     {
       "source_id": 4,
@@ -519,7 +1083,7 @@
       "status": "waiting_for_source",
       "review_reason": "Extracted text is missing or too short for reliable prediction",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-20T07:34:48.916558+00:00"
+      "created_at": "2026-08-20T07:42:27.884478+00:00"
     },
     {
       "source_id": 4,
@@ -565,7 +1129,7 @@
       "status": "failed",
       "review_reason": "Validation error: Missing required field: 'file_name'",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-20T07:34:48.916558+00:00"
+      "created_at": "2026-08-20T07:42:27.884478+00:00"
     },
     {
       "source_id": 4,
@@ -625,7 +1189,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-20T07:34:48.934582+00:00"
+      "created_at": "2026-08-20T07:42:27.899444+00:00"
     },
     {
       "source_id": 4,
@@ -685,7 +1249,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-20T07:34:48.944179+00:00"
+      "created_at": "2026-08-20T07:42:27.907152+00:00"
     },
     {
       "source_id": 4,
@@ -745,7 +1309,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-20T07:34:48.960635+00:00"
+      "created_at": "2026-08-20T07:42:27.913774+00:00"
     },
     {
       "source_id": 4,
@@ -805,7 +1369,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-20T07:34:48.974465+00:00"
+      "created_at": "2026-08-20T07:42:27.924998+00:00"
     },
     {
       "source_id": 1,
@@ -865,7 +1429,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "e81991bd-ff55-4607-987b-354e2ae83241",
-      "created_at": "2026-08-20T07:34:48.987947+00:00"
+      "created_at": "2026-08-20T07:42:27.941893+00:00"
     },
     {
       "source_id": 2,
@@ -925,7 +1489,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "b890a3bd-7751-4980-8db3-89b2f179e129",
-      "created_at": "2026-08-20T07:34:49.003056+00:00"
+      "created_at": "2026-08-20T07:42:27.944546+00:00"
     },
     {
       "source_id": 3,
@@ -985,7 +1549,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "552ff71d-84ed-4c20-98c3-407916acd30c",
-      "created_at": "2026-08-20T07:34:49.014215+00:00"
+      "created_at": "2026-08-20T07:42:27.963619+00:00"
     },
     {
       "source_id": 4,
@@ -1045,7 +1609,7 @@
       "status": "needs_review",
       "review_reason": "Out-of-distribution input detected",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-20T07:34:49.024114+00:00"
+      "created_at": "2026-08-20T07:42:27.973869+00:00"
     },
     {
       "source_id": 4,
@@ -1090,7 +1654,7 @@
       "status": "failed",
       "review_reason": "Missing required platform lineage: document_external_id",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-20T07:34:49.034273+00:00"
+      "created_at": "2026-08-20T07:42:27.988153+00:00"
     },
     {
       "source_id": 4,
@@ -1137,7 +1701,7 @@
       "status": "failed",
       "review_reason": "Validation error: Field 'file_size' must be a number, got str",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-20T07:34:49.034273+00:00"
+      "created_at": "2026-08-20T07:42:27.988153+00:00"
     }
   ]
 }

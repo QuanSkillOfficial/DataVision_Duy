@@ -155,6 +155,117 @@ jobs:
       - name: Run local integration contract smoke test
         run: python scripts/week7_shared_integration_smoke_test.py
 
+  module-parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify core module structure parity
+        shell: bash
+        run: |
+          set -e
+          echo "=== Module parity check ==="
+          ERRORS=0
+
+          # Prediction module
+          for f in ai/prediction/__init__.py ai/prediction/inference.py ai/prediction/config.py ai/prediction/requirements-ci.txt; do
+            if [ ! -f "$f" ]; then
+              echo "MISSING: $f"
+              ERRORS=$((ERRORS + 1))
+            else
+              echo "OK: $f"
+            fi
+          done
+
+          # Data engineering
+          for f in data_engineering/__init__.py; do
+            if [ -d data_engineering ] && [ ! -f "$f" ]; then
+              echo "MISSING: $f"
+              ERRORS=$((ERRORS + 1))
+            else
+              echo "OK or skipped: $f"
+            fi
+          done
+
+          # RAG module
+          for f in ai/rag/__init__.py; do
+            if [ -d ai/rag ] && [ ! -f "$f" ]; then
+              echo "MISSING: $f"
+              ERRORS=$((ERRORS + 1))
+            else
+              echo "OK or skipped: $f"
+            fi
+          done
+
+          # Shared requirements
+          if [ ! -f requirements-ci.txt ]; then
+            echo "MISSING: requirements-ci.txt"
+            ERRORS=$((ERRORS + 1))
+          else
+            echo "OK: requirements-ci.txt"
+          fi
+
+          if [ "$ERRORS" -gt 0 ]; then
+            echo "Module parity check failed with $ERRORS errors"
+            exit 1
+          fi
+          echo "All module parity checks passed"
+
+  security-source-ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scan for hardcoded secrets and unsafe patterns
+        shell: bash
+        run: |
+          set -e
+          echo "=== Security source scan ==="
+          ERRORS=0
+
+          # Check for hardcoded passwords/tokens in Python files
+          if grep -rn --include="*.py" -E "(password|secret|token|api_key)\s*=\s*['\"][^'\"]{8,}" . \
+             | grep -v -E "(example|test|mock|fake|dummy|placeholder|__pycache__|\.env\.example)" \
+             | grep -v "requirements"; then
+            echo "WARNING: Possible hardcoded secrets found (review above)"
+          else
+            echo "OK: No hardcoded secrets detected in Python source"
+          fi
+
+          # Check for unsafe eval/exec usage
+          if grep -rn --include="*.py" -E "^\s*(eval|exec)\s*\(" . \
+             | grep -v -E "(__pycache__|test_|\.pyc)"; then
+            echo "FAIL: Unsafe eval/exec usage found"
+            ERRORS=$((ERRORS + 1))
+          else
+            echo "OK: No unsafe eval/exec usage"
+          fi
+
+          # Check for private keys committed
+          if find . -name "*.pem" -o -name "*.key" -o -name "id_rsa" | grep -v ".git/" | head -1 | grep .; then
+            echo "FAIL: Private key files found in repo"
+            ERRORS=$((ERRORS + 1))
+          else
+            echo "OK: No private key files"
+          fi
+
+          # Check .env files not committed (except examples)
+          if find . -name ".env" -not -name ".env.example" -not -name ".env.staging.example" | grep -v ".git/" | head -1 | grep .; then
+            echo "FAIL: .env file committed to repo"
+            ERRORS=$((ERRORS + 1))
+          else
+            echo "OK: No .env files committed"
+          fi
+
+          if [ "$ERRORS" -gt 0 ]; then
+            echo "Security scan failed with $ERRORS issues"
+            exit 1
+          fi
+          echo "All security checks passed"
+
   module-discovery:
     runs-on: ubuntu-latest
     outputs:
@@ -293,6 +404,58 @@ jobs:
       - name: Run prediction owner tests
         run: pytest tests/ai_tests/ -q
 
+  prediction-db-ci:
+    needs: module-discovery
+    if: ${{ needs.module-discovery.outputs.prediction == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: datavision
+          POSTGRES_PASSWORD: datavision123
+          POSTGRES_DB: datavision_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U datavision -d datavision_db"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    env:
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: datavision_db
+      POSTGRES_USER: datavision
+      POSTGRES_PASSWORD: datavision123
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: |
+            requirements-ci.txt
+            ai/prediction/requirements-ci.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-ci.txt
+          python -m pip install -r ai/prediction/requirements-ci.txt
+          python -m pip check
+      - name: Apply database schema
+        run: python scripts/week7_apply_database_schema.py
+      - name: Load ingestion outputs into DB
+        run: python scripts/load_ingestion_outputs_to_postgres.py --write-db --smoke
+      - name: Run prediction DB round-trip proof
+        run: python scripts/week8_prediction_db_round_trip.py
+      - name: Upload DB round-trip evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: week8-prediction-db-round-trip
+          path: outputs/integration/week8_prediction_db_round_trip.json
+          if-no-files-found: warn
+
   ui-ci:
     needs: module-discovery
     if: ${{ needs.module-discovery.outputs.ui == 'true' }}
@@ -324,6 +487,7 @@ jobs:
       - database-ci
       - rag-ci
       - prediction-ci
+      - prediction-db-ci
       - ui-ci
     runs-on: ubuntu-latest
     timeout-minutes: 25

@@ -1,5 +1,6 @@
 {
-  "generated_at": "2026-07-26T10:37:55.499642+00:00",
+  "generated_at": "2026-08-20T07:34:49.063988+00:00",
+  "release_sha": "8769667ee6d8464a5d20f37f460c84288189ef1c",
   "response": {
     "document_external_id": "doc_dataflow_technical_report",
     "source_name": "dataflow_technical_report_pdf",
@@ -23,14 +24,19 @@
       }
     ],
     "review_reason": "Confidence below staging threshold",
-    "source_id": 4,
-    "document_db_id": 1,
+    "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+    "training_data_version": "fallback-data-hash",
+    "is_out_of_distribution": false,
+    "threshold_policy": {
+      "staging_acceptance_threshold": 0.8,
+      "review_threshold": 0.5,
+      "min_extracted_text_length": 50
+    },
     "manual_review_required": true,
-    "batch_index": 1,
     "fixture_only": false
   },
   "metadata": {
     "owner": "Tuong",
-    "source": "real_week7_duy_batch"
+    "source": "canonical_20_payloads"
   }
 }

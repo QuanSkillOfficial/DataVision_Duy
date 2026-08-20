@@ -18,8 +18,15 @@ _PROJECT_ROOT = os.path.abspath(os.path.join(_SCRIPT_DIR, "..", ".."))
 if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
 
-from ai.prediction.feature_builder import STATUS_FAILED
-from ai.prediction.inference import predict_document_type, MODEL_PATH
+from ai.prediction.feature_builder import (
+    STATUS_FAILED,
+    STATUS_ACCEPTED,
+    STATUS_NEEDS_REVIEW,
+    STATUS_WAITING_FOR_SOURCE,
+)
+from ai.prediction.inference import predict_document_type, MODEL_PATH, _load_model
+from ai.prediction.config import STAGING_ACCEPTANCE_THRESHOLD, REVIEW_THRESHOLD, MIN_EXTRACTED_TEXT_LENGTH
+
 
 
 # ---------------------------------------------------------------------------
@@ -81,18 +88,47 @@ def predict_document_types(
 
         # Normalize validation errors into uniform shape
         if "error" in prediction:
+            try:
+                pkg = _load_model(model_path)
+                model_version = pkg.get("model_version", "document_classifier_v1")
+                model_checksum = pkg.get("model_checksum", "unknown-checksum")
+                training_data_version = pkg.get("training_data_version", "fallback-data-hash")
+            except Exception:
+                model_version = "document_classifier_v1"
+                model_checksum = "unknown-checksum"
+                training_data_version = "fallback-data-hash"
+
             prediction = {
                 "predicted_document_type": None,
                 "confidence": 0.0,
-                "model_version": "document_classifier_v1",
+                "model_version": model_version,
                 "status": STATUS_FAILED,
                 "review_reason": f"Validation error: {prediction.get('message', 'Unknown validation error')}",
                 "top_predictions": [],
+                "model_checksum": model_checksum,
+                "training_data_version": training_data_version,
+                "is_out_of_distribution": False,
+                "threshold_policy": {
+                    "staging_acceptance_threshold": STAGING_ACCEPTANCE_THRESHOLD,
+                    "review_threshold": REVIEW_THRESHOLD,
+                    "min_extracted_text_length": MIN_EXTRACTED_TEXT_LENGTH
+                }
             }
 
         # Enrich with ID fields from input
+        doc_ext_id = payload.get("document_external_id")
+        if not doc_ext_id:
+            prediction.update({
+                "predicted_document_type": None,
+                "confidence": 0.0,
+                "status": STATUS_FAILED,
+                "top_predictions": [],
+                "review_reason": "Missing required platform lineage: document_external_id",
+                "is_out_of_distribution": False,
+            })
+
         result = {
-            "document_external_id": payload.get("document_external_id"),
+            "document_external_id": doc_ext_id,
             "source_name": payload.get("source_name"),
             "ingestion_run_id": payload.get("ingestion_run_id"),
             **prediction,

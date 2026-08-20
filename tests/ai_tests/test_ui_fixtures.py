@@ -106,12 +106,15 @@ def test_batch_fixture_valid_json():
 
 
 def test_batch_fixture_has_results():
-    """Batch fixture must have a 'results' list."""
+    """Batch fixture must have exactly 20 real prediction results."""
     with open(BATCH_FIXTURE, "r", encoding="utf-8") as f:
         data = json.load(f)
     assert "results" in data
     assert isinstance(data["results"], list)
-    assert len(data["results"]) > 0
+    assert len(data["results"]) == 20, (
+        f"Batch fixture must contain all 20 real Duy prediction results, "
+        f"got {len(data['results'])}"
+    )
 
 
 def test_batch_fixture_results_have_required_fields():
@@ -168,12 +171,15 @@ def test_review_fixture_valid_json():
 
 
 def test_review_fixture_has_review_items():
-    """Review queue fixture must have 'review_items' list."""
+    """Review queue fixture must have 'review_items' list with exactly 15 items."""
     with open(REVIEW_FIXTURE, "r", encoding="utf-8") as f:
         data = json.load(f)
     assert "review_items" in data
     assert isinstance(data["review_items"], list)
-    assert len(data["review_items"]) > 0
+    assert len(data["review_items"]) == 15, (
+        f"Review queue must contain at least 15 items from real Duy predictions, "
+        f"got {len(data['review_items'])}"
+    )
 
 
 def test_review_fixture_items_are_needs_review():
