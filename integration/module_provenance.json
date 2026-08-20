@@ -41,7 +41,7 @@
         },
         {
           "path": "week8/database",
-          "tree_sha": "54729409036eb091f46dceebf3b07d2345ef4b55"
+          "tree_sha": "cebca6e2955900d0f87786f97691be124b7307e2"
         },
         {
           "path": "deployment/database/init",
@@ -52,7 +52,7 @@
         "week7/database/scripts/ci_database_smoke_test.py",
         "week7/database/requirements-ci.txt",
         "week8/database/migrations/0004_prediction_reviewer_corrections.sql",
-        "week8/database/outputs/backups/backup_manifest.json",
+	"week8/database/outputs/backups/.gitkeep",
         "week8/database/tests/integration/test_backup_restore_gates.py",
         "deployment/database/init/10_phat_schema_v4_fixed.sql",
         "deployment/database/init/20_phat_schema_and_views.sql"
