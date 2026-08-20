@@ -1,0 +1,80 @@
+name: UI Week 8 release gates
+
+# Kept out of ci.yml on purpose: these two gates own the UI module (DV-HUNG-01,
+# DV-HUNG-02, DV-HUNG-03) and must be able to fail a release candidate without
+# editing the shared integration workflow.
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  # DV-HUNG-01: backend-mode contract tests are mandatory for a release
+  # candidate. The gate fails when any required UI-to-backend test is skipped,
+  # so fixture-mode success can never stand in for integration evidence.
+  ui-backend-mode-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: demo/requirements-ci.txt
+
+      - name: Install UI dependencies
+        run: python -m pip install -r demo/requirements-ci.txt
+
+      - name: Run mandatory backend-mode gate
+        env:
+          QS_RELEASE_SHA: ${{ github.sha }}
+          QS_ENVIRONMENT: ci
+        run: python scripts/week8_backend_mode_gate.py
+
+      - name: Upload backend-mode evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: hung-backend-mode-evidence-${{ github.sha }}
+          path: outputs/week8/
+          if-no-files-found: warn
+
+  # DV-HUNG-02 / DV-HUNG-03: the complete user journey, in a real browser,
+  # against a real backend.
+  ui-browser-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: |
+            demo/requirements-ci.txt
+            requirements-e2e.txt
+
+      - name: Install UI and browser dependencies
+        run: |
+          python -m pip install -r demo/requirements-ci.txt
+          python -m pip install -r requirements-e2e.txt
+
+      - name: Install Chromium for Playwright
+        run: python -m playwright install --with-deps chromium
+
+      - name: Run browser user journey
+        env:
+          QS_RELEASE_SHA: ${{ github.sha }}
+          QS_ENVIRONMENT: ci
+        run: python scripts/week8_run_browser_e2e.py --release-sha "${{ github.sha }}"
+
+      - name: Upload browser evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: hung-browser-e2e-evidence-${{ github.sha }}
+          path: |
+            outputs/week8/
+            screenshots/week8_browser_e2e/
+          if-no-files-found: warn

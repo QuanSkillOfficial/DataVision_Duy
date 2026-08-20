@@ -1,0 +1,30 @@
+# Default integration owner plus an independent release reviewer. The second
+# owner prevents a self-review deadlock when Duy changes governance paths.
+* @minzi03 @satyamcser
+
+# Canonical ingestion, CI/CD, release, and deployment governance.
+/data_engineering/ @minzi03 @satyamcser
+/scripts/ @minzi03 @satyamcser
+/.github/ @minzi03 @satyamcser
+/deployment/cloud/ @minzi03 @satyamcser
+/integration/ @minzi03 @satyamcser
+/integration/module_provenance.json @minzi03 @satyamcser @TanPhat0507 @Nguyen-The-Lap @wally205 @ronalhung03
+
+# PostgreSQL/pgvector integration paths.
+/week7/database/ @TanPhat0507 @minzi03
+/week8/database/ @TanPhat0507 @minzi03
+/deployment/database/init/ @TanPhat0507 @minzi03
+
+# RAG and retrieval integration paths.
+/ai/rag/ @Nguyen-The-Lap @minzi03
+/ai/ai_tests/ @Nguyen-The-Lap @minzi03
+
+# Prediction and model integration paths.
+/ai/prediction/ @wally205 @minzi03
+/tests/ai_tests/ @wally205 @minzi03
+
+# Streamlit UI and browser-contract owner paths.
+/demo/ @ronalhung03 @minzi03
+/tests/e2e/ @ronalhung03 @minzi03
+/deployment/staging/ @ronalhung03 @minzi03
+/tests/test_*.py @ronalhung03 @minzi03

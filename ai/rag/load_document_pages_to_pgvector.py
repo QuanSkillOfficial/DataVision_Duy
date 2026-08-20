@@ -7,7 +7,6 @@ import sys
 from pathlib import Path
 from typing import List, Dict, Optional
 import os
-
 import numpy as np
 
 try:
@@ -18,6 +17,22 @@ except ImportError:  # pragma: no cover - direct script execution fallback
     from document_loader import DocumentLoader
     from embedder import create_embedder
     from vector_store import VectorStore, resolve_document_db_id
+
+
+def _filter_existing_chunk_pairs(chunks, embeddings, existing_chunk_ids, dimension):
+    """Keep chunk/embedding positions aligned while filtering duplicates."""
+    unique_pairs = [
+        (chunk, embeddings[index])
+        for index, chunk in enumerate(chunks)
+        if chunk["chunk_id"] not in existing_chunk_ids
+    ]
+    filtered_chunks = [chunk for chunk, _ in unique_pairs]
+    filtered_embeddings = (
+        np.stack([embedding for _, embedding in unique_pairs])
+        if unique_pairs
+        else np.empty((0, dimension), dtype=np.float32)
+    )
+    return filtered_chunks, filtered_embeddings
 
 
 def load_and_ingest(
@@ -111,6 +126,19 @@ def load_and_ingest(
         document_db_id = resolve_document_db_id(vector_store.connection, document_external_id)
         result["document_db_id"] = document_db_id
         print(f"Resolved to document_db_id: {document_db_id}")
+        # Capture existing rows/chunk ids for this document so we can report and remove stale chunks
+        try:
+            cursor = vector_store.connection.cursor()
+            cursor.execute("SELECT COUNT(*) FROM document_chunks WHERE document_id = %s", (document_db_id,))
+            rows_before = cursor.fetchone()[0]
+            cursor.execute("SELECT chunk_id FROM document_chunks WHERE document_id = %s", (document_db_id,))
+            existing_chunk_ids = {row[0] for row in cursor.fetchall()}
+            cursor.close()
+        except Exception:
+            rows_before = 0
+            existing_chunk_ids = set()
+        result["rows_before"] = rows_before
+        print(f"Existing rows for document {document_db_id}: {rows_before}")
 
         # Step 7: Prepare chunks with metadata
         print("Preparing chunks for insertion...")
@@ -121,6 +149,7 @@ def load_and_ingest(
             chunk["metadata"]["document_external_id"] = document_external_id
             if prediction_metadata:
                 chunk["metadata"].update(prediction_metadata)
+        desired_chunk_ids = {chunk["chunk_id"] for chunk in chunks}
 
         # Step 8: Check for duplicates if requested
         duplicate_count = 0
@@ -139,21 +168,13 @@ def load_and_ingest(
             print(f"Found {duplicate_count} duplicate chunks")
 
             if duplicate_count > 0:
-                # Filter out duplicates
-                existing_chunk_ids = set()
-                cursor = vector_store.connection.cursor()
-                cursor.execute("SELECT chunk_id FROM document_chunks WHERE document_id = %s", (document_db_id,))
-                for row in cursor.fetchall():
-                    existing_chunk_ids.add(row[0])
-                cursor.close()
-
-                unique_pairs = [
-                    (chunk, embedding)
-                    for chunk, embedding in zip(chunks, embeddings)
-                    if chunk["chunk_id"] not in existing_chunk_ids
-                ]
-                chunks = [chunk for chunk, _ in unique_pairs]
-                embeddings = np.asarray([embedding for _, embedding in unique_pairs])
+                # Filter chunk/embedding pairs together so their indices cannot drift.
+                chunks, embeddings = _filter_existing_chunk_pairs(
+                    chunks,
+                    embeddings,
+                    existing_chunk_ids,
+                    result["embedding_dimension"],
+                )
                 print(f"Filtered to {len(chunks)} unique chunks")
 
         # Step 9: Insert chunks
@@ -169,6 +190,21 @@ def load_and_ingest(
             result["chunks_inserted"] = len(inserted_ids)
             result["insertion_time_ms"] = round(insertion_time, 2)
             print(f"Inserted {len(inserted_ids)} chunks in {insertion_time:.2f}ms")
+
+        # Stale IDs are based on the complete desired document state, not only
+        # the subset that happened to be newly inserted during this run.
+        stale_ids = sorted(existing_chunk_ids - desired_chunk_ids)
+        deleted = 0
+        if stale_ids:
+            print(f"Deleting {len(stale_ids)} stale chunk(s) for document {document_db_id}...")
+            if vector_store.delete(stale_ids):
+                deleted = len(stale_ids)
+        cursor = vector_store.connection.cursor()
+        cursor.execute("SELECT COUNT(*) FROM document_chunks WHERE document_id = %s", (document_db_id,))
+        result["rows_after"] = int(cursor.fetchone()[0])
+        cursor.close()
+        result["rows_deleted"] = deleted
+        result["stale_chunk_ids_deleted"] = stale_ids
 
         # Step 10: Finalize
         result["status"] = "success"

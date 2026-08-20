@@ -1,0 +1,238 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-17T13:43:07.735202+00:00",
+  "dataset": {
+    "payload_directory": "outputs/prediction_payloads/week7",
+    "label_manifest": "ai/prediction/evaluation/duy_week7_labels.json",
+    "label_basis": "Week 8 task-contract review of Duy handoff document identities",
+    "payload_source_sha": "ca19091095809047a143536186bd76d03f728449",
+    "prediction_source_sha": "51a29c4f5a3db43d3661678494b75455853ec73c",
+    "total_payloads": 20,
+    "labeled_payloads": 15,
+    "excluded_validation_payloads": 5,
+    "scope_note": "This operational handoff set is report-dominant; use the canonical multi-class set for broad model-quality comparison."
+  },
+  "model": {
+    "model_version": "document_classifier_v1",
+    "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
+    "training_data_version": "fallback-data-hash",
+    "threshold_policy": {
+      "staging_acceptance_threshold": 0.8,
+      "review_threshold": 0.5,
+      "min_extracted_text_length": 50
+    }
+  },
+  "metrics": {
+    "accuracy": 0.066667,
+    "macro_precision": 0.333333,
+    "macro_recall": 0.022222,
+    "macro_f1": 0.041667,
+    "status_counts": {
+      "needs_review": 16,
+      "waiting_for_source": 2,
+      "failed": 2
+    }
+  },
+  "results": [
+    {
+      "payload_file": "01_doc_dataflow_technical_report.json",
+      "document_external_id": "doc_dataflow_technical_report",
+      "expected_document_type": "report",
+      "predicted_document_type": "report",
+      "confidence": 0.4184,
+      "status": "needs_review",
+      "is_out_of_distribution": false,
+      "included_in_quality_metrics": true
+    },
+    {
+      "payload_file": "02_doc_dataflow_technical_report_intro_pages.json",
+      "document_external_id": "doc_dataflow_technical_report_intro_pages",
+      "expected_document_type": "report",
+      "predicted_document_type": "contract",
+      "confidence": 0.6096,
+      "status": "needs_review",
+      "is_out_of_distribution": false,
+      "included_in_quality_metrics": true
+    },
+    {
+      "payload_file": "03_doc_dataflow_technical_report_architecture_page.json",
+      "document_external_id": "doc_dataflow_technical_report_architecture_page",
+      "expected_document_type": "report",
+      "predicted_document_type": "contract",
+      "confidence": 0.6128,
+      "status": "needs_review",
+      "is_out_of_distribution": false,
+      "included_in_quality_metrics": true
+    },
+    {
+      "payload_file": "04_doc_dataflow_technical_report_related_work.json",
+      "document_external_id": "doc_dataflow_technical_report_related_work",
+      "expected_document_type": "report",
+      "predicted_document_type": "contract",
+      "confidence": 0.6279,
+      "status": "needs_review",
+      "is_out_of_distribution": false,
+      "included_in_quality_metrics": true
+    },
+    {
+      "payload_file": "05_doc_superstore_sales_csv_summary.json",
+      "document_external_id": "doc_superstore_sales_csv_summary",
+      "expected_document_type": "report",
+      "predicted_document_type": "invoice",
+      "confidence": 0.7101,
+      "status": "needs_review",
+      "is_out_of_distribution": false,
+      "included_in_quality_metrics": true
+    },
+    {
+      "payload_file": "06_doc_product_sales_region_excel_summary.json",
+      "document_external_id": "doc_product_sales_region_excel_summary",
+      "expected_document_type": "report",
+      "predicted_document_type": "invoice",
+      "confidence": 0.6829,
+      "status": "needs_review",
+      "is_out_of_distribution": false,
+      "included_in_quality_metrics": true
+    },
+    {
+      "payload_file": "07_doc_dummyjson_products_api_summary.json",
+      "document_external_id": "doc_dummyjson_products_api_summary",
+      "expected_document_type": "report",
+      "predicted_document_type": "contract",
+      "confidence": 0.3839,
+      "status": "needs_review",
+      "is_out_of_distribution": false,
+      "included_in_quality_metrics": true
+    },
+    {
+      "payload_file": "08_doc_short_text_quality_gate.json",
+      "document_external_id": "doc_short_text_quality_gate",
+      "expected_document_type": null,
+      "predicted_document_type": null,
+      "confidence": 0.0,
+      "status": "waiting_for_source",
+      "is_out_of_distribution": false,
+      "included_in_quality_metrics": false
+    },
+    {
+      "payload_file": "09_doc_empty_text_quality_gate.json",
+      "document_external_id": "doc_empty_text_quality_gate",
+      "expected_document_type": null,
+      "predicted_document_type": null,
+      "confidence": 0.0,
+      "status": "waiting_for_source",
+      "is_out_of_distribution": false,
+      "included_in_quality_metrics": false
+    },
+    {
+      "payload_file": "10_doc_missing_file_name_validation.json",
+      "document_external_id": "doc_missing_file_name_validation",
+      "expected_document_type": null,
+      "predicted_document_type": null,
+      "confidence": 0.0,
+      "status": "failed",
+      "is_out_of_distribution": false,
+      "included_in_quality_metrics": false
+    },
+    {
+      "payload_file": "11_doc_dataflow_system_operators_pages.json",
+      "document_external_id": "doc_dataflow_system_operators_pages",
+      "expected_document_type": "report",
+      "predicted_document_type": "contract",
+      "confidence": 0.5967,
+      "status": "needs_review",
+      "is_out_of_distribution": false,
+      "included_in_quality_metrics": true
+    },
+    {
+      "payload_file": "12_doc_dataflow_pipeline_api_pages.json",
+      "document_external_id": "doc_dataflow_pipeline_api_pages",
+      "expected_document_type": "report",
+      "predicted_document_type": "contract",
+      "confidence": 0.5892,
+      "status": "needs_review",
+      "is_out_of_distribution": false,
+      "included_in_quality_metrics": true
+    },
+    {
+      "payload_file": "13_doc_dataflow_agent_workflow_pages.json",
+      "document_external_id": "doc_dataflow_agent_workflow_pages",
+      "expected_document_type": "report",
+      "predicted_document_type": "contract",
+      "confidence": 0.5796,
+      "status": "needs_review",
+      "is_out_of_distribution": false,
+      "included_in_quality_metrics": true
+    },
+    {
+      "payload_file": "14_doc_dataflow_agentic_rag_evaluation_pages.json",
+      "document_external_id": "doc_dataflow_agentic_rag_evaluation_pages",
+      "expected_document_type": "report",
+      "predicted_document_type": "contract",
+      "confidence": 0.5576,
+      "status": "needs_review",
+      "is_out_of_distribution": false,
+      "included_in_quality_metrics": true
+    },
+    {
+      "payload_file": "15_doc_superstore_order_profitability_sample.json",
+      "document_external_id": "doc_superstore_order_profitability_sample",
+      "expected_document_type": "report",
+      "predicted_document_type": "invoice",
+      "confidence": 0.6296,
+      "status": "needs_review",
+      "is_out_of_distribution": false,
+      "included_in_quality_metrics": true
+    },
+    {
+      "payload_file": "16_doc_product_sales_region_sample.json",
+      "document_external_id": "doc_product_sales_region_sample",
+      "expected_document_type": "report",
+      "predicted_document_type": "invoice",
+      "confidence": 0.5551,
+      "status": "needs_review",
+      "is_out_of_distribution": false,
+      "included_in_quality_metrics": true
+    },
+    {
+      "payload_file": "17_doc_dummyjson_inventory_sample.json",
+      "document_external_id": "doc_dummyjson_inventory_sample",
+      "expected_document_type": "report",
+      "predicted_document_type": "contract",
+      "confidence": 0.375,
+      "status": "needs_review",
+      "is_out_of_distribution": false,
+      "included_in_quality_metrics": true
+    },
+    {
+      "payload_file": "18_doc_dataflow_technical_notes_markdown.json",
+      "document_external_id": "doc_dataflow_technical_notes_markdown",
+      "expected_document_type": "report",
+      "predicted_document_type": "contract",
+      "confidence": 0.2985,
+      "status": "needs_review",
+      "is_out_of_distribution": true,
+      "included_in_quality_metrics": true
+    },
+    {
+      "payload_file": "19_missing_document_external_id.json",
+      "document_external_id": null,
+      "expected_document_type": null,
+      "predicted_document_type": "resume",
+      "confidence": 0.3071,
+      "status": "needs_review",
+      "is_out_of_distribution": false,
+      "included_in_quality_metrics": false
+    },
+    {
+      "payload_file": "20_doc_invalid_file_size_validation.json",
+      "document_external_id": "doc_invalid_file_size_validation",
+      "expected_document_type": null,
+      "predicted_document_type": null,
+      "confidence": 0.0,
+      "status": "failed",
+      "is_out_of_distribution": false,
+      "included_in_quality_metrics": false
+    }
+  ]
+}

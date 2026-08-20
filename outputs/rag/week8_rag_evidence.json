@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "evidence_type": "local_ci_pipeline",
+  "generated_at": "2026-08-20T13:10:10.092913+00:00",
+  "provenance": {
+    "owner_repository": "https://github.com/QuanSkillOfficial/DataVision_Lap",
+    "owner_branch": "codex/lap-week8-evidence-closeout",
+    "source_commit_sha": "5d18d15929504ad8cc08b59794a48bc99de101ba",
+    "source_commit_url": "https://github.com/QuanSkillOfficial/DataVision_Lap/commit/5d18d15929504ad8cc08b59794a48bc99de101ba",
+    "canonical_repository": "https://github.com/QuanSkillOfficial/DataVision_Duy",
+    "canonical_pull_request": 5,
+    "canonical_paths": [
+      "ai/rag",
+      "ai/ai_tests",
+      "outputs/ui_fixtures/lap_rag_response_real.json"
+    ]
+  },
+  "source_sha256": "25f9b6b9d9d859d444a55730587e2e11ed415f9b71dfd95c518ed7528290e652",
+  "source_files": [
+    "ai/rag/rag_pipeline.py",
+    "ai/rag/retriever.py",
+    "ai/rag/vector_store.py",
+    "ai/rag/scripts/week8_generate_rag_evidence.py"
+  ],
+  "configuration": {
+    "backend": "in_memory",
+    "chunk_size": 512,
+    "overlap": 20,
+    "top_k": 3,
+    "min_score": 0.0
+  },
+  "embedding": {
+    "identity": "ci-token-hash-384",
+    "dimension": 384,
+    "purpose": "CI-only deterministic substitute; not live pgvector production evidence"
+  },
+  "indexing": {
+    "before": 0,
+    "after_first": 2,
+    "after_second": 2,
+    "first": {
+      "document_id": "doc_dataflow_technical_report",
+      "num_chunks": 2,
+      "chunks_inserted": 2,
+      "chunks_skipped_duplicates": 0,
+      "chunk_ids": [
+        "doc_dataflow_technical_report_chunk_000",
+        "doc_dataflow_technical_report_chunk_001"
+      ],
+      "duplicate_chunk_ids": [],
+      "status": "success",
+      "was_reindexed": false
+    },
+    "second": {
+      "document_id": "doc_dataflow_technical_report",
+      "num_chunks": 2,
+      "chunks_inserted": 0,
+      "chunks_skipped_duplicates": 2,
+      "chunk_ids": [
+        "doc_dataflow_technical_report_chunk_000",
+        "doc_dataflow_technical_report_chunk_001"
+      ],
+      "duplicate_chunk_ids": [
+        "doc_dataflow_technical_report_chunk_000",
+        "doc_dataflow_technical_report_chunk_001"
+      ],
+      "status": "success",
+      "was_reindexed": true
+    },
+    "duplicate_free": true
+  },
+  "response": {
+    "question": "What is the DataFlow pipeline?",
+    "answer": "The DataFlow pipeline consists of three main stages: ingestion, processing, and output.",
+    "retrieved_chunks": [
+      {
+        "chunk_id": "doc_dataflow_technical_report_chunk_000",
+        "document_id": "doc_dataflow_technical_report",
+        "document_db_id": null,
+        "document_external_id": "doc_dataflow_technical_report",
+        "file_name": "DataFlow_Technical_Report.pdf",
+        "id": "doc_dataflow_technical_report_chunk_000",
+        "text": "The DataFlow pipeline consists of three main stages: ingestion, processing, and output. The ingestion stage collects and validates raw data from databases, APIs, and file systems. The processing stage transforms data using ETL operations and applies business rules. The output stage delivers processed data to downstream sy",
+        "chunk_text": "The DataFlow pipeline consists of three main stages: ingestion, processing, and output. The ingestion stage collects and validates raw data from databases, APIs, and file systems. The processing stage transforms data using ETL operations and applies business rules. The output stage delivers processed data to downstream sy",
+        "page_number": 4,
+        "metadata": {
+          "file_name": "DataFlow_Technical_Report.pdf",
+          "source": "DataFlow_Technical_Report.pdf",
+          "document_external_id": "doc_dataflow_technical_report",
+          "page_number": 4
+        },
+        "score": 0.5149805899709463,
+        "similarity_score": 0.5149805899709463
+      },
+      {
+        "chunk_id": "doc_dataflow_technical_report_chunk_001",
+        "document_id": "doc_dataflow_technical_report",
+        "document_db_id": null,
+        "document_external_id": "doc_dataflow_technical_report",
+        "file_name": "DataFlow_Technical_Report.pdf",
+        "id": "doc_dataflow_technical_report_chunk_001",
+        "text": "ata to downstream systems and generates reports. Data quality checks, logging, and lineage metadata are preserved throughout the pipeline. This evidence document intentionally contains enough detail to exercise deterministic chunking, retrieval, citation validation, and duplicate-safe repeated indexing.",
+        "chunk_text": "ata to downstream systems and generates reports. Data quality checks, logging, and lineage metadata are preserved throughout the pipeline. This evidence document intentionally contains enough detail to exercise deterministic chunking, retrieval, citation validation, and duplicate-safe repeated indexing.",
+        "page_number": 4,
+        "metadata": {
+          "file_name": "DataFlow_Technical_Report.pdf",
+          "source": "DataFlow_Technical_Report.pdf",
+          "document_external_id": "doc_dataflow_technical_report",
+          "page_number": 4
+        },
+        "score": 0.47043318301439285,
+        "similarity_score": 0.47043318301439285
+      }
+    ],
+    "num_retrieved": 2,
+    "retrieved_context": [
+      {
+        "chunk_id": "doc_dataflow_technical_report_chunk_000",
+        "document_id": "doc_dataflow_technical_report",
+        "document_db_id": null,
+        "document_external_id": "doc_dataflow_technical_report",
+        "file_name": "DataFlow_Technical_Report.pdf",
+        "id": "doc_dataflow_technical_report_chunk_000",
+        "text": "The DataFlow pipeline consists of three main stages: ingestion, processing, and output. The ingestion stage collects and validates raw data from databases, APIs, and file systems. The processing stage transforms data using ETL operations and applies business rules. The output stage delivers processed data to downstream sy",
+        "chunk_text": "The DataFlow pipeline consists of three main stages: ingestion, processing, and output. The ingestion stage collects and validates raw data from databases, APIs, and file systems. The processing stage transforms data using ETL operations and applies business rules. The output stage delivers processed data to downstream sy",
+        "page_number": 4,
+        "metadata": {
+          "file_name": "DataFlow_Technical_Report.pdf",
+          "source": "DataFlow_Technical_Report.pdf",
+          "document_external_id": "doc_dataflow_technical_report",
+          "page_number": 4
+        },
+        "score": 0.5149805899709463,
+        "similarity_score": 0.5149805899709463
+      },
+      {
+        "chunk_id": "doc_dataflow_technical_report_chunk_001",
+        "document_id": "doc_dataflow_technical_report",
+        "document_db_id": null,
+        "document_external_id": "doc_dataflow_technical_report",
+        "file_name": "DataFlow_Technical_Report.pdf",
+        "id": "doc_dataflow_technical_report_chunk_001",
+        "text": "ata to downstream systems and generates reports. Data quality checks, logging, and lineage metadata are preserved throughout the pipeline. This evidence document intentionally contains enough detail to exercise deterministic chunking, retrieval, citation validation, and duplicate-safe repeated indexing.",
+        "chunk_text": "ata to downstream systems and generates reports. Data quality checks, logging, and lineage metadata are preserved throughout the pipeline. This evidence document intentionally contains enough detail to exercise deterministic chunking, retrieval, citation validation, and duplicate-safe repeated indexing.",
+        "page_number": 4,
+        "metadata": {
+          "file_name": "DataFlow_Technical_Report.pdf",
+          "source": "DataFlow_Technical_Report.pdf",
+          "document_external_id": "doc_dataflow_technical_report",
+          "page_number": 4
+        },
+        "score": 0.47043318301439285,
+        "similarity_score": 0.47043318301439285
+      }
+    ],
+    "context": "[Source 1: DataFlow_Technical_Report.pdf (similarity: 0.515)]\nThe DataFlow pipeline consists of three main stages: ingestion, processing, and output. The ingestion stage collects and validates raw data from databases, APIs, and file systems. The processing stage transforms data using ETL operations and applies business rules. The output stage delivers processed data to downstream sy\n\n[Source 2: DataFlow_Technical_Report.pdf (similarity: 0.470)]\nata to downstream systems and generates reports. Data quality checks, logging, and lineage metadata are preserved throughout the pipeline. This evidence document intentionally contains enough detail to exercise deterministic chunking, retrieval, citation validation, and duplicate-safe repeated indexing.",
+    "citations": [
+      {
+        "file_name": "DataFlow_Technical_Report.pdf",
+        "page_number": 4,
+        "chunk_id": "doc_dataflow_technical_report_chunk_000",
+        "similarity": 0.5149805899709463,
+        "document_external_id": "doc_dataflow_technical_report"
+      },
+      {
+        "file_name": "DataFlow_Technical_Report.pdf",
+        "page_number": 4,
+        "chunk_id": "doc_dataflow_technical_report_chunk_001",
+        "similarity": 0.47043318301439285,
+        "document_external_id": "doc_dataflow_technical_report"
+      }
+    ],
+    "status": "retrieval_only",
+    "model": "ci-token-hash-384",
+    "metadata": {
+      "num_chunks_retrieved": 2,
+      "top_k": 3,
+      "min_score": 0.0,
+      "citation_valid": true,
+      "citation_errors": [],
+      "citation_warnings": [],
+      "retrieval_backend": "in_memory",
+      "embedding_mode": "deterministic_ci",
+      "embedding_dimension": 384,
+      "production_model": "sentence-transformers/all-MiniLM-L6-v2",
+      "production_evidence": false
+    },
+    "file_name": "DataFlow_Technical_Report.pdf",
+    "document_external_id": "doc_dataflow_technical_report"
+  }
+}

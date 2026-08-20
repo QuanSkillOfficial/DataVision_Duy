@@ -27,10 +27,6 @@ class RAGService:
         self.retriever = retriever
         self.answer_generator = answer_generator
 
-    @property
-    def model_name(self) -> str:
-        return getattr(self.embedder, "model_name", "unknown-embedding-model")
-
     def retrieve_context(
         self,
         question: str,
@@ -50,24 +46,16 @@ class RAGService:
             top_k: Number of top chunks to retrieve
 
         Returns:
-            Dictionary matching UI contract:
-            {
-                "question": "...",
-                "answer": null,
-                "retrieved_context": [...],
-                "citations": [...],
-                "status": "retrieval_only",
-                "model": "all-MiniLM-L6-v2"
-            }
+            Dictionary matching UI contract - always non-empty structure.
         """
         start_time = time.time()
 
-        # Build metadata filter
+        question = (question or "").strip()
+
         metadata_filter = dict(metadata_filter or {})
         if document_id is not None:
             metadata_filter["document_id"] = document_id
 
-        # Retrieve chunks
         try:
             retrieved_chunks = self.retriever.retrieve(
                 query=question,
@@ -77,36 +65,116 @@ class RAGService:
         except Exception as e:
             return {
                 "question": question,
-                "answer": None,
+                "answer": "I do not know based on the provided documents.",
                 "retrieved_context": [],
                 "citations": [],
                 "status": "error",
-                "model": self.model_name,
-                "error": str(e)
+                "model": "all-MiniLM-L6-v2",
+                "error": str(e),
+                "metadata": {
+                    "latency_ms": round((time.time() - start_time) * 1000, 2),
+                    "num_chunks_retrieved": 0,
+                    "document_id": document_id,
+                    "reason": f"Retrieval error: {e}",
+                    "error_code": "RETRIEVAL_EXCEPTION",
+                },
             }
 
-        # Extract citations
         citations = self.retriever.get_source_citations(retrieved_chunks)
+        citation_validation = self.retriever.validate_citations(citations, retrieved_chunks)
 
-        # Calculate latency
+        if not question:
+            status = "error"
+            default_answer = "Please provide a valid question."
+            reason = "Question cannot be empty"
+            error_code = "INVALID_QUESTION"
+        elif not retrieved_chunks:
+            status = "no_answer_found"
+            default_answer = "I do not know based on the provided documents."
+            reason = "No chunks matched the query above similarity threshold"
+            error_code = None
+        else:
+            status = "retrieval_only"
+            default_answer = None
+            reason = None
+            error_code = None
+
+        first_chunk = retrieved_chunks[0] if retrieved_chunks else None
+        if first_chunk:
+            chunk_meta = first_chunk.get("metadata", {}) or {}
+            document_external_id = (
+                first_chunk.get("document_external_id")
+                or chunk_meta.get("document_external_id")
+            )
+            file_name = (
+                first_chunk.get("file_name")
+                or chunk_meta.get("file_name")
+                or chunk_meta.get("source")
+            )
+            document_db_id = (
+                first_chunk.get("document_db_id")
+                or first_chunk.get("document_id_fk")
+            )
+        else:
+            document_external_id = None
+            file_name = None
+            document_db_id = document_id
+
         latency_ms = (time.time() - start_time) * 1000
 
-        # Build response matching UI contract
+        answer_value = (
+            default_answer
+            if default_answer is not None
+            else self._summarize_top_chunk(retrieved_chunks)
+        )
+
         response = {
             "question": question,
-            "answer": None,  # Will be filled by LLM if available
+            "answer": answer_value,
             "retrieved_context": retrieved_chunks,
             "citations": citations,
-            "status": "retrieval_only",
-            "model": self.model_name,
+            "status": status,
+            "model": "all-MiniLM-L6-v2",
             "metadata": {
                 "latency_ms": round(latency_ms, 2),
                 "num_chunks_retrieved": len(retrieved_chunks),
-                "document_id": document_id
-            }
+                "document_id": document_id,
+                "top_k": top_k,
+                "filter_applied": metadata_filter or None,
+                "reason": reason,
+                "error_code": error_code,
+                "citation_valid": citation_validation.get("is_valid", False),
+                "citation_errors": citation_validation.get("errors", []),
+                "citation_warnings": citation_validation.get("warnings", []),
+            },
         }
 
+        if document_external_id is not None:
+            response["document_external_id"] = document_external_id
+        if document_db_id is not None:
+            response["document_db_id"] = document_db_id
+        if file_name is not None:
+            response["file_name"] = file_name
+
         return response
+
+    @staticmethod
+    def _summarize_top_chunk(retrieved_chunks: List[Dict]) -> Optional[str]:
+        """Return a deterministic non-empty answer fallback from the top chunk."""
+        if not retrieved_chunks:
+            return None
+        top_chunk = retrieved_chunks[0]
+        text = (
+            top_chunk.get("chunk_text")
+            or top_chunk.get("text")
+            or ""
+        ).strip()
+        if not text:
+            return None
+        first_sentence = text.split(". ")[0].strip()
+        if first_sentence and not first_sentence.endswith("."):
+            first_sentence += "."
+        return first_sentence or None
 
     def query_with_answer(
         self,
@@ -127,42 +195,45 @@ class RAGService:
             top_k: Number of top chunks to retrieve
 
         Returns:
-            Dictionary with answer if LLM available, otherwise retrieval_only
+            Dictionary with answer if LLM available, otherwise retrieval_only.
+            Always contains a non-empty answer field.
         """
-        # First, retrieve context
         response = self.retrieve_context(question, document_id, top_k, metadata_filter=metadata_filter)
 
-        # If no answer generator, return retrieval-only response
         if not self.answer_generator:
+            if not response["answer"]:
+                response["answer"] = "I do not know based on the provided documents."
             return response
 
-        # If no chunks retrieved, return retrieval-only with low confidence
         if not response["retrieved_context"]:
             response["status"] = "no_context"
-            response["answer"] = "I do not know based on the provided documents."
+            response["answer"] = response.get("answer") or "I do not know based on the provided documents."
             return response
 
-        # Generate answer using LLM
         try:
             answer_result = self.answer_generator.generate_answer(
                 question=question,
                 retrieved_chunks=response["retrieved_context"]
             )
 
-            # Update response with answer
-            response["answer"] = answer_result.get("answer")
+            llm_answer = answer_result.get("answer")
+            if not llm_answer:
+                llm_answer = response.get("answer") or "I do not know based on the provided documents."
+
+            response["answer"] = llm_answer
             response["status"] = answer_result.get("status", "answered")
             response["metadata"]["llm_model"] = answer_result.get("model")
             response["metadata"]["confidence"] = answer_result.get("confidence", 0.0)
 
-            # If LLM indicated it doesn't know, update status
-            if response["answer"] and "i do not know" in response["answer"].lower():
-                response["status"] = "no_answer"
+            if "i do not know" in llm_answer.lower() or "not provided" in llm_answer.lower():
+                if response["status"] == "answered":
+                    response["status"] = "no_answer"
 
         except Exception as e:
-            # Fallback to retrieval-only on error
             response["status"] = "llm_error"
             response["error"] = str(e)
+            if not response["answer"]:
+                response["answer"] = "I do not know based on the provided documents."
 
         return response
 
@@ -268,13 +339,13 @@ def create_rag_service(
     Returns:
         Configured RAGService instance
     """
-    from .embedder import create_embedder
+    from .embedder import Embedder
     from .vector_store import VectorStore
     from .retriever import Retriever
     from .answer_generator import AnswerGenerator
 
     # Initialize components
-    embedder = create_embedder()
+    embedder = Embedder()
     vector_store = VectorStore(use_pgvector=use_pgvector, connection_string=connection_string)
     retriever = Retriever(embedder=embedder, vector_store=vector_store, top_k=5)
 

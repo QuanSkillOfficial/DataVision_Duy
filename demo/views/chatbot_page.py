@@ -1,15 +1,9 @@
 import streamlit as st
 
 from demo.config import RAG_SIMILARITY_HIGH, RAG_SIMILARITY_MEDIUM, get_mode_label
+from demo.helpers.ui_status import render_service_error
 from demo.services.service_client import ask_rag
-
-
-def _answer_text(data):
-    """Render retrieval-only responses without leaking Python ``None`` to UI."""
-    return data.get("answer") or (
-        "Retrieval completed. Review the cited passages below; "
-        "answer generation is disabled in this staging build."
-    )
+from demo.services.service_errors import is_error
 
 
 def _similarity_badge(score: float) -> str:
@@ -86,6 +80,16 @@ def main():
 
     for chat in st.session_state.chat_history:
         with st.chat_message(chat["role"]):
+            if chat.get("error_response"):
+                render_service_error(
+                    chat["error_response"],
+                    "RAG service",
+                    what_is_missing=(
+                        "No answer and no citations were returned. Do not treat "
+                        "this turn as a retrieval result."
+                    ),
+                )
+                continue
             st.markdown(chat["message"])
             if chat.get("citations"):
                 _render_citations(chat["citations"], chat.get("retrieved_context"))
@@ -106,12 +110,26 @@ def main():
 
         document_id = st.session_state.get("selected_document_id")
         response = ask_rag(user_input, document_id=document_id)
+
+        if is_error(response):
+            # Never store a failed retrieval as RAG context: downstream
+            # suggestions and reports must not cite an answer that never came.
+            st.session_state["last_rag_response"] = {}
+            st.session_state.chat_history.append({
+                "role": "assistant",
+                "message": "",
+                "error_response": response,
+            })
+            st.rerun()
+
         st.session_state["last_rag_response"] = response.get("data", {})
         data = response.get("data", {})
 
         st.session_state.chat_history.append({
             "role": "assistant",
-            "message": _answer_text(data),
+            "message": data.get(
+                "answer", "I do not know based on the provided documents."
+            ),
             "citations": data.get("citations", []),
             "retrieved_context": data.get("retrieved_context", []),
             "model": data.get("model", ""),

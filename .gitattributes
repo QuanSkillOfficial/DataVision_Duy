@@ -1,0 +1,7 @@
+# Linux-executed deployment assets must keep LF even when contributors work
+# from Windows. A CRLF checkout breaks /bin/sh in the staging containers.
+deployment/staging/*.sh text eol=lf
+deployment/staging/*.conf text eol=lf
+deployment/cloud/*.yml text eol=lf
+.github/workflows/*.yml text eol=lf
+scripts/*.sh text eol=lf

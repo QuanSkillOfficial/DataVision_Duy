@@ -3,10 +3,16 @@ tests/test_rag_ui_contract.py
 ================================
 Verifies ask_rag() honors the rag_ui_contract: answer, citations,
 retrieved_context, similarity_score, chunk_id, status.
+
+Week 8 note (DV-HUNG-01): this module imports the fixture implementation
+directly instead of `service_client`. These tests pin the reference UI
+contract - the shape and business rules the UI requires from any backend - so
+they must produce the same result in fixture mode and in backend mode. Live
+UI-to-backend integration is covered separately by
+tests/test_backend_contract_smoke.py, which runs in backend mode only.
 """
 
-from demo.services.service_client import ask_rag
-from demo.views.chatbot_page import _answer_text
+from demo.services.mock_client import ask_rag
 
 
 def test_valid_question_returns_envelope():
@@ -20,12 +26,6 @@ def test_response_has_required_fields():
     data = response["data"]
     for field in ["question", "answer", "citations", "retrieved_context", "status"]:
         assert field in data, f"Missing field: {field}"
-
-
-def test_retrieval_only_answer_is_user_facing():
-    message = _answer_text({"answer": None})
-    assert "Retrieval completed" in message
-    assert message != "None"
 
 
 def test_has_citation_with_required_fields():

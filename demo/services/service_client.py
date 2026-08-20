@@ -29,6 +29,21 @@ else:
 
 
 # ─────────────────────────────────────────────
+# HEALTH / RELEASE IDENTITY (DV-HUNG-04)
+# ─────────────────────────────────────────────
+
+def get_backend_health() -> dict:
+    """
+    Returns backend liveness and the release identity it reports.
+
+    data fields: ok, service, backend_reachable, release_sha, environment.
+    In fixture mode this always reports backend_reachable = False so the UI
+    cannot present fixture success as a live backend.
+    """
+    return _client.get_backend_health()
+
+
+# ─────────────────────────────────────────────
 # DASHBOARD (Duy + Phat)
 # ─────────────────────────────────────────────
 

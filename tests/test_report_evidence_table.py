@@ -5,9 +5,16 @@ Verifies generate_report() produces a strict 8-section schema plus
 an evidence_table that traces back to ingestion / dashboard /
 prediction / RAG / suggestions, and degrades gracefully when sources
 are missing.
+
+Week 8 note (DV-HUNG-01): this module imports the fixture implementation
+directly instead of `service_client`. These tests pin the reference UI
+contract - the shape and business rules the UI requires from any backend - so
+they must produce the same result in fixture mode and in backend mode. Live
+UI-to-backend integration is covered separately by
+tests/test_backend_contract_smoke.py, which runs in backend mode only.
 """
 
-from demo.services.service_client import generate_report
+from demo.services.mock_client import generate_report
 
 
 STRICT_SECTIONS = [

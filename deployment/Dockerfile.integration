@@ -10,20 +10,26 @@ RUN pip install --no-cache-dir \
     -r /app/ai/rag/requirements-ci.txt \
     -r /app/ai/prediction/requirements-ci.txt
 
-COPY data_engineering /app/data_engineering
-COPY ai /app/ai
-COPY backend_stub /app/backend_stub
-COPY scripts /app/scripts
-COPY week7 /app/week7
-COPY deployment /app/deployment
-COPY logs/runs /app/logs/runs
-COPY outputs /app/outputs
-COPY week2/data /app/week2/data
-COPY week2/logs /app/week2/logs
-COPY data_engineering/configs /app/data_engineering/configs
+RUN groupadd --gid 10001 datavision \
+    && useradd --uid 10001 --gid datavision --create-home datavision
+
+COPY --chown=datavision:datavision data_engineering /app/data_engineering
+COPY --chown=datavision:datavision ai /app/ai
+COPY --chown=datavision:datavision backend_stub /app/backend_stub
+COPY --chown=datavision:datavision scripts /app/scripts
+COPY --chown=datavision:datavision week7 /app/week7
+COPY --chown=datavision:datavision week8 /app/week8
+COPY --chown=datavision:datavision deployment /app/deployment
+COPY --chown=datavision:datavision logs/runs /app/logs/runs
+COPY --chown=datavision:datavision outputs /app/outputs
+COPY --chown=datavision:datavision week2/data /app/week2/data
+COPY --chown=datavision:datavision week2/logs /app/week2/logs
+COPY --chown=datavision:datavision data_engineering/configs /app/data_engineering/configs
 
 ENV PYTHONPATH=/app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV RAG_EMBEDDING_MODE=hash
+
+USER datavision
 
 CMD ["python", "scripts/week8_seed_staging.py"]

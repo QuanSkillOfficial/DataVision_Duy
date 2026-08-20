@@ -3,12 +3,14 @@ import streamlit as st
 
 from domain_config import DEFAULT_DOMAIN_KEY, get_domain_names
 from demo.config import USE_BACKEND, get_mode_label
+from demo.helpers.ui_status import guard_response, render_service_error
 from demo.services.service_client import (
     get_dashboard_metrics,
     get_ingestion_status,
     get_recent_activity,
     generate_suggestions,
 )
+from demo.services.service_errors import is_error
 from utils import (
     get_active_sources,
     get_source_name,
@@ -89,6 +91,13 @@ def main():
     st.caption(f"Data mode: {get_mode_label()}")
 
     generated_dashboard = st.session_state.get("panely_generated_dashboard")
+    if not generated_dashboard and USE_BACKEND:
+        st.info("Generate a dashboard from the Upload page first.")
+        if st.button("Go to Upload"):
+            st.session_state.page = "upload"
+            st.session_state.pending_navigation_choice = "Upload"
+            st.rerun()
+        return
 
     domain_options = get_domain_names()
     if st.session_state.get("selected_domain_context") not in domain_options:
@@ -97,15 +106,33 @@ def main():
     sources = _active_sources()
 
     # ── Fetch through service layer (Duy + Phat) ──────────────────────────
+    # Each dependency is guarded separately so one failing service degrades
+    # only its own panel (DV-HUNG-05 partial-service behavior).
     metrics_response = get_dashboard_metrics(sources)
-    signals = metrics_response["data"]
+    signals = guard_response(
+        metrics_response,
+        "Dashboard metrics service",
+        what_is_missing=(
+            "Data health KPIs, quality signals and the review queue cannot be "
+            "shown. Nothing on this page is being substituted with fixture data."
+        ),
+    )
+    if signals is None:
+        st.caption(
+            "Flow: Duy ingestion logs -> Phat analytics views -> Dashboard UI. "
+            "The dashboard stops here until the metrics service recovers."
+        )
+        return
+
     st.session_state["dashboard_signals"] = signals
 
     ingestion_response = get_ingestion_status()
-    ingestion_run = ingestion_response.get("data", {})
+    ingestion_failed = is_error(ingestion_response)
+    ingestion_run = {} if ingestion_failed else (ingestion_response.get("data") or {})
 
     activity_response = get_recent_activity()
-    activity = activity_response.get("data", [])
+    activity_failed = is_error(activity_response)
+    activity = [] if activity_failed else (activity_response.get("data") or [])
 
     if generated_dashboard:
         st.caption(
@@ -114,11 +141,6 @@ def main():
         )
         if generated_dashboard.get("description"):
             st.write(generated_dashboard["description"])
-    elif USE_BACKEND:
-        st.caption(
-            "Direct backend mode: live PostgreSQL analytics are loaded "
-            "without requiring the Upload page first."
-        )
     else:
         st.caption(
             "Direct fixture mode: Week 7 integration fixtures are loaded "
@@ -174,19 +196,34 @@ def main():
             "prediction_result": st.session_state.get("prediction_result", {}),
             "rag_context": st.session_state.get("last_rag_response", {}),
         })
-        st.session_state["suggestions"] = suggestions_response["data"]
-        st.session_state["suggestion_details_expanded"] = False
-        st.session_state.page = "suggestions"
-        st.session_state.pending_navigation_choice = "Suggestions"
-        st.rerun()
+        generated = guard_response(
+            suggestions_response,
+            "Suggestion service",
+            what_is_missing="No suggestions were generated, so the page did not navigate.",
+        )
+        if generated is not None:
+            st.session_state["suggestions"] = generated
+            st.session_state["suggestion_details_expanded"] = False
+            st.session_state.page = "suggestions"
+            st.session_state.pending_navigation_choice = "Suggestions"
+            st.rerun()
 
     # ── Ingestion Run Panel ────────────────────────────────────────────────
     st.subheader("Ingestion Run Panel")
-    with st.expander("🔍 Ingestion Stepper & Path Verification", expanded=True):
+    if ingestion_failed:
+        render_service_error(
+            ingestion_response,
+            "Ingestion status service",
+            what_is_missing=(
+                "Run ID, file hash and storage paths are unavailable, so this "
+                "page cannot prove source traceability for the current release."
+            ),
+        )
+    with st.expander("🔍 Ingestion Stepper & Path Verification", expanded=not ingestion_failed):
         st.markdown(f"""
-        **Run ID:** `{ingestion_run.get('run_id', 'Not available in current data.')}`
-        **Source Document:** `{ingestion_run.get('source_name', 'Not available in current data.')}` (`{ingestion_run.get('source_type', 'N/A')}`)
-        **Pipeline Status:** `{ingestion_run.get('status', 'Not available in current data.')}`
+        **Run ID:** `{ingestion_run.get('run_id', 'Not available in current data.')}`  
+        **Source Document:** `{ingestion_run.get('source_name', 'Not available in current data.')}` (`{ingestion_run.get('source_type', 'N/A')}`)  
+        **Pipeline Status:** `{ingestion_run.get('status', 'Not available in current data.')}`  
         **File Hash (SHA-256):** `{ingestion_run.get('file_hash_sha256', 'Not available in current data.')}`
         """)
 
@@ -223,7 +260,15 @@ def main():
     _render_document_processing_status(signals.get("document_processing_status", {}))
 
     st.markdown("---")
-    _render_recent_activity(activity)
+    if activity_failed:
+        st.subheader("Recent Activity Logs")
+        render_service_error(
+            activity_response,
+            "Recent activity service",
+            what_is_missing="Recent platform activity cannot be shown.",
+        )
+    else:
+        _render_recent_activity(activity)
 
     st.caption(
         "Flow: Duy ingestion logs -> Phat analytics views -> Dashboard UI. "

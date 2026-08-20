@@ -54,6 +54,28 @@ def _envelope(data: Any, status: str = "success", **metadata) -> dict:
 
 
 # ─────────────────────────────────────────────
+# HEALTH / RELEASE IDENTITY (DV-HUNG-04)
+# ─────────────────────────────────────────────
+
+def get_backend_health() -> dict:
+    """Fixture mode has no backend, and must never claim it does.
+
+    The UI uses `source` to label the health panel honestly, so a reviewer can
+    never mistake a fixture-mode green state for a live backend.
+    """
+    return _envelope(
+        {
+            "ok": True,
+            "service": "fixture_mode",
+            "backend_reachable": False,
+            "release_sha": None,
+            "environment": None,
+        },
+        source="fixtures",
+    )
+
+
+# ─────────────────────────────────────────────
 # DASHBOARD (Duy + Phat)
 # ─────────────────────────────────────────────
 
@@ -67,9 +89,9 @@ def get_dashboard_metrics(source_context: Optional[List[dict]] = None) -> dict:
     # expects, pulling each field from its correct source view.
     overview_list = views.get("v_dashboard_overview", [{}])
     overview = overview_list[0] if isinstance(overview_list, list) and overview_list else (overview_list or {})
-
+    
     quality_list = views.get("v_data_quality_dashboard", [])
-
+    
     ingestion_health_list = views.get("v_ingestion_health", [{}])
     ingestion_health = ingestion_health_list[0] if isinstance(ingestion_health_list, list) and ingestion_health_list else {}
 

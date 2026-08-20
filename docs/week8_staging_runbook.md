@@ -117,19 +117,24 @@ server.
 
 1. Wait for `DataVision CI` to pass on `main`.
 2. Verify `Publish staging images` succeeded and download its
-   `week8-release-<sha>` manifest. The manifest records all three GHCR digests.
+   `week8-release-<sha>` manifest. The manifest binds the successful CI run,
+   release SHA, and all three immutable GHCR digest references.
 3. Create/configure the GitHub Environment `staging` using
    `deployment/cloud/README.md`.
-4. Run `Deploy staging` with the full green SHA, backend URL ending in `/api`,
-   and UI URL.
+4. Run `Deploy staging` with the full green SHA and the TLS-protected UI URL.
+   The backend remains loopback-only and the workflow validates it through SSH.
 5. Retain `week8-cloud-acceptance-<sha>` as the cloud evidence artifact.
 
-The deploy workflow validates pinned SSH host identity, confirms all exact-SHA
-images exist, renders secrets only inside the runner bundle, starts the remote
-stack, checks UI backend mode, and requires the health response to expose the
-requested release SHA. It promotes the server's `current` pointer only after
-15/15 acceptance succeeds. If a prior accepted pointer exists, a failed run
-re-applies it automatically without deleting the PostgreSQL volume.
+The deploy workflow validates pinned SSH host identity, verifies the release
+SHA against a successful CI run on `main`, validates the release manifest,
+inspects and deploys only `image@sha256` references, renders secrets only inside
+the runner bundle, and performs a fail-closed remote preflight before upload.
+It then checks UI backend mode and exact release identity, requires 15/15 API
+acceptance, verifies the IP allowlist and basic authentication, and runs the
+full Playwright user journey against the deployed services. It promotes the
+server's `current` pointer only after every gate succeeds. If a prior protected
+release exists, a failed run re-applies it automatically without deleting the
+PostgreSQL volume; it never rolls back to an unprotected UI.
 
 The actual staging URL cannot be claimed as accepted until that workflow has
 run successfully with real Environment credentials.
@@ -151,5 +156,5 @@ run successfully with real Environment credentials.
 - Replace the deterministic staging embedder with a versioned semantic model
   artifact and evaluate retrieval quality.
 - Persist user feedback; the current feedback route validates the contract only.
-- Add authentication, secret management, TLS, monitoring, and managed backups
-  before any production deployment.
+- Replace staging basic auth with application-level authentication and managed
+  identity, then add monitoring and managed backups before production.

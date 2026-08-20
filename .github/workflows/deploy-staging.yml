@@ -7,17 +7,14 @@ on:
         description: Full Git SHA whose images were published after green CI
         required: true
         type: string
-      backend_url:
-        description: Public API base URL, including /api
-        required: true
-        type: string
       ui_url:
-        description: Public Streamlit URL
+        description: TLS-protected Streamlit URL
         required: true
         type: string
 
 permissions:
   contents: read
+  actions: read
   packages: read
 
 concurrency:
@@ -27,37 +24,42 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 40
     environment:
       name: staging
       url: ${{ inputs.ui_url }}
     env:
       RELEASE_SHA: ${{ inputs.release_sha }}
-      BACKEND_URL: ${{ inputs.backend_url }}
       UI_URL: ${{ inputs.ui_url }}
       STAGING_HOST: ${{ secrets.STAGING_HOST }}
       STAGING_USER: ${{ secrets.STAGING_USER }}
       STAGING_SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
       STAGING_KNOWN_HOSTS: ${{ secrets.STAGING_KNOWN_HOSTS }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      STAGING_UI_PASSWORD: ${{ secrets.STAGING_UI_PASSWORD }}
+      STAGING_UI_USER: ${{ vars.STAGING_UI_USER }}
+      STAGING_ALLOWED_CIDRS: ${{ vars.STAGING_ALLOWED_CIDRS }}
       STAGING_SSH_PORT: ${{ vars.STAGING_SSH_PORT }}
       STAGING_PATH: ${{ vars.STAGING_PATH }}
       BACKEND_PUBLIC_PORT: ${{ vars.STAGING_BACKEND_PORT }}
       UI_PUBLIC_PORT: ${{ vars.STAGING_UI_PORT }}
       IMAGE_PREFIX: ghcr.io/${{ github.repository_owner }}/datavision
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ inputs.release_sha }}
+          fetch-depth: 0
       - name: Validate deployment inputs and Environment configuration
         shell: bash
         run: |
           [[ "$RELEASE_SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "release_sha must be a full lowercase Git SHA" >&2; exit 1; }
-          [[ "$BACKEND_URL" =~ ^https?://.+/api/?$ ]] || { echo "backend_url must be an HTTP(S) URL ending in /api" >&2; exit 1; }
-          [[ "$UI_URL" =~ ^https?:// ]] || { echo "ui_url must be an HTTP(S) URL" >&2; exit 1; }
-          for name in STAGING_HOST STAGING_USER STAGING_SSH_KEY STAGING_KNOWN_HOSTS POSTGRES_PASSWORD; do
+          [[ "$UI_URL" =~ ^https:// ]] || { echo "ui_url must be an HTTPS URL" >&2; exit 1; }
+          for name in STAGING_HOST STAGING_USER STAGING_SSH_KEY STAGING_KNOWN_HOSTS POSTGRES_PASSWORD STAGING_UI_PASSWORD STAGING_UI_USER STAGING_ALLOWED_CIDRS; do
             [ -n "${!name}" ] || { echo "$name is not configured in the staging Environment" >&2; exit 1; }
           done
+          [[ "$STAGING_UI_USER" =~ ^[A-Za-z0-9._-]{1,64}$ ]] || {
+            echo "STAGING_UI_USER contains unsupported characters" >&2; exit 1;
+          }
           STAGING_SSH_PORT="${STAGING_SSH_PORT:-22}"
           STAGING_PATH="${STAGING_PATH:-/opt/datavision}"
           BACKEND_PUBLIC_PORT="${BACKEND_PUBLIC_PORT:-8000}"
@@ -75,6 +77,53 @@ jobs:
             echo "UI_PUBLIC_PORT=$UI_PUBLIC_PORT"
             echo "IMAGE_PREFIX=${IMAGE_PREFIX,,}"
           } >> "$GITHUB_ENV"
+      - name: Verify release SHA passed canonical main CI
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git fetch --no-tags origin main
+          python scripts/verify_release_candidate.py \
+            --sha "$RELEASE_SHA" \
+            --repository "$GITHUB_REPOSITORY" \
+            --main-ref origin/main \
+            --github-env "$GITHUB_ENV"
+      - name: Download and validate the release manifest
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          artifact_name="week8-release-$RELEASE_SHA"
+          gh api \
+            "repos/$GITHUB_REPOSITORY/actions/artifacts?name=$artifact_name&per_page=100" \
+            > release-artifacts.json
+          artifact_id="$(python - <<'PY'
+          import json, os
+          payload = json.load(open("release-artifacts.json", encoding="utf-8"))
+          matches = [
+              artifact for artifact in payload.get("artifacts", [])
+              if artifact.get("name") == f"week8-release-{os.environ['RELEASE_SHA']}"
+              and not artifact.get("expired")
+              and artifact.get("workflow_run", {}).get("head_sha") == os.environ["RELEASE_SHA"]
+          ]
+          if not matches:
+              raise SystemExit("No live release manifest exists for the requested SHA")
+          # A rerun of the successful main CI can legitimately publish the same
+          # immutable release again. Select the newest artifact, then validate
+          # its SHA, source CI run, repositories, and digests below.
+          matches.sort(key=lambda artifact: (artifact.get("created_at", ""), artifact["id"]), reverse=True)
+          print(matches[0]["id"])
+          PY
+          )"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$artifact_id/zip" > release-artifact.zip
+          mkdir release-artifact
+          unzip -q release-artifact.zip -d release-artifact
+          python scripts/validate_release_manifest.py \
+            --manifest release-artifact/release-manifest.json \
+            --expected-sha "$RELEASE_SHA" \
+            --expected-ci-run-id "$VERIFIED_CI_RUN_ID" \
+            --image-prefix "$IMAGE_PREFIX" \
+            --github-env "$GITHUB_ENV"
       - name: Configure pinned SSH host identity
         shell: bash
         run: |
@@ -84,31 +133,48 @@ jobs:
           printf '%s\n' "$STAGING_KNOWN_HOSTS" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
       - name: Verify published SHA images
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v4
       - name: Inspect release images
         shell: bash
         run: |
-          docker buildx imagetools inspect "${IMAGE_PREFIX}-backend:${RELEASE_SHA}"
-          docker buildx imagetools inspect "${IMAGE_PREFIX}-ui:${RELEASE_SHA}"
-          docker buildx imagetools inspect "${IMAGE_PREFIX}-seed:${RELEASE_SHA}"
+          docker buildx imagetools inspect "$BACKEND_IMAGE_REF"
+          docker buildx imagetools inspect "$UI_IMAGE_REF"
+          docker buildx imagetools inspect "$SEED_IMAGE_REF"
       - name: Build secret-safe deployment bundle
         shell: bash
         run: |
           mkdir -p staging-bundle/database
           cp deployment/cloud/docker-compose.staging.yml staging-bundle/
+          cp deployment/cloud/docker-compose.staging-proxy.yml staging-bundle/
+          cp deployment/staging/nginx-staging-ui.conf staging-bundle/
+          cp deployment/staging/render-allowlist.sh staging-bundle/
           cp -R deployment/database/init staging-bundle/database/
+          cp release-artifact/release-manifest.json staging-bundle/
+          password_hash="$(printf '%s' "$STAGING_UI_PASSWORD" | openssl passwd -apr1 -stdin)"
+          printf '%s:%s\n' "$STAGING_UI_USER" "$password_hash" > staging-bundle/htpasswd
+          chmod 600 staging-bundle/htpasswd
           RELEASE_SHA="$RELEASE_SHA" IMAGE_PREFIX="$IMAGE_PREFIX" \
           POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
+          STAGING_ALLOWED_CIDRS="$STAGING_ALLOWED_CIDRS" \
           BACKEND_PUBLIC_PORT="$BACKEND_PUBLIC_PORT" UI_PUBLIC_PORT="$UI_PUBLIC_PORT" \
-          python scripts/render_staging_env.py --output staging-bundle/.env.staging
+          python scripts/render_staging_env.py \
+            --manifest release-artifact/release-manifest.json \
+            --output staging-bundle/.env.staging
           docker compose -f staging-bundle/docker-compose.staging.yml \
+            -f staging-bundle/docker-compose.staging-proxy.yml \
             --env-file staging-bundle/.env.staging config --quiet
           tar -czf staging-bundle.tgz -C staging-bundle .
+      - name: Run remote preflight before any deployment mutation
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/id_ed25519 -p "$STAGING_SSH_PORT" "$STAGING_USER@$STAGING_HOST" \
+            "bash -s -- '$STAGING_PATH' '$BACKEND_PUBLIC_PORT' '$UI_PUBLIC_PORT'" \
+            < scripts/week8_remote_preflight.sh | tee remote-preflight.txt
       - name: Capture rollback target and upload release
         shell: bash
         run: |
@@ -117,7 +183,21 @@ jobs:
           "${SSH[@]}" "mkdir -p '$STAGING_PATH/releases/$RELEASE_SHA'"
           "${SSH[@]}" "readlink '$STAGING_PATH/current' 2>/dev/null || true" > previous-release.txt
           "${SCP[@]}" staging-bundle.tgz "$STAGING_USER@$STAGING_HOST:$STAGING_PATH/releases/$RELEASE_SHA/bundle.tgz"
-          "${SSH[@]}" "cd '$STAGING_PATH/releases/$RELEASE_SHA' && tar -xzf bundle.tgz && rm bundle.tgz && chmod 600 .env.staging"
+          "${SSH[@]}" "cd '$STAGING_PATH/releases/$RELEASE_SHA' && tar -xzf bundle.tgz && rm bundle.tgz && chmod 600 .env.staging htpasswd"
+      - name: Back up the current PostgreSQL database before deployment
+        shell: bash
+        run: |
+          previous="$(tr -d '\r\n' < previous-release.txt 2>/dev/null || true)"
+          if [[ "$previous" =~ ^/[A-Za-z0-9._/-]+$ ]]; then
+            backup_path="$STAGING_PATH/backups/pre-${RELEASE_SHA}.dump"
+            ssh -i ~/.ssh/id_ed25519 -p "$STAGING_SSH_PORT" "$STAGING_USER@$STAGING_HOST" \
+              "set -e; mkdir -p '$STAGING_PATH/backups'; cd '$previous'; set -a; . ./.env.staging; set +a; docker compose --env-file .env.staging -f docker-compose.staging.yml exec -T db pg_dump -U \"\$POSTGRES_USER\" -d \"\$POSTGRES_DB\" -F c > '$backup_path'; test -s '$backup_path'; docker compose --env-file .env.staging -f docker-compose.staging.yml exec -T db pg_restore --list < '$backup_path' >/dev/null"
+            printf 'status=verified\npath=%s\nrelease_sha=%s\n' \
+              "$backup_path" "$RELEASE_SHA" > pre-deploy-backup.txt
+          else
+            printf 'status=not_applicable\nreason=first_deployment\nrelease_sha=%s\n' \
+              "$RELEASE_SHA" > pre-deploy-backup.txt
+          fi
       - name: Pull and start exact release
         shell: bash
         env:
@@ -126,17 +206,90 @@ jobs:
           printf '%s' "$GHCR_TOKEN" | ssh -i ~/.ssh/id_ed25519 -p "$STAGING_SSH_PORT" \
             "$STAGING_USER@$STAGING_HOST" "docker login ghcr.io -u '$GITHUB_ACTOR' --password-stdin"
           ssh -i ~/.ssh/id_ed25519 -p "$STAGING_SSH_PORT" "$STAGING_USER@$STAGING_HOST" \
-            "cd '$STAGING_PATH/releases/$RELEASE_SHA' && docker compose --env-file .env.staging -f docker-compose.staging.yml pull && docker compose --env-file .env.staging -f docker-compose.staging.yml up -d"
+            "cd '$STAGING_PATH/releases/$RELEASE_SHA' && docker compose --env-file .env.staging -f docker-compose.staging.yml -f docker-compose.staging-proxy.yml pull && docker compose --env-file .env.staging -f docker-compose.staging.yml -f docker-compose.staging-proxy.yml up -d"
       - name: Run cloud acceptance 15/15 for exact SHA
         shell: bash
         run: |
           ssh -i ~/.ssh/id_ed25519 -p "$STAGING_SSH_PORT" "$STAGING_USER@$STAGING_HOST" \
-            "cd '$STAGING_PATH/releases/$RELEASE_SHA' && docker compose --env-file .env.staging -f docker-compose.staging.yml exec -T ui python -c \"import os; assert os.environ.get('QS_USE_BACKEND') == 'true'\""
+            "cd '$STAGING_PATH/releases/$RELEASE_SHA' && docker compose --env-file .env.staging -f docker-compose.staging.yml -f docker-compose.staging-proxy.yml exec -T ui python -c \"import os; assert os.environ.get('QS_USE_BACKEND') == 'true'; assert os.environ.get('QS_RELEASE_SHA') == '$RELEASE_SHA'; assert os.environ.get('QS_ENVIRONMENT') == 'staging'\""
+          curl -fsS "$UI_URL/_stcore/health" >/dev/null
+          ssh -i ~/.ssh/id_ed25519 -p "$STAGING_SSH_PORT" \
+            -o ExitOnForwardFailure=yes -N \
+            -L 18000:127.0.0.1:"$BACKEND_PUBLIC_PORT" \
+            -L 18501:127.0.0.1:"$UI_PUBLIC_PORT" \
+            "$STAGING_USER@$STAGING_HOST" &
+          tunnel_pid=$!
+          trap 'kill "$tunnel_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 20); do
+            curl -fsS http://127.0.0.1:18000/api/health >/dev/null && \
+              curl -fsS http://127.0.0.1:18501/_stcore/health >/dev/null && break
+            [ "$attempt" -lt 20 ] || { echo "SSH acceptance tunnels did not become healthy" >&2; exit 1; }
+            sleep 1
+          done
           python scripts/week8_remote_staging_smoke_test.py \
-            --backend-url "$BACKEND_URL" \
-            --ui-url "$UI_URL" \
+            --backend-url http://127.0.0.1:18000/api \
+            --ui-url http://127.0.0.1:18501 \
             --expected-release-sha "$RELEASE_SHA" \
             --output outputs/integration/week8_cloud_staging_acceptance.json
+      - name: Verify private staging access controls
+        shell: bash
+        run: |
+          mkdir -p outputs/week8
+          status_with_credentials="$(curl -sS -o /dev/null -w '%{http_code}' \
+            --user "$STAGING_UI_USER:$STAGING_UI_PASSWORD" "$UI_URL/")"
+          if [ "$status_with_credentials" != "403" ]; then
+            echo "Expected public runner with valid credentials to be rejected by the IP allowlist; got HTTP $status_with_credentials" >&2
+            exit 1
+          fi
+
+          ssh -i ~/.ssh/id_ed25519 -p "$STAGING_SSH_PORT" \
+            -o ExitOnForwardFailure=yes -N \
+            -L 18501:127.0.0.1:"$UI_PUBLIC_PORT" \
+            "$STAGING_USER@$STAGING_HOST" &
+          tunnel_pid=$!
+          trap 'kill "$tunnel_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 20); do
+            curl -fsS http://127.0.0.1:18501/_stcore/health >/dev/null && break
+            [ "$attempt" -lt 20 ] || { echo "SSH UI tunnel did not become healthy" >&2; exit 1; }
+            sleep 1
+          done
+          unauthenticated_status="$(curl -sS -o /dev/null -w '%{http_code}' http://127.0.0.1:18501/)"
+          authenticated_status="$(curl -sS -o /dev/null -w '%{http_code}' \
+            --user "$STAGING_UI_USER:$STAGING_UI_PASSWORD" http://127.0.0.1:18501/)"
+          [ "$unauthenticated_status" = "401" ] || { echo "Expected HTTP 401 without credentials; got $unauthenticated_status" >&2; exit 1; }
+          [ "$authenticated_status" = "200" ] || { echo "Expected HTTP 200 through the protected tunnel; got $authenticated_status" >&2; exit 1; }
+          printf 'release_sha=%s\nexternal_authenticated_status=%s\ntunnel_unauthenticated_status=%s\ntunnel_authenticated_status=%s\n' \
+            "$RELEASE_SHA" "$status_with_credentials" "$unauthenticated_status" "$authenticated_status" \
+            > outputs/week8/staging_access_control.txt
+      - name: Install browser acceptance dependencies
+        shell: bash
+        run: |
+          python -m pip install --disable-pip-version-check \
+            -r demo/requirements-ci.txt \
+            -r requirements-e2e.txt
+          python -m playwright install --with-deps chromium
+          python -m pip check
+      - name: Run required browser journey through the protected proxy
+        shell: bash
+        env:
+          QS_E2E_HTTP_USER: ${{ vars.STAGING_UI_USER }}
+          QS_E2E_HTTP_PASSWORD: ${{ secrets.STAGING_UI_PASSWORD }}
+          QS_ENVIRONMENT: staging
+        run: |
+          ssh -i ~/.ssh/id_ed25519 -p "$STAGING_SSH_PORT" \
+            -o ExitOnForwardFailure=yes -N \
+            -L 18501:127.0.0.1:"$UI_PUBLIC_PORT" \
+            "$STAGING_USER@$STAGING_HOST" &
+          tunnel_pid=$!
+          trap 'kill "$tunnel_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 20); do
+            curl -fsS http://127.0.0.1:18501/_stcore/health >/dev/null && break
+            [ "$attempt" -lt 20 ] || { echo "SSH UI tunnel did not become healthy" >&2; exit 1; }
+            sleep 1
+          done
+          python scripts/week8_run_browser_e2e.py \
+            --base-url http://127.0.0.1:18501 \
+            --release-sha "$RELEASE_SHA"
       - name: Promote accepted release pointer
         shell: bash
         run: |
@@ -147,18 +300,36 @@ jobs:
         shell: bash
         run: |
           previous="$(tr -d '\r\n' < previous-release.txt 2>/dev/null || true)"
-          if [[ "$previous" =~ ^/[A-Za-z0-9._/-]+$ ]]; then
+          if [[ "$previous" =~ ^/[A-Za-z0-9._/-]+$ ]] && \
+             ssh -i ~/.ssh/id_ed25519 -p "$STAGING_SSH_PORT" "$STAGING_USER@$STAGING_HOST" \
+               "test -f '$previous/docker-compose.staging-proxy.yml'"; then
             ssh -i ~/.ssh/id_ed25519 -p "$STAGING_SSH_PORT" "$STAGING_USER@$STAGING_HOST" \
-              "cd '$previous' && docker compose --env-file .env.staging -f docker-compose.staging.yml up -d && ln -sfn '$previous' '$STAGING_PATH/current'"
+              "cd '$previous' && docker compose --env-file .env.staging -f docker-compose.staging.yml -f docker-compose.staging-proxy.yml up -d && ln -sfn '$previous' '$STAGING_PATH/current'"
           else
-            echo "No previous accepted release pointer exists; keeping diagnostics for manual recovery."
+            echo "No previous protected release exists; refusing to roll back to an unauthenticated UI."
           fi
+      - name: Capture remote failure diagnostics
+        if: failure()
+        continue-on-error: true
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/id_ed25519 -p "$STAGING_SSH_PORT" "$STAGING_USER@$STAGING_HOST" \
+            "if [ -d '$STAGING_PATH/releases/$RELEASE_SHA' ]; then cd '$STAGING_PATH/releases/$RELEASE_SHA' && docker compose --env-file .env.staging -f docker-compose.staging.yml -f docker-compose.staging-proxy.yml ps -a && docker compose --env-file .env.staging -f docker-compose.staging.yml -f docker-compose.staging-proxy.yml logs --no-color --tail=200; else echo 'Release directory was not created'; fi" \
+            > remote-failure-diagnostics.txt 2>&1
       - name: Upload cloud acceptance evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: week8-cloud-acceptance-${{ inputs.release_sha }}
           path: |
             outputs/integration/week8_cloud_staging_acceptance.json
+            outputs/week8/staging_access_control.txt
+            outputs/week8/hung_browser_e2e.json
+            outputs/week8/hung_browser_e2e_junit.xml
+            screenshots/week8_browser_e2e/
             previous-release.txt
+            pre-deploy-backup.txt
+            remote-preflight.txt
+            remote-failure-diagnostics.txt
+            release-artifact/release-manifest.json
           if-no-files-found: warn

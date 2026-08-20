@@ -169,6 +169,18 @@ def train(data_path: str = DATA_PATH) -> None:
     print("[9/10] Saving model package")
     os.makedirs(MODEL_DIR, exist_ok=True)
 
+    import hashlib
+    def get_file_hash(path: str) -> str:
+        if not os.path.exists(path):
+            return "fallback-data-hash"
+        hasher = hashlib.md5()
+        with open(path, 'rb') as f:
+            buf = f.read()
+            hasher.update(buf)
+        return hasher.hexdigest()
+
+    import sklearn
+    training_data_version = get_file_hash(data_path)
     model_package = {
         "model": best_pipeline,
         "label_encoder": label_encoder,
@@ -176,6 +188,9 @@ def train(data_path: str = DATA_PATH) -> None:
         "model_name": MODEL_NAME,
         "model_version": MODEL_VERSION,
         "confidence_threshold": CONFIDENCE_THRESHOLD,
+        "sklearn_version": sklearn.__version__,
+        "training_data_version": training_data_version,
+        "training_data_path": data_path,
     }
     joblib.dump(model_package, MODEL_PATH)
     print(f"       Saved model -> {MODEL_PATH}")

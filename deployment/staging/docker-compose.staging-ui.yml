@@ -1,0 +1,77 @@
+# DV-HUNG-07: authenticated access for the staging Streamlit UI.
+#
+# Streamlit has no authentication of its own. Exposing port 8501 on a public
+# host would publish every uploaded document, prediction and RAG answer to
+# anyone who finds the address, so the UI is never published directly.
+#
+# This overlay keeps the UI on an internal Docker network and puts an
+# authenticating reverse proxy in front of it. Only the proxy binds a host
+# port, and it enforces both an IP allowlist and HTTP basic authentication.
+#
+# Usage:
+#   bash deployment/staging/generate_htpasswd.sh reviewer
+#   docker compose \
+#     -f docker-compose.yml \
+#     -f deployment/staging/docker-compose.staging-ui.yml \
+#     --profile ui up -d
+#
+# Terminate TLS at the platform load balancer or add certificates to the proxy
+# before sharing the address outside the deployment host.
+
+services:
+  ui:
+    # No `ports:` mapping - the UI is reachable only through the proxy.
+    ports: !reset []
+    expose:
+      - "8501"
+    environment:
+      QS_USE_BACKEND: "true"
+      QS_BACKEND_URL: ${BACKEND_BASE_URL:-http://backend:8000/api}
+      # Release identity shown in the UI header (DV-HUNG-04). Deployment must
+      # pass the exact SHA and digest it deployed.
+      QS_RELEASE_SHA: ${QS_RELEASE_SHA:?QS_RELEASE_SHA is required for staging}
+      QS_IMAGE_DIGEST: ${QS_IMAGE_DIGEST:-}
+      QS_ENVIRONMENT: ${QS_ENVIRONMENT:-staging}
+      QS_BUILD_TIMESTAMP: ${QS_BUILD_TIMESTAMP:-}
+    networks:
+      - datavision_internal
+
+  ui-proxy:
+    # Same profile as the service it fronts. Without this the proxy would be a
+    # default service depending on a profiled one, which makes the whole
+    # overlay invalid unless `--profile ui` happens to be passed.
+    profiles: ["ui"]
+    image: nginx:1.27-alpine
+    depends_on:
+      - ui
+    ports:
+      - "${STAGING_UI_PORT:-8443}:8080"
+    # Renders the IP allowlist from STAGING_ALLOWED_CIDRS, then hands over to
+    # the stock nginx entrypoint. Invoked through `sh` so the mounted script
+    # does not need an executable bit on the deployment host.
+    entrypoint: ["/bin/sh", "/etc/nginx/render-allowlist.sh"]
+    # Compose clears the image CMD when entrypoint is overridden.
+    command: ["nginx", "-g", "daemon off;"]
+    volumes:
+      # Paths are relative to the project directory (the directory of the first
+      # -f file, i.e. the repository root), not to this overlay file. Writing
+      # them as ./nginx-staging-ui.conf would silently bind non-existent paths
+      # in the repository root instead.
+      - ./deployment/staging/nginx-staging-ui.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./deployment/staging/render-allowlist.sh:/etc/nginx/render-allowlist.sh:ro
+      - ./deployment/staging/htpasswd:/etc/nginx/htpasswd:ro
+    environment:
+      # Space-separated CIDRs of the approved reviewer networks. This is the
+      # only place the allowlist is defined; the proxy will not start without it.
+      STAGING_ALLOWED_CIDRS: ${STAGING_ALLOWED_CIDRS:?Set STAGING_ALLOWED_CIDRS before exposing staging}
+    networks:
+      - datavision_internal
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8080/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+networks:
+  datavision_internal:
+    driver: bridge

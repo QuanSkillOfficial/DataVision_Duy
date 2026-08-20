@@ -10,7 +10,9 @@ services:
       - datavision_pgdata:/var/lib/postgresql/data
       - ./database/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      # Force TCP readiness. The Unix socket can answer during initdb before
+      # containers on the Compose network can connect, creating a first-run race.
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 12
@@ -48,7 +50,10 @@ services:
       DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
       RAG_EMBEDDING_MODE: ${RAG_EMBEDDING_MODE:-hash}
     ports:
-      - "${BACKEND_PUBLIC_PORT:-8000}:8000"
+      # The API is consumed by Streamlit on the internal network. Binding it
+      # to loopback keeps it available to the SSH acceptance tunnel without
+      # publishing an unauthenticated API on the Internet.
+      - "127.0.0.1:${BACKEND_PUBLIC_PORT:-8000}:8000"
     depends_on:
       staging-seed:
         condition: service_completed_successfully
@@ -68,6 +73,9 @@ services:
       QS_USE_BACKEND: "true"
       QS_BACKEND_URL: http://backend:8000/api
       DATAVISION_RELEASE_SHA: ${DATAVISION_RELEASE_SHA:?DATAVISION_RELEASE_SHA is required}
+      QS_RELEASE_SHA: ${QS_RELEASE_SHA:?QS_RELEASE_SHA is required}
+      QS_IMAGE_DIGEST: ${QS_IMAGE_DIGEST:?QS_IMAGE_DIGEST is required}
+      QS_ENVIRONMENT: ${QS_ENVIRONMENT:-staging}
     ports:
       - "${UI_PUBLIC_PORT:-8501}:8501"
     depends_on:

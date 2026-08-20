@@ -1,8 +1,15 @@
 """
 Week 7 prediction feedback contract tests.
+
+Week 8 note (DV-HUNG-01): this module imports the fixture implementation
+directly instead of `service_client`. These tests pin the reference UI
+contract - the shape and business rules the UI requires from any backend - so
+they must produce the same result in fixture mode and in backend mode. Live
+UI-to-backend integration is covered separately by
+tests/test_backend_contract_smoke.py, which runs in backend mode only.
 """
 
-from demo.services.service_client import submit_prediction_correction
+from demo.services.mock_client import submit_prediction_correction
 
 
 def test_week7_prediction_feedback_payload_is_accepted():

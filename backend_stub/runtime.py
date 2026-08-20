@@ -59,10 +59,14 @@ def health_snapshot() -> dict[str, Any]:
             cursor.execute(f"SELECT COUNT(*) FROM {table}")
             counts[table] = int(cursor.fetchone()[0])
     return {
+        "ok": pgvector,
         "service": "datavision-backend",
         "healthy": pgvector,
         "mode": "staging",
         "release_sha": os.getenv("DATAVISION_RELEASE_SHA", "local"),
+        "environment": os.getenv("DATAVISION_ENVIRONMENT")
+        or os.getenv("QS_ENVIRONMENT")
+        or "staging",
         "database": "reachable",
         "pgvector": pgvector,
         "embedding_mode": os.getenv("RAG_EMBEDDING_MODE", "hash"),
@@ -82,6 +86,86 @@ def review_queue() -> list[dict[str, Any]]:
         LIMIT 100
         """
     )
+
+
+def save_prediction_feedback(payload: dict[str, Any]) -> dict[str, Any]:
+    """Persist a reviewer correction and remove the prediction from the queue."""
+    from ai.prediction.reviewer_corrections import build_correction_payload
+
+    prediction_log_id = payload.get("prediction_log_id")
+    try:
+        prediction_log_id = int(prediction_log_id)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("prediction_log_id must be an integer") from exc
+
+    correction = build_correction_payload(
+        prediction_log_id=prediction_log_id,
+        original_prediction=payload.get("original_prediction", ""),
+        corrected_document_type=payload.get("corrected_document_type", ""),
+        corrected_by=payload.get("corrected_by", ""),
+        correction_reason=payload.get("correction_reason"),
+        document_id=payload.get("document_db_id") or payload.get("document_id"),
+        document_external_id=payload.get("document_external_id"),
+    )
+    with connect() as conn, conn.cursor(cursor_factory=RealDictCursor) as cursor:
+        cursor.execute(
+            """
+            SELECT id, document_id, document_external_id, predicted_label
+            FROM prediction_logs WHERE id = %s FOR UPDATE
+            """,
+            (prediction_log_id,),
+        )
+        prediction = cursor.fetchone()
+        if prediction is None:
+            raise ValueError(f"prediction_log_id {prediction_log_id} does not exist")
+        cursor.execute(
+            """
+            INSERT INTO prediction_reviewer_corrections (
+                prediction_log_id, document_id, document_external_id,
+                original_prediction, corrected_document_type, corrected_by,
+                correction_reason, created_at
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (prediction_log_id) DO UPDATE SET
+                document_id = EXCLUDED.document_id,
+                document_external_id = EXCLUDED.document_external_id,
+                original_prediction = EXCLUDED.original_prediction,
+                corrected_document_type = EXCLUDED.corrected_document_type,
+                corrected_by = EXCLUDED.corrected_by,
+                correction_reason = EXCLUDED.correction_reason,
+                created_at = EXCLUDED.created_at
+            RETURNING *
+            """,
+            (
+                correction["prediction_log_id"],
+                correction.get("document_id") or prediction.get("document_id"),
+                correction.get("document_external_id")
+                or prediction.get("document_external_id"),
+                correction["original_prediction"],
+                correction["corrected_document_type"],
+                correction["corrected_by"],
+                correction.get("correction_reason"),
+                correction["created_at"],
+            ),
+        )
+        saved = dict(cursor.fetchone())
+        cursor.execute(
+            """
+            UPDATE prediction_logs
+            SET status = 'accepted',
+                review_reason = %s
+            WHERE id = %s
+            """,
+            (
+                f"Reviewed by {correction['corrected_by']}: "
+                f"{correction['corrected_document_type']}",
+                prediction_log_id,
+            ),
+        )
+    return {
+        "saved": True,
+        "status": "accepted",
+        "feedback": _json_safe(saved),
+    }
 
 
 def dashboard_metrics(source_context: list[dict[str, Any]] | None = None) -> dict[str, Any]:
@@ -157,8 +241,16 @@ def latest_ingestion_status(run_id: str | None = None) -> dict[str, Any]:
         SELECT il.run_id, il.run_id AS ingestion_run_id, s.name AS source_name,
                s.source_type, il.source_id, il.status, il.records_read,
                il.records_valid, il.records_invalid, il.data_quality_score,
-               il.started_at, il.ended_at, il.manifest_path
+               il.started_at, il.ended_at, il.manifest_path,
+               d.file_hash_sha256, d.file_name, d.document_external_id
         FROM ingestion_logs il LEFT JOIN sources s ON s.id = il.source_id
+        LEFT JOIN LATERAL (
+            SELECT file_hash_sha256, file_name, document_external_id
+            FROM documents
+            WHERE source_id = il.source_id
+            ORDER BY created_at DESC, id DESC
+            LIMIT 1
+        ) d ON TRUE
         {condition}
         ORDER BY il.created_at DESC, il.id DESC LIMIT 1
         """,

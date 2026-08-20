@@ -9,12 +9,26 @@ permissions:
   contents: read
 
 jobs:
+  module-parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+      - name: Verify canonical module provenance and required paths
+        run: python scripts/verify_module_provenance.py
+
   data-engineering-ci:
+    needs: module-parity
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
@@ -34,8 +48,9 @@ jobs:
         run: python scripts/week7_data_pipeline_smoke_test.py
 
   data-db-loading-ci:
+    needs: module-parity
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     services:
       postgres:
         image: pgvector/pgvector:pg16
@@ -55,8 +70,8 @@ jobs:
       DB_USER: datavision
       DB_PASSWORD: datavision123
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
@@ -82,11 +97,12 @@ jobs:
           --verify-handoffs
 
   backend-contract-ci:
+    needs: module-parity
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
@@ -99,32 +115,28 @@ jobs:
       - name: Start backend contract stub
         run: |
           nohup uvicorn backend_stub.main:app --host 127.0.0.1 --port 8000 >/tmp/datavision-backend.log 2>&1 &
-          for i in {1..30}; do
+          for _ in {1..30}; do
             curl --fail --silent http://127.0.0.1:8000/api/health && break
             sleep 1
           done
       - name: Run backend contract smoke test
         run: python scripts/week7_backend_stub_smoke_test.py
-      - name: Run UI-to-backend contract tests when UI is merged
-        shell: bash
+      - name: Run mandatory UI-to-backend contract tests
         env:
           QS_USE_BACKEND: "true"
           BACKEND_BASE_URL: http://127.0.0.1:8000/api
         run: |
-          if [ -f demo/requirements-ci.txt ] && [ -f tests/test_backend_contract_smoke.py ]; then
-            python -m pip install -r demo/requirements-ci.txt
-            python -m pip check
-            python -m pytest tests/test_backend_contract_smoke.py -q
-          else
-            echo "UI module is not merged; UI-to-backend contract tests are pending."
-          fi
+          python -m pip install -r demo/requirements-ci.txt
+          python -m pip check
+          python -m pytest tests/test_backend_contract_smoke.py -q
 
   shared-readiness-ci:
+    needs: module-parity
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
@@ -138,11 +150,12 @@ jobs:
         run: python scripts/week7_shared_repo_readiness_check.py --strict
 
   integration-contract-ci:
+    needs: module-parity
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
@@ -155,46 +168,12 @@ jobs:
       - name: Run local integration contract smoke test
         run: python scripts/week7_shared_integration_smoke_test.py
 
-  module-discovery:
-    runs-on: ubuntu-latest
-    outputs:
-      database: ${{ steps.detect.outputs.database }}
-      rag: ${{ steps.detect.outputs.rag }}
-      prediction: ${{ steps.detect.outputs.prediction }}
-      ui: ${{ steps.detect.outputs.ui }}
-    steps:
-      - uses: actions/checkout@v4
-      - id: detect
-        name: Detect merged owner modules
-        shell: bash
-        run: |
-          if [ -f week7/database/scripts/ci_database_smoke_test.py ] && [ -f week7/database/requirements-ci.txt ]; then
-            echo "database=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "database=false" >> "$GITHUB_OUTPUT"
-          fi
-          if [ -f ai/rag/scripts/week7_rag_ci_smoke_test.py ] && [ -f ai/rag/requirements-ci.txt ]; then
-            echo "rag=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "rag=false" >> "$GITHUB_OUTPUT"
-          fi
-          if [ -f scripts/week7_prediction_ci_smoke_test.py ] && [ -f ai/prediction/requirements-ci.txt ]; then
-            echo "prediction=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "prediction=false" >> "$GITHUB_OUTPUT"
-          fi
-          if [ -f scripts/week7_ui_ci_smoke_test.py ] && [ -f demo/requirements-ci.txt ]; then
-            echo "ui=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "ui=false" >> "$GITHUB_OUTPUT"
-          fi
-
-  # Owner jobs are mandatory after the Week 8 canonical merge.
+  # Owner jobs are mandatory after the Week 8 canonical merge. A missing or
+  # changed canonical module fails module-parity instead of silently skipping.
   database-ci:
-    needs: module-discovery
-    if: ${{ needs.module-discovery.outputs.database == 'true' }}
+    needs: module-parity
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     services:
       postgres:
         image: pgvector/pgvector:pg16
@@ -207,9 +186,15 @@ jobs:
         options: >-
           --health-cmd "pg_isready -U datavision -d datavision_db"
           --health-interval 5s --health-timeout 5s --health-retries 12
+    env:
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_NAME: datavision_db
+      DB_USER: datavision
+      DB_PASSWORD: datavision123
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
@@ -222,6 +207,14 @@ jobs:
           python -m pip install -r requirements-ci.txt
           python -m pip install -r week7/database/requirements-ci.txt
           python -m pip check
+      - name: Install PostgreSQL backup and restore clients
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+      - name: Run Phat Week 8 migration, lifecycle, backup and restore gates
+        run: |
+          python -m pytest week8/database/tests/unit week8/database/tests/integration -q
+          python week8/database/scripts/scan_for_secrets.py
       - name: Run database setup
         env:
           DB_HOST: localhost
@@ -250,13 +243,12 @@ jobs:
           fi
 
   rag-ci:
-    needs: module-discovery
-    if: ${{ needs.module-discovery.outputs.rag == 'true' }}
+    needs: module-parity
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
@@ -272,13 +264,12 @@ jobs:
         run: pytest ai/ai_tests/ -q
 
   prediction-ci:
-    needs: module-discovery
-    if: ${{ needs.module-discovery.outputs.prediction == 'true' }}
+    needs: module-parity
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
@@ -292,17 +283,18 @@ jobs:
         run: python scripts/week7_prediction_ci_smoke_test.py
       - name: Run prediction owner tests
         run: pytest tests/ai_tests/ -q
+      - name: Verify labelled Duy payload evaluation
+        run: python scripts/week8_evaluate_duy_prediction.py --check
 
   ui-ci:
-    needs: module-discovery
-    if: ${{ needs.module-discovery.outputs.ui == 'true' }}
+    needs: module-parity
     runs-on: ubuntu-latest
     timeout-minutes: 8
     env:
       QS_USE_BACKEND: "false"
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
@@ -317,26 +309,80 @@ jobs:
       - name: Run UI CI smoke test
         run: python scripts/week7_ui_ci_smoke_test.py
 
+  security-source-ci:
+    needs: module-parity
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+      - name: Scan tracked source and configuration
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln,secret,misconfig
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          format: json
+          output: trivy-source.json
+          exit-code: "1"
+      - name: Generate CycloneDX source SBOM
+        if: always()
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln
+          format: cyclonedx
+          output: datavision-source.cdx.json
+          exit-code: "0"
+      - name: Upload source security evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: week8-source-security-${{ github.sha }}
+          path: |
+            trivy-source.json
+            datavision-source.cdx.json
+          if-no-files-found: error
+
   week8-staging-compose-ci:
     needs:
+      - module-parity
       - data-engineering-ci
+      - data-db-loading-ci
       - backend-contract-ci
+      - shared-readiness-ci
+      - integration-contract-ci
       - database-ci
       - rag-ci
       - prediction-ci
       - ui-ci
+      - security-source-ci
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
       - name: Validate Week 8 Compose model
         run: |
           docker compose -f docker-compose.yml config --quiet
-          docker compose -f deployment/cloud/docker-compose.staging.yml \
-            --env-file deployment/cloud/.env.staging.example config --quiet
+          staging_bundle="$(mktemp -d)"
+          trap 'rm -rf "$staging_bundle"' EXIT
+          cp deployment/cloud/docker-compose.staging.yml "$staging_bundle/"
+          cp deployment/cloud/docker-compose.staging-proxy.yml "$staging_bundle/"
+          cp deployment/cloud/.env.staging.example "$staging_bundle/.env.staging"
+          cp deployment/staging/nginx-staging-ui.conf "$staging_bundle/"
+          cp deployment/staging/render-allowlist.sh "$staging_bundle/"
+          printf 'reviewer:$apr1$ci-only$placeholder\n' > "$staging_bundle/htpasswd"
+          docker compose \
+            -f "$staging_bundle/docker-compose.staging.yml" \
+            -f "$staging_bundle/docker-compose.staging-proxy.yml" \
+            --env-file "$staging_bundle/.env.staging" config --quiet
       - name: Run clean-volume Week 8 staging acceptance
         run: >-
           python scripts/week8_staging_smoke_test.py
@@ -346,7 +392,7 @@ jobs:
           --project-name datavision-week8-ci
       - name: Upload staging acceptance evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: week8-staging-acceptance
           path: outputs/integration/week8_staging_acceptance.json

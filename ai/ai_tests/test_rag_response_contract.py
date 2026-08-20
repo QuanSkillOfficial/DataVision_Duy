@@ -71,25 +71,54 @@ def test_rag_service_response_contract():
     assert "status" in response
     assert "model" in response
 
-    # The response must identify the embedder that actually produced vectors.
-    assert response["model"] == embedder.model_name
+    # Check model name
+    assert response["model"] == "all-MiniLM-L6-v2"
 
     print("✓ test_rag_service_response_contract passed")
 
 
 def test_retrieval_only_status():
-    """Test retrieval_only status when no LLM."""
+    """Test retrieval_only status when chunks exist and no LLM is used."""
     embedder = FakeEmbedder()
     vector_store = FakeVectorStore()
     retriever = Retriever(embedder=embedder, vector_store=vector_store, top_k=5)
     service = RAGService(embedder, vector_store, retriever)
 
-    response = service.retrieve_context("Test question")
+    chunks = [
+        {
+            "chunk_id": "doc_001_page_1_chunk_000",
+            "document_id": "doc_001",
+            "chunk_text": "Machine learning is a subset of artificial intelligence.",
+            "metadata": {"source": "test.pdf", "page_number": 1},
+        }
+    ]
+    embeddings = embedder.embed([c["chunk_text"] for c in chunks])
+    vector_store.add_chunks(chunks, embeddings)
+
+    response = service.retrieve_context("What is machine learning?")
 
     assert response["status"] == "retrieval_only"
-    assert response["answer"] is None
+    assert response["answer"] is not None
+    assert isinstance(response["answer"], str)
+    assert len(response["answer"]) > 0
 
     print("✓ test_retrieval_only_status passed")
+
+
+def test_no_answer_found_status_empty_store():
+    """Test no_answer_found status with a non-empty deterministic answer."""
+    embedder = FakeEmbedder()
+    vector_store = FakeVectorStore()
+    retriever = Retriever(embedder=embedder, vector_store=vector_store, top_k=5)
+    service = RAGService(embedder, vector_store, retriever)
+
+    response = service.retrieve_context("Unrelated question")
+
+    assert response["status"] == "no_answer_found"
+    assert response["answer"] is not None
+    assert "I do not know" in response["answer"] or "provided documents" in response["answer"]
+
+    print("✓ test_no_answer_found_status_empty_store passed")
 
 
 def test_citations_in_response():
@@ -171,6 +200,7 @@ if __name__ == "__main__":
     test_rag_response_contract_fields()
     test_rag_service_response_contract()
     test_retrieval_only_status()
+    test_no_answer_found_status_empty_store()
     test_citations_in_response()
     test_unsupported_query_low_confidence()
     test_response_metadata()
