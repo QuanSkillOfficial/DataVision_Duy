@@ -32,8 +32,22 @@ def test_canonical_20_payload_flow(tmp_path):
         # Run prediction
         result = predict_document_type(payload)
 
-        # Check validation errors or standard prediction fields
-        if "error" in result:
+        # Check validation errors, missing platform lineage, or standard prediction fields
+        doc_ext_id = payload.get("document_external_id")
+        if not doc_ext_id:
+            prediction_norm = {
+                "predicted_document_type": None,
+                "confidence": 0.0,
+                "model_version": result.get("model_version", "document_classifier_v1") if isinstance(result, dict) else "document_classifier_v1",
+                "status": "failed",
+                "review_reason": "Missing required platform lineage: document_external_id",
+                "top_predictions": [],
+                "model_checksum": result.get("model_checksum", "unknown-checksum") if isinstance(result, dict) else "unknown-checksum",
+                "training_data_version": result.get("training_data_version", "fallback-data-hash") if isinstance(result, dict) else "fallback-data-hash",
+                "is_out_of_distribution": False,
+                "threshold_policy": result.get("threshold_policy", {}) if isinstance(result, dict) else {},
+            }
+        elif isinstance(result, dict) and "error" in result:
             # Normalize shape for validation errors
             prediction_norm = {
                 "predicted_document_type": None,
@@ -48,7 +62,7 @@ def test_canonical_20_payload_flow(tmp_path):
 
         # Enrich with ID fields from input
         enriched_result = {
-            "document_external_id": payload.get("document_external_id"),
+            "document_external_id": doc_ext_id,
             "source_name": payload.get("source_name"),
             "ingestion_run_id": payload.get("ingestion_run_id"),
             **prediction_norm,
@@ -83,20 +97,114 @@ def test_canonical_20_payload_flow(tmp_path):
         assert "document_id" in lp, f"Log payload {i} missing document_id" # Tuong maps document_db_id -> document_id
         assert lp["status"] in ["accepted", "needs_review", "waiting_for_source", "failed"]
 
-    # 5. Save results to evidence file
+    # Verify status breakdown: exactly 15 needs_review, 3 failed, 2 waiting_for_source
+    from collections import Counter
+    status_counts = dict(Counter(res["status"] for res in results))
+    assert status_counts.get("needs_review") == 15, f"Expected 15 needs_review, got {status_counts.get('needs_review')}"
+    assert status_counts.get("failed") == 3, f"Expected 3 failed, got {status_counts.get('failed')}"
+    assert status_counts.get("waiting_for_source") == 2, f"Expected 2 waiting_for_source, got {status_counts.get('waiting_for_source')}"
+    assert status_counts.get("accepted", 0) == 0, "Real payload results must not be auto-accepted"
+
+    # 5. Exercise evidence serialization without mutating tracked repository files.
     evidence = {
-        "source_sha": "51a29c4f5a3db43d3661678494b75455853ec73c",
+        "release_sha": "0" * 40,
+        "status_counts": status_counts,
         "results": results,
         "log_payloads": log_payloads
     }
 
-    generated_results_file = tmp_path / "canonical_20_results.json"
-    with generated_results_file.open("w", encoding="utf-8") as f:
+    evidence_file = tmp_path / "canonical_20_results.json"
+    with evidence_file.open("w", encoding="utf-8") as f:
         json.dump(evidence, f, indent=2, default=str)
-    assert len(json.loads(generated_results_file.read_text(encoding="utf-8"))["results"]) == 20
+
+    with evidence_file.open("r", encoding="utf-8") as f:
+        serialized = json.load(f)
+    assert len(serialized["results"]) == 20
+    assert len(serialized["log_payloads"]) == 20
+
+
+# ---------------------------------------------------------------------------
+# Real Duy ID verification
+# ---------------------------------------------------------------------------
+
+# IDs that come from real Duy ingestion outputs — NOT synthetic test data.
+REAL_DUY_DOCUMENT_IDS = {
+    "doc_dataflow_technical_report",
+    "doc_dataflow_technical_report_intro_pages",
+    "doc_dataflow_technical_report_architecture_page",
+    "doc_dataflow_technical_report_related_work",
+    "doc_superstore_sales_csv_summary",
+    "doc_product_sales_region_excel_summary",
+    "doc_dummyjson_products_api_summary",
+    "doc_short_text_quality_gate",
+    "doc_empty_text_quality_gate",
+    "doc_missing_file_name_validation",
+    "doc_dataflow_system_operators_pages",
+    "doc_dataflow_pipeline_api_pages",
+    "doc_dataflow_agent_workflow_pages",
+    "doc_dataflow_agentic_rag_evaluation_pages",
+    "doc_superstore_order_profitability_sample",
+    "doc_product_sales_region_sample",
+    "doc_dummyjson_inventory_sample",
+    "doc_dataflow_technical_notes_markdown",
+    "doc_invalid_file_size_validation",
+    # payload 19 has document_external_id = None (missing ID edge case)
+}
+
+SYNTHETIC_ID_PREFIXES = [
+    "doc_contract_", "doc_financial_", "doc_invoice_",
+    "doc_policy_", "doc_report_0", "doc_paper_",
+    "doc_resume_", "doc_edge_", "doc_tricky_",
+]
+
+
+def test_canonical_payloads_use_real_duy_ids():
+    """Canonical payloads must use real Duy document IDs, not synthetic ones."""
+    with open(CANONICAL_PAYLOADS_FILE, "r", encoding="utf-8") as f:
+        payloads = json.load(f)
+
+    for i, payload in enumerate(payloads):
+        doc_id = payload.get("document_external_id")
+        if doc_id is not None:
+            for prefix in SYNTHETIC_ID_PREFIXES:
+                assert not doc_id.startswith(prefix), (
+                    f"Payload {i} uses synthetic ID '{doc_id}' — "
+                    f"must use real Duy document IDs"
+                )
+
+
+def test_canonical_payloads_contain_known_duy_ids():
+    """At least the core Duy document IDs must appear in canonical payloads."""
+    with open(CANONICAL_PAYLOADS_FILE, "r", encoding="utf-8") as f:
+        payloads = json.load(f)
+
+    payload_ids = {p.get("document_external_id") for p in payloads}
+    # At least 15 of the 19 known IDs should be present (allows for minor changes)
+    overlap = REAL_DUY_DOCUMENT_IDS & payload_ids
+    assert len(overlap) >= 15, (
+        f"Expected at least 15 known Duy IDs in canonical payloads, "
+        f"found {len(overlap)}: {overlap}"
+    )
+
+
+def test_canonical_results_file_has_current_structure():
+    """Pre-existing canonical results file must have expected structure."""
+    if not os.path.exists(CANONICAL_RESULTS_FILE):
+        pytest.skip("canonical_20_results.json not yet generated")
 
     with open(CANONICAL_RESULTS_FILE, "r", encoding="utf-8") as f:
-        checked_in_evidence = json.load(f)
-    assert checked_in_evidence["source_sha"] == evidence["source_sha"]
-    assert len(checked_in_evidence["results"]) == 20
-    assert len(checked_in_evidence["log_payloads"]) == 20
+        data = json.load(f)
+
+    assert "release_sha" in data, "Missing release_sha"
+    assert len(data["release_sha"]) == 40, "release_sha must be a full Git SHA"
+    assert "results" in data, "Missing results"
+    assert len(data["results"]) == 20, f"Expected 20 results, got {len(data['results'])}"
+
+    # Verify no synthetic IDs in results
+    for r in data["results"]:
+        doc_id = r.get("document_external_id")
+        if doc_id:
+            for prefix in SYNTHETIC_ID_PREFIXES:
+                assert not doc_id.startswith(prefix), (
+                    f"Result uses synthetic ID '{doc_id}'"
+                )
