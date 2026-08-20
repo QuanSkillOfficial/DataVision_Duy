@@ -37,3 +37,8 @@ deployment/staging/htpasswd
 # DV-HUNG-01/02/03: Week 8 UI evidence is produced by CI and uploaded as a
 # build artifact, not committed.
 outputs/week8/
+
+# Generated backup artifacts — never commit, only .gitkeep stays tracked
+week8/database/outputs/backups/*.dump
+week8/database/outputs/backups/*.dump.sha256
+week8/database/outputs/backups/backup_manifest.json
