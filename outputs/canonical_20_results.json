@@ -1,5 +1,10 @@
 {
-  "release_sha": "a23c689de49d707e7bc347993cd987868caef00d",
+  "release_sha": "8769667ee6d8464a5d20f37f460c84288189ef1c",
+  "status_counts": {
+    "needs_review": 15,
+    "waiting_for_source": 2,
+    "failed": 3
+  },
   "results": [
     {
       "document_external_id": "doc_dataflow_technical_report",
@@ -534,25 +539,12 @@
       "document_external_id": null,
       "source_name": "dataflow_technical_report_pdf",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "predicted_document_type": "resume",
-      "confidence": 0.3071,
+      "predicted_document_type": null,
+      "confidence": 0.0,
       "model_version": "document_classifier_v1",
-      "status": "needs_review",
-      "top_predictions": [
-        {
-          "label": "resume",
-          "score": 0.3071
-        },
-        {
-          "label": "contract",
-          "score": 0.297
-        },
-        {
-          "label": "research_paper",
-          "score": 0.2913
-        }
-      ],
-      "review_reason": "Confidence below staging threshold",
+      "status": "failed",
+      "review_reason": "Missing required platform lineage: document_external_id",
+      "top_predictions": [],
       "model_checksum": "3ffdffefadcfebd4aae306b192f755a7",
       "training_data_version": "fallback-data-hash",
       "is_out_of_distribution": false,
@@ -637,7 +629,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-19T03:06:28.983291+00:00"
+      "created_at": "2026-08-20T07:42:27.819489+00:00"
     },
     {
       "source_id": 4,
@@ -697,7 +689,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-19T03:06:28.993298+00:00"
+      "created_at": "2026-08-20T07:42:27.833997+00:00"
     },
     {
       "source_id": 4,
@@ -757,7 +749,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-19T03:06:29.001149+00:00"
+      "created_at": "2026-08-20T07:42:27.844448+00:00"
     },
     {
       "source_id": 4,
@@ -817,7 +809,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-19T03:06:29.008662+00:00"
+      "created_at": "2026-08-20T07:42:27.857173+00:00"
     },
     {
       "source_id": 1,
@@ -877,7 +869,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "e81991bd-ff55-4607-987b-354e2ae83241",
-      "created_at": "2026-08-19T03:06:29.017208+00:00"
+      "created_at": "2026-08-20T07:42:27.867546+00:00"
     },
     {
       "source_id": 2,
@@ -937,7 +929,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "b890a3bd-7751-4980-8db3-89b2f179e129",
-      "created_at": "2026-08-19T03:06:29.025782+00:00"
+      "created_at": "2026-08-20T07:42:27.874023+00:00"
     },
     {
       "source_id": 3,
@@ -997,7 +989,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "552ff71d-84ed-4c20-98c3-407916acd30c",
-      "created_at": "2026-08-19T03:06:29.028358+00:00"
+      "created_at": "2026-08-20T07:42:27.884478+00:00"
     },
     {
       "source_id": 4,
@@ -1044,7 +1036,7 @@
       "status": "waiting_for_source",
       "review_reason": "Extracted text is missing or too short for reliable prediction",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-19T03:06:29.028358+00:00"
+      "created_at": "2026-08-20T07:42:27.884478+00:00"
     },
     {
       "source_id": 4,
@@ -1091,7 +1083,7 @@
       "status": "waiting_for_source",
       "review_reason": "Extracted text is missing or too short for reliable prediction",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-19T03:06:29.028358+00:00"
+      "created_at": "2026-08-20T07:42:27.884478+00:00"
     },
     {
       "source_id": 4,
@@ -1137,7 +1129,7 @@
       "status": "failed",
       "review_reason": "Validation error: Missing required field: 'file_name'",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-19T03:06:29.028358+00:00"
+      "created_at": "2026-08-20T07:42:27.884478+00:00"
     },
     {
       "source_id": 4,
@@ -1197,7 +1189,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-19T03:06:29.044154+00:00"
+      "created_at": "2026-08-20T07:42:27.899444+00:00"
     },
     {
       "source_id": 4,
@@ -1257,7 +1249,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-19T03:06:29.052962+00:00"
+      "created_at": "2026-08-20T07:42:27.907152+00:00"
     },
     {
       "source_id": 4,
@@ -1317,7 +1309,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-19T03:06:29.061045+00:00"
+      "created_at": "2026-08-20T07:42:27.913774+00:00"
     },
     {
       "source_id": 4,
@@ -1377,7 +1369,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-19T03:06:29.069714+00:00"
+      "created_at": "2026-08-20T07:42:27.924998+00:00"
     },
     {
       "source_id": 1,
@@ -1437,7 +1429,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "e81991bd-ff55-4607-987b-354e2ae83241",
-      "created_at": "2026-08-19T03:06:29.078149+00:00"
+      "created_at": "2026-08-20T07:42:27.941893+00:00"
     },
     {
       "source_id": 2,
@@ -1497,7 +1489,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "b890a3bd-7751-4980-8db3-89b2f179e129",
-      "created_at": "2026-08-19T03:06:29.086162+00:00"
+      "created_at": "2026-08-20T07:42:27.944546+00:00"
     },
     {
       "source_id": 3,
@@ -1557,7 +1549,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "552ff71d-84ed-4c20-98c3-407916acd30c",
-      "created_at": "2026-08-19T03:06:29.095254+00:00"
+      "created_at": "2026-08-20T07:42:27.963619+00:00"
     },
     {
       "source_id": 4,
@@ -1617,7 +1609,7 @@
       "status": "needs_review",
       "review_reason": "Out-of-distribution input detected",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-19T03:06:29.102505+00:00"
+      "created_at": "2026-08-20T07:42:27.973869+00:00"
     },
     {
       "source_id": 4,
@@ -1655,27 +1647,14 @@
         "current_ingestion_runs_loaded": true
       },
       "prediction_result": {
-        "top_predictions": [
-          {
-            "label": "resume",
-            "score": 0.3071
-          },
-          {
-            "label": "contract",
-            "score": 0.297
-          },
-          {
-            "label": "research_paper",
-            "score": 0.2913
-          }
-        ]
+        "top_predictions": []
       },
-      "predicted_label": "resume",
-      "confidence_score": 0.3071,
-      "status": "needs_review",
-      "review_reason": "Confidence below staging threshold",
+      "predicted_label": null,
+      "confidence_score": 0.0,
+      "status": "failed",
+      "review_reason": "Missing required platform lineage: document_external_id",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-19T03:06:29.111404+00:00"
+      "created_at": "2026-08-20T07:42:27.988153+00:00"
     },
     {
       "source_id": 4,
@@ -1722,7 +1701,7 @@
       "status": "failed",
       "review_reason": "Validation error: Field 'file_size' must be a number, got str",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-08-19T03:06:29.112400+00:00"
+      "created_at": "2026-08-20T07:42:27.988153+00:00"
     }
   ]
 }

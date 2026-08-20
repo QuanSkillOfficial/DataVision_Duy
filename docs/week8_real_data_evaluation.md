@@ -28,5 +28,12 @@
 | Status | Count | Percentage |
 |---|---|---|
 | `needs_review` | 15 | 75.00% |
-| `accepted` | 3 | 15.00% |
+| `failed` | 3 | 15.00% |
 | `waiting_for_source` | 2 | 10.00% |
+| `accepted` | 0 | 0.00% |
+
+## Model Governance & Staging Safety
+
+- **Mandatory Human Review**: Under the conservative staging acceptance threshold (`STAGING_ACCEPTANCE_THRESHOLD = 0.80`), 100% of non-failed/waiting documents (15/20) are routed to the manual review queue (`needs_review`).
+- **Safety Gate**: Direct automatic acceptance into downstream production without reviewer confirmation is disabled until further training iterations.
+- **Lineage Protection**: Any payload missing mandatory platform lineage (`document_external_id`) is strictly rejected as `failed` rather than entering the review queue without a valid identifier.

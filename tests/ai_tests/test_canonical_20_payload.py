@@ -47,8 +47,22 @@ def test_canonical_20_payload_flow():
         # Run prediction
         result = predict_document_type(payload)
         
-        # Check validation errors or standard prediction fields
-        if "error" in result:
+        # Check validation errors, missing platform lineage, or standard prediction fields
+        doc_ext_id = payload.get("document_external_id")
+        if not doc_ext_id:
+            prediction_norm = {
+                "predicted_document_type": None,
+                "confidence": 0.0,
+                "model_version": result.get("model_version", "document_classifier_v1") if isinstance(result, dict) else "document_classifier_v1",
+                "status": "failed",
+                "review_reason": "Missing required platform lineage: document_external_id",
+                "top_predictions": [],
+                "model_checksum": result.get("model_checksum", "unknown-checksum") if isinstance(result, dict) else "unknown-checksum",
+                "training_data_version": result.get("training_data_version", "fallback-data-hash") if isinstance(result, dict) else "fallback-data-hash",
+                "is_out_of_distribution": False,
+                "threshold_policy": result.get("threshold_policy", {}) if isinstance(result, dict) else {},
+            }
+        elif isinstance(result, dict) and "error" in result:
             # Normalize shape for validation errors
             prediction_norm = {
                 "predicted_document_type": None,
@@ -63,7 +77,7 @@ def test_canonical_20_payload_flow():
             
         # Enrich with ID fields from input
         enriched_result = {
-            "document_external_id": payload.get("document_external_id"),
+            "document_external_id": doc_ext_id,
             "source_name": payload.get("source_name"),
             "ingestion_run_id": payload.get("ingestion_run_id"),
             **prediction_norm,
@@ -98,9 +112,17 @@ def test_canonical_20_payload_flow():
         assert "document_id" in lp, f"Log payload {i} missing document_id" # Tuong maps document_db_id -> document_id
         assert lp["status"] in ["accepted", "needs_review", "waiting_for_source", "failed"]
 
+    # Verify status breakdown: exactly 15 needs_review, 3 failed, 2 waiting_for_source
+    from collections import Counter
+    status_counts = dict(Counter(res["status"] for res in results))
+    assert status_counts.get("needs_review") == 15, f"Expected 15 needs_review, got {status_counts.get('needs_review')}"
+    assert status_counts.get("failed") == 3, f"Expected 3 failed, got {status_counts.get('failed')}"
+    assert status_counts.get("waiting_for_source") == 2, f"Expected 2 waiting_for_source, got {status_counts.get('waiting_for_source')}"
+
     # 5. Save results to evidence file
     evidence = {
         "release_sha": get_git_sha(),
+        "status_counts": status_counts,
         "results": results,
         "log_payloads": log_payloads
     }

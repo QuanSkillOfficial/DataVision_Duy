@@ -1,5 +1,6 @@
 {
-  "generated_at": "2026-07-26T10:37:55.499642+00:00",
+  "generated_at": "2026-08-20T07:34:49.063988+00:00",
+  "release_sha": "8769667ee6d8464a5d20f37f460c84288189ef1c",
   "total_payloads": 20,
   "prediction_log_payloads": [
     {
@@ -21,7 +22,7 @@
         "num_pages": 36,
         "page_range": "1-36",
         "source_system": "manual_upload",
-        "extracted_text": "--- Page 1 ---\nDecember19,2025 DataFlow: An LLM-Driven Framework for Unified Data Preparation and Workflow Automation in the Era of Data-Centric AI Hao Liang∗,†, Xiaochen Ma∗,†, Zhou Liu∗,†, Zhen Hao Wong∗, Zhengyang Zhao∗, Zimo Meng∗, Runming He∗, Chengyu Shen∗, Qifeng Cai∗, Zhaoyang Han∗, Meiyi Qiang∗, Yalin Feng∗, Tianyi Bai∗, Zewei Pan, Ziyi Guo, Yizhen Jiang, Jingwen Deng, Qijie You, Peichao Lai, Tianyu Guo, Chi Hsu Tsai, Hengyi Feng, Rui Hu, Wenkai Yu, Junbo Niu, Bohan Zeng, Ruichuan An, L... [truncated]",
+        "extracted_text": "--- Page 1 ---\nDecember19,2025 DataFlow: An LLM-Driven Framework for Unified Data Preparation and Workflow Automation in the Era of Data-Centric AI Hao Liang\u2217,\u2020, Xiaochen Ma\u2217,\u2020, Zhou Liu\u2217,\u2020, Zhen Hao Wong\u2217, Zhengyang Zhao\u2217, Zimo Meng\u2217, Runming He\u2217, Chengyu Shen\u2217, Qifeng Cai\u2217, Zhaoyang Han\u2217, Meiyi Qiang\u2217, Yalin Feng\u2217, Tianyi Bai\u2217, Zewei Pan, Ziyi Guo, Yizhen Jiang, Jingwen Deng, Qijie You, Peichao Lai, Tianyu Guo, Chi Hsu Tsai, Hengyi Feng, Rui Hu, Wenkai Yu, Junbo Niu, Bohan Zeng, Ruichuan An, L... [truncated]",
         "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
         "raw_output_path": "week2/data/raw/pdf/dataflow_technical_report_raw.pdf",
         "staging_output_path": "week2/data/staging/pdf/dataflow_pdf_text.txt",
@@ -64,7 +65,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-07-26T10:37:55.498642+00:00"
+      "created_at": "2026-08-20T07:34:48.850255+00:00"
     },
     {
       "source_id": 4,
@@ -124,7 +125,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-07-26T10:37:55.499642+00:00"
+      "created_at": "2026-08-20T07:34:48.864087+00:00"
     },
     {
       "source_id": 4,
@@ -146,7 +147,7 @@
         "num_pages": 1,
         "page_range": "8",
         "source_system": "manual_upload",
-        "extracted_text": "DataFlow Technical Report 8 📊Data 🛰 DataFlow-System 📖DataFlow-Core Pipeline Zoo 🎯Downstream Remote API Local Engine Python Package Applications LLM Gemini 🚅 LiteLLM vLLM Serving ChatGPT 🚀 LightRAG SGLang Operator Extension Text Storage Operator Zoo Prompt Template Extension Rule-OP Math Reasoning LLM-OP Model-OP Code Pipeline Extension Text2SQL Prompt Template Zoo Agentic-RAG SQLite General ... Text2SQL Reasoning Knowledge Extraction MySQL Math noitazidradnatS troppuS 🧩DataFlow-Extensions Pipeli... [truncated]",
+        "extracted_text": "DataFlow Technical Report 8 \ud83d\udccaData \ud83d\udef0 DataFlow-System \ud83d\udcd6DataFlow-Core Pipeline Zoo \ud83c\udfafDownstream Remote API Local Engine Python Package Applications LLM Gemini \ud83d\ude85 LiteLLM vLLM Serving ChatGPT \ud83d\ude80 LightRAG SGLang Operator Extension Text Storage Operator Zoo Prompt Template Extension Rule-OP Math Reasoning LLM-OP Model-OP Code Pipeline Extension Text2SQL Prompt Template Zoo Agentic-RAG SQLite General ... Text2SQL Reasoning Knowledge Extraction MySQL Math noitazidradnatS troppuS \ud83e\udde9DataFlow-Extensions Pipeli... [truncated]",
         "parsing_status": "ready",
         "raw_output_path": "week2/data/raw/pdf/dataflow_technical_report_raw.pdf",
         "staging_output_path": "week2/data/staging/pdf/dataflow_pdf_text.txt",
@@ -184,7 +185,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-07-26T10:37:55.499642+00:00"
+      "created_at": "2026-08-20T07:34:48.874919+00:00"
     },
     {
       "source_id": 4,
@@ -206,7 +207,7 @@
         "num_pages": 2,
         "page_range": "6-7",
         "source_system": "manual_upload",
-        "extracted_text": "DataFlow Technical Report 6 2 Background and Related Works 2.1 Data in LLM Development The development of LLMs involves several key stages, among which training is particularly crucial, as the model learns fundamental linguistic patterns from large-scale corpora. During this stage, the model is exposed to vast amounts of text data from various domains, enabling it to acquire a broad understanding of language. Consequently, the quality and diversity of training data directly impact the model’s ab... [truncated]",
+        "extracted_text": "DataFlow Technical Report 6 2 Background and Related Works 2.1 Data in LLM Development The development of LLMs involves several key stages, among which training is particularly crucial, as the model learns fundamental linguistic patterns from large-scale corpora. During this stage, the model is exposed to vast amounts of text data from various domains, enabling it to acquire a broad understanding of language. Consequently, the quality and diversity of training data directly impact the model\u2019s ab... [truncated]",
         "parsing_status": "ready",
         "raw_output_path": "week2/data/raw/pdf/dataflow_technical_report_raw.pdf",
         "staging_output_path": "week2/data/staging/pdf/dataflow_pdf_text.txt",
@@ -244,7 +245,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-07-26T10:37:55.499642+00:00"
+      "created_at": "2026-08-20T07:34:48.887483+00:00"
     },
     {
       "source_id": 1,
@@ -304,7 +305,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "e81991bd-ff55-4607-987b-354e2ae83241",
-      "created_at": "2026-07-26T10:37:55.499642+00:00"
+      "created_at": "2026-08-20T07:34:48.899595+00:00"
     },
     {
       "source_id": 2,
@@ -364,7 +365,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "b890a3bd-7751-4980-8db3-89b2f179e129",
-      "created_at": "2026-07-26T10:37:55.499642+00:00"
+      "created_at": "2026-08-20T07:34:48.907511+00:00"
     },
     {
       "source_id": 3,
@@ -424,7 +425,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "552ff71d-84ed-4c20-98c3-407916acd30c",
-      "created_at": "2026-07-26T10:37:55.499642+00:00"
+      "created_at": "2026-08-20T07:34:48.916558+00:00"
     },
     {
       "source_id": 4,
@@ -471,7 +472,7 @@
       "status": "waiting_for_source",
       "review_reason": "Extracted text is missing or too short for reliable prediction",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-07-26T10:37:55.499642+00:00"
+      "created_at": "2026-08-20T07:34:48.916558+00:00"
     },
     {
       "source_id": 4,
@@ -518,7 +519,7 @@
       "status": "waiting_for_source",
       "review_reason": "Extracted text is missing or too short for reliable prediction",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-07-26T10:37:55.499642+00:00"
+      "created_at": "2026-08-20T07:34:48.916558+00:00"
     },
     {
       "source_id": 4,
@@ -564,7 +565,7 @@
       "status": "failed",
       "review_reason": "Validation error: Missing required field: 'file_name'",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-07-26T10:37:55.499642+00:00"
+      "created_at": "2026-08-20T07:34:48.916558+00:00"
     },
     {
       "source_id": 4,
@@ -586,7 +587,7 @@
         "num_pages": 2,
         "page_range": "9-10",
         "source_system": "manual_upload",
-        "extracted_text": "DataFlow Technical Report 9 of user-contributed components. Together, these elements provide a scalable and extensible substrate for constructing, executing, and sharing LLM-centric data preparation workflows. 4.1 Global Storage Abstraction and Operator Interaction At the core of DataFlow’s execution substrate is a unified storage abstraction that maintains the canonical tabular representation of the dataset and mediates all data access during workflow execution. LLM-oriented data—suchasinstruct... [truncated]",
+        "extracted_text": "DataFlow Technical Report 9 of user-contributed components. Together, these elements provide a scalable and extensible substrate for constructing, executing, and sharing LLM-centric data preparation workflows. 4.1 Global Storage Abstraction and Operator Interaction At the core of DataFlow\u2019s execution substrate is a unified storage abstraction that maintains the canonical tabular representation of the dataset and mediates all data access during workflow execution. LLM-oriented data\u2014suchasinstruct... [truncated]",
         "parsing_status": "ready",
         "raw_output_path": "week2/data/raw/pdf/dataflow_technical_report_raw.pdf",
         "staging_output_path": "week2/data/staging/pdf/dataflow_pdf_text.txt",
@@ -624,7 +625,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-07-26T10:37:55.499642+00:00"
+      "created_at": "2026-08-20T07:34:48.934582+00:00"
     },
     {
       "source_id": 4,
@@ -684,7 +685,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-07-26T10:37:55.499642+00:00"
+      "created_at": "2026-08-20T07:34:48.944179+00:00"
     },
     {
       "source_id": 4,
@@ -706,7 +707,7 @@
         "num_pages": 2,
         "page_range": "14-15",
         "source_system": "manual_upload",
-        "extracted_text": "DataFlow Technical Report 14 Intelligent Pipeline Recommendation Operator Pipeline Sequencing Agent Pipeline Construction Agent Debug sub-Intent Mocked Data Operator Retrieval Pipeline Verification sub-Intent Agent Agent prompt_template op code MockedData Pipeline User Query Intent Analysis Agent sub-Intent DataFlow …… Operator Library Data Routing Agent Oper A at g o e r n t Reuse Syn O th p e e s r i a s t A or g ent pipeline Result Reporting Agent Stage1: Intent Decomposition Stage2: Operator... [truncated]",
+        "extracted_text": "DataFlow Technical Report 14 Intelligent Pipeline Recommendation Operator Pipeline Sequencing Agent Pipeline Construction Agent Debug sub-Intent Mocked Data Operator Retrieval Pipeline Verification sub-Intent Agent Agent prompt_template op code MockedData Pipeline User Query Intent Analysis Agent sub-Intent DataFlow \u2026\u2026 Operator Library Data Routing Agent Oper A at g o e r n t Reuse Syn O th p e e s r i a s t A or g ent pipeline Result Reporting Agent Stage1: Intent Decomposition Stage2: Operator... [truncated]",
         "parsing_status": "ready",
         "raw_output_path": "week2/data/raw/pdf/dataflow_technical_report_raw.pdf",
         "staging_output_path": "week2/data/staging/pdf/dataflow_pdf_text.txt",
@@ -744,7 +745,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-07-26T10:37:55.499642+00:00"
+      "created_at": "2026-08-20T07:34:48.960635+00:00"
     },
     {
       "source_id": 4,
@@ -766,7 +767,7 @@
         "num_pages": 2,
         "page_range": "25,29",
         "source_system": "manual_upload",
-        "extracted_text": "DataFlow Technical Report 25 Table8 AgenticRAG Pipeline: Performance comparison between synthetic datasets and existing human-constructed datasets. All values are Exact Match (%). “OOD-Avg” excludes the in-domain test set of each training dataset. “DF-OOD (matched)” provides the OOD score of DF-AgenticRAG under the *same* in-domain exclusion, ensuring fair comparison. TrainingData HotpotQA 2Wiki Musique Bamboogle Avg OOD-Avg DF-OOD(matched) Qwen-2.5-7B-Instruct 25.0 25.8 9.9 27.2 22.0 – – Traine... [truncated]",
+        "extracted_text": "DataFlow Technical Report 25 Table8 AgenticRAG Pipeline: Performance comparison between synthetic datasets and existing human-constructed datasets. All values are Exact Match (%). \u201cOOD-Avg\u201d excludes the in-domain test set of each training dataset. \u201cDF-OOD (matched)\u201d provides the OOD score of DF-AgenticRAG under the *same* in-domain exclusion, ensuring fair comparison. TrainingData HotpotQA 2Wiki Musique Bamboogle Avg OOD-Avg DF-OOD(matched) Qwen-2.5-7B-Instruct 25.0 25.8 9.9 27.2 22.0 \u2013 \u2013 Traine... [truncated]",
         "parsing_status": "ready",
         "raw_output_path": "week2/data/raw/pdf/dataflow_technical_report_raw.pdf",
         "staging_output_path": "week2/data/staging/pdf/dataflow_pdf_text.txt",
@@ -804,7 +805,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-07-26T10:37:55.499642+00:00"
+      "created_at": "2026-08-20T07:34:48.974465+00:00"
     },
     {
       "source_id": 1,
@@ -864,7 +865,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "e81991bd-ff55-4607-987b-354e2ae83241",
-      "created_at": "2026-07-26T10:37:55.499642+00:00"
+      "created_at": "2026-08-20T07:34:48.987947+00:00"
     },
     {
       "source_id": 2,
@@ -924,7 +925,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "b890a3bd-7751-4980-8db3-89b2f179e129",
-      "created_at": "2026-07-26T10:37:55.499642+00:00"
+      "created_at": "2026-08-20T07:34:49.003056+00:00"
     },
     {
       "source_id": 3,
@@ -984,7 +985,7 @@
       "status": "needs_review",
       "review_reason": "Confidence below staging threshold",
       "ingestion_run_id": "552ff71d-84ed-4c20-98c3-407916acd30c",
-      "created_at": "2026-07-26T10:37:55.499642+00:00"
+      "created_at": "2026-08-20T07:34:49.014215+00:00"
     },
     {
       "source_id": 4,
@@ -1042,9 +1043,9 @@
       "predicted_label": "contract",
       "confidence_score": 0.2985,
       "status": "needs_review",
-      "review_reason": "Confidence below staging threshold",
+      "review_reason": "Out-of-distribution input detected",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-07-26T10:37:55.499642+00:00"
+      "created_at": "2026-08-20T07:34:49.024114+00:00"
     },
     {
       "source_id": 4,
@@ -1089,7 +1090,7 @@
       "status": "failed",
       "review_reason": "Missing required platform lineage: document_external_id",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-07-26T10:37:55.499642+00:00"
+      "created_at": "2026-08-20T07:34:49.034273+00:00"
     },
     {
       "source_id": 4,
@@ -1111,7 +1112,7 @@
         "num_pages": 1,
         "page_range": "8",
         "source_system": "manual_upload",
-        "extracted_text": "DataFlow Technical Report 8 📊Data 🛰 DataFlow-System 📖DataFlow-Core Pipeline Zoo 🎯Downstream Remote API Local Engine Python Package Applications LLM Gemini 🚅 LiteLLM vLLM Serving ChatGPT 🚀 LightRAG SGLang Operator Extension Text Storage Operator Zoo Prompt Template Extension Rule-OP Math Reasoning LLM-OP Model-OP Code Pipeline Extension Text2SQL Prompt Template Zoo Agentic-RAG SQLite General ... Text2SQL Reasoning Knowledge Extraction MySQL Math noitazidradnatS troppuS 🧩DataFlow-Extensions Pipeli... [truncated]",
+        "extracted_text": "DataFlow Technical Report 8 \ud83d\udccaData \ud83d\udef0 DataFlow-System \ud83d\udcd6DataFlow-Core Pipeline Zoo \ud83c\udfafDownstream Remote API Local Engine Python Package Applications LLM Gemini \ud83d\ude85 LiteLLM vLLM Serving ChatGPT \ud83d\ude80 LightRAG SGLang Operator Extension Text Storage Operator Zoo Prompt Template Extension Rule-OP Math Reasoning LLM-OP Model-OP Code Pipeline Extension Text2SQL Prompt Template Zoo Agentic-RAG SQLite General ... Text2SQL Reasoning Knowledge Extraction MySQL Math noitazidradnatS troppuS \ud83e\udde9DataFlow-Extensions Pipeli... [truncated]",
         "parsing_status": "ready",
         "raw_output_path": null,
         "staging_output_path": null,
@@ -1136,7 +1137,7 @@
       "status": "failed",
       "review_reason": "Validation error: Field 'file_size' must be a number, got str",
       "ingestion_run_id": "2c1e2629-2512-4d57-bd08-a9c6c01f0caf",
-      "created_at": "2026-07-26T10:37:55.499642+00:00"
+      "created_at": "2026-08-20T07:34:49.034273+00:00"
     }
   ]
 }

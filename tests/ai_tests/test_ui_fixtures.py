@@ -171,13 +171,13 @@ def test_review_fixture_valid_json():
 
 
 def test_review_fixture_has_review_items():
-    """Review queue fixture must have at least 10 needs_review items from real data."""
+    """Review queue fixture must have 'review_items' list with exactly 15 items."""
     with open(REVIEW_FIXTURE, "r", encoding="utf-8") as f:
         data = json.load(f)
     assert "review_items" in data
     assert isinstance(data["review_items"], list)
-    assert len(data["review_items"]) >= 10, (
-        f"Review queue must contain at least 10 items from real Duy predictions, "
+    assert len(data["review_items"]) == 15, (
+        f"Review queue must contain at least 15 items from real Duy predictions, "
         f"got {len(data['review_items'])}"
     )
 
