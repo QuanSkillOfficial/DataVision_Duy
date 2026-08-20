@@ -63,25 +63,31 @@
       "owner_name": "Nguyen The Lap",
       "owner_github": "Nguyen-The-Lap",
       "source_repository": "https://github.com/QuanSkillOfficial/DataVision_Lap",
-      "source_sha": "25381241ffda53e7481d15af6f260204592066c9",
-      "source_commit_url": "https://github.com/QuanSkillOfficial/DataVision_Lap/commit/25381241ffda53e7481d15af6f260204592066c9",
+      "source_sha": "b22a3732b3dcf6c0e700973ebf276316db23f62f",
+      "source_commit_url": "https://github.com/QuanSkillOfficial/DataVision_Lap/commit/b22a3732b3dcf6c0e700973ebf276316db23f62f",
       "integration_mode": "imported-and-adapted",
+      "canonical_followup_commits": [
+        "https://github.com/QuanSkillOfficial/DataVision_Duy/commit/eec61f483d21364a258ab10a63ccd6aff77e39dd"
+      ],
       "canonical_paths": [
         {
           "path": "ai/rag",
-          "tree_sha": "0439c464de11595615e8a2810db85382ae51f430"
+          "tree_sha": "104aacc2d6ee8efccacb10c5a954b83b29ec9757"
         },
         {
           "path": "ai/ai_tests",
-          "tree_sha": "08f18260313ba361bd724568a000e327a4a5fe01"
+          "tree_sha": "fd1d4268bc6b35aba6edd1498fe90608f45326df"
         }
       ],
       "required_files": [
         "ai/rag/rag_service.py",
         "ai/rag/scripts/week7_rag_ci_smoke_test.py",
+        "ai/rag/scripts/week8_generate_rag_evidence.py",
         "ai/rag/requirements-ci.txt",
         "ai/ai_tests/test_rag_reindex_idempotency.py",
-        "ai/ai_tests/test_rag_response_contract.py"
+        "ai/ai_tests/test_rag_response_contract.py",
+        "outputs/rag/week8_rag_evidence.json",
+        "outputs/ui_fixtures/lap_rag_response_real.json"
       ]
     },
     {
